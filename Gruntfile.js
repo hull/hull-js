@@ -9,7 +9,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-dox');
-  grunt.loadNpmTasks('grunt-reload');
 
   var port = 3001;
 
@@ -117,7 +116,7 @@ module.exports = function(grunt) {
 
   // default build task
   grunt.registerTask('build', ['clean', 'coffee'/*,'jshint' , 'mocha', 'requirejs' */]);
-  grunt.registerTask('default', ['connect', 'build', 'reload', 'watch']);
+  grunt.registerTask('default', ['connect', 'build', 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 
 };
