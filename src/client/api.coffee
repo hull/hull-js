@@ -1,7 +1,6 @@
 define ->
 
   (env)->
-    core = env.core
 
     rpc = false
 
@@ -9,10 +8,13 @@ define ->
       require:
         paths:
           easyXDM: 'easyXDM/easyXDM'
+          backbone: 'backbone/backbone'
         shim:
           easyXDM: { exports: 'easyXDM' }
+          backbone: { exports: 'Backbone', deps: ['underscore', 'jquery'] }
 
-    init: ->
+    init: (env)->
+      core = env.core
       _         = require('underscore')
       Backbone  = require('backbone')
       easyXDM   = require('easyXDM')
@@ -56,7 +58,6 @@ define ->
         ret
 
       message = (params, callback, errback)->
-        # throw new Error("Api not initialized yet") unless rpc
         console.error("Api not initialized yet") unless rpc
         promise = core.data.deferred()
 
@@ -146,7 +147,7 @@ define ->
           model.on 'change', ->
             args = slice.call(arguments)
             eventName = ("hull.model." + model._id + '.' + 'change')
-            core.pubsub.emit(eventName, { eventName: eventName, model: model, changes: args[1]?.changes })
+            core.mediator.emit(eventName, { eventName: eventName, model: model, changes: args[1]?.changes })
           model.fetch
             success: ->
               model._fetched = true
@@ -179,14 +180,15 @@ define ->
 
       initialized = core.data.deferred()
 
-      onRemoteMessage = ->
-        console.warn("RPC Message", arguments)
+      onRemoteMessage = -> console.warn("RPC Message", arguments)
+
+      onRemoteReady = (data)-> initialized.resolve(data)
 
       rpc = new easyXDM.Rpc({
         remote: "#{env.config.orgUrl}/api/v1/#{env.config.appId}/remote.html"
       }, {
         remote: { message: {}, ready: {} }
-        local:  { message: onRemoteMessage, ready: -> initialized.resolve() }
+        local:  { message: onRemoteMessage, ready: onRemoteReady }
       })
 
       initialized

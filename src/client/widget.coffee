@@ -25,7 +25,6 @@ define ['backbone', 'underscore'], (Backbone, _)->
     initialize: ->
 
     constructor: (options)->
-      console.warn("HullWidget constructor: ", this)
       try
         @events = if _.isFunction(@events) then @events() else @events
         @events ?= {}
@@ -97,7 +96,6 @@ define ['backbone', 'underscore'], (Backbone, _)->
       return @
 
     actionHandler: (e)=>
-      console.warn("Action !", e)
       try
         source  = $(e.currentTarget)
         action  = source.data("hull-action")
@@ -106,7 +104,6 @@ define ['backbone', 'underscore'], (Backbone, _)->
           throw new Error("Can't find action #{action} on this Widget")
         options = {}
         options[decamelize(k).replace("hull_", "")] = v for k,v of source.data()
-        console.warn("Action to call: ", fn, @actions)
         fn.call(@, source, e, options)
       catch e
         console.error("oops... missed action?", e)

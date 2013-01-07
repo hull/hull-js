@@ -2,6 +2,12 @@ define ['components/aura-express/lib/aura'], (Aura)->
 
   hull = null
 
+  myApp = {
+    name: 'myApp'
+    afterAppStart: (env)->
+      window.Hull = env.core.createSandbox()
+  }
+
   Hull = (config)->
     return hull if hull && hull.app
     hull = { config }
@@ -9,9 +15,10 @@ define ['components/aura-express/lib/aura'], (Aura)->
     hull.app
         .use('aura-extensions/aura-handlebars')
         .use('aura-extensions/aura-backbone')
-        .use('lib/ext/api')
-        .use('lib/ext/auth')
-        .use('lib/ext/widget')
+        .use('lib/client/api')
+        .use('lib/client/auth')
+        .use('lib/client/widget')
+        .use(myApp)
         .start({ widgets: 'body' })
     return hull
 

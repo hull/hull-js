@@ -21,7 +21,7 @@ define ->
           dfd.done -> me.trigger('change')
           me.fetch(success: dfd.resolve, error: dfd.reject, silent: true)
         catch err
-          console.warn "Error on auth promise resolution", err
+          console.error "Error on auth promise resolution", err
         finally
           authenticating = false
 
@@ -37,10 +37,10 @@ define ->
         authenticating.providerName = providerName
         authenticating.done callback if _.isFunction(callback)
 
-        auth_url = "#{core.config.orgUrl}/auth/#{providerName.toLowerCase()}"
+        auth_url = "#{env.config.orgUrl}/auth/#{providerName.toLowerCase()}"
         auth_params = opts || {}
-        auth_params.app_id        = core.config.appId
-        auth_params.callback_url  = core.config.callback_url || document.location.toString()
+        auth_params.app_id        = env.config.appId
+        auth_params.callback_url  = env.config.callback_url || document.location.toString()
 
         auth_params.auth_referer  = document.location.toString()
         auth_url += "?#{$.param(auth_params)}"
