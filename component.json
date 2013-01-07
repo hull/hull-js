@@ -6,6 +6,7 @@
     "aura-express": "latest",
     "require-handlebars-plugin": "latest",
     "backbone": "latest",
-    "easyXDM": "latest"
+    "easyXDM": "latest",
+    "route-recognizer": "latest"
   }
 }
