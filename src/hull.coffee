@@ -7,8 +7,8 @@ define ['components/aura-express/lib/aura'], (Aura)->
     hull = { config }
     hull.app = Aura(config)
     hull.app
-        .use('extensions/aura-handlebars')
-        .use('extensions/aura-backbone')
+        .use('aura-extensions/aura-handlebars')
+        .use('aura-extensions/aura-backbone')
         .use('lib/ext/api')
         .use('lib/ext/auth')
         .use('lib/ext/widget')
