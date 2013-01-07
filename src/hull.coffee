@@ -8,7 +8,7 @@ define ['components/aura-express/lib/aura'], (Aura)->
       window.Hull = env.core.createSandbox()
   }
 
-  Hull = (config)->
+  (config)->
     return hull if hull && hull.app
     hull = { config }
     hull.app = Aura(config)
@@ -22,5 +22,3 @@ define ['components/aura-express/lib/aura'], (Aura)->
         .start({ widgets: 'body' })
     return hull
 
-  window.Hull = Hull
-  Hull
