@@ -1,0 +1,11 @@
+{
+  "name": "hull-express",
+  "version": "0.1.0",
+  "main": "./lib/hull.js",
+  "dependencies": {
+    "aura-express": "latest",
+    "require-handlebars-plugin": "latest",
+    "backbone": "latest",
+    "easyXDM": "latest"
+  }
+}
