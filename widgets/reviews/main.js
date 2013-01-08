@@ -36,7 +36,7 @@ define(['sandbox'], function(sandbox) {
             rating = this.dom.find("select", this.$el).val(),
             self = this;
 
-        this.data.api.post("hull", this.id + "/reviews", { description: description, rating: rating }).done(function() {
+        this.sandbox.data.api.post("hull", this.id + "/reviews", { description: description, rating: rating }).done(function() {
           self.render();
         });
       }

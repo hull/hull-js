@@ -21,7 +21,7 @@ define(function() {
       comment: function() {
         var description = this.$el.find("textarea").val();
             render = function() { this.render() };
-        this.data.api.post("hull", this.id + "/comments", { description: description }, render);
+        this.sandbox.data.api.post("hull", this.id + "/comments", { description: description }, render);
       }
     }
   };

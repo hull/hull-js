@@ -28,6 +28,7 @@ define ['components/aura-express/lib/aura'], (Aura)->
         .use('aura-extensions/aura-backbone')
         .use('lib/client/api')
         .use('lib/client/auth')
+        .use('lib/client/templates')
         .use('lib/client/widget')
         .use(myApp)
         .start({ widgets: 'body' })
