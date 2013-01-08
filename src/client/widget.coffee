@@ -10,11 +10,6 @@ define ['backbone', 'underscore'], (Backbone, _)->
     app: 'app'
     org: 'org'
 
-  templates = {}
-
-  loadTemplate: (tpl)->
-
-
   class HullWidget extends Backbone.View
 
     context: {}
@@ -25,6 +20,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
     initialize: ->
 
     constructor: (options)->
+      @ref = options.ref
       try
         @events = if _.isFunction(@events) then @events() else @events
         @events ?= {}
@@ -56,8 +52,8 @@ define ['backbone', 'underscore'], (Backbone, _)->
       @_renderCount ?= 0
       @_renderCount++
       ret       = _.clone(@context || {})
+      dfd       = @sandbox.data.deferred()
       try
-        dfd       = @sandbox.data.deferred()
         keys      = _.keys(@datasources)
         promises  = _.map keys, (k)=>
           if _.isString(@datasources[k])
@@ -66,9 +62,13 @@ define ['backbone', 'underscore'], (Backbone, _)->
             @datasources[k].call(@)
           else
             @datasources[k]
+        
+        widgetDeferred = $.when.apply($, promises)
+       
+        templateDeferred = @sandbox.template.load(@templates, @ref)
 
-        $.when.apply($, promises).done =>
-          args = slice.call(arguments)
+        $.when(widgetDeferred, templateDeferred).done (data, tpls)=>
+          args = data
           _.map keys, (k,i)->
             if _.isFunction args[i]?.toJSON
               ret[k] = args[i].toJSON()
@@ -76,18 +76,19 @@ define ['backbone', 'underscore'], (Backbone, _)->
               ret[k] = args[i]
           ret.loggedIn = @loggedIn()
           ret.renderCount = @_renderCount
+          @_templates = tpls
           dfd.resolve(ret)
+
       catch e
         console.error("Caught error in buildContext", e)
         dfd.reject(e)
-
       dfd
 
     loggedIn: =>
       !!@sandbox.data.api.model('me').id
 
     getTemplate: (tpl, data)=>
-      tpl || @template || @templates?[0]
+      tpl || @template || @templates[0]
 
     doRender: (tpl, data)=>
       ret = @renderTemplate(@getTemplate(tpl, data), data)
