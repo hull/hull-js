@@ -1,0 +1,7 @@
+{{#if loggedIn}}
+Hello I am {{me.name}}
+<hr>
+<button data-hull-action='logout'>Bye bye !</button>
+{{else}}
+Please <button data-hull-action='login' data-hull-provider='facebook'>Login</button> first
+{{/if}}
