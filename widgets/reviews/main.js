@@ -16,7 +16,7 @@ define(['sandbox'], function(sandbox) {
       reviews.url = this.id + "/reviews";
 
       this.datasources.reviewable = function() {
-        return self.data.api.get("hull", this.id, { fields: 'reviews' });
+        return self.sandbox.data.api("hull/" + self.id, { fields: 'reviews' });
       }
     },
 

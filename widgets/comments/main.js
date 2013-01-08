@@ -9,12 +9,12 @@ define(function() {
     initialize: function(options) {
       var self = this;
       this.datasources.commentable = function() {
-        return self.data.api.get("hull", this.id, { fields: 'comments' });
+        return self.sandbox.data.api("hull/" + self.id, { fields: 'comments' });
       }
     },
 
-    afterRender: function() {
-      this.$el.find('textarea').focus();
+    afterRender: function(data) {
+      console.warn('comments rendered with data: ', data);
     },
 
     actions: {
