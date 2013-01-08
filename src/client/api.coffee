@@ -28,7 +28,8 @@ define ->
         path = args.shift()
         next = args.shift()
 
-        throw new Error("Invalid path passed to Hull.api()") if (typeof path != 'string')
+        if (typeof path != 'string')
+          return console.error("Invalid path passed to Hull.api() : ", path)
 
         while (next)
           type = typeof next
@@ -119,7 +120,7 @@ define ->
         res.then(callback, errback)
         res
 
-      api = ()-> message.apply(api, extractApiArgs(slice.call(arguments)))
+      api = -> message.apply(api, extractApiArgs(slice.call(arguments)))
 
       methodMap =
         'create': 'post'

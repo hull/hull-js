@@ -23,8 +23,6 @@ define ->
       onRemoteMessage = (req, callback, errback)->
         throw new Error("Path not recognized #{JSON.stringify(req)}") unless req.path
 
-        window.__router = core.services
-
         routes  = core.services.recognize(req.path)
 
         if routes && route = routes[0]

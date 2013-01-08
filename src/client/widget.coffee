@@ -47,8 +47,11 @@ define ['backbone', 'underscore'], (Backbone, _)->
       Backbone.View.prototype.constructor.apply(@, arguments)
 
     renderTemplate: (tpl, data)=>
-      _tpl = @_templates[tpl]
-      _tpl(data || @) if _tpl
+      _tpl = @_templates?[tpl]
+      if _tpl
+        _tpl(data || @)
+      else
+        "Cannot find template '#{tpl}'"
 
     beforeRender: (data)-> data
 
@@ -110,6 +113,12 @@ define ['backbone', 'underscore'], (Backbone, _)->
 
     afterRender: (data)=> data
 
+
+    # Build render context from datasources
+    # Call beforeRender
+    # doRender
+    # afterRender
+    # Start nested widgets...
     render: (tpl, data)=>
       ctx = @buildContext.call(@)
       ctx.fail (err)-> console.error("Error building context: ", err)

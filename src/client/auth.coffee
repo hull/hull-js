@@ -12,9 +12,9 @@ define ->
       sandbox.authenticating = ->
         authenticating
 
-      sandbox.authComplete =->
+      authComplete = ->
         try
-          return unless authenticating.state() == 'pending'
+          return unless authenticating && authenticating.state() == 'pending'
           providerName = authenticating.providerName
           dfd = authenticating
           me = sandbox.data.api.model('me')
@@ -25,6 +25,8 @@ define ->
         finally
           authenticating = false
 
+
+      core.mediator.on "hull.authComplete", authComplete
 
       sandbox.login = (providerName, opts, callback=->)->
 
@@ -54,6 +56,7 @@ define ->
         dfd = sandbox.data.api('hull/logout')
         dfd.done ->
           sandbox.data.api.model('me').clear()
+          sandbox.data.api.model('me').trigger('change')
           sandbox.data.api.model.clearAll()
           callback() if _.isFunction(callback)
         dfd
