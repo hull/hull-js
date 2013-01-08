@@ -20,6 +20,9 @@ Serve it to js.hull.dev via pow
     echo 3001 > ~/.pow/js.hull
 
 
+Configure ```app/app.js``` with the correct settings
+
+
 Start grunt
 
     grunt
