@@ -9,14 +9,12 @@
 
 
 <ul>
-{{#commentable}}
 {{#comments}}
-  <li>{{name}}, {{description}} (by {{user.name}})</li>
+  <li>{{updated_at}}: {{description}} (by {{user.name}})</li>
 {{/comments}}
 
 {{^comments}}
   oops... no comments for the moment
 {{/comments}}
-{{/commentable}}
 </ul>
 

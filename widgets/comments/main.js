@@ -1,29 +1,22 @@
-define(function() {
+define({
+  type:       'Hull',
+  templates:  ['comments'],
 
-  return {
+  datasources: {
+    comments: function() {
+      return this.sandbox.data.api("hull/" + this.id + "/comments");
+    }
+  },
 
-    type:       'Hull',
-    namespace:  'comments',
-    templates:  ['comments'],
-
-    initialize: function(options) {
-      var self = this;
-      this.datasources.commentable = function() {
-        return self.sandbox.data.api("hull/" + self.id, { fields: 'comments' });
-      }
-    },
-
-    afterRender: function(data) {
-      console.warn('comments rendered with data: ', data);
-    },
-
-    actions: {
-      comment: function() {
-        var description = this.$el.find("textarea").val();
-            render = function() { this.render() };
-        this.sandbox.data.api.post("hull", this.id + "/comments", { description: description }, render);
+  actions: {
+    comment: function() {
+      var description = this.$el.find("textarea").val();
+      if (description && description.length > 0) {
+        this.sandbox.data.api.post("hull", this.id + "/comments", {
+          description: description
+        }).then(this.refresh);
       }
     }
-  };
+  }
 });
 
