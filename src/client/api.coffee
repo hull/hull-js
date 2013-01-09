@@ -194,16 +194,11 @@ define ->
       onRemoteMessage = -> console.warn("RPC Message", arguments)
 
       onRemoteReady = (data)->
-        console.warn("Data: ", data)
-        try
-          for m in ['me', 'app', 'org']
-            attrs = data[m]
-            if attrs
-              attrs._id = m
-              console.warn("Settings model: ", attrs._id, attrs)
-              api.model(attrs)
-        catch e
-          console.warn("Et maintenant ?", e)
+        for m in ['me', 'app', 'org']
+          attrs = data[m]
+          if attrs && attrs._id
+            attrs._id = m
+            api.model(attrs)
 
         initialized.resolve(data)
 
