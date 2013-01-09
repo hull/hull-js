@@ -1,7 +1,8 @@
 define(['sandbox', 'underscore', './default_fields', './jquery.h5validate'], function(sandbox, _, default_fields) {
 
-  return sandbox.widgets.create({
+  return {
 
+    type: "Hull",
     namespace :'registration',
     templates: ['registration_form', 'registration_complete'],
     complete: false,
@@ -27,7 +28,7 @@ define(['sandbox', 'underscore', './default_fields', './jquery.h5validate'], fun
 
     register: function(extra) {
       var self  = this;
-          me    = this.data.api.model('me');
+          me    = this.sandbox.data.api.model('me');
       if (this.loggedIn()) {
         me.save({ extra: extra }, { silent: true, success: function() {
           self.trigger('register', this);
@@ -52,7 +53,7 @@ define(['sandbox', 'underscore', './default_fields', './jquery.h5validate'], fun
     },
 
     afterRender: function() {
-      _.defer(function() { this.$el.h5Validate() }.bind(this));
+      this.$el.h5Validate();
     },
 
     submitForm: function() {
@@ -91,5 +92,5 @@ define(['sandbox', 'underscore', './default_fields', './jquery.h5validate'], fun
         this.register(extra);
       }
     }
-  });
+  };
 });

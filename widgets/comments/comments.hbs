@@ -1,22 +1,18 @@
-<div data-hull-widget="identity"></div>
-
 {{#if loggedIn}}
   <textarea></textarea>
   <button data-hull-action="comment">Send</button>
 {{else}}
-  <button data-hull-action="login" data-hull-provider="facebook">Login first</button>m
+  <button data-hull-action="login" data-hull-provider="facebook">Login first</button>
 {{/if}}
 
 
 <ul>
-{{#commentable}}
 {{#comments}}
-  <li>{{name}}, {{description}} (by {{user.name}})</li>
+  <li>{{updated_at}}: {{description}} (by {{user.name}})</li>
 {{/comments}}
 
 {{^comments}}
   oops... no comments for the moment
 {{/comments}}
-{{/commentable}}
 </ul>
 
