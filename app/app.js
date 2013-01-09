@@ -1,13 +1,14 @@
 define(['lib/hull'], function(Hull) {
-
-  window.app = Hull({
-    name: "super app",
-    orgUrl: 'http://aura.hull.dev',
-    appId: '50e842b8cf9f4f1f00000004',
+  Hull({
+    appId: 'YOUR_API_KEY',
+    orgUrl: 'http://your.app.domain.tld',
+    /*
+    name: "name your app",
     debug: true,
     widgets: {
       sources: { 'default' : 'widgets/' }
     }
+    */
   });
-
 });
+
