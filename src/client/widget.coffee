@@ -12,12 +12,11 @@ define ['backbone', 'underscore'], (Backbone, _)->
 
   class HullWidget extends Backbone.View
 
-    context: {}
     actions: {}
 
-    refreshEvents: ["hull.model.me.change"]
-
     initialize: ->
+
+    refreshEvents: ['hull.model.me.change']
 
     constructor: (options)->
       @ref = options.ref
@@ -41,6 +40,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
       catch e
         console.error("Error loading HullWidget", e)
       Backbone.View.prototype.constructor.apply(@, arguments)
+      @render()
 
     renderTemplate: (tpl, data)=>
       _tpl = @_templates?[tpl]
@@ -51,10 +51,16 @@ define ['backbone', 'underscore'], (Backbone, _)->
 
     beforeRender: (data)-> data
 
+    log: (msg)=>
+      if @options.debug
+        console.warn(@options.name, ":", @options.id, msg)
+      else
+        console.warn("[DEBUG] #{@options.name}", msg, @)
+
     buildContext: =>
       @_renderCount ?= 0
       @_renderCount++
-      ret       = _.clone(@context || {})
+      ret       = {}
       dfd       = @sandbox.data.deferred()
       try
         keys      = _.keys(@datasources)
@@ -65,10 +71,12 @@ define ['backbone', 'underscore'], (Backbone, _)->
             @datasources[k].call(@)
           else
             @datasources[k]
-        
+
         widgetDeferred = $.when.apply($, promises)
-       
+
+
         templateDeferred = @sandbox.template.load(@templates, @ref)
+
 
         $.when(widgetDeferred, templateDeferred).done (data, tpls)=>
           args = data
@@ -77,9 +85,9 @@ define ['backbone', 'underscore'], (Backbone, _)->
               ret[k] = args[i].toJSON()
             else
               ret[k] = args[i]
-          ret.loggedIn = @loggedIn()
+          ret.loggedIn    = @loggedIn()
           ret.renderCount = @_renderCount
-          @_templates = tpls
+          @_templates     = tpls
           dfd.resolve(ret)
 
       catch e

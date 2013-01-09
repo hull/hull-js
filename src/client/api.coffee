@@ -136,26 +136,36 @@ define ->
         dfd
 
       models = {}
-      api.model = (attrs)->
-        attrs = { _id: attrs } if _.isString(attrs)
-        throw new Error('A model must have an identifier...') unless attrs?._id?
-        model = models[attrs._id]
-        unless model?
-          model = models[attrs._id] = new Model()
-          model._id = attrs._id
+
+      setupModel = (attrs)->
+        if attrs.id
+          model = new Model(attrs)
+        else
+          model = new Model()
+        model.on 'change', ->
+          args = slice.call(arguments)
+          eventName = ("hull.model." + model._id + '.' + 'change')
+          core.mediator.emit(eventName, { eventName: eventName, model: model, changes: args[1]?.changes })
+        dfd   = model.deferred = core.data.deferred()
+        model._id = attrs._id
+        models[attrs._id] = model
+        if model.id
+          model._fetched = true
+          dfd.resolve(model)
+        else
           model._fetched = false
-          dfd   = model.deferred = core.data.deferred()
-          model.on 'change', ->
-            args = slice.call(arguments)
-            eventName = ("hull.model." + model._id + '.' + 'change')
-            core.mediator.emit(eventName, { eventName: eventName, model: model, changes: args[1]?.changes })
           model.fetch
             success: ->
               model._fetched = true
               dfd.resolve(model)
             error:   ->
               dfd.fail(model)
-        model
+
+      api.model = (attrs)->
+        attrs = { _id: attrs } if _.isString(attrs)
+        throw new Error('A model must have an identifier...') unless attrs?._id?
+        models[attrs._id] || setupModel(attrs)
+
 
       api.model.clearAll =->
         models = {}
@@ -183,7 +193,19 @@ define ->
 
       onRemoteMessage = -> console.warn("RPC Message", arguments)
 
-      onRemoteReady = (data)-> initialized.resolve(data)
+      onRemoteReady = (data)->
+        console.warn("Data: ", data)
+        try
+          for m in ['me', 'app', 'org']
+            attrs = data[m]
+            if attrs
+              attrs._id = m
+              console.warn("Settings model: ", attrs._id, attrs)
+              api.model(attrs)
+        catch e
+          console.warn("Et maintenant ?", e)
+
+        initialized.resolve(data)
 
       rpc = new easyXDM.Rpc({
         remote: "#{env.config.orgUrl}/api/v1/#{env.config.appId}/remote.html"
