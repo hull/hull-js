@@ -160,6 +160,7 @@ define ->
               dfd.resolve(model)
             error:   ->
               dfd.fail(model)
+        model
 
       api.model = (attrs)->
         attrs = { _id: attrs } if _.isString(attrs)

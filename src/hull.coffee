@@ -26,6 +26,7 @@ define ['components/aura-express/lib/aura'], (Aura)->
     hull.app
         .use('aura-extensions/aura-handlebars')
         .use('aura-extensions/aura-backbone')
+        .use('lib/client/handlebars-helpers')
         .use('lib/client/api')
         .use('lib/client/auth')
         .use('lib/client/templates')

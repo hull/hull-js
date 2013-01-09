@@ -1,6 +1,7 @@
 define({
   type:       'Hull',
   templates:  ['comments'],
+  debug: true,
 
   datasources: {
     comments: function() {
@@ -19,4 +20,3 @@ define({
     }
   }
 });
-
