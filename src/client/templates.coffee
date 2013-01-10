@@ -1,19 +1,19 @@
 define ->
   init: (env)->
-    env.core.template.load = (tplNames, ref, format="hbs")->
+    env.core.template.load = (names, ref, format="hbs")->
       loadedTemplates = {}
-      names = [tplNames] if _.isString(tplNames)
+      names = [names] if _.isString(names)
       paths = []
       dfd   = env.core.data.deferred()
       ret = {}
-      for name in tplNames
+      for name in names
         path = "#{ref}/#{name}"
         # if require.defined(path)
         #   ret[tpl] = require(path)
         # else
         localTpl = env.core.dom.find("script[data-hull-template='#{path}']")
         if localTpl.length
-          parsed = env.template.parse(localTpl.text(), name)
+          parsed = env.core.template.parse(localTpl.text(), name)
           ret[name] = parsed
           define path, parsed
         else
@@ -29,4 +29,4 @@ define ->
       else
         dfd.resolve(ret)
       dfd.promise() 
-  
+   

@@ -160,14 +160,14 @@ module.exports = function(grunt) {
           require: true,
           define: true,
           _: true,
-          $: true,
+          $: true
         }
       }
     },
 
 
     mocha: {
-      aura: {
+      hull: {
         src: ['http://localhost:' + port + "/spec/index.html"]
       }
     },
