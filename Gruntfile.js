@@ -51,25 +51,91 @@ module.exports = function(grunt) {
     },
 
     requirejs: {
-      compile: {
+      client: {
         options: {
           baseUrl: '.',
-          optimize: 'none',
+          // optimize: 'none',
           preserveLicenseComments: true,
           paths: {
-            aura:         'lib',
-            jquery:       'components/jquery/jquery',
-            underscore:   'components/underscore/underscore',
-            eventemitter: 'components/eventemitter2/lib/eventemitter2'
+            aura:           'components/aura-express/dist/aura',
+            underscore:     'components/underscore/underscore',
+            eventemitter:   'components/eventemitter2/lib/eventemitter2',
+            backbone:       'components/backbone/backbone',
+            easyXDM:        'components/easyXDM/easyXDM',
+            handlebars:     'components/require-handlebars-plugin/Handlebars',
+            hbs:            'components/require-handlebars-plugin/hbs',
+            i18nprecompile: 'components/require-handlebars-plugin/hbs/i18nprecompile',
+            json2:          'components/require-handlebars-plugin/hbs/json2',
+            requireLib:     'components/requirejs/require',
+            jquery:         'empty:',
+            text:           'components/requirejs-text/text'
+
           },
           shim: {
-            underscore: { exports: '_' }
+            backbone:   { exports: 'Backbone', deps: ['underscore', 'jquery'] },
+            underscore: { exports: '_' },
+            easyXDM:    { exports: 'easyXDM' }
           },
-          include: ['aura/aura', 'aura/ext/debug', 'aura/ext/pubsub', 'aura/ext/widgets'],
-          exclude: ['jquery'],
-          out: 'dist/aura.js'
+          include: [
+            'requireLib',
+            'underscore',
+            'backbone',
+            'eventemitter',
+            'easyXDM',
+            'aura',
+            'aura-extensions/aura-backbone',
+            'aura-extensions/aura-backbone',
+            'aura-extensions/aura-handlebars',
+            'handlebars',
+            'hbs',
+            'text',
+            'i18nprecompile',
+            'json2',
+            'lib/hull',
+            'lib/client/api',
+            'lib/client/auth',
+            'lib/client/templates',
+            'lib/client/handlebars-helpers',
+            'lib/client/widget',
+          ],
+          out: 'dist/hull.js'
+        }
+      },
+      remote: {
+        options: {
+          baseUrl: '.',
+          // optimize: '',
+          preserveLicenseComments: true,
+          paths: {
+            aura:         'components/aura-express/dist/aura',
+            underscore:   'components/underscore/underscore',
+            eventemitter: 'components/eventemitter2/lib/eventemitter2',
+            easyXDM:      'components/easyXDM/easyXDM',
+            requireLib:   'components/requirejs/require',
+            jquery:       'components/jquery/jquery',
+            text:           'components/requirejs-text/text',
+            'route-recognizer': 'components/route-recognizer/dist/route-recognizer.amd'
+          },
+          shim: {
+            underscore: { exports: '_' },
+            easyXDM:    { exports: 'easyXDM' }
+          },
+          include: [
+            'requireLib',
+            'underscore',
+            'eventemitter',
+            'easyXDM',
+            'aura',
+            'text',
+            'lib/hull-remote',
+            'lib/remote/services',
+            'lib/remote/services/facebook-service',
+            'lib/remote/services/hull-service',
+          ],
+          out: 'dist/hull-remote.js'
         }
       }
+
     },
 
     jshint: {
@@ -109,13 +175,13 @@ module.exports = function(grunt) {
     watch: {
       src: {
         files: ['src/**/*.coffee', 'spec/src/**/*.coffee'],
-        tasks: ['coffee']
+        tasks: ['build']
       }
     }
   });
 
   // default build task
-  grunt.registerTask('build', ['clean', 'coffee'/*,'jshint' , 'mocha', 'requirejs' */]);
+  grunt.registerTask('build', ['clean', 'coffee' /*, 'requirejs' */]);
   grunt.registerTask('default', ['connect', 'build', 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 
