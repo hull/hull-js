@@ -27,10 +27,6 @@ define(['aura/aura'], function(aura) {
     var extension = {
       init: function (appEnv) {
         env = appEnv;
-        // Mocks Handlebars for the tests
-        appEnv.core.template.parse = function (tpl) {
-          return tpl;
-        };
       } 
     };
 
@@ -43,7 +39,7 @@ define(['aura/aura'], function(aura) {
 
     // Make sure the app is started before...
     before(function(done) {
-      initStatus.then(function() { done(); });
+      initStatus.then(done.bind(null, null));
     });
 
     describe("Check the correct loading of the module", function() {
@@ -61,10 +57,7 @@ define(['aura/aura'], function(aura) {
         var tplName = "doesNotExist";
         var prefix = "test";
         var ret = env.core.template.load(tplName, prefix);
-        var spy = sinon.spy(function () {
-          spy.should.have.been.called;
-          done();
-        });
+        var spy = sinon.spy(done.bind(null, null));
         ret.fail(spy);
       });
     });
@@ -77,23 +70,22 @@ define(['aura/aura'], function(aura) {
 
       before(insertTemplateHelper(hullTemplateName, templateContents));
       
-      it("should contain the template as the return value of the promise", function () {
+      it("should contain the template as the return value of the promise", function (done) {
         var ret = env.core.template.load(tplName, prefix);
-        var expectedReturn = {};
-        expectedReturn[tplName] = templateContents;
-        var spy = sinon.spy();
+        var spy = sinon.spy(function (ret) {
+          ret.should.contain.keys('tpl1');
+          ret.tpl1.should.be.a('function');
+          ret.tpl1().should.equal(templateContents);
+          done();
+        });
         ret.done(spy);
-        spy.should.have.been.calledWith(expectedReturn);
       });
     });
 
     describe("Server loading", function () {
       it("should use require to fetch the necessary templates", function (done) {
         var ret = env.core.template.load('test', 'fixtures');
-        var spy = sinon.spy(function () {
-          spy.should.have.been.called;
-          done();
-        });
+        var spy = sinon.spy(done.bind(null, null));
         ret.done(spy);
         ret.done(function (tpls) {
           arguments.should.have.length(1);
@@ -112,7 +104,8 @@ define(['aura/aura'], function(aura) {
         var ret = env.core.template.load('test1', 'fixtures');
         ret.done(function (tpls) {
           tpls.should.have.keys('test1');
-          tpls.test1.should.equal(tplContents);
+          tpls.test1.should.be.a('function');
+          tpls.test1().should.equal(tplContents);
         });
       });
     });
