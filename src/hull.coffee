@@ -22,6 +22,7 @@ define ['components/aura-express/lib/aura'], (Aura)->
   (config)->
     return hull if hull && hull.app
     hull = { config }
+    config.namespace = "hull"
     hull.app = Aura(config)
     hull.app
         .use('aura-extensions/aura-handlebars')

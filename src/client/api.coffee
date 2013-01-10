@@ -197,7 +197,7 @@ define ->
       onRemoteReady = (data)->
         for m in ['me', 'app', 'org']
           attrs = data[m]
-          if attrs && attrs._id
+          if attrs
             attrs._id = m
             api.model(attrs)
 

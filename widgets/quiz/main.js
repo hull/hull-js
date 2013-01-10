@@ -7,7 +7,6 @@ define({
 
   initialize: function() {
     this.quiz = this.sandbox.data.api.model(this.id);
-    console.warn("Et mes acclamations ?", this.quiz);
     this.sandbox.on('hull.model.' + this.id + '.change', function() { this.render() }.bind(this));
     this.datasources.quiz = this.id;
     this.currentQuestionIndex = 0;
