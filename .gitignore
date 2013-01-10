@@ -2,5 +2,5 @@ node_modules
 components
 dist
 npm-debug.log
-lib
+/lib
 app/app.js

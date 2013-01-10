@@ -1,8 +1,8 @@
 define ->
   init: (env)->
-    env.core.template.load = (tplNames, ref, format="hbs")->
+    env.core.template.load = (names, ref, format="hbs")->
       loadedTemplates = {}
-      names = [tplNames] if _.isString(tplNames)
+      names = [names] if _.isString(names)
       paths = []
       dfd   = env.core.data.deferred()
       ret = {}
