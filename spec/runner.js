@@ -16,7 +16,8 @@ define(['chai', 'sinonChai'], function(chai, sinonChai) {
   window.notrack = true;
 
   var specs = [
-    'spec/lib/extensions/templates_spec'
+    'spec/lib/extensions/templates_spec',
+    'spec/client/api_spec'
   ];
   require(specs, runMocha);
  
