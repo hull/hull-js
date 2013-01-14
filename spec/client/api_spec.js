@@ -1,8 +1,8 @@
 define(['aura/aura'], function (aura) {
 
   "use strict";
-  /*jshint browser: true */
-  /*global describe:true, it:true, before: true, sinon: true */
+  /*jshint devel: true, browser: true */
+  /*global describe:true, it:true, before: true, sinon: true, define: true */
 
   var delay = function () {
     var args = arguments;
@@ -10,7 +10,7 @@ define(['aura/aura'], function (aura) {
     setTimeout(function () {
       var argsArray = slice.call(args);
       argsArray.shift().apply(null, argsArray);
-    }, parseInt(Math.random()*2));
+    }, parseInt(Math.random()*2, 10));
   };
 
   var easyXDMMock = {
@@ -110,41 +110,61 @@ define(['aura/aura'], function (aura) {
         });
       });
 
-      it("accepts only one set of additional params", function (done) {
-        var additionalParams = {};
-        var ret = api("success", additionalParams);
+      it("extends params one set after the other", function (done) {
+        var additionalParams = {limit: 10};
+        var ret = api("success", additionalParams, {limit: 5});
         ret.done(function (params) {
-          params.params.should.be.equal(additionalParams);
+          params.params.should.be.eql({limit: 5});
           done();
         });
-        api.bind(api, "success", additionalParams, additionalParams).should.throw(TypeError);
+        api.bind(api, "success", additionalParams, {limit: 5}).should.not.throw(TypeError);
       });
     });
 
     describe("Method-based API", function () {
+      it("takes hull as the default provider", function (done) {
+        api.get("/path").done(function (params) {
+          params.path.should.equal("hull/path");
+          done();
+        });
+      });
+
+      it("accepts an object to describe the provider", function (done) {
+        api.get({path: "/path", provider: "facebook"}).done(function (params) {
+          params.path.should.equal("facebook/path");
+          done();
+        });
+      });
+
+      it("defaults the provider to hull even with an object", function (done) {
+        api.get({path: "/path"}).done(function (params) {
+          params.path.should.equal('hull/path');
+          done();
+        });
+      });
+
       it("appends the method to the params automatically", function (done) {
-        var postPromise = api.post('service', 'path');
+        var postPromise = api.post('/path');
         postPromise.done(function (params) {
           params.method.should.equal('post');
           done();
-        }); 
+        });
       });
 
-      it("must be called with a service name and a path", function () {
-        api.get.bind(api, 'path').should.throw(Error);
-        api.post.bind(api, 'path').should.throw(Error);
-        api.put.bind(api, 'path').should.throw(Error);
-        api.del.bind(api, 'path').should.throw(Error);
-
-        api.get.bind(api, 'service', 'path').should.not.throw(Error);
-        api.post.bind(api, 'service', 'path').should.not.throw(Error);
-        api.put.bind(api, 'service', 'path').should.not.throw(Error);
-        api.del.bind(api, 'service', 'path').should.not.throw(Error);
+      it("can be passed default params for the requests", function (done) {
+        var additionalParams = {limit: 10};
+        api.get({path:'/path', provider: 'me', params: additionalParams}, function (params) {
+          params.should.contain.keys('params');
+          params.params.should.eql(additionalParams);
+          done();
+        });
       });
 
-      it("prepends the service name to the path", function (done) {
-        var promise = api.get('service', 'path', function(params) {
-          params.path.should.equal('service/path');
+      it("can bypass additional parameters with an object", function (done) {
+        var additionalParams = {limit: 10, page: 3};
+        api.get({path: '/path', provider: 'me', params: additionalParams}, {limit: 5}).done(function (params) {
+          params.params.should.contain.keys(['limit', 'page']);
+          params.params.limit.should.equal(5);
           done();
         });
       });
