@@ -10,7 +10,7 @@ define({
 
   datasources: {
     collections: function() {
-      return this.sandbox.data.api("hull/" + this.id + "/collections");
+      return this.api("hull/" + this.id + "/collections");
     }
   },
 
@@ -22,7 +22,7 @@ define({
         inputs[input.getAttribute('name')] = input.value;
       }
     });
-    this.sandbox.data.api.post('hull', this.id + "/collections", inputs).then(function() { self.render() });
+    this.api.post('hull', this.id + "/collections", inputs).then(function() { self.render() });
   }
 
 

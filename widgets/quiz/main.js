@@ -6,7 +6,7 @@ define({
   answers: {},
 
   initialize: function() {
-    this.quiz = this.sandbox.data.api.model(this.id);
+    this.quiz = this.api.model(this.id);
     this.sandbox.on('hull.model.' + this.id + '.change', function() { this.render() }.bind(this));
     this.datasources.quiz = this.id;
     this.currentQuestionIndex = 0;
@@ -56,7 +56,7 @@ define({
         timing  = (new Date() - this.startedAt) / 1000;
       }
 
-      var res  = this.sandbox.data.api.post("hull", this.id + "/achieve", {
+      var res  = this.api.post("hull", this.id + "/achieve", {
         data: { answers: this.answers },
         timing: timing
       });
@@ -81,7 +81,7 @@ define({
     this.submitted = false;
     this.answers = {};
     this.currentQuestionIndex = 0;
-    this.currentUserId = this.sandbox.data.api.model('me').id;
+    this.currentUserId = this.api.model('me').id;
   },
 
   // TODO : Refactor this please !!!!

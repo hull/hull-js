@@ -5,7 +5,7 @@ define({
 
   datasources: {
     comments: function() {
-      return this.sandbox.data.api("hull/" + this.id + "/comments");
+      return this.api("hull/" + this.id + "/comments");
     }
   },
 
@@ -13,7 +13,7 @@ define({
     comment: function() {
       var description = this.$el.find("textarea").val();
       if (description && description.length > 0) {
-        this.sandbox.data.api.post("hull", this.id + "/comments", {
+        this.api.post("hull", this.id + "/comments", {
           description: description
         }).then(this.refresh);
       }
