@@ -20,6 +20,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
 
     constructor: (options)->
       @ref = options.ref
+      @api = @sandbox.data.api
       try
         @events = if _.isFunction(@events) then @events() else @events
         @events ?= {}
