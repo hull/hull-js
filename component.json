@@ -4,9 +4,9 @@
   "main": "./lib/hull.js",
   "dependencies": {
     "aura-express": "latest",
-    "require-handlebars-plugin": "latest",
     "backbone": "latest",
     "easyXDM": "latest",
-    "route-recognizer": "latest"
+    "route-recognizer": "latest",
+    "handlebars": "~1.0.0-rc.1"
   }
 }

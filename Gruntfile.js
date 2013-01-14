@@ -62,10 +62,7 @@ module.exports = function(grunt) {
             eventemitter:   'components/eventemitter2/lib/eventemitter2',
             backbone:       'components/backbone/backbone',
             easyXDM:        'components/easyXDM/easyXDM',
-            handlebars:     'components/require-handlebars-plugin/Handlebars',
-            hbs:            'components/require-handlebars-plugin/hbs',
-            i18nprecompile: 'components/require-handlebars-plugin/hbs/i18nprecompile',
-            json2:          'components/require-handlebars-plugin/hbs/json2',
+            handlebars:     'components/handlebars',
             requireLib:     'components/requirejs/require',
             jquery:         'empty:',
             text:           'components/requirejs-text/text'
@@ -84,7 +81,6 @@ module.exports = function(grunt) {
             'easyXDM',
             'aura',
             'aura-extensions/aura-backbone',
-            'aura-extensions/aura-backbone',
             'aura-extensions/aura-handlebars',
             'handlebars',
             'hbs',
@@ -96,7 +92,7 @@ module.exports = function(grunt) {
             'lib/client/auth',
             'lib/client/templates',
             'lib/client/handlebars-helpers',
-            'lib/client/widget',
+            'lib/client/widget'
           ],
           out: 'dist/hull.js'
         }
@@ -130,7 +126,7 @@ module.exports = function(grunt) {
             'lib/hull-remote',
             'lib/remote/services',
             'lib/remote/services/facebook-service',
-            'lib/remote/services/hull-service',
+            'lib/remote/services/hull-service'
           ],
           out: 'dist/hull-remote.js'
         }
@@ -182,7 +178,7 @@ module.exports = function(grunt) {
 
   // default build task
   grunt.registerTask('build', ['clean', 'coffee' /*, 'requirejs' */]);
-  grunt.registerTask('default', ['connect', 'build', 'mocha', 'watch']);
+  grunt.registerTask('default', ['connect', 'build', 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 
 };
