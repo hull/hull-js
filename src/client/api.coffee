@@ -78,6 +78,7 @@ define ->
         defaultProvider = 'hull'
         (description)->
           argsArray   = slice.call(arguments, 1);
+          params = {}
           if _.isString(description)
             provider = defaultProvider
             path = description
@@ -85,7 +86,7 @@ define ->
             provider  = description.provider || defaultProvider
             path      = description.path
             params    = description.params
- 
+
           path        = path.substring(1) if path[0] == "/"
           path        = [provider, path].join("/")
           args        = extractApiArgs([path, params].concat(argsArray))
@@ -138,8 +139,9 @@ define ->
         'read':   'get'
 
       sync = (method, model, options={})->
-        url = if _.isFunction(model.url) then model.url() else model.url
-        dfd = api(url, methodMap[method], model.toJSON())
+        url   = if _.isFunction(model.url) then model.url() else model.url
+        verb  = methodMap[method]
+        dfd = api[verb](url, model.toJSON())
         dfd.then(options.success)
         dfd.fail(options.error)
         dfd
@@ -182,14 +184,43 @@ define ->
 
       Model = Backbone.Model.extend
         sync: sync
-        url: -> "/#{@_id}"
+        url: -> 
+          @_id || @id || @collection?.url
 
       Collection = Backbone.Collection.extend
-        url: -> "/#{@_id}"
+        model: Model
         sync: sync
 
-      api.collection = (ext)->
-        Collection.extend(ext)
+
+      collections = {}
+      
+      setupCollection = (path)->
+        collection = new Collection
+        collection.url = path
+        
+        collection.on 'all', ->
+          args = slice.call(arguments)
+          eventName = ("hull.collection." + path.replace("/", ".") + '.' + args[0])
+          core.mediator.emit(eventName, { eventName: eventName, collection: collection, changes: args[1]?.changes })
+        dfd   = collection.deferred = core.data.deferred()
+        collections[path] = collection
+        if collection.models.length > 0
+          collection._fetched = true
+          dfd.resolve(collection)
+        else
+          collection._fetched = false
+          collection.fetch
+            success: ->
+              collection._fetched = true
+              dfd.resolve(collection)
+            error:   ->
+              dfd.fail(collection)
+        collection
+        
+      api.collection = (path)->
+        throw new Error('A model must have an path...') unless path?
+        collections[path] || setupCollection(path)
+        
 
       api.get     = exec('get')
       api.post    = exec('post')
