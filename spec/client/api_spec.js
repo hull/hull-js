@@ -10,7 +10,7 @@ define(['aura/aura'], function (aura) {
     setTimeout(function () {
       var argsArray = slice.call(args);
       argsArray.shift().apply(null, argsArray);
-    }, Math.random() * 500);
+    }, parseInt(Math.random()*2));
   };
 
   var easyXDMMock = {
