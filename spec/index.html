@@ -19,7 +19,7 @@
         }
       };
       var runMocha = function() {
-        mocha.globals(['Backbone', 'easyXDM']);
+        mocha.globals(['Backbone', 'easyXDM', 'Handlebars']);
         if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
         else { mocha.run(); }
       };
