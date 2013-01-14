@@ -29,7 +29,7 @@ define ->
         next = args.shift()
 
         if (typeof path != 'string')
-          return console.error("Invalid path passed to Hull.api() : ", path)
+          throw new TypeError("Invalid path passed to Hull.api() : " + JSON.stringify(path));
 
         while (next)
           type = typeof next
@@ -40,11 +40,10 @@ define ->
               callback = next
             else if (!errback)
               errback = next
-
           else if (type == 'object' && !params)
             params = next
           else
-            throw new Error("Invalid argument passed to Hull.api(): " + next)
+            throw new TypeError("Invalid argument passed to Hull.api(): " + next)
 
           next = args.shift()
 
@@ -52,7 +51,7 @@ define ->
         params ?= {}
 
         callback ?= ->
-        errback  ?= (err, data)-> console.error('Uncaught error: ', err, data)
+        errback  ?= (err, data)-> console.error('The request has failed: ', err, data)
 
         ret = [{ path: path, method: method, params: params }, callback, errback]
 

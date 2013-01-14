@@ -13,7 +13,7 @@ define ->
         # else
         localTpl = env.core.dom.find("script[data-hull-template='#{path}']")
         if localTpl.length
-          parsed = env.core.template.parse(localTpl.text(), name)
+          parsed = env.core.template.hbs(localTpl.text(), name)
           ret[name] = parsed
           define path, parsed
         else
