@@ -182,7 +182,7 @@ module.exports = function(grunt) {
 
   // default build task
   grunt.registerTask('build', ['clean', 'coffee' /*, 'requirejs' */]);
-  grunt.registerTask('default', ['connect', 'build', 'watch']);
+  grunt.registerTask('default', ['connect', 'build', 'mocha', 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 
 };
