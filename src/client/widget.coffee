@@ -26,8 +26,9 @@ define ['backbone', 'underscore'], (Backbone, _)->
     refreshEvents: ['model.hull.me.change']
 
     constructor: (options)->
-      @ref = options.ref
-      @api = @sandbox.data.api
+      @ref    = options.ref
+      @api    = @sandbox.data.api
+      @track  = @sandbox.track
       try
         @events = if _.isFunction(@events) then @events() else @events
         @events ?= {}
@@ -94,10 +95,9 @@ define ['backbone', 'underscore'], (Backbone, _)->
             else
               throw new TypeError('Unknown type: ' + type);
           else
-            ds 
+            ds
 
         widgetDeferred = $.when.apply($, promises)
-
 
         templateDeferred = @sandbox.template.load(@templates, @ref)
 
@@ -120,7 +120,10 @@ define ['backbone', 'underscore'], (Backbone, _)->
       dfd
 
     loggedIn: =>
-      !!@sandbox.data.api.model('me').id
+      return false unless @sandbox.data.api.model('me').id?
+      identities = {}
+      @sandbox.data.api.model('me').get("identities").map (i)-> identities[i.provider] = i
+      identities
 
     getTemplate: (tpl, data)=>
       tpl || @template || @templates[0]
