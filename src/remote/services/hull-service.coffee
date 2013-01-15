@@ -26,6 +26,24 @@ define ['jquery', 'underscore'], ($, _)->
 
       return
 
+    trackHandler = (req, route, callback, errback)->
+      analytics.track(req.params.path, req.params)
+      callback(true)
+
+    config:
+      require:
+        paths:
+          analytics: 'analytics/analytics'
+        shim:
+          analytics: { exports: 'analytics' }
+
     init: (env)->
+      analytics = require('analytics')
+      analytics.initialize(config.settings.analytics)
+      if env.config.data.me?.id?
+        console.warn("env config data ?", env.config.data.me)
+        analytics.identify(env.config.data.me.id)
+        analytics.track("init", { appId: config.appId })
       env.core.services.add([ { path: 'hull/*path', handler: handler } ])
+      env.core.services.add([ { path: 'track/*path',    handler: trackHandler } ])
 
