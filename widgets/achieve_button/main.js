@@ -20,19 +20,12 @@
  * Check out the kitchensink for a working example.
 */
 
-/**
- * Achieve Button:
- *
- * @param {String} id achievement id
- * @param {String} secret the Achievement's secret. Check out this widget's summary on how to use it
-*/
 
 define({
   type: "Hull",
   templates: ["achieve_button"],
   actions: {
     achieve: function() {
-      console.warn("Calling achieve on ", this, this.options)
       this.api("hull/" + this.id + "/achieve", "post", { secret: this.options.secret }).then(this.refresh);
     }
   },
@@ -40,7 +33,6 @@ define({
     achievement: function() { return this.api('hull/' + this.id); }
   },
   beforeRender: function(data) {
-    console.warn("Achievement ?", data);
     if (data.achievement && data.achievement.badge) {
       data.isAchieved = true;
     } else {

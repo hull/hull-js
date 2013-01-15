@@ -1,5 +1,5 @@
 {{#if isAchieved}}
-  <button class="btn btn-success">[DONE] Checked {{achievement.name}}</button>
+  <button class="btn btn-success">[DONE] Checked ({{achievement.name}})</button>
 {{else}}
-  <button class="btn {{#unless canAchieve}}disabled{{/unless}}" data-hull-action="achieve">CheckIn {{achievement.name}}</button>
+  <button class="btn {{#unless canAchieve}}disabled{{/unless}}" data-hull-action="achieve">CheckIn ({{achievement.name}})</button>
 {{/if}}
