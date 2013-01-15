@@ -3,7 +3,7 @@ define ['components/aura-express/lib/aura'], (Aura)->
   hull = null
 
   myApp = {
-    name: 'myApp'
+    name: 'Hull'
     afterAppStart: (env)->
       sb = env.core.createSandbox();
       window.Hull = sb;
