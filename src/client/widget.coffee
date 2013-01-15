@@ -1,5 +1,12 @@
 define ['backbone', 'underscore'], (Backbone, _)->
 
+  parseURI = (uri, bindings)->
+    placeHolders = uri.match(/(\:[a-zA-Z0-9]+)/g)
+    return uri unless placeHolders
+    for p in placeHolders
+      uri = uri.replace(p, bindings[p.slice(1)]);
+    uri
+
   slice = Array.prototype.slice
 
   decamelize = (camelCase)->
@@ -67,21 +74,26 @@ define ['backbone', 'underscore'], (Backbone, _)->
         keys      = _.keys(@datasources)
         promises  = _.map keys, (k)=>
           if _.isString(@datasources[k])
-            @sandbox.data.api.model(@datasources[k]).deferred
+            uri = @datasources[k]
+            completeURI = parseURI(uri, @)
+            @sandbox.data.api.collection(completeURI).deferred
           else if _.isFunction(@datasources[k])
             @datasources[k].call(@)
+          else if @datasources[k].provider && @datasources[k].path #@TODO Enhance check
+            @datasources[k].path = parseURI(@datasources[k].path, @)
+            @sandbox.data.api.collection(@datasources[k]).deferred
           else
-            @datasources[k]
+            @datasources[k] 
 
         widgetDeferred = $.when.apply($, promises)
 
 
         templateDeferred = @sandbox.template.load(@templates, @ref)
 
-
         $.when(widgetDeferred, templateDeferred).done (data, tpls)=>
           args = data
-          _.map keys, (k,i)->
+          _.map keys, (k,i)=>
+            @datasources[k] = args[i]
             if _.isFunction args[i]?.toJSON
               ret[k] = args[i].toJSON()
             else

@@ -73,23 +73,27 @@ define ->
 
         promise
 
+      normalizeAPIArguments = (argsArray)->
+        defaultProvider = 'hull'
+        description = argsArray.shift()
+        params = {}
+        if _.isString(description)
+          provider = defaultProvider
+          path = description
+        if _.isObject(description)
+          provider  = description.provider || defaultProvider
+          path      = description.path
+          params    = description.params
+
+        path        = path.substring(1) if path[0] == "/"
+        path        = [provider, path].join("/")
+        [path, params].concat(argsArray)
+
       exec = (m)->
         method = m
-        defaultProvider = 'hull'
-        (description)->
-          argsArray   = slice.call(arguments, 1);
-          params = {}
-          if _.isString(description)
-            provider = defaultProvider
-            path = description
-          if _.isObject(description)
-            provider  = description.provider || defaultProvider
-            path      = description.path
-            params    = description.params
-
-          path        = path.substring(1) if path[0] == "/"
-          path        = [provider, path].join("/")
-          args        = extractApiArgs([path, params].concat(argsArray))
+        ()->
+          normalizedParams = normalizeAPIArguments (slice.call(arguments))
+          args        = extractApiArgs(normalizedParams)
           req         = args[0]
           req.method  = method
           message.apply(api, args)
@@ -141,7 +145,7 @@ define ->
       sync = (method, model, options={})->
         url   = if _.isFunction(model.url) then model.url() else model.url
         verb  = methodMap[method]
-        dfd = api[verb](url, model.toJSON())
+        dfd = api(url, verb, model.toJSON())
         dfd.then(options.success)
         dfd.fail(options.error)
         dfd
@@ -195,15 +199,15 @@ define ->
       collections = {}
       
       setupCollection = (path)->
-        collection = new Collection
-        collection.url = path
+        collection      = new Collection
+        collectionURI   = path
+        collection.url  = path
         
         collection.on 'all', ->
           args = slice.call(arguments)
-          eventName = ("hull.collection." + path.replace("/", ".") + '.' + args[0])
+          eventName = ("collection." + collectionURI.replace(/\//g, ".") + '.' + args[0])
           core.mediator.emit(eventName, { eventName: eventName, collection: collection, changes: args[1]?.changes })
         dfd   = collection.deferred = core.data.deferred()
-        collections[path] = collection
         if collection.models.length > 0
           collection._fetched = true
           dfd.resolve(collection)
@@ -219,7 +223,11 @@ define ->
         
       api.collection = (path)->
         throw new Error('A model must have an path...') unless path?
-        collections[path] || setupCollection(path)
+        throw new Error('You must specify the provider...') if (path.path && !path.provider)
+        normalizedArguments = normalizeAPIArguments slice.call(arguments);
+        path = normalizedArguments[0]
+        collections[path] ?= setupCollection.apply(api, normalizedArguments)
+        collections[path]
         
 
       api.get     = exec('get')
