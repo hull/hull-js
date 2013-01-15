@@ -23,7 +23,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
 
     initialize: ->
 
-    refreshEvents: ['hull.model.me.change']
+    refreshEvents: ['model.hull.me.change']
 
     constructor: (options)->
       @ref = options.ref
@@ -73,17 +73,28 @@ define ['backbone', 'underscore'], (Backbone, _)->
       try
         keys      = _.keys(@datasources)
         promises  = _.map keys, (k)=>
-          if _.isString(@datasources[k])
-            uri = @datasources[k]
+          ds = @datasources[k]
+          if _.isString(ds)
+            uri = ds
             completeURI = parseURI(uri, @)
-            @sandbox.data.api.collection(completeURI).deferred
-          else if _.isFunction(@datasources[k])
-            @datasources[k].call(@)
-          else if @datasources[k].provider && @datasources[k].path #@TODO Enhance check
-            @datasources[k].path = parseURI(@datasources[k].path, @)
-            @sandbox.data.api.collection(@datasources[k]).deferred
+            isModel = uri.lastIndexOf('/') in [-1, 0]
+            if isModel
+              @sandbox.data.api.model(completeURI).deferred
+            else
+              @sandbox.data.api.collection(completeURI).deferred
+          else if _.isFunction(ds)
+            ds.call(@)
+          else if ds.provider && ds.path #@TODO Enhance check
+            type = ds.type || 'collection'
+            ds.path = parseURI(ds.path, @)
+            if type == 'model'
+              @sandbox.data.api.model(ds).deferred
+            else if type == 'collection'
+              @sandbox.data.api.collection(ds).deferred
+            else
+              throw new TypeError('Unknown type: ' + type);
           else
-            @datasources[k] 
+            ds 
 
         widgetDeferred = $.when.apply($, promises)
 

@@ -159,7 +159,7 @@ define ->
           model = new Model()
         model.on 'change', ->
           args = slice.call(arguments)
-          eventName = ("hull.model." + model._id + '.' + 'change')
+          eventName = ("model.hull." + model._id + '.' + 'change')
           core.mediator.emit(eventName, { eventName: eventName, model: model, changes: args[1]?.changes })
         dfd   = model.deferred = core.data.deferred()
         model._id = attrs._id
@@ -189,7 +189,11 @@ define ->
       Model = Backbone.Model.extend
         sync: sync
         url: -> 
-          @_id || @id || @collection?.url
+          if (@id || @_id)
+            url = normalizeAPIArguments([@_id || @id])[0] 
+          else
+            url = @collection?.url
+          url
 
       Collection = Backbone.Collection.extend
         model: Model
