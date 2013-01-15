@@ -3,20 +3,25 @@ define({
   templates:  ['comments'],
   debug: true,
 
-  datasources: {
-    comments: function() {
-      return this.api("hull/" + this.id + "/comments");
-    }
+  initialize: function() {
+    this.sandbox.on("collection.hull." + this.id + ".comments.**", function() { this.refresh(); }.bind(this));
   },
 
+  datasources: {
+    comments: {
+      provider: "hull",
+      path: ":id/comments"
+    }
+  },
+  
   actions: {
     comment: function() {
       var description = this.$el.find("textarea").val();
       if (description && description.length > 0) {
-        this.api.post("hull", this.id + "/comments", {
+        this.datasources.comments.create({
           description: description
-        }).then(this.refresh);
-      }
+        });
+      }        
     }
   }
 });

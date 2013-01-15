@@ -1,5 +1,12 @@
 define ['backbone', 'underscore'], (Backbone, _)->
 
+  parseURI = (uri, bindings)->
+    placeHolders = uri.match(/(\:[a-zA-Z0-9]+)/g)
+    return uri unless placeHolders
+    for p in placeHolders
+      uri = uri.replace(p, bindings[p.slice(1)]);
+    uri
+
   slice = Array.prototype.slice
 
   decamelize = (camelCase)->
@@ -16,7 +23,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
 
     initialize: ->
 
-    refreshEvents: ['hull.model.me.change']
+    refreshEvents: ['model.hull.me.change']
 
     constructor: (options)->
       @ref = options.ref
@@ -66,22 +73,38 @@ define ['backbone', 'underscore'], (Backbone, _)->
       try
         keys      = _.keys(@datasources)
         promises  = _.map keys, (k)=>
-          if _.isString(@datasources[k])
-            @sandbox.data.api.model(@datasources[k]).deferred
-          else if _.isFunction(@datasources[k])
-            @datasources[k].call(@)
+          ds = @datasources[k]
+          if _.isString(ds)
+            uri = ds
+            completeURI = parseURI(uri, @)
+            isModel = uri.lastIndexOf('/') in [-1, 0]
+            if isModel
+              @sandbox.data.api.model(completeURI).deferred
+            else
+              @sandbox.data.api.collection(completeURI).deferred
+          else if _.isFunction(ds)
+            ds.call(@)
+          else if ds.provider && ds.path #@TODO Enhance check
+            type = ds.type || 'collection'
+            ds.path = parseURI(ds.path, @)
+            if type == 'model'
+              @sandbox.data.api.model(ds).deferred
+            else if type == 'collection'
+              @sandbox.data.api.collection(ds).deferred
+            else
+              throw new TypeError('Unknown type: ' + type);
           else
-            @datasources[k]
+            ds 
 
         widgetDeferred = $.when.apply($, promises)
 
 
         templateDeferred = @sandbox.template.load(@templates, @ref)
 
-
         $.when(widgetDeferred, templateDeferred).done (data, tpls)=>
           args = data
-          _.map keys, (k,i)->
+          _.map keys, (k,i)=>
+            @datasources[k] = args[i]
             if _.isFunction args[i]?.toJSON
               ret[k] = args[i].toJSON()
             else
