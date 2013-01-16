@@ -26,6 +26,32 @@ define ['jquery', 'underscore'], ($, _)->
 
       return
 
+    trackHandler = (req, route, callback, errback)->
+      eventName = req.path.replace(/^\?track\//, '')
+      analytics.track(eventName, req.params)
+      req.path    = "t"
+      req.params.event ?= eventName
+      req.params  = { t: btoa(JSON.stringify(req.params)) }
+      handler(req, route, callback, errback)
+
+    config:
+      require:
+        paths:
+          analytics: 'analytics/analytics'
+          base64:    'base64/base64'
+        shim:
+          analytics: { exports: 'analytics' }
+
     init: (env)->
+      analytics = require('analytics')
+      analytics.initialize(config.settings.analytics)
+      if env.config.data.me?.id?
+        me = env.config.data.me
+        ident = _.pick(me, 'name', 'email', 'id', 'picture')
+        ident.distinct_id = me.id
+        ident.$name       = me.name
+        analytics.identify(env.config.data.me.id, ident)
+        analytics.track("init", { appId: config.appId })
       env.core.services.add([ { path: 'hull/*path', handler: handler } ])
+      env.core.services.add([ { path: 'track/*path',    handler: trackHandler } ])
 

@@ -26,7 +26,6 @@ define ->
         routes  = core.services.recognize(req.path)
 
         if routes && route = routes[0]
-          console.warn("[ROUTE] #{req.method.toUpperCase()}: #{req.path}", req.params)
           route.handler(req, route, callback, errback)
         else
           errback(catchAll(req))

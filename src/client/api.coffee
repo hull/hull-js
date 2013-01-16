@@ -14,7 +14,9 @@ define ->
           backbone: { exports: 'Backbone', deps: ['underscore', 'jquery'] }
 
     init: (env)->
-      core = env.core
+      core    = env.core
+      sandbox = env.sandbox
+
       _         = require('underscore')
       Backbone  = require('backbone')
       easyXDM   = require('easyXDM')
@@ -151,7 +153,6 @@ define ->
         dfd
 
       models = {}
-
       setupModel = (attrs)->
         if attrs.id
           model = new Model(attrs)
@@ -184,13 +185,13 @@ define ->
 
 
       api.model.clearAll =->
-        models = {}
+        models = _.pick(models, 'me', 'app', 'org')
 
       Model = Backbone.Model.extend
         sync: sync
-        url: -> 
+        url: ->
           if (@id || @_id)
-            url = normalizeAPIArguments([@_id || @id])[0] 
+            url = normalizeAPIArguments([@_id || @id])[0]
           else
             url = @collection?.url
           url
@@ -201,12 +202,12 @@ define ->
 
 
       collections = {}
-      
+
       setupCollection = (path)->
         collection      = new Collection
         collectionURI   = path
         collection.url  = path
-        
+
         collection.on 'all', ->
           args = slice.call(arguments)
           eventName = ("collection." + collectionURI.replace(/\//g, ".") + '.' + args[0])
@@ -224,7 +225,7 @@ define ->
             error:   ->
               dfd.fail(collection)
         collection
-        
+
       api.collection = (path)->
         throw new Error('A model must have an path...') unless path?
         throw new Error('You must specify the provider...') if (path.path && !path.provider)
@@ -232,7 +233,7 @@ define ->
         path = normalizedArguments[0]
         collections[path] ?= setupCollection.apply(api, normalizedArguments)
         collections[path]
-        
+
 
       api.get     = exec('get')
       api.post    = exec('post')
@@ -241,6 +242,11 @@ define ->
       api.batch   = batch
 
       core.data.api = api
+      core.track = (eventName, params)->
+        api("track/#{eventName}", 'post', params)
+
+      sandbox.track = (eventName, params)->
+        core.track(eventName, params)
 
       initialized = core.data.deferred()
 
