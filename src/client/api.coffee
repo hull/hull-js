@@ -59,6 +59,13 @@ define ->
 
         ret
 
+      ###
+      # Sends the message described by @params to easyXDM
+      # @param {Object} contains the provider, uri and parameters for the message
+      # @param {Function} optional a success callback
+      # @param {Function} optional an error callback
+      # @return {Promise}
+      ###
       message = (params, callback, errback)->
         console.error("Api not initialized yet") unless rpc
         promise = core.data.deferred()
@@ -75,6 +82,17 @@ define ->
 
         promise
 
+      ###
+      # Normalizes the parameters defining a message. At this point, they can have two forms
+      # * [String, ...] where the String is an uri. The request will be made to the default provider
+      # * [Object, ...] where the Object describes more completely the request. It must provide a "path" key, can provide a "provider" key as well as some default parameters in the "params" key
+      # In the second form, the optional params can be overridden through parameters at data.api calls
+      #
+      # The normalized form is the first one.
+      # 
+      # @param {Array} the parameters for the API calls
+      # @return {Array} The normalized form of parameters
+      ###
       normalizeAPIArguments = (argsArray)->
         defaultProvider = 'hull'
         description = argsArray.shift()
@@ -89,7 +107,9 @@ define ->
 
         path        = path.substring(1) if path[0] == "/"
         path        = [provider, path].join("/")
-        [path, params].concat(argsArray)
+        ret         = [path]
+        ret.push(params) if params?
+        ret.concat(argsArray)
 
       exec = (m)->
         method = m
