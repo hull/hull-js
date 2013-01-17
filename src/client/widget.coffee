@@ -1,10 +1,11 @@
 define ['backbone', 'underscore'], (Backbone, _)->
 
   parseURI = (uri, bindings)->
-    placeHolders = uri.match(/(\:[a-zA-Z0-9]+)/g)
+    bindings = _.extend({}, bindings, bindings.options) if bindings.options
+    placeHolders = uri.match(/(\:[a-zA-Z0-9-_]+)/g)
     return uri unless placeHolders
     for p in placeHolders
-      uri = uri.replace(p, bindings[p.slice(1)]);
+      uri = uri.replace(p, bindings[decamelize(p).slice(1)]);
     uri
 
   slice = Array.prototype.slice
