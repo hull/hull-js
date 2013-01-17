@@ -36,6 +36,6 @@ define ->
       })
       true
 
-    afterAppStart: -> rpc.ready(env.config.data)
+    afterAppStart: -> rpc.ready(env.config)
 
 

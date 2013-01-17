@@ -8,8 +8,10 @@ define ['components/aura-express/lib/aura'], (Aura)->
     config.debug = true
     hull.app = Aura(config)
     hull.app.use('lib/remote/services')
-    for serviceName, serviceConfig of config.services
-      hull.app.use("lib/remote/services/#{serviceName}-service")
+    hull.app.use('lib/remote/services/hull')
+
+    if config.services.settings.facebook_app
+      hull.app.use('lib/remote/services/facebook')
 
     hull.app.start()
 

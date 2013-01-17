@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "main": "./lib/hull.js",
   "dependencies": {
+    "jquery" : "1.8.3",
     "aura-express": "latest",
-    "backbone": "latest",
+    "backbone": "0.9.9",
     "easyXDM": "latest",
     "route-recognizer": "latest",
     "handlebars": "~1.0.0-rc.1",
-    "analytics": "latest",
-    "base64": "latest"
+    "analytics": "*",
+    "base64": "latest",
+    "jquery-file-upload" : "latest"
   }
 }

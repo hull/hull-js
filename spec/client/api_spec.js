@@ -15,8 +15,13 @@ define(['aura/aura'], function (aura) {
 
   var easyXDMMock = {
     Rpc: function (a1, a2) {
-      console.log("constructing easyXDMMock.Rpc with params: ", arguments);
-      delay(a2.local.ready, {me: {name: "test"}, app: {name: "test", org: {name: "test"}}});
+      delay(a2.local.ready, {
+        data: {
+          me:   { id: "123", name: "test" },
+          app:  { id: "123", name: "test" } ,
+          org:  { id: "123", name: "test" }
+        }
+      });
     }
   };
 
@@ -30,7 +35,7 @@ define(['aura/aura'], function (aura) {
     }
     delay(cb, conf);
   };
-  
+
   define('easyXDM', function () { return easyXDMMock;});
 
   describe("API specs", function () {
@@ -45,7 +50,7 @@ define(['aura/aura'], function (aura) {
     app
       .use(extension)
       .use('lib/client/api');
-    
+
     var initStatus = app.start();
     before(function (done) {
       initStatus.then(function () {
@@ -90,7 +95,7 @@ define(['aura/aura'], function (aura) {
         var params = [123, null, undefined, Object.create(null), {}];
         params.forEach(function (param) {
           api.bind(api, param).should.throw(TypeError);
-        }); 
+        });
       });
 
       it("accepts a method as the second parameter", function (done) {

@@ -252,7 +252,9 @@ define ->
 
       onRemoteMessage = -> console.warn("RPC Message", arguments)
 
-      onRemoteReady = (data)->
+      onRemoteReady = (remoteConfig)->
+        data = remoteConfig.data
+        env.config.services = remoteConfig.services
         for m in ['me', 'app', 'org']
           attrs = data[m]
           if attrs
