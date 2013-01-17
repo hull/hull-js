@@ -142,9 +142,9 @@ define({
   onUploadDone: function(data) {
     // var location = $(data.result).find('Location').text();
     // Context.app.addImage(filename: data.files[0].name)
-    console.warn("Upload done... saving it to user images ?", data.files[0]);
     if (data.files[0] && data.files[0].type && data.files[0].type.split("/")[0] === "image") {
-      this.api('hull/me/images', 'post', { source_url: this.fileUrl(data.files[0].name), name: data.files[0].name })
+      var source_url = this.fileUrl(data.files[0].name);
+      this.api('hull/me/images', 'post', { source_url: source_url, name: data.files[0].name })
     }
     this.uploader.options.maxNumberOfFiles++;
   },
@@ -156,7 +156,7 @@ define({
 
   fileUrl: function(filename) {
     var policy = this.sandbox.data.storage_policy;
-    return policy.url + policy.params.key.replace('${filename}', "/" + filename);
+    return encodeURI(policy.url + policy.params.key.replace('${filename}', "/" + filename));
   },
 
   initialize: function() {
