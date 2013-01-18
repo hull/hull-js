@@ -8,7 +8,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-mocha');
-  grunt.loadNpmTasks('grunt-dox');
+  // grunt.loadNpmTasks('grunt-dox');
 
   var port = 3001;
 
@@ -43,7 +43,7 @@ module.exports = function(grunt) {
       glob_to_multiple: {
         files: grunt.file.expandMapping(['src/**/*.coffee'], 'lib/', {
           rename: function(destBase, destPath) {
-            return destPath.replace(/\.coffee$/, '.js');
+            return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
           }
         })
       }
@@ -171,9 +171,7 @@ module.exports = function(grunt) {
 
 
     mocha: {
-      hull: {
-        src: ['http://localhost:' + port + "/spec/index.html"]
-      }
+      hull: ['http://localhost:' + port + "/spec/index.html"]
     },
 
     watch: {
@@ -186,7 +184,7 @@ module.exports = function(grunt) {
 
   // default build task
   grunt.registerTask('build', ['clean', 'coffee' /*, 'requirejs' */]);
-  grunt.registerTask('default', ['connect', 'build', 'mocha', 'watch']);
+  grunt.registerTask('default', ['connect', 'build', /*'mocha',*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 
 };
