@@ -27,17 +27,25 @@ module.exports = function(grunt) {
       }
     },
 
-    clean: ['lib','dist'],
+    clean: {
+      files: {
+        src: ['lib','dist']
+      }
+    },
 
     coffee: {
       compile: {
-        files: {
-          'lib/*.js' : 'src/**/*.coffee'
-        },
         options: {
           bare: false,
           header: true
         }
+      },
+      glob_to_multiple: {
+        files: grunt.file.expandMapping(['src/**/*.coffee'], 'lib/', {
+          rename: function(destBase, destPath) {
+            return destPath.replace(/\.coffee$/, '.js');
+          }
+        })
       }
     },
 
