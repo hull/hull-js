@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
   'use strict';
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -29,7 +29,7 @@ module.exports = function(grunt) {
 
     clean: {
       files: {
-        src: ['lib','dist']
+        src: ['lib', 'dist']
       }
     },
 
@@ -42,7 +42,7 @@ module.exports = function(grunt) {
       },
       glob_to_multiple: {
         files: grunt.file.expandMapping(['src/**/*.coffee'], 'lib/', {
-          rename: function(destBase, destPath) {
+          rename: function (destBase, destPath) {
             return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
           }
         })
@@ -91,10 +91,7 @@ module.exports = function(grunt) {
             'aura-extensions/aura-backbone',
             'aura-extensions/aura-handlebars',
             'handlebars',
-            'hbs',
             'text',
-            'i18nprecompile',
-            'json2',
             'lib/hull',
             'lib/client/api',
             'lib/client/auth',
