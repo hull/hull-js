@@ -157,6 +157,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
     # afterRender
     # Start nested widgets...
     render: (tpl, data)=>
+      @refresh ?= _.throttle(@render, 200)
       ctx = @buildContext.call(@)
       ctx.fail (err)-> console.error("Error building context: ", err)
       ctx.then (ctx)=>
@@ -166,8 +167,6 @@ define ['backbone', 'underscore'], (Backbone, _)->
           _.defer(@afterRender.bind(@, data))
           _.defer((-> @sandbox.start(@$el)).bind(@))
 
-    refresh: =>
-      @render()
 
 
   (env)->
