@@ -160,8 +160,9 @@ define ['backbone', 'underscore'], (Backbone, _)->
       ctx = @buildContext.call(@)
       ctx.fail (err)-> console.error("Error building context: ", err)
       ctx.then (ctx)=>
-        $.when(@beforeRender.call(@, ctx)).done (data)=>
-          throw new Error("beforeRender must return the data !") unless data?
+        beforeCtx = @beforeRender.call(@, ctx)
+        $.when(beforeCtx).done (dataAfterBefore)=>
+          data = dataAfterBefore || ctx
           @doRender(tpl, data)
           _.defer(@afterRender.bind(@, data))
           _.defer((-> @sandbox.start(@$el)).bind(@))

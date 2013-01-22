@@ -2,7 +2,6 @@ define ->
 
   ->
     
-    Handlebars = require('handlebars')
     __seq = new Date().getTime()
 
     HandlebarsHelpers = {}
@@ -21,7 +20,7 @@ define ->
      * Generates an image representation for a social object.  
      * 
      *     <img src="{{imageUrl "4bb5c26bacb93e0000000007" 'small' 'http://placehold.it/200x200'}}"/>
-     *     => <img src="//app.oahu.fr/img/4bb5c26bacb93e0000000007/small"/>
+     *     => <img src="//hull.io/img/4bb5c26bacb93e0000000007/small"/>
      * 
      * @param  {String} id           The Object's ID
      * @param  {String} size="small" An optional size preset. See docs for available presets  
@@ -33,7 +32,7 @@ define ->
       return fallback unless id
       id = id.replace(/\/(large|small|medium|thumb)$/,'')
       size = 'small' unless _.isString(size)
-      "//#{Oahu.env.cloudfront}/img/#{id}/#{size}"
+      "//hullapp.dev/img/#{id}/#{size}"
 
 
     ###*

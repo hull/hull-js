@@ -24,7 +24,7 @@ define ['components/aura-express/lib/aura'], (Aura)->
     hull = { config }
     config.namespace = "hull"
     hull.app = Aura(config)
-    hull.app
+    initProcess = hull.app
         .use('aura-extensions/aura-handlebars')
         .use('aura-extensions/aura-backbone')
         .use('lib/client/handlebars-helpers')
@@ -35,6 +35,9 @@ define ['components/aura-express/lib/aura'], (Aura)->
         .use('lib/client/widget')
         .use(myApp)
         .start({ widgets: 'body' })
+
+    initProcess.fail (err)->
+      throw err
     return hull
 
 

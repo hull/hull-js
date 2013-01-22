@@ -40,7 +40,7 @@ module.exports = function (grunt) {
           header: true
         }
       },
-      glob_to_multiple: {
+      files: {
         files: grunt.file.expandMapping(['src/**/*.coffee'], 'lib/', {
           rename: function (destBase, destPath) {
             return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
@@ -70,10 +70,13 @@ module.exports = function (grunt) {
             eventemitter:   'components/eventemitter2/lib/eventemitter2',
             backbone:       'components/backbone/backbone',
             easyXDM:        'components/easyXDM/easyXDM',
-            handlebars:     'components/handlebars',
+            handlebars:     'components/handlebars/handlebars',
             requireLib:     'components/requirejs/require',
             jquery:         'empty:',
-            text:           'components/requirejs-text/text'
+            text:           'components/requirejs-text/text',
+            "jquery.fileupload": 'components/jquery-file-upload/js/jquery.fileupload',
+            "jquery.ui.widget":  'components/jquery-file-upload/js/vendor/jquery.ui.widget'
+
 
           },
           shim: {
@@ -85,6 +88,7 @@ module.exports = function (grunt) {
             'requireLib',
             'underscore',
             'backbone',
+            'handlebars',
             'eventemitter',
             'easyXDM',
             'aura',
@@ -92,12 +96,15 @@ module.exports = function (grunt) {
             'aura-extensions/aura-handlebars',
             'handlebars',
             'text',
+            'jquery.fileupload',
+            'jquery.ui.widget',
             'lib/hull',
             'lib/client/api',
             'lib/client/auth',
             'lib/client/templates',
             'lib/client/handlebars-helpers',
-            'lib/client/widget'
+            'lib/client/widget',
+            'lib/client/storage'
           ],
           out: 'dist/hull.js'
         }
@@ -130,8 +137,8 @@ module.exports = function (grunt) {
             'text',
             'lib/hull-remote',
             'lib/remote/services',
-            'lib/remote/services/facebook-service',
-            'lib/remote/services/hull-service'
+            'lib/remote/services/facebook',
+            'lib/remote/services/hull'
           ],
           out: 'dist/hull-remote.js'
         }
@@ -173,14 +180,14 @@ module.exports = function (grunt) {
 
     watch: {
       src: {
-        files: ['src/**/*.coffee', 'spec/src/**/*.coffee'],
+        files: ['aura-extensions/**/*.js', 'src/**/*.coffee', 'spec/src/**/*.coffee'],
         tasks: ['build']
       }
     }
   });
 
   // default build task
-  grunt.registerTask('build', ['clean', 'coffee' /*, 'requirejs' */]);
+  grunt.registerTask('build', ['clean', 'coffee', 'requirejs']);
   grunt.registerTask('default', ['connect', 'build', /*'mocha',*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 
