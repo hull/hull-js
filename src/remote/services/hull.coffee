@@ -48,7 +48,6 @@ define ['jquery', 'underscore'], ($, _)->
       _.map env.config.services.types.analytics, (s)->
         _.extend(analyticsSettings, env.config.services.settings[s])
       analytics.initialize(analyticsSettings)
-      console.warn("The hole config : ", env.config)
       if env.config.data.me?.id?
         me = env.config.data.me
         ident = _.pick(me, 'name', 'email', 'id', 'picture')
