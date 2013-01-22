@@ -89,7 +89,7 @@ define ->
       # In the second form, the optional params can be overridden through parameters at data.api calls
       #
       # The normalized form is the first one.
-      # 
+      #
       # @param {Array} the parameters for the API calls
       # @return {Array} The normalized form of parameters
       ###
@@ -227,7 +227,6 @@ define ->
         collection      = new Collection
         collectionURI   = path
         collection.url  = path
-
         collection.on 'all', ->
           args = slice.call(arguments)
           eventName = ("collection." + collectionURI.replace(/\//g, ".") + '.' + args[0])
@@ -275,6 +274,7 @@ define ->
       onRemoteReady = (remoteConfig)->
         data = remoteConfig.data
         env.config.services = remoteConfig.services
+        env.sandbox.config.services = remoteConfig.services
         for m in ['me', 'app', 'org']
           attrs = data[m]
           if attrs
