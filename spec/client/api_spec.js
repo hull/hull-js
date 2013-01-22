@@ -16,13 +16,11 @@ define(['aura/aura'], function (aura) {
 
   var easyXDMMock = {
     Rpc: function (a1, a2) {
-      console.log("constructing easyXDMMock.Rpc with params: ", arguments);
       delay(a2.local.ready, {me: {name: "test"}, app: {name: "test", org: {name: "test"}}});
     }
   };
 
   easyXDMMock.Rpc.prototype.message = function (conf, successCb, errorCb) {
-    console.log("Calling easyXDMMock.Rpc#message with params: ", arguments);
     var cb;
     if (conf.path.indexOf('error') === 0) {
       cb = errorCb;
