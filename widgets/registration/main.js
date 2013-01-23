@@ -31,8 +31,7 @@ define(['sandbox', 'underscore', './default_fields', './jquery.h5validate'], fun
           me    = this.sandbox.data.api.model('me');
       if (this.loggedIn()) {
         this.api('hull/me/profile', 'put', profile, function(myAttrs) {
-          console.warn("Profile updated.. !", myAttrs);
-          me.set(myAttrs)
+          me.set(myAttrs);
           self.trigger('register', this);
           self.render();
         });
