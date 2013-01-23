@@ -11,14 +11,20 @@ define ->
       paths = []
       dfd   = env.core.data.deferred()
       ret = {}
+      widgetName = ref.replace('__widget__$', '').split('@')[0]
       for name in names
         path = "#{ref}/#{name}"
         # if require.defined(path)
         #   ret[tpl] = require(path)
         # else
-        localTpl = env.core.dom.find("script[data-hull-template='#{path}']")
+        tplName = [widgetName, name].join("/")
+        localTpl = env.core.dom.find("script[data-hull-template='#{tplName}']")
         if localTpl.length
-          parsed = setupTemplate(localTpl.text(), name);
+          parsed = setupTemplate(localTpl.text(), name)
+          ret[name] = parsed
+          define path, parsed
+        else if window.Hull.templates["#{tplName}"]
+          parsed = setupTemplate(window.Hull.templates["#{tplName}"], name)
           ret[name] = parsed
           define path, parsed
         else

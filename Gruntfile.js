@@ -7,6 +7,8 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
+  grunt.loadNpmTasks('grunt-contrib-handlebars');
+  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-mocha');
   // grunt.loadNpmTasks('grunt-dox');
 
@@ -30,6 +32,9 @@ module.exports = function (grunt) {
     clean: {
       files: {
         src: ['lib', 'dist']
+      },
+      widgets: {
+        src: ['widgets', 'tmp']
       }
     },
 
@@ -62,7 +67,7 @@ module.exports = function (grunt) {
       client: {
         options: {
           baseUrl: '.',
-          // optimize: 'none',
+          optimize: 'none',
           preserveLicenseComments: true,
           paths: {
             aura:           'components/aura-express/dist/aura',
@@ -76,8 +81,6 @@ module.exports = function (grunt) {
             text:           'components/requirejs-text/text',
             "jquery.fileupload": 'components/jquery-file-upload/js/jquery.fileupload',
             "jquery.ui.widget":  'components/jquery-file-upload/js/vendor/jquery.ui.widget'
-
-
           },
           shim: {
             backbone:   { exports: 'Backbone', deps: ['underscore', 'jquery'] },
@@ -142,8 +145,27 @@ module.exports = function (grunt) {
           ],
           out: 'dist/hull-remote.js'
         }
+      },
+      widgets: {
+        options: {
+          baseUrl: 'widgets-src',
+          include: [
+            'comments/main.js'
+          ],
+          out: 'tmp/widgets/comments/widget.js'
+        }
       }
+    },
 
+    concat: {
+      widgets: {
+        options: {
+          stripBanners: true
+        },
+        files: {
+          'widgets/comments/main.js': ['tmp/widgets/comments/*.js']
+        }
+      }
     },
 
     jshint: {
@@ -173,6 +195,30 @@ module.exports = function (grunt) {
       }
     },
 
+    handlebars: {
+      widgets: {
+        options: {
+          wrapped: true,
+          namespace: "Hull.templates",
+          processName: function (filename) {
+            return filename.replace("widgets-src/", "").replace(/\.hbs$/, '');
+          }
+        },
+        files: {
+          "tmp/widgets/achieve_button/templates.js" : "widgets-src/achieve_button/**/*.hbs",
+          "tmp/widgets/activity/templates.js"       : "widgets-src/activity/**/*.hbs",
+          "tmp/widgets/comments/templates.js"       : "widgets-src/comments/**/*.hbs",
+          "tmp/widgets/explorer/templates.js"       : "widgets-src/explorer/**/*.hbs",
+          "tmp/widgets/friends_list/templates.js"   : "widgets-src/friends_list/**/*.hbs",
+          "tmp/widgets/identity/templates.js"       : "widgets-src/identity/**/*.hbs",
+          "tmp/widgets/lists/templates.js"          : "widgets-src/lists/**/*.hbs",
+          "tmp/widgets/quiz/templates.js"           : "widgets-src/quiz/**/*.hbs",
+          "tmp/widgets/registration/templates.js"   : "widgets-src/registration/**/*.hbs",
+          "tmp/widgets/reviews/templates.js"        : "widgets-src/reviews/**/*.hbs",
+          "tmp/widgets/upload/templates.js"         : "widgets-src/upload/**/*.hbs",
+        }
+      }
+    },
 
     mocha: {
       hull: ['http://localhost:' + port + "/spec/index.html"]
@@ -187,7 +233,8 @@ module.exports = function (grunt) {
   });
 
   // default build task
-  grunt.registerTask('build', ['clean', 'coffee', 'requirejs']);
+  grunt.registerTask('build', ['clean', 'coffee', 'requirejs', 'build_widgets']);
+  grunt.registerTask('build_widgets', ['clean:widgets', 'handlebars', 'requirejs:widgets', 'concat:widgets']);
   grunt.registerTask('default', ['connect', 'build', /*'mocha',*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 

@@ -1,5 +1,7 @@
 define ['backbone', 'underscore'], (Backbone, _)->
 
+  debug = false
+
   parseURI = (uri, bindings)->
     bindings = _.extend({}, bindings, bindings.options) if bindings.options
     placeHolders = uri.match(/(\:[a-zA-Z0-9-_]+)/g)
@@ -130,8 +132,10 @@ define ['backbone', 'underscore'], (Backbone, _)->
       tpl || @template || @templates[0]
 
     doRender: (tpl, data)=>
-      ret = @renderTemplate(@getTemplate(tpl, data), data)
+      tplName = @getTemplate(tpl, data)
+      ret = @renderTemplate(tplName, data)
       @$el.addClass(this.className)
+      ret = "<!-- START #{tplName}-->#{ret}<!-- END #{tplName}-->" if debug
       @$el.html(ret)
       return @
 
@@ -172,6 +176,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
 
 
   (env)->
+    debug = env.config.debug
     env.core.registerWidgetType("Hull", HullWidget.prototype)
 
 

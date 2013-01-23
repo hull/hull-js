@@ -1,5 +1,4 @@
-define({
-  type:       'Hull',
+Hull.widget('comments', {
   templates:  ['comments'],
   debug: true,
 
@@ -7,21 +6,22 @@ define({
     this.sandbox.on("collection.hull." + this.id + ".comments.**", function() { this.refresh(); }.bind(this));
   },
 
+  //@FIX Cache is broken for datasources declared as objects
   datasources: {
-    comments: {
-      provider: "hull",
-      path: ":id/comments"
-    }
+    comments: ":id/comments"
   },
   
   actions: {
-    comment: function() {
+    comment: function (elt, evt, data) {
       var description = this.$el.find("textarea").val();
       if (description && description.length > 0) {
-        this.datasources.comments.create({
+        var comment = this.datasources.comments.create({
           description: description
         });
-      }        
+        var xhr = comment.save();
+        xhr.promise().then(_.bind(this.render, this, null, null));
+      }
+      evt.stopPropagation();
     }
   }
 });

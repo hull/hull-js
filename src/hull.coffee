@@ -1,12 +1,19 @@
 define ['components/aura-express/lib/aura'], (Aura)->
 
+  window.Hull = Hull = 
+    templates: {}
+    widget: (widgetName, widgetDef)->
+      widgetDef.type ?= "Hull"
+      define("__widget__$#{widgetName}@hull", widgetDef)
+      return widgetDef
+
   hull = null
 
   myApp = {
     name: 'Hull'
     afterAppStart: (env)->
       sb = env.core.createSandbox();
-      window.Hull = sb;
+      Hull = _.extend(Hull, sb);
       Hull.me     = sb.data.api.model('me');
       Hull.app    = sb.data.api.model('app');
       Hull.org    = sb.data.api.model('org');
@@ -34,6 +41,7 @@ define ['components/aura-express/lib/aura'], (Aura)->
         .use('lib/client/templates')
         .use('lib/client/widget')
         .use(myApp)
+        .registerWidgetsSource('hull', 'http://js.hull.dev/widgets')
         .start({ widgets: 'body' })
 
     initProcess.fail (err)->
