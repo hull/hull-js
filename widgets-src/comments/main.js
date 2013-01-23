@@ -1,4 +1,5 @@
-Hull.widget('comments', {
+define({
+  type: 'Hull',
   templates:  ['comments'],
   debug: true,
 

@@ -9,6 +9,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-mocha');
   // grunt.loadNpmTasks('grunt-dox');
 
@@ -145,28 +146,27 @@ module.exports = function (grunt) {
           ],
           out: 'dist/hull-remote.js'
         }
-      },
-      widgets: {
-        options: {
-          baseUrl: 'widgets-src',
-          include: [
-            'comments/main.js'
-          ],
-          out: 'tmp/widgets/comments/widget.js'
-        }
       }
     },
 
-    concat: {
+    uglify: {
       widgets: {
-        options: {
-          stripBanners: true
-        },
         files: {
-          'widgets/comments/main.js': ['tmp/widgets/comments/*.js']
+          'widgets/achieve_button/main.js' : ['tmp/widgets/achieve_button/templates.js', 'widgets-src/achieve_button/main.js'],
+          'widgets/activity/main.js' : ['tmp/widgets/activity/templates.js', 'widgets-src/activity/main.js'],
+          'widgets/comments/main.js' : ['tmp/widgets/comments/templates.js', 'widgets-src/comments/main.js'],
+          'widgets/explorer/main.js' : ['tmp/widgets/explorer/templates.js', 'widgets-src/explorer/main.js'],
+          'widgets/friends_list/main.js' : ['tmp/widgets/friends_list/templates.js', 'widgets-src/friends_list/main.js'],
+          'widgets/identity/main.js' : ['tmp/widgets/identity/templates.js', 'widgets-src/identity/main.js'],
+          'widgets/lists/main.js' : ['tmp/widgets/lists/templates.js', 'widgets-src/lists/main.js'],
+          'widgets/quiz/main.js' : ['tmp/widgets/quiz/templates.js', 'widgets-src/quiz/main.js'],
+          'widgets/registration/main.js' : ['tmp/widgets/registration/templates.js', 'widgets-src/registration/main.js'],
+          'widgets/reviews/main.js' : ['tmp/widgets/reviews/templates.js', 'widgets-src/reviews/main.js'],
+          'widgets/upload/main.js' : ['tmp/widgets/upload/templates.js', 'widgets-src/upload/main.js'],
         }
       }
     },
+  
 
     jshint: {
       files: {
@@ -234,7 +234,7 @@ module.exports = function (grunt) {
 
   // default build task
   grunt.registerTask('build', ['clean', 'coffee', 'requirejs', 'build_widgets']);
-  grunt.registerTask('build_widgets', ['clean:widgets', 'handlebars', 'requirejs:widgets', 'concat:widgets']);
+  grunt.registerTask('build_widgets', ['clean:widgets', 'handlebars', 'uglify:widgets']);
   grunt.registerTask('default', ['connect', 'build', /*'mocha',*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 
