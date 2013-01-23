@@ -1,3 +1,4 @@
+/*global define:true */
 define(['aura/aura'], function (aura) {
 
   "use strict";
@@ -10,23 +11,16 @@ define(['aura/aura'], function (aura) {
     setTimeout(function () {
       var argsArray = slice.call(args);
       argsArray.shift().apply(null, argsArray);
-    }, parseInt(Math.random()*2, 10));
+    }, parseInt(Math.random() * 2, 10));
   };
 
   var easyXDMMock = {
     Rpc: function (a1, a2) {
-      delay(a2.local.ready, {
-        data: {
-          me:   { id: "123", name: "test" },
-          app:  { id: "123", name: "test" } ,
-          org:  { id: "123", name: "test" }
-        }
-      });
+      delay(a2.local.ready, {me: {name: "test"}, app: {name: "test", org: {name: "test"}}});
     }
   };
 
   easyXDMMock.Rpc.prototype.message = function (conf, successCb, errorCb) {
-    console.log("Calling easyXDMMock.Rpc#message with params: ", arguments);
     var cb;
     if (conf.path.indexOf('error') === 0) {
       cb = errorCb;
@@ -35,8 +29,8 @@ define(['aura/aura'], function (aura) {
     }
     delay(cb, conf);
   };
-
-  define('easyXDM', function () { return easyXDMMock;});
+  
+  define('easyXDM', function () { return easyXDMMock; });
 
   describe("API specs", function () {
     var env, api, app = aura();
@@ -50,7 +44,7 @@ define(['aura/aura'], function (aura) {
     app
       .use(extension)
       .use('lib/client/api');
-
+    
     var initStatus = app.start();
     before(function (done) {
       initStatus.then(function () {
@@ -158,7 +152,7 @@ define(['aura/aura'], function (aura) {
 
       it("can be passed default params for the requests", function (done) {
         var additionalParams = {limit: 10};
-        api.get({path:'/path', provider: 'me', params: additionalParams}, function (params) {
+        api.get({path: '/path', provider: 'me', params: additionalParams}, function (params) {
           params.should.contain.keys('params');
           params.params.should.eql(additionalParams);
           done();

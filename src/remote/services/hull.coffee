@@ -51,7 +51,6 @@ define ['jquery', 'underscore'], ($, _)->
         analyticsSettings[_service.name] = _service
 
       analytics.initialize(analyticsSettings)
-
       if env.config.data.me?.id?
         me = env.config.data.me
         ident = _.pick(me, 'name', 'email', 'id', 'picture')
