@@ -27,6 +27,10 @@ define ->
           parsed = setupTemplate(window.Hull.templates["#{tplName}"], name)
           ret[name] = parsed
           define path, parsed
+        else if window.Hull.templates._default?["#{tplName}"]
+          parsed = setupTemplate(window.Hull.templates._default["#{tplName}"], name)
+          ret[name] = parsed
+          define path, parsed
         else
           paths.push([name, "text!#{path}.#{format}"])
       if paths.length > 0
