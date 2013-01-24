@@ -31,7 +31,7 @@ module.exports = function (grunt) {
     },
 
     clean: {
-      files: {
+      libs: {
         src: ['lib', 'dist']
       },
       widgets: {
@@ -259,16 +259,21 @@ module.exports = function (grunt) {
     },
 
     watch: {
-      src: {
+      widgets: {
+        files: ['widgets-src/**/*'],
+        tasks: ['build_widgets']
+      },
+      libs: {
         files: ['aura-extensions/**/*.js', 'src/**/*.coffee', 'spec/src/**/*.coffee'],
-        tasks: ['build']
+        tasks: ['build_libs']
       }
     }
   });
 
   // default build task
-  grunt.registerTask('build', ['clean', 'coffee', 'requirejs', 'build_widgets']);
+  grunt.registerTask('build_libs', ['clean:libs', 'coffee', 'requirejs']);
   grunt.registerTask('build_widgets', ['clean:widgets', 'handlebars', 'concat:widgets', 'uglify:widgets']);
+  grunt.registerTask('build', ['build_libs', 'build_widgets'])
   grunt.registerTask('default', ['connect', 'build', /*'mocha',*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 
