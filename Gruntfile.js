@@ -116,29 +116,35 @@ module.exports = function (grunt) {
       remote: {
         options: {
           baseUrl: '.',
-          // optimize: '',
+          optimize: 'none',
           preserveLicenseComments: true,
           paths: {
-            aura:         'components/aura-express/dist/aura',
-            underscore:   'components/underscore/underscore',
-            eventemitter: 'components/eventemitter2/lib/eventemitter2',
-            easyXDM:      'components/easyXDM/easyXDM',
-            requireLib:   'components/requirejs/require',
-            jquery:       'components/jquery/jquery',
-            text:           'components/requirejs-text/text',
-            'route-recognizer': 'components/route-recognizer/dist/route-recognizer.amd'
+            aura:               'components/aura-express/dist/aura',
+            underscore:         'components/underscore/underscore',
+            eventemitter:       'components/eventemitter2/lib/eventemitter2',
+            easyXDM:            'components/easyXDM/easyXDM',
+            requireLib:         'components/requirejs/require',
+            jquery:             'components/jquery/jquery',
+            text:               'components/requirejs-text/text',
+            'route-recognizer': 'components/route-recognizer/dist/route-recognizer.amd',
+            analytics:          'components/analytics/analytics',
+            base64:             'components/base64/base64'
           },
           shim: {
             underscore: { exports: '_' },
+            analytics: { exports: 'analytics' },
             easyXDM:    { exports: 'easyXDM' }
           },
           include: [
             'requireLib',
+            'jquery',
             'underscore',
             'eventemitter',
             'easyXDM',
             'aura',
             'text',
+            'base64',
+            'analytics',
             'lib/hull-remote',
             'lib/remote/services',
             'lib/remote/services/facebook',
