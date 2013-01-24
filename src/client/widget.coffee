@@ -167,7 +167,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
       ctx.then (ctx)=>
         beforeCtx = @beforeRender.call(@, ctx)
         $.when(beforeCtx).done (dataAfterBefore)=>
-          data = dataAfterBefore || ctx
+          data = _.extend(dataAfterBefore || ctx, data)
           @doRender(tpl, data)
           _.defer(@afterRender.bind(@, data))
           _.defer((-> @sandbox.start(@$el)).bind(@))
