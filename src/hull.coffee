@@ -4,7 +4,7 @@ define ['components/aura-express/lib/aura'], (Aura)->
     templates: _.extend {}, window.Hull?.templates
     widget: (widgetName, widgetDef)->
       widgetDef.type ?= "Hull"
-      define("__widget__$#{widgetName}@hull", widgetDef)
+      define("__widget__$#{widgetName}@default", widgetDef)
       return widgetDef
 
   hull = null
