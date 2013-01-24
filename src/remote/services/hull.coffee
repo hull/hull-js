@@ -44,9 +44,12 @@ define ['jquery', 'underscore'], ($, _)->
 
     init: (env)->
       analytics = require('analytics')
-      analyticsSettings = { 'Segment.io' : { apiKey: '5x6lk6f' } }
+      analyticsSettings = {}
+
       _.map env.config.services.types.analytics, (s)->
-        _.extend(analyticsSettings, env.config.services.settings[s])
+        _service = env.config.services.settings[s]
+        analyticsSettings[_service.name] = _service
+
       analytics.initialize(analyticsSettings)
       if env.config.data.me?.id?
         me = env.config.data.me
