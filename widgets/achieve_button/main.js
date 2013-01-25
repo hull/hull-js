@@ -1,87 +1,49 @@
+/**
+ * Achieve Button:
+ *
+ * **Let a user achieve something**
+ *
+ * A button that lets a user achieve an achievement.
+ *
+ * * `data-hull-id="ACHIEVEMENT_ID"` : specify which achievement to unlock
+ * * `data-hull-secret="SECRET"` : specify the secret.
+ *
+ * Using this widget you can implement two very useful functionalities:
+ *
+ * * **Basic Checkins**, without any sort of verification : just specify in the secret in plain text, and the achievement will be unlockable immediately.
+ * * **Restricted Checkins** : Do not write the secret in plain text.
+ * Instead, use the server library to compute a user-specific token, and use it only when you want your user to be able to checkin.
+ * The user will then be able to unlock the achievement using a unique token, only valid for him and for a limited time.
+ * Check out the Kitchensink for a working example.
+ *
+ * * **Server-side unlocked Achievements** : Don't use this widget at all. Instead use the server library to unlock an achievement for a user.
+ * Check out the kitchensink for a working example.
+*/
+
+
 define({
-    type: "Hull",
-    templates: [ "achieve_button" ],
-    actions: {
-        achieve: function() {
-            this.api("hull/" + this.id + "/achieve", "post", {
-                secret: this.options.secret
-            }).then(this.refresh);
-        }
-    },
-    datasources: {
-        achievement: function() {
-            return this.api("hull/" + this.id);
-        }
-    },
-    beforeRender: function(data) {
-        if (data.achievement && data.achievement.badge) {
-            data.isAchieved = true;
-        } else {
-            data.isAchieved = false;
-            if (data.loggedIn && this.options.secret) {
-                data.canAchieve = true;
-            } else {
-                data.canAchieve = false;
-            }
-        }
-        return data;
+  type: "Hull",
+  templates: ["achieve_button"],
+  actions: {
+    achieve: function() {
+      this.api("hull/" + this.id + "/achieve", "post", { secret: this.options.secret }).then(this.refresh);
     }
-});
+  },
+  datasources: {
+    achievement: function() { return this.api('hull/' + this.id); }
+  },
+  beforeRender: function(data) {
+    if (data.achievement && data.achievement.badge) {
+      data.isAchieved = true;
+    } else {
+      data.isAchieved = false;
+      if (data.loggedIn && this.options.secret) {
+        data.canAchieve = true;
+      } else {
+        data.canAchieve = false;
+      }
+    }
+    return data;
+  }
 
-this["Hull"] = this["Hull"] || {};
-
-this["Hull"]["templates"] = this["Hull"]["templates"] || {};
-
-this["Hull"]["templates"]["_default"] = this["Hull"]["templates"]["_default"] || {};
-
-this["Hull"]["templates"]["_default"]["achieve_button/achieve_button"] = Handlebars.template(function(Handlebars, depth0, helpers, partials, data) {
-    helpers = helpers || Handlebars.helpers;
-    data = data || {};
-    var buffer = "", stack1, stack2, functionType = "function", escapeExpression = this.escapeExpression, self = this;
-    function program1(depth0, data) {
-        var buffer = "", stack1;
-        buffer += '\n  <button class="btn btn-success">[DONE] Checked (';
-        stack1 = depth0.achievement;
-        stack1 = stack1 == null || stack1 === false ? stack1 : stack1.name;
-        stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
-        buffer += escapeExpression(stack1) + ")</button>\n";
-        return buffer;
-    }
-    function program3(depth0, data) {
-        var buffer = "", stack1, stack2;
-        buffer += '\n  <button class="btn ';
-        stack1 = depth0.canAchieve;
-        stack2 = {};
-        stack1 = helpers.unless.call(depth0, stack1, {
-            hash: stack2,
-            inverse: self.noop,
-            fn: self.program(4, program4, data),
-            data: data
-        });
-        if (stack1 || stack1 === 0) {
-            buffer += stack1;
-        }
-        buffer += '" data-hull-action="achieve">CheckIn (';
-        stack1 = depth0.achievement;
-        stack1 = stack1 == null || stack1 === false ? stack1 : stack1.name;
-        stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
-        buffer += escapeExpression(stack1) + ")</button>\n";
-        return buffer;
-    }
-    function program4(depth0, data) {
-        return "disabled";
-    }
-    stack1 = depth0.isAchieved;
-    stack2 = {};
-    stack1 = helpers["if"].call(depth0, stack1, {
-        hash: stack2,
-        inverse: self.program(3, program3, data),
-        fn: self.program(1, program1, data),
-        data: data
-    });
-    if (stack1 || stack1 === 0) {
-        buffer += stack1;
-    }
-    buffer += "\n";
-    return buffer;
 });
