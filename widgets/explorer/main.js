@@ -1,1 +1,15 @@
-define(["./prism"],{type:"Hull",templates:["explorer"],actions:{get:function(){var t=this,e=this.sandbox.dom.find("input",this.$el).val();t.sandbox.dom.find("code",t.$el).text("loading..."),this.api("hull/"+e).then(function(e){var n=JSON.stringify(e,null,"	").replace(/\n/g,"<br>");t.sandbox.dom.find("code",t.$el).html(n)})}}}),this.Hull=this.Hull||{},this.Hull.templates=this.Hull.templates||{},this.Hull.templates._default=this.Hull.templates._default||{},this.Hull.templates._default["explorer/explorer"]=Handlebars.template(function(t,e,n,a,l){n=n||t.helpers,l=l||{};var s,i,o="",u="function",r=this.escapeExpression;return o+='<h1>Hull API Explorer</h1>\n<p><input type="text" value="',i=n.path,i?s=i.call(e,{hash:{},data:l}):(s=e.path,s=typeof s===u?s.apply(e):s),o+=r(s)+'" placeholder="/path/to/resource"></p>\n<pre class="code language-javascript">\n  <code></code>\n</pre>\n<br />\n<button data-hull-action="get">Get</button>\n'});
+define(['./prism'], {
+  type: "Hull",
+  templates: ["explorer"],
+  actions: {
+    get: function() {
+      var self = this;
+      var path = this.sandbox.dom.find("input", this.$el).val();
+      self.sandbox.dom.find("code", self.$el).text('loading...');
+      this.api("hull/" + path).then(function(response) {
+        var prettyJson = JSON.stringify(response, null, "\t").replace(/\n/g, "<br>")
+        self.sandbox.dom.find("code", self.$el).html(prettyJson);
+      });
+    }
+  }
+});

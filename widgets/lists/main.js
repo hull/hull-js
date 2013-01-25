@@ -1,1 +1,19 @@
-define({type:"Hull",templates:["lists"],events:{"submit form":"createList"},datasources:{lists:":id/lists"},createList:function(t){t.preventDefault();var e=this,n={};this.sandbox.dom.find("input",this.$el).each(function(t,e){"text"===e.getAttribute("type")&&(n[e.getAttribute("name")]=e.value)}),this.api("hull/"+this.id+"/lists","post",n).then(function(){e.render()})}}),this.Hull=this.Hull||{},this.Hull.templates=this.Hull.templates||{},this.Hull.templates._default=this.Hull.templates._default||{},this.Hull.templates._default["lists/lists"]=Handlebars.template(function(t,e,n,l,a){function s(t,e){var l,a,s,o="";return o+="\n  <h1>My lists....</h1>\n  ",s=n.lists,s?l=s.call(t,{hash:{},inverse:f.noop,fn:f.program(2,i,e),data:e}):(l=t.lists,l=typeof l===m?l.apply(t):l),a={},n.lists||(l=y.call(t,l,{hash:a,inverse:f.noop,fn:f.program(2,i,e),data:e})),(l||0===l)&&(o+=l),o+='\n\n  <h1>Create a new List</h1>\n  <form>\n    <p>\n      Name:\n      <input type="text" name="name">\n    </p>\n    <p>\n      Description:\n      <input type="text" name="description">\n    </p>\n    <input type="submit" name="Create my collection">\n  </form>\n\n'}function i(t,e){var l,a,s,i="";return i+="\n    <h3>",s=n.name,s?l=s.call(t,{hash:{},data:e}):(l=t.name,l=typeof l===m?l.apply(t):l),i+=d(l)+"</h3>\n    <ul>\n    ",s=n.items,s?l=s.call(t,{hash:{},inverse:f.noop,fn:f.program(3,o,e),data:e}):(l=t.items,l=typeof l===m?l.apply(t):l),a={},n.items||(l=y.call(t,l,{hash:a,inverse:f.noop,fn:f.program(3,o,e),data:e})),(l||0===l)&&(i+=l),i+="\n    ",s=n.items,s?l=s.call(t,{hash:{},inverse:f.program(5,r,e),fn:f.noop,data:e}):(l=t.items,l=typeof l===m?l.apply(t):l),a={},n.items||(l=y.call(t,l,{hash:a,inverse:f.program(5,r,e),fn:f.noop,data:e})),(l||0===l)&&(i+=l),i+="\n    </ul>\n  "}function o(t,e){var l,a,s="";return s+="\n      <li>\n        [",a=n.type,a?l=a.call(t,{hash:{},data:e}):(l=t.type,l=typeof l===m?l.apply(t):l),s+=d(l)+"] ",a=n.name,a?l=a.call(t,{hash:{},data:e}):(l=t.name,l=typeof l===m?l.apply(t):l),s+=d(l)+" ",a=n.description,a?l=a.call(t,{hash:{},data:e}):(l=t.description,l=typeof l===m?l.apply(t):l),s+=d(l)+"\n      </li>\n    "}function r(){return"\n      <li>\n        Empty Collection\n      </li>\n    "}function p(){return"\n  Connect to view your lists...\n"}n=n||t.helpers,a=a||{};var u,h,c="",m="function",d=this.escapeExpression,f=this,y=n.blockHelperMissing;return u=e.loggedIn,h={},u=n["if"].call(e,u,{hash:h,inverse:f.program(7,p,a),fn:f.program(1,s,a),data:a}),(u||0===u)&&(c+=u),c+="\n"});
+define({
+  type: "Hull",
+  templates: ['lists'],
+  events: { 'submit form' : 'createList' },
+
+  datasources: { lists: ":id/lists" },
+
+  createList: function(e) {
+    e.preventDefault();
+    var self = this, inputs = {};
+    this.sandbox.dom.find('input', this.$el).each(function(c, input) {
+      if (input.getAttribute('type') === 'text') {
+        inputs[input.getAttribute('name')] = input.value;
+      }
+    });
+    this.api('hull/' + this.id + "/lists", 'post', inputs).then(function() { self.render() });
+  }
+
+});

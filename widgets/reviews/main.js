@@ -1,1 +1,47 @@
-define(["sandbox"],function(t){var e=t.mvc.Collection({comparator:function(t){return-1*new Date(t.get("updated_at")).getTime()}});return t.widgets.create({namespace:"reviews",templates:["reviews"],initialize:function(){var t=this,a=this.reviews=new e([]);a.url=this.id+"/reviews",this.datasources.reviewable=function(){return t.sandbox.data.api("hull/"+t.id,{fields:"reviews"})}},beforeRender:function(t){return t.reviews=this.reviews.reset(t.reviewable.reviews).toJSON(),t},afterRender:function(){var t=this.dom.find("textarea",this.$el);t.focus()},actions:{review:function(){var t=this.dom.find("textarea",this.$el).val(),e=this.dom.find("select",this.$el).val(),a=this;this.sandbox.data.api.post("hull",this.id+"/reviews",{description:t,rating:e}).done(function(){a.render()})}}})}),this.Hull=this.Hull||{},this.Hull.templates=this.Hull.templates||{},this.Hull.templates._default=this.Hull.templates._default||{},this.Hull.templates._default["reviews/templates/reviews"]=Handlebars.template(function(t,e,a,n,l){function i(t,e,n){var l,i,o="";return o+="\n",l=n.loggedIn,i={},l=a["if"].call(t,l,{hash:i,inverse:f.program(4,r,e),fn:f.program(2,s,e),data:e}),(l||0===l)&&(o+=l),o+="\n<ul>\n"}function s(){return'\n<select>\n  <option>1</option>\n  <option>2</option>\n  <option>3</option>\n  <option>4</option>\n  <option>5</option>\n</select>\n<textarea></textarea>\n<button data-hull-action="review">Send</button>\n'}function r(){return'\n<button data-hull-action="login" data-hull-provider="facebook">Login first</button>\n'}function o(t,e){var n,l,i="";return i+="\n<li>[",l=a.rating,l?n=l.call(t,{hash:{},data:e}):(n=t.rating,n=typeof n===m?n.apply(t):n),i+=y(n)+"] ",l=a.name,l?n=l.call(t,{hash:{},data:e}):(n=t.name,n=typeof n===m?n.apply(t):n),i+=y(n)+", ",l=a.description,l?n=l.call(t,{hash:{},data:e}):(n=t.description,n=typeof n===m?n.apply(t):n),i+=y(n)+" (by ",n=t.user,n=null==n||n===!1?n:n.name,n=typeof n===m?n.apply(t):n,i+=y(n)+")</li>\n"}function p(){return"\noops... no reviews for the moment\n"}a=a||t.helpers,l=l||{};var u,h,d,c="",f=this,m="function",y=this.escapeExpression,v=a.blockHelperMissing;return c+="<h1>(",d=a.renderCount,d?u=d.call(e,{hash:{},data:l}):(u=e.renderCount,u=typeof u===m?u.apply(e):u),c+=y(u)+") Reviewable: ",u=e.reviewable,u=null==u||u===!1?u:u.name,u=typeof u===m?u.apply(e):u,c+=y(u)+'</h1>\n<div data-hull-widget="identity"></div>\n',d=a.reviewable,d?u=d.call(e,{hash:{},inverse:f.noop,fn:f.programWithDepth(i,l,e),data:l}):(u=e.reviewable,u=typeof u===m?u.apply(e):u),h={},a.reviewable||(u=v.call(e,u,{hash:h,inverse:f.noop,fn:f.programWithDepth(i,l,e),data:l})),(u||0===u)&&(c+=u),c+="\n",d=a.reviews,d?u=d.call(e,{hash:{},inverse:f.noop,fn:f.program(6,o,l),data:l}):(u=e.reviews,u=typeof u===m?u.apply(e):u),h={},a.reviews||(u=v.call(e,u,{hash:h,inverse:f.noop,fn:f.program(6,o,l),data:l})),(u||0===u)&&(c+=u),c+="\n",d=a.reviews,d?u=d.call(e,{hash:{},inverse:f.program(8,p,l),fn:f.noop,data:l}):(u=e.reviews,u=typeof u===m?u.apply(e):u),h={},a.reviews||(u=v.call(e,u,{hash:h,inverse:f.program(8,p,l),fn:f.noop,data:l})),(u||0===u)&&(c+=u),c+="\n</ul>\n\n"});
+define(['sandbox'], function(sandbox) {
+
+  var ReviewsCollection = sandbox.mvc.Collection({
+    comparator: function(c) {
+      return -1 * new Date(c.get('updated_at')).getTime();
+    }
+  });
+
+  return sandbox.widgets.create({
+    namespace: 'reviews',
+    templates: ['reviews'],
+
+    initialize: function(options) {
+      var self = this,
+          reviews = this.reviews = new ReviewsCollection([]);
+      reviews.url = this.id + "/reviews";
+
+      this.datasources.reviewable = function() {
+        return self.sandbox.data.api("hull/" + self.id, { fields: 'reviews' });
+      }
+    },
+
+    beforeRender: function(data) {
+      data.reviews = this.reviews.reset(data.reviewable.reviews).toJSON();
+      return data;
+    },
+
+    afterRender: function() {
+      var area = this.dom.find('textarea', this.$el);
+      area.focus();
+    },
+
+    actions: {
+      review: function() {
+        var description = this.dom.find("textarea", this.$el).val(),
+            rating = this.dom.find("select", this.$el).val(),
+            self = this;
+
+        this.sandbox.data.api.post("hull", this.id + "/reviews", { description: description, rating: rating }).done(function() {
+          self.render();
+        });
+      }
+    }
+  });
+
+});
+

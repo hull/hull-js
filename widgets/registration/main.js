@@ -1,1 +1,97 @@
-define(["sandbox","underscore","./default_fields","./jquery.h5validate"],function(t,e,a){return{type:"Hull",namespace:"registration",templates:["registration_form","registration_complete"],complete:!1,default_fields:a,events:{"submit form":"submitForm"},datasources:{fields:function(){return this.default_fields||[]}},initialize:function(){e.bindAll(this)},validate:function(){return this.$el.h5Validate("allValid")},register:function(t){var e=this;me=this.sandbox.data.api.model("me"),this.loggedIn()&&this.api("hull/me/profile","put",t,function(t){me.set(t),e.trigger("register",this),e.render()})},beforeRender:function(t){var a=t.me&&t.me.profile||{};return t.isComplete=e.all(e.map(t.fields,function(e){return e.value=a[e.name]||t.me[e.name],e.value})),this.template=t.isComplete?"registration_complete":"registration_form",this.fields=t.fields,t},afterRender:function(){this.$el.h5Validate()},submitForm:function(){this.actions.submit.apply(this,arguments)},actions:{edit:function(t,e){return e.preventDefault(),e.stopPropagation(),this.render("registration_form"),!1},submit:function(t,a){if(a&&a.preventDefault(),!this.validate())return a&&a.stopPropagation(),a&&a.stopImmediatePropagation(),!1;var n=e.clone(this.fields),l={},i=this.$el;e.map(n,function(t){l[t.name]="checkbox"==t.type?i.find(".h5-"+t.name).is(":checked"):i.find(".h5-"+t.name).val()}),this.register(l)}}}}),this.Hull=this.Hull||{},this.Hull.templates=this.Hull.templates||{},this.Hull.templates._default=this.Hull.templates._default||{},this.Hull.templates._default["registration/registration_complete"]=Handlebars.template(function(t,e,a,n,l){return a=a||t.helpers,l=l||{},'Registration complete... thanks\n\n<button data-hull-action="edit">Edit</button>\n'}),this.Hull.templates._default["registration/registration_form"]=Handlebars.template(function(t,e,a,n,l){function i(t,e){var n,l,i,r="";return r+='\n    <div class="field ',i=a.name,i?n=i.call(t,{hash:{},data:e}):(n=t.name,n=typeof n===_?n.apply(t):n),r+=q(n)+'">\n        <label for="',i=a.name,i?n=i.call(t,{hash:{},data:e}):(n=t.name,n=typeof n===_?n.apply(t):n),r+=q(n)+'">',i=a.label,i?n=i.call(t,{hash:{},data:e}):(n=t.label,n=typeof n===_?n.apply(t):n),r+=q(n)+"</label>\n\n        ",n=t.type,l={},i=a.ifEqual,n=i?i.call(t,n,"text",{hash:l,inverse:x.noop,fn:x.program(2,s,e),data:e}):E.call(t,"ifEqual",n,"text",{hash:l,inverse:x.noop,fn:x.program(2,s,e),data:e}),(n||0===n)&&(r+=n),r+="\n\n        ",n=t.type,l={},i=a.ifEqual,n=i?i.call(t,n,"checkbox",{hash:l,inverse:x.noop,fn:x.program(9,u,e),data:e}):E.call(t,"ifEqual",n,"checkbox",{hash:l,inverse:x.noop,fn:x.program(9,u,e),data:e}),(n||0===n)&&(r+=n),r+="\n\n        ",n=t.type,l={},i=a.ifEqual,n=i?i.call(t,n,"select",{hash:l,inverse:x.noop,fn:x.program(14,c,e),data:e}):E.call(t,"ifEqual",n,"select",{hash:l,inverse:x.noop,fn:x.program(14,c,e),data:e}),(n||0===n)&&(r+=n),r+='\n\n        <div id="',i=a.name,i?n=i.call(t,{hash:{},data:e}):(n=t.name,n=typeof n===_?n.apply(t):n),r+=q(n)+"_error\" class='error' for=\"",i=a.name,i?n=i.call(t,{hash:{},data:e}):(n=t.name,n=typeof n===_?n.apply(t):n),r+=q(n)+'">',i=a.error,i?n=i.call(t,{hash:{},data:e}):(n=t.error,n=typeof n===_?n.apply(t):n),r+=q(n)+"</div>\n    </div>\n\n    "}function s(t,e){var n,l,i,s="";return s+='\n\n            <input\n              class="',i=a.type,i?n=i.call(t,{hash:{},data:e}):(n=t.type,n=typeof n===_?n.apply(t):n),s+=q(n)+" h5-",i=a.name,i?n=i.call(t,{hash:{},data:e}):(n=t.name,n=typeof n===_?n.apply(t):n),s+=q(n)+'"\n              type="',i=a.type,i?n=i.call(t,{hash:{},data:e}):(n=t.type,n=typeof n===_?n.apply(t):n),s+=q(n)+'"\n              id="',i=a.name,i?n=i.call(t,{hash:{},data:e}):(n=t.name,n=typeof n===_?n.apply(t):n),s+=q(n)+'"\n              name="',i=a.name,i?n=i.call(t,{hash:{},data:e}):(n=t.name,n=typeof n===_?n.apply(t):n),s+=q(n)+'"\n              value="',i=a.value,i?n=i.call(t,{hash:{},data:e}):(n=t.value,n=typeof n===_?n.apply(t):n),s+=q(n)+'"\n\n              ',i=a.placeholder,i?n=i.call(t,{hash:{},inverse:x.noop,fn:x.program(3,r,e),data:e}):(n=t.placeholder,n=typeof n===_?n.apply(t):n),l={},a.placeholder||(n=z.call(t,n,{hash:l,inverse:x.noop,fn:x.program(3,r,e),data:e})),(n||0===n)&&(s+=n),s+="\n              ",i=a.pattern,i?n=i.call(t,{hash:{},inverse:x.noop,fn:x.program(5,o,e),data:e}):(n=t.pattern,n=typeof n===_?n.apply(t):n),l={},a.pattern||(n=z.call(t,n,{hash:l,inverse:x.noop,fn:x.program(5,o,e),data:e})),(n||0===n)&&(s+=n),s+="\n              ",i=a.required,i?n=i.call(t,{hash:{},inverse:x.noop,fn:x.program(7,p,e),data:e}):(n=t.required,n=typeof n===_?n.apply(t):n),l={},a.required||(n=z.call(t,n,{hash:l,inverse:x.noop,fn:x.program(7,p,e),data:e})),(n||0===n)&&(s+=n),s+='\n\n              data-h5-errorid="',i=a.name,i?n=i.call(t,{hash:{},data:e}):(n=t.name,n=typeof n===_?n.apply(t):n),s+=q(n)+'_error"\n            />\n\n        '}function r(t,e){var n,l,i="";return i+='placeholder="',l=a.placeholder,l?n=l.call(t,{hash:{},data:e}):(n=t.placeholder,n=typeof n===_?n.apply(t):n),i+=q(n)+'"'}function o(t,e){var n,l,i="";return i+='pattern="',l=a.pattern,l?n=l.call(t,{hash:{},data:e}):(n=t.pattern,n=typeof n===_?n.apply(t):n),i+=q(n)+'"'}function p(){return"required"}function u(t,e){var n,l,i,s="";return s+='\n            <input\n              class="',i=a.type,i?n=i.call(t,{hash:{},data:e}):(n=t.type,n=typeof n===_?n.apply(t):n),s+=q(n)+" h5-",i=a.name,i?n=i.call(t,{hash:{},data:e}):(n=t.name,n=typeof n===_?n.apply(t):n),s+=q(n)+'"\n              type="',i=a.type,i?n=i.call(t,{hash:{},data:e}):(n=t.type,n=typeof n===_?n.apply(t):n),s+=q(n)+'"\n              id="',i=a.name,i?n=i.call(t,{hash:{},data:e}):(n=t.name,n=typeof n===_?n.apply(t):n),s+=q(n)+'"\n              name="',i=a.name,i?n=i.call(t,{hash:{},data:e}):(n=t.name,n=typeof n===_?n.apply(t):n),s+=q(n)+'"\n              ',n=t.value,l={},i=a.ifEqual,n=i?i.call(t,n,"true",{hash:l,inverse:x.noop,fn:x.program(10,h,e),data:e}):E.call(t,"ifEqual",n,"true",{hash:l,inverse:x.noop,fn:x.program(10,h,e),data:e}),(n||0===n)&&(s+=n),s+='\n              placeholder="',i=a.placeholder,i?n=i.call(t,{hash:{},data:e}):(n=t.placeholder,n=typeof n===_?n.apply(t):n),s+=q(n)+'"\n              ',i=a.required,i?n=i.call(t,{hash:{},inverse:x.noop,fn:x.program(12,d,e),data:e}):(n=t.required,n=typeof n===_?n.apply(t):n),l={},a.required||(n=z.call(t,n,{hash:l,inverse:x.noop,fn:x.program(12,d,e),data:e})),(n||0===n)&&(s+=n),s+='\n              data-h5-errorid="',i=a.name,i?n=i.call(t,{hash:{},data:e}):(n=t.name,n=typeof n===_?n.apply(t):n),s+=q(n)+'_error"\n            />\n\n        '}function h(){return"checked"}function d(){return"required"}function c(t,e){var n,l,i,s="";return s+="\n            <select\n            class='",i=a.type,i?n=i.call(t,{hash:{},data:e}):(n=t.type,n=typeof n===_?n.apply(t):n),s+=q(n)+" h5-",i=a.name,i?n=i.call(t,{hash:{},data:e}):(n=t.name,n=typeof n===_?n.apply(t):n),s+=q(n)+"'\n            type=\"",i=a.type,i?n=i.call(t,{hash:{},data:e}):(n=t.type,n=typeof n===_?n.apply(t):n),s+=q(n)+'"\n            id="',i=a.name,i?n=i.call(t,{hash:{},data:e}):(n=t.name,n=typeof n===_?n.apply(t):n),s+=q(n)+'"\n            name="',i=a.name,i?n=i.call(t,{hash:{},data:e}):(n=t.name,n=typeof n===_?n.apply(t):n),s+=q(n)+'"\n            ',i=a.required,i?n=i.call(t,{hash:{},inverse:x.noop,fn:x.program(15,f,e),data:e}):(n=t.required,n=typeof n===_?n.apply(t):n),l={},a.required||(n=z.call(t,n,{hash:l,inverse:x.noop,fn:x.program(15,f,e),data:e})),(n||0===n)&&(s+=n),s+='\n            data-h5-errorid="',i=a.name,i?n=i.call(t,{hash:{},data:e}):(n=t.name,n=typeof n===_?n.apply(t):n),s+=q(n)+'_error">\n              ',i=a.options,i?n=i.call(t,{hash:{},inverse:x.noop,fn:x.programWithDepth(m,e,t),data:e}):(n=t.options,n=typeof n===_?n.apply(t):n),l={},a.options||(n=z.call(t,n,{hash:l,inverse:x.noop,fn:x.programWithDepth(m,e,t),data:e})),(n||0===n)&&(s+=n),s+="\n            </select>\n        "}function f(){return"required"}function m(t,e,n){var l,i,s,r,o="";return o+='\n                  <option\n                    label="',r=a.label,r?l=r.call(t,{hash:{},data:e}):(l=t.label,l=typeof l===_?l.apply(t):l),o+=q(l)+'"\n                    value="',r=a.value,r?l=r.call(t,{hash:{},data:e}):(l=t.value,l=typeof l===_?l.apply(t):l),o+=q(l)+'"\n                    ',l=t.value,i=n.value,s={},r=a.ifEqual,l=r?r.call(t,i,l,{hash:s,inverse:x.noop,fn:x.program(18,y,e),data:e}):E.call(t,"ifEqual",i,l,{hash:s,inverse:x.noop,fn:x.program(18,y,e),data:e}),(l||0===l)&&(o+=l),o+="\n                  >",r=a.value,r?l=r.call(t,{hash:{},data:e}):(l=t.value,l=typeof l===_?l.apply(t):l),o+=q(l)+"</option>\n              "}function y(){return"selected"}a=a||t.helpers,l=l||{};var v,g,b,H="",_="function",q=this.escapeExpression,x=this,z=a.blockHelperMissing,E=a.helperMissing;return H+='<div class="registration">\n  <form>\n\n    ',b=a.fields,b?v=b.call(e,{hash:{},inverse:x.noop,fn:x.program(1,i,l),data:l}):(v=e.fields,v=typeof v===_?v.apply(e):v),g={},a.fields||(v=z.call(e,v,{hash:g,inverse:x.noop,fn:x.program(1,i,l),data:l})),(v||0===v)&&(H+=v),H+='\n\n    <div class="field">\n      <input type=\'submit\' data-hull-action="submit" value="Valider" />\n    </div>\n  </form>\n</div>\n'});
+define(['sandbox', 'underscore', './default_fields', './jquery.h5validate'], function(sandbox, _, default_fields) {
+
+  return {
+
+    type: "Hull",
+    namespace :'registration',
+    templates: ['registration_form', 'registration_complete'],
+    complete: false,
+    default_fields: default_fields,
+
+    events: {
+      'submit form' : 'submitForm'
+    },
+
+    datasources: {
+      fields: function() {
+        return this.default_fields || [];
+      }
+    },
+
+    initialize : function(options, callback) {
+      _.bindAll(this);
+    },
+
+    validate: function() {
+      return this.$el.h5Validate('allValid');
+    },
+
+    register: function(profile) {
+      var self  = this;
+          me    = this.sandbox.data.api.model('me');
+      if (this.loggedIn()) {
+        this.api('hull/me/profile', 'put', profile, function(myAttrs) {
+          me.set(myAttrs);
+          self.trigger('register', this);
+          self.render();
+        });
+      }
+    },
+
+    beforeRender: function(data) {
+      var extra = data.me && data.me.profile || {};
+      data.isComplete = _.all(_.map(data.fields, function(f) {
+        f.value = extra[f.name] || data.me[f.name];
+        return f.value;
+      }));
+      if (data.isComplete) {
+        this.template = "registration_complete";
+      } else {
+        this.template = "registration_form";
+      }
+      this.fields = data.fields;
+      return data;
+    },
+
+    afterRender: function() {
+      this.$el.h5Validate();
+    },
+
+    submitForm: function() {
+      this.actions.submit.apply(this, arguments)
+    },
+
+    actions: {
+      edit: function(source, e, opts) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.render("registration_form");
+        return false;
+      },
+
+      submit: function(source, e, opts) {
+        e && e.preventDefault()
+
+        if (!this.validate()) {
+          e && e.stopPropagation();
+          e && e.stopImmediatePropagation();
+          return false
+        }
+
+        var fields = _.clone(this.fields),
+            extra  = {},
+            el = this.$el;
+
+        _.map(fields, function(field) {
+          if (field.type == 'checkbox') {
+            extra[field.name] = el.find(".h5-" + field.name).is(":checked");
+          } else {
+            extra[field.name] = el.find(".h5-" + field.name).val();
+          }
+        });
+
+        this.register(extra);
+      }
+    }
+  };
+});

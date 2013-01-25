@@ -1,1 +1,9 @@
-define({type:"Hull",templates:["friends_list"],datasources:{friends:function(){return this.api("hull/me/friends")}}}),this.Hull=this.Hull||{},this.Hull.templates=this.Hull.templates||{},this.Hull.templates._default=this.Hull.templates._default||{},this.Hull.templates._default["friends_list/friends_list"]=Handlebars.template(function(t,e,n,l,a){function s(t,e){var l,a,s="";return s+='\n  <li>\n    <img src="',a=n.picture,a?l=a.call(t,{hash:{},data:e}):(l=t.picture,l=typeof l===p?l.apply(t):l),s+=h(l)+'" alt="',a=n.name,a?l=a.call(t,{hash:{},data:e}):(l=t.name,l=typeof l===p?l.apply(t):l),s+=h(l)+'">\n    ',a=n.name,a?l=a.call(t,{hash:{},data:e}):(l=t.name,l=typeof l===p?l.apply(t):l),s+=h(l)+"\n  </li>\n  "}n=n||t.helpers,a=a||{};var i,o,r,u="",p="function",h=this.escapeExpression,c=this,d=n.blockHelperMissing;return u+="<h1>My Friends</h1>\n<ul>\n  ",r=n.friends,r?i=r.call(e,{hash:{},inverse:c.noop,fn:c.program(1,s,a),data:a}):(i=e.friends,i=typeof i===p?i.apply(e):i),o={},n.friends||(i=d.call(e,i,{hash:o,inverse:c.noop,fn:c.program(1,s,a),data:a})),(i||0===i)&&(u+=i),u+="\n</ul>"});
+define({
+  type: "Hull",
+  templates: ['friends_list'],
+  datasources: {
+    friends: function() {
+      return this.api("hull/me/friends");
+    }
+  }
+})

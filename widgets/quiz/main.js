@@ -1,1 +1,144 @@
-define({type:"Hull",namespace:"quiz",templates:["quiz_intro","quiz_question","quiz_finished","quiz_result"],answers:{},initialize:function(){this.quiz=this.api.model(this.id),this.sandbox.on("hull.model."+this.id+".change",function(){this.render()}.bind(this)),this.datasources.quiz=this.id,this.currentQuestionIndex=0,this.answers={},this.started=this.options.autostart?!0:!1},actions:{login:function(t,e,n){this.sandbox.login(n.provider,n).then(this.startQuiz.bind(this))},answer:function(t,e,n){this.answers[n.question_id]=n.answer_id,this.quiz.set("answers",this.answers)},answerAndNext:function(){this.actions.answer.apply(this,arguments),this.actions.next()},start:function(){this.startQuiz()},next:function(){this.currentQuestionIndex+=1,this.render()},previous:function(){this.currentQuestionIndex>0&&(this.currentQuestionIndex-=1,this.render("quiz_question"))},submit:function(){var t=0;this.startedAt&&(t=(new Date-this.startedAt)/1e3);var e=this.api.post("hull",this.id+"/achieve",{data:{answers:this.answers},timing:t}),n=this;e.done(function(t){n.submitted=!0,n.quiz.set("badge",t)})}},startQuiz:function(){this.reset(),this.startedAt=new Date,this.started=!0,this.render("quiz_question")},reset:function(){this.started=!1,this.submitted=!1,this.answers={},this.currentQuestionIndex=0,this.currentUserId=this.api.model("me").id},getTemplate:function(t,e){return t?t:this.loggedIn()?this.submitted&&e.result?"quiz_result":e.current?e.current.question?"quiz_question":"quiz_finished":e.result?"quiz_result":"quiz_intro":"quiz_intro"},beforeRender:function(t){return t.me.id!=this.currentUserId?(this.template="quiz_intro",this.reset(),t):(t.result=this.getResult(t),this.started&&(t.questions=this.getQuestions(t),t.current=this.getCurrent(t)),t)},getCurrent:function(t){return this.currentQuestion=t.questions[this.currentQuestionIndex],{index:this.currentQuestionIndex,question:this.currentQuestion,next:t.questions[this.currentQuestionIndex+1],previous:t.questions[this.currentQuestionIndex-1]}},getQuestions:function(t){return t.quiz.questions},getResult:function(t){return t.quiz.badge}}),this.Hull=this.Hull||{},this.Hull.templates=this.Hull.templates||{},this.Hull.templates._default=this.Hull.templates._default||{},this.Hull.templates._default["quiz/quiz_finished"]=Handlebars.template(function(t,e,n,a,i){return n=n||t.helpers,i=i||{},"Yeah, you have finished the super quiz !\n\n<button data-hull-action='submit'>Submit !</button>\n"}),this.Hull.templates._default["quiz/quiz_intro"]=Handlebars.template(function(t,e,n,a,i){function s(){return"\n<button data-hull-action='start'>Start !</button>\n"}function l(){return"\n<button data-hull-action='login' data-hull-provider=\"facebook\">Login first... !</button>\n"}n=n||t.helpers,i=i||{};var r,u,o="",h=this;return o+="<h1>Hey, a super intro !</h1>\n\n",r=e.loggedIn,u={},r=n["if"].call(e,r,{hash:u,inverse:h.program(3,l,i),fn:h.program(1,s,i),data:i}),(r||0===r)&&(o+=r),o+="\n"}),this.Hull.templates._default["quiz/quiz_question"]=Handlebars.template(function(t,e,n,a,i){function s(t,e){var a,i,s="";return s+="\n<h1>",i=n.name,i?a=i.call(t,{hash:{},data:e}):(a=t.name,a=typeof a===v?a.apply(t):a),s+=y(a)+"</h1>\n<p>",i=n.description,i?a=i.call(t,{hash:{},data:e}):(a=t.description,a=typeof a===v?a.apply(t):a),s+=y(a)+"</p>\n"}function l(t,e){var a,i,s,l="";return l+="\n",s=n.question,s?a=s.call(t,{hash:{},inverse:b.noop,fn:b.program(4,r,e),data:e}):(a=t.question,a=typeof a===v?a.apply(t):a),i={},n.question||(a=g.call(t,a,{hash:i,inverse:b.noop,fn:b.program(4,r,e),data:e})),(a||0===a)&&(l+=a),l+="\n\n<div>\n",a=t.previous,i={},a=n["if"].call(t,a,{hash:i,inverse:b.noop,fn:b.program(7,o,e),data:e}),(a||0===a)&&(l+=a),l+="\n\nCurrent: ",s=n.index,s?a=s.call(t,{hash:{},data:e}):(a=t.index,a=typeof a===v?a.apply(t):a),l+=y(a)+"\n\n",a=t.next,i={},a=n["if"].call(t,a,{hash:i,inverse:b.program(11,p,e),fn:b.program(9,h,e),data:e}),(a||0===a)&&(l+=a),l+="\n</div>\n\n"}function r(t,e){var a,i,s,l="";return l+="\n<div>\n  <h3>",s=n.name,s?a=s.call(t,{hash:{},data:e}):(a=t.name,a=typeof a===v?a.apply(t):a),l+=y(a)+"</h3>\n  <p>",s=n.description,s?a=s.call(t,{hash:{},data:e}):(a=t.description,a=typeof a===v?a.apply(t):a),l+=y(a)+"</p>\n  <div>\n    ",s=n.answers,s?a=s.call(t,{hash:{},inverse:b.noop,fn:b.programWithDepth(u,e,t),data:e}):(a=t.answers,a=typeof a===v?a.apply(t):a),i={},n.answers||(a=g.call(t,a,{hash:i,inverse:b.noop,fn:b.programWithDepth(u,e,t),data:e})),(a||0===a)&&(l+=a),l+="\n  </div>\n</div>\n"}function u(t,e,a){var i,s,l="";return l+='\n    <button data-hull-action="answerAndNext"\n            data-hull-answer-id="',s=n.id,s?i=s.call(t,{hash:{},data:e}):(i=t.id,i=typeof i===v?i.apply(t):i),l+=y(i)+'"\n            data-hull-question-id="',i=a.id,i=typeof i===v?i.apply(t):i,l+=y(i)+'"\n    >',s=n.name,s?i=s.call(t,{hash:{},data:e}):(i=t.name,i=typeof i===v?i.apply(t):i),l+=y(i)+"</button>\n    "}function o(){return'\n<button data-hull-action="previous">&larr; Previous</button>\n'}function h(){return'\n<button data-hull-action="next">Next &rarr;</button>\n'}function p(){return'\n<button data-hull-action="submit">Submit</button>\n'}n=n||t.helpers,i=i||{};var c,d,f,m="",v="function",y=this.escapeExpression,b=this,g=n.blockHelperMissing;return f=n.quiz,f?c=f.call(e,{hash:{},inverse:b.noop,fn:b.program(1,s,i),data:i}):(c=e.quiz,c=typeof c===v?c.apply(e):c),d={},n.quiz||(c=g.call(e,c,{hash:d,inverse:b.noop,fn:b.program(1,s,i),data:i})),(c||0===c)&&(m+=c),m+="\n",f=n.current,f?c=f.call(e,{hash:{},inverse:b.noop,fn:b.program(3,l,i),data:i}):(c=e.current,c=typeof c===v?c.apply(e):c),d={},n.current||(c=g.call(e,c,{hash:d,inverse:b.noop,fn:b.program(3,l,i),data:i})),(c||0===c)&&(m+=c),m+="\n"}),this.Hull.templates._default["quiz/quiz_result"]=Handlebars.template(function(t,e,n,a,i){function s(t,e){var a,i,s="";return s+="\nYou Have ",i=n.score,i?a=i.call(t,{hash:{},data:e}):(a=t.score,a=typeof a===h?a.apply(t):a),s+=p(a)+" points !\n"}n=n||t.helpers,i=i||{};var l,r,u,o="",h="function",p=this.escapeExpression,c=this,d=n.blockHelperMissing;return o+="<h1>Yeah... a great result ! ",u=n.renderCount,u?l=u.call(e,{hash:{},data:i}):(l=e.renderCount,l=typeof l===h?l.apply(e):l),o+=p(l)+"</h1>\n\n",l=e.result,l=null==l||l===!1?l:l.data,l=typeof l===h?l.apply(e):l,r={},l=d.call(e,l,{hash:r,inverse:c.noop,fn:c.program(1,s,i),data:i}),(l||0===l)&&(o+=l),o+='\n\n\n<button data-hull-action="start">Start over...</button>\n\n'});
+define({
+  type: "Hull",
+  namespace: 'quiz',
+  templates: ['quiz_intro', 'quiz_question', 'quiz_finished', 'quiz_result'],
+
+  answers: {},
+
+  initialize: function() {
+    this.quiz = this.api.model(this.id);
+    this.sandbox.on('hull.model.' + this.id + '.change', function() { this.render() }.bind(this));
+    this.datasources.quiz = this.id;
+    this.currentQuestionIndex = 0;
+    this.answers = {};
+    if (this.options.autostart) {
+      this.started = true;
+    } else {
+      this.started = false;
+    }
+  },
+
+  actions: {
+
+    login: function(source, e, options) {
+      this.sandbox.login(options.provider, options).then(this.startQuiz.bind(this));
+    },
+
+    answer: function(source, e, opts) {
+      this.answers[opts.question_id] = opts.answer_id;
+      this.quiz.set('answers', this.answers);
+    },
+
+    answerAndNext: function(source, e, opts) {
+      this.actions.answer.apply(this, arguments);
+      this.actions.next();
+    },
+
+    start: function() {
+      this.startQuiz();
+    },
+
+    next: function() {
+      this.currentQuestionIndex += 1;
+      this.render();
+    },
+
+    previous: function(source, e, data) {
+      if (this.currentQuestionIndex > 0) {
+        this.currentQuestionIndex -= 1;
+        this.render('quiz_question');
+      }
+    },
+
+    submit: function() {
+      var timing = 0;
+      if (this.startedAt) {
+        timing  = (new Date() - this.startedAt) / 1000;
+      }
+
+      var res  = this.api.post("hull", this.id + "/achieve", {
+        data: { answers: this.answers },
+        timing: timing
+      });
+
+      var self = this;
+      res.done(function(badge) {
+        self.submitted = true;
+        self.quiz.set('badge', badge);
+      });
+    }
+  },
+
+  startQuiz: function() {
+    this.reset();
+    this.startedAt = new Date();
+    this.started = true;
+    this.render('quiz_question');
+  },
+
+  reset: function() {
+    this.started = false;
+    this.submitted = false;
+    this.answers = {};
+    this.currentQuestionIndex = 0;
+    this.currentUserId = this.api.model('me').id;
+  },
+
+  // TODO : Refactor this please !!!!
+  getTemplate: function(tpl, data) {
+    if (tpl) {
+      return tpl;
+    }
+    if (!this.loggedIn()) {
+      return "quiz_intro";
+    } else if (this.submitted && data.result) {
+      return "quiz_result";
+    } else if (data.current) {
+      if (data.current.question) {
+        return "quiz_question";
+      } else {
+        return "quiz_finished";
+      }
+    } else if (data.result) {
+      return "quiz_result";
+    }
+    return "quiz_intro";
+  },
+
+  beforeRender: function(data) {
+
+    if (data.me.id != this.currentUserId) {
+      this.template = "quiz_intro";
+      this.reset();
+      return data;
+    }
+
+    data.result             = this.getResult(data);
+
+    if (this.started) {
+      data.questions        = this.getQuestions(data);
+      data.current          = this.getCurrent(data);
+    }
+
+    return data;
+  },
+
+  getCurrent: function(data) {
+    this.currentQuestion = data.questions[this.currentQuestionIndex];
+    return {
+      index:        this.currentQuestionIndex,
+      question:     this.currentQuestion,
+      next:         data.questions[this.currentQuestionIndex + 1],
+      previous:     data.questions[this.currentQuestionIndex - 1]
+    };
+  },
+
+  getQuestions: function(data) {
+    return data.quiz.questions;
+  },
+
+  getResult: function(data) {
+    return data.quiz.badge;
+  }
+
+});

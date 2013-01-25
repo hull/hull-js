@@ -1,1 +1,166 @@
-(function(e){"function"==typeof define&&define.amd?define("jquery.ui.widget",["jquery"],e):e(jQuery)})(function(e,t){var n=0,a=Array.prototype.slice,i=e.cleanData;e.cleanData=function(t){for(var n,a=0;null!=(n=t[a]);a++)try{e(n).triggerHandler("remove")}catch(s){}i(t)},e.widget=function(t,n,a){var i,s,r,o,l=t.split(".")[0];t=t.split(".")[1],i=l+"-"+t,a||(a=n,n=e.Widget),e.expr[":"][i.toLowerCase()]=function(t){return!!e.data(t,i)},e[l]=e[l]||{},s=e[l][t],r=e[l][t]=function(e,t){return this._createWidget?(arguments.length&&this._createWidget(e,t),void 0):new r(e,t)},e.extend(r,s,{version:a.version,_proto:e.extend({},a),_childConstructors:[]}),o=new n,o.options=e.widget.extend({},o.options),e.each(a,function(t,i){e.isFunction(i)&&(a[t]=function(){var e=function(){return n.prototype[t].apply(this,arguments)},a=function(e){return n.prototype[t].apply(this,e)};return function(){var t,n=this._super,s=this._superApply;return this._super=e,this._superApply=a,t=i.apply(this,arguments),this._super=n,this._superApply=s,t}}())}),r.prototype=e.widget.extend(o,{widgetEventPrefix:o.widgetEventPrefix||t},a,{constructor:r,namespace:l,widgetName:t,widgetBaseClass:i,widgetFullName:i}),s?(e.each(s._childConstructors,function(t,n){var a=n.prototype;e.widget(a.namespace+"."+a.widgetName,r,n._proto)}),delete s._childConstructors):n._childConstructors.push(r),e.widget.bridge(t,r)},e.widget.extend=function(n){for(var i,s,r=a.call(arguments,1),o=0,l=r.length;l>o;o++)for(i in r[o])s=r[o][i],r[o].hasOwnProperty(i)&&s!==t&&(n[i]=e.isPlainObject(s)?e.isPlainObject(n[i])?e.widget.extend({},n[i],s):e.widget.extend({},s):s);return n},e.widget.bridge=function(n,i){var s=i.prototype.widgetFullName;e.fn[n]=function(r){var o="string"==typeof r,l=a.call(arguments,1),p=this;return r=!o&&l.length?e.widget.extend.apply(null,[r].concat(l)):r,o?this.each(function(){var a,i=e.data(this,s);return i?e.isFunction(i[r])&&"_"!==r.charAt(0)?(a=i[r].apply(i,l),a!==i&&a!==t?(p=a&&a.jquery?p.pushStack(a.get()):a,!1):void 0):e.error("no such method '"+r+"' for "+n+" widget instance"):e.error("cannot call methods on "+n+" prior to initialization; "+"attempted to call method '"+r+"'")}):this.each(function(){var t=e.data(this,s);t?t.option(r||{})._init():new i(r,this)}),p}},e.Widget=function(){},e.Widget._childConstructors=[],e.Widget.prototype={widgetName:"widget",widgetEventPrefix:"",defaultElement:"<div>",options:{disabled:!1,create:null},_createWidget:function(t,a){a=e(a||this.defaultElement||this)[0],this.element=e(a),this.uuid=n++,this.eventNamespace="."+this.widgetName+this.uuid,this.options=e.widget.extend({},this.options,this._getCreateOptions(),t),this.bindings=e(),this.hoverable=e(),this.focusable=e(),a!==this&&(e.data(a,this.widgetName,this),e.data(a,this.widgetFullName,this),this._on(this.element,{remove:function(e){e.target===a&&this.destroy()}}),this.document=e(a.style?a.ownerDocument:a.document||a),this.window=e(this.document[0].defaultView||this.document[0].parentWindow)),this._create(),this._trigger("create",null,this._getCreateEventData()),this._init()},_getCreateOptions:e.noop,_getCreateEventData:e.noop,_create:e.noop,_init:e.noop,destroy:function(){this._destroy(),this.element.unbind(this.eventNamespace).removeData(this.widgetName).removeData(this.widgetFullName).removeData(e.camelCase(this.widgetFullName)),this.widget().unbind(this.eventNamespace).removeAttr("aria-disabled").removeClass(this.widgetFullName+"-disabled "+"ui-state-disabled"),this.bindings.unbind(this.eventNamespace),this.hoverable.removeClass("ui-state-hover"),this.focusable.removeClass("ui-state-focus")},_destroy:e.noop,widget:function(){return this.element},option:function(n,a){var i,s,r,o=n;if(0===arguments.length)return e.widget.extend({},this.options);if("string"==typeof n)if(o={},i=n.split("."),n=i.shift(),i.length){for(s=o[n]=e.widget.extend({},this.options[n]),r=0;i.length-1>r;r++)s[i[r]]=s[i[r]]||{},s=s[i[r]];if(n=i.pop(),a===t)return s[n]===t?null:s[n];s[n]=a}else{if(a===t)return this.options[n]===t?null:this.options[n];o[n]=a}return this._setOptions(o),this},_setOptions:function(e){var t;for(t in e)this._setOption(t,e[t]);return this},_setOption:function(e,t){return this.options[e]=t,"disabled"===e&&(this.widget().toggleClass(this.widgetFullName+"-disabled ui-state-disabled",!!t).attr("aria-disabled",t),this.hoverable.removeClass("ui-state-hover"),this.focusable.removeClass("ui-state-focus")),this},enable:function(){return this._setOption("disabled",!1)},disable:function(){return this._setOption("disabled",!0)},_on:function(t,n){var a,i=this;n?(t=a=e(t),this.bindings=this.bindings.add(t)):(n=t,t=this.element,a=this.widget()),e.each(n,function(n,s){function r(){return i.options.disabled===!0||e(this).hasClass("ui-state-disabled")?void 0:("string"==typeof s?i[s]:s).apply(i,arguments)}"string"!=typeof s&&(r.guid=s.guid=s.guid||r.guid||e.guid++);var o=n.match(/^(\w+)\s*(.*)$/),l=o[1]+i.eventNamespace,p=o[2];p?a.delegate(p,l,r):t.bind(l,r)})},_off:function(e,t){t=(t||"").split(" ").join(this.eventNamespace+" ")+this.eventNamespace,e.unbind(t).undelegate(t)},_delay:function(e,t){function n(){return("string"==typeof e?a[e]:e).apply(a,arguments)}var a=this;return setTimeout(n,t||0)},_hoverable:function(t){this.hoverable=this.hoverable.add(t),this._on(t,{mouseenter:function(t){e(t.currentTarget).addClass("ui-state-hover")},mouseleave:function(t){e(t.currentTarget).removeClass("ui-state-hover")}})},_focusable:function(t){this.focusable=this.focusable.add(t),this._on(t,{focusin:function(t){e(t.currentTarget).addClass("ui-state-focus")},focusout:function(t){e(t.currentTarget).removeClass("ui-state-focus")}})},_trigger:function(t,n,a){var i,s,r=this.options[t];if(a=a||{},n=e.Event(n),n.type=(t===this.widgetEventPrefix?t:this.widgetEventPrefix+t).toLowerCase(),n.target=this.element[0],s=n.originalEvent,s)for(i in s)i in n||(n[i]=s[i]);return this.element.trigger(n,a),!(e.isFunction(r)&&r.apply(this.element[0],[n].concat(a))===!1||n.isDefaultPrevented())}},e.each({show:"fadeIn",hide:"fadeOut"},function(t,n){e.Widget.prototype["_"+t]=function(a,i,s){"string"==typeof i&&(i={effect:i});var r,o=i?i===!0||"number"==typeof i?n:i.effect||n:t;i=i||{},"number"==typeof i&&(i={duration:i}),r=!e.isEmptyObject(i),i.complete=s,i.delay&&a.delay(i.delay),r&&e.effects&&(e.effects.effect[o]||e.uiBackCompat!==!1&&e.effects[o])?a[t](i):o!==t&&a[o]?a[o](i.duration,i.easing,s):a.queue(function(n){e(this)[t](),s&&s.call(a[0]),n()})}}),e.uiBackCompat!==!1&&(e.Widget.prototype._getCreateOptions=function(){return e.metadata&&e.metadata.get(this.element[0])[this.widgetName]})}),function(e){"function"==typeof define&&define.amd?define("jquery.fileupload",["jquery","jquery.ui.widget"],e):e(window.jQuery)}(function(e){e.support.xhrFileUpload=!!window.XMLHttpRequestUpload&&!!window.FileReader,e.support.xhrFormDataFileUpload=!!window.FormData,e.widget("blueimp.fileupload",{options:{dropZone:e(document),pasteZone:e(document),fileInput:void 0,replaceFileInput:!0,paramName:void 0,singleFileUploads:!0,limitMultiFileUploads:void 0,sequentialUploads:!1,limitConcurrentUploads:void 0,forceIframeTransport:!1,redirect:void 0,redirectParamName:void 0,postMessage:void 0,multipart:!0,maxChunkSize:void 0,uploadedBytes:void 0,recalculateProgress:!0,progressInterval:100,bitrateInterval:500,formData:function(e){return e.serializeArray()},add:function(e,t){t.submit()},processData:!1,contentType:!1,cache:!1},_refreshOptionsList:["fileInput","dropZone","pasteZone","multipart","forceIframeTransport"],_BitrateTimer:function(){this.timestamp=+new Date,this.loaded=0,this.bitrate=0,this.getBitrate=function(e,t,n){var a=e-this.timestamp;return(!this.bitrate||!n||a>n)&&(this.bitrate=8*(t-this.loaded)*(1e3/a),this.loaded=t,this.timestamp=e),this.bitrate}},_isXHRUpload:function(t){return!t.forceIframeTransport&&(!t.multipart&&e.support.xhrFileUpload||e.support.xhrFormDataFileUpload)},_getFormData:function(t){var n;return"function"==typeof t.formData?t.formData(t.form):e.isArray(t.formData)?t.formData:t.formData?(n=[],e.each(t.formData,function(e,t){n.push({name:e,value:t})}),n):[]},_getTotal:function(t){var n=0;return e.each(t,function(e,t){n+=t.size||1}),n},_onProgress:function(e,t){if(e.lengthComputable){var n,a,i=+new Date;if(t._time&&t.progressInterval&&i-t._time<t.progressInterval&&e.loaded!==e.total)return;t._time=i,n=t.total||this._getTotal(t.files),a=parseInt(e.loaded/e.total*(t.chunkSize||n),10)+(t.uploadedBytes||0),this._loaded+=a-(t.loaded||t.uploadedBytes||0),t.lengthComputable=!0,t.loaded=a,t.total=n,t.bitrate=t._bitrateTimer.getBitrate(i,a,t.bitrateInterval),this._trigger("progress",e,t),this._trigger("progressall",e,{lengthComputable:!0,loaded:this._loaded,total:this._total,bitrate:this._bitrateTimer.getBitrate(i,this._loaded,t.bitrateInterval)})}},_initProgressListener:function(t){var n=this,a=t.xhr?t.xhr():e.ajaxSettings.xhr();a.upload&&(e(a.upload).bind("progress",function(e){var a=e.originalEvent;e.lengthComputable=a.lengthComputable,e.loaded=a.loaded,e.total=a.total,n._onProgress(e,t)}),t.xhr=function(){return a})},_initXHRData:function(t){var n,a=t.files[0],i=t.multipart||!e.support.xhrFileUpload,s=t.paramName[0];t.headers=t.headers||{},t.contentRange&&(t.headers["Content-Range"]=t.contentRange),i?e.support.xhrFormDataFileUpload&&(t.postMessage?(n=this._getFormData(t),t.blob?n.push({name:s,value:t.blob}):e.each(t.files,function(e,a){n.push({name:t.paramName[e]||s,value:a})})):(t.formData instanceof FormData?n=t.formData:(n=new FormData,e.each(this._getFormData(t),function(e,t){n.append(t.name,t.value)})),t.blob?(t.headers["Content-Disposition"]='attachment; filename="'+encodeURI(a.name)+'"',n.append(s,t.blob,a.name)):e.each(t.files,function(e,a){(window.Blob&&a instanceof Blob||window.File&&a instanceof File)&&n.append(t.paramName[e]||s,a,a.name)})),t.data=n):(t.headers["Content-Disposition"]='attachment; filename="'+encodeURI(a.name)+'"',t.contentType=a.type,t.data=t.blob||a),t.blob=null},_initIframeSettings:function(t){t.dataType="iframe "+(t.dataType||""),t.formData=this._getFormData(t),t.redirect&&e("<a></a>").prop("href",t.url).prop("host")!==location.host&&t.formData.push({name:t.redirectParamName||"redirect",value:t.redirect})},_initDataSettings:function(e){this._isXHRUpload(e)?(this._chunkedUpload(e,!0)||(e.data||this._initXHRData(e),this._initProgressListener(e)),e.postMessage&&(e.dataType="postmessage "+(e.dataType||""))):this._initIframeSettings(e,"iframe")},_getParamName:function(t){var n=e(t.fileInput),a=t.paramName;return a?e.isArray(a)||(a=[a]):(a=[],n.each(function(){for(var t=e(this),n=t.prop("name")||"files[]",i=(t.prop("files")||[1]).length;i;)a.push(n),i-=1}),a.length||(a=[n.prop("name")||"files[]"])),a},_initFormSettings:function(t){t.form&&t.form.length||(t.form=e(t.fileInput.prop("form")),t.form.length||(t.form=e(this.options.fileInput.prop("form")))),t.paramName=this._getParamName(t),t.url||(t.url=t.form.prop("action")||location.href),t.type=(t.type||t.form.prop("method")||"").toUpperCase(),"POST"!==t.type&&"PUT"!==t.type&&"PATCH"!==t.type&&(t.type="POST"),t.formAcceptCharset||(t.formAcceptCharset=t.form.attr("accept-charset"))},_getAJAXSettings:function(t){var n=e.extend({},this.options,t);return this._initFormSettings(n),this._initDataSettings(n),n},_enhancePromise:function(e){return e.success=e.done,e.error=e.fail,e.complete=e.always,e},_getXHRPromise:function(t,n,a){var i=e.Deferred(),s=i.promise();return n=n||this.options.context||s,t===!0?i.resolveWith(n,a):t===!1&&i.rejectWith(n,a),s.abort=i.promise,this._enhancePromise(s)},_getUploadedBytes:function(e){var t=e.getResponseHeader("Range"),n=t&&t.split("-"),a=n&&n.length>1&&parseInt(n[1],10);return a&&a+1},_chunkedUpload:function(t,n){var a,i,s=this,r=t.files[0],o=r.size,l=t.uploadedBytes=t.uploadedBytes||0,p=t.maxChunkSize||o,u=r.slice||r.webkitSlice||r.mozSlice,d=e.Deferred(),h=d.promise();return this._isXHRUpload(t)&&u&&(l||o>p)&&!t.data?n?!0:l>=o?(r.error="Uploaded bytes exceed file size",this._getXHRPromise(!1,t.context,[null,"error",r.error])):(i=function(){var n=e.extend({},t);n.blob=u.call(r,l,l+p,r.type),n.chunkSize=n.blob.size,n.contentRange="bytes "+l+"-"+(l+n.chunkSize-1)+"/"+o,s._initXHRData(n),s._initProgressListener(n),a=(e.ajax(n)||s._getXHRPromise(!1,n.context)).done(function(a,r,p){l=s._getUploadedBytes(p)||l+n.chunkSize,n.loaded||s._onProgress(e.Event("progress",{lengthComputable:!0,loaded:l-n.uploadedBytes,total:l-n.uploadedBytes}),n),t.uploadedBytes=n.uploadedBytes=l,o>l?i():d.resolveWith(n.context,[a,r,p])}).fail(function(e,t,a){d.rejectWith(n.context,[e,t,a])})},this._enhancePromise(h),h.abort=function(){return a.abort()},i(),h):!1},_beforeSend:function(e,t){0===this._active&&(this._trigger("start"),this._bitrateTimer=new this._BitrateTimer),this._active+=1,this._loaded+=t.uploadedBytes||0,this._total+=this._getTotal(t.files)},_onDone:function(t,n,a,i){this._isXHRUpload(i)||this._onProgress(e.Event("progress",{lengthComputable:!0,loaded:1,total:1}),i),i.result=t,i.textStatus=n,i.jqXHR=a,this._trigger("done",null,i)},_onFail:function(e,t,n,a){a.jqXHR=e,a.textStatus=t,a.errorThrown=n,this._trigger("fail",null,a),a.recalculateProgress&&(this._loaded-=a.loaded||a.uploadedBytes||0,this._total-=a.total||this._getTotal(a.files))},_onAlways:function(e,t,n,a){this._active-=1,a.textStatus=t,n&&n.always?(a.jqXHR=n,a.result=e):(a.jqXHR=e,a.errorThrown=n),this._trigger("always",null,a),0===this._active&&(this._trigger("stop"),this._loaded=this._total=0,this._bitrateTimer=null)},_onSend:function(t,n){var a,i,s,r,o=this,l=o._getAJAXSettings(n),p=function(){return o._sending+=1,l._bitrateTimer=new o._BitrateTimer,a=a||((i||o._trigger("send",t,l)===!1)&&o._getXHRPromise(!1,l.context,i)||o._chunkedUpload(l)||e.ajax(l)).done(function(e,t,n){o._onDone(e,t,n,l)}).fail(function(e,t,n){o._onFail(e,t,n,l)}).always(function(e,t,n){if(o._sending-=1,o._onAlways(e,t,n,l),l.limitConcurrentUploads&&l.limitConcurrentUploads>o._sending)for(var a,i=o._slots.shift();i;){if(a=i.state?"pending"===i.state():!i.isRejected()){i.resolve();break}i=o._slots.shift()}})};return this._beforeSend(t,l),this.options.sequentialUploads||this.options.limitConcurrentUploads&&this.options.limitConcurrentUploads<=this._sending?(this.options.limitConcurrentUploads>1?(s=e.Deferred(),this._slots.push(s),r=s.pipe(p)):r=this._sequence=this._sequence.pipe(p,p),r.abort=function(){return i=[,"abort","abort"],a?a.abort():(s&&s.rejectWith(l.context,i),p())},this._enhancePromise(r)):p()},_onAdd:function(t,n){var a,i,s,r,o=this,l=!0,p=e.extend({},this.options,n),u=p.limitMultiFileUploads,d=this._getParamName(p);if((p.singleFileUploads||u)&&this._isXHRUpload(p))if(!p.singleFileUploads&&u)for(s=[],a=[],r=0;n.files.length>r;r+=u)s.push(n.files.slice(r,r+u)),i=d.slice(r,r+u),i.length||(i=d),a.push(i);else a=d;else s=[n.files],a=[d];return n.originalFiles=n.files,e.each(s||n.files,function(i,r){var p=e.extend({},n);return p.files=s?r:[r],p.paramName=a[i],p.submit=function(){return p.jqXHR=this.jqXHR=o._trigger("submit",t,this)!==!1&&o._onSend(t,this),this.jqXHR},l=o._trigger("add",t,p)}),l},_replaceFileInput:function(t){var n=t.clone(!0);e("<form></form>").append(n)[0].reset(),t.after(n).detach(),e.cleanData(t.unbind("remove")),this.options.fileInput=this.options.fileInput.map(function(e,a){return a===t[0]?n[0]:a}),t[0]===this.element[0]&&(this.element=n)},_handleFileTreeEntry:function(t,n){var a,i=this,s=e.Deferred(),r=function(e){e&&!e.entry&&(e.entry=t),s.resolve([e])};return n=n||"",t.isFile?t._file?(t._file.relativePath=n,s.resolve(t._file)):t.file(function(e){e.relativePath=n,s.resolve(e)},r):t.isDirectory?(a=t.createReader(),a.readEntries(function(e){i._handleFileTreeEntries(e,n+t.name+"/").done(function(e){s.resolve(e)}).fail(r)},r)):s.resolve([]),s.promise()},_handleFileTreeEntries:function(t,n){var a=this;return e.when.apply(e,e.map(t,function(e){return a._handleFileTreeEntry(e,n)})).pipe(function(){return Array.prototype.concat.apply([],arguments)})},_getDroppedFiles:function(t){t=t||{};var n=t.items;return n&&n.length&&(n[0].webkitGetAsEntry||n[0].getAsEntry)?this._handleFileTreeEntries(e.map(n,function(e){var t;return e.webkitGetAsEntry?(t=e.webkitGetAsEntry(),t&&(t._file=e.getAsFile()),t):e.getAsEntry()})):e.Deferred().resolve(e.makeArray(t.files)).promise()},_getSingleFileInputFiles:function(t){t=e(t);var n,a,i=t.prop("webkitEntries")||t.prop("entries");if(i&&i.length)return this._handleFileTreeEntries(i);if(n=e.makeArray(t.prop("files")),n.length)void 0===n[0].name&&n[0].fileName&&e.each(n,function(e,t){t.name=t.fileName,t.size=t.fileSize});else{if(a=t.prop("value"),!a)return e.Deferred().resolve([]).promise();n=[{name:a.replace(/^.*\\/,"")}]}return e.Deferred().resolve(n).promise()},_getFileInputFiles:function(t){return t instanceof e&&1!==t.length?e.when.apply(e,e.map(t,this._getSingleFileInputFiles)).pipe(function(){return Array.prototype.concat.apply([],arguments)}):this._getSingleFileInputFiles(t)},_onChange:function(t){var n=this,a={fileInput:e(t.target),form:e(t.target.form)};this._getFileInputFiles(a.fileInput).always(function(e){a.files=e,n.options.replaceFileInput&&n._replaceFileInput(a.fileInput),n._trigger("change",t,a)!==!1&&n._onAdd(t,a)})},_onPaste:function(t){var n=t.originalEvent.clipboardData,a=n&&n.items||[],i={files:[]};return e.each(a,function(e,t){var n=t.getAsFile&&t.getAsFile();n&&i.files.push(n)}),this._trigger("paste",t,i)===!1||this._onAdd(t,i)===!1?!1:void 0},_onDrop:function(e){var t=this,n=e.dataTransfer=e.originalEvent.dataTransfer,a={};n&&n.files&&n.files.length&&e.preventDefault(),this._getDroppedFiles(n).always(function(n){a.files=n,t._trigger("drop",e,a)!==!1&&t._onAdd(e,a)})},_onDragOver:function(t){var n=t.dataTransfer=t.originalEvent.dataTransfer;return this._trigger("dragover",t)===!1?!1:(n&&-1!==e.inArray("Files",n.types)&&(n.dropEffect="copy",t.preventDefault()),void 0)},_initEventHandlers:function(){this._isXHRUpload(this.options)&&(this._on(this.options.dropZone,{dragover:this._onDragOver,drop:this._onDrop}),this._on(this.options.pasteZone,{paste:this._onPaste})),this._on(this.options.fileInput,{change:this._onChange})},_destroyEventHandlers:function(){this._off(this.options.dropZone,"dragover drop"),this._off(this.options.pasteZone,"paste"),this._off(this.options.fileInput,"change")},_setOption:function(t,n){var a=-1!==e.inArray(t,this._refreshOptionsList);a&&this._destroyEventHandlers(),this._super(t,n),a&&(this._initSpecialOptions(),this._initEventHandlers())},_initSpecialOptions:function(){var t=this.options;void 0===t.fileInput?t.fileInput=this.element.is('input[type="file"]')?this.element:this.element.find('input[type="file"]'):t.fileInput instanceof e||(t.fileInput=e(t.fileInput)),t.dropZone instanceof e||(t.dropZone=e(t.dropZone)),t.pasteZone instanceof e||(t.pasteZone=e(t.pasteZone))},_create:function(){var t=this.options;e.extend(t,e(this.element[0].cloneNode(!1)).data()),this._initSpecialOptions(),this._slots=[],this._sequence=this._getXHRPromise(!0),this._sending=this._active=this._loaded=this._total=0,this._initEventHandlers()},_destroy:function(){this._destroyEventHandlers()},add:function(t){var n=this;t&&!this.options.disabled&&(t.fileInput&&!t.files?this._getFileInputFiles(t.fileInput).always(function(e){t.files=e,n._onAdd(null,t)}):(t.files=e.makeArray(t.files),this._onAdd(null,t)))},send:function(t){if(t&&!this.options.disabled){if(t.fileInput&&!t.files){var n,a,i=this,s=e.Deferred(),r=s.promise();return r.abort=function(){return a=!0,n?n.abort():(s.reject(null,"abort","abort"),r)},this._getFileInputFiles(t.fileInput).always(function(e){a||(t.files=e,n=i._onSend(null,t).then(function(e,t,n){s.resolve(e,t,n)},function(e,t,n){s.reject(e,t,n)}))}),this._enhancePromise(r)}if(t.files=e.makeArray(t.files),t.files.length)return this._onSend(null,t)}return this._getXHRPromise(!1,t&&t.context)}})}),define(["jquery.fileupload"],{type:"Hull",templates:["upload","upload_file_single","upload_file_multiple"],fileTypes:{images:/(\.|\/)(gif|jpe?g|png)$/i,videos:/(\.|\/)(mov|mkv|mpg|wmv|mp4|m4v)$/i},fileProcessors:{images:[{action:"load",fileTypes:/^image\/(gif|jpeg|png)$/,maxFileSize:2e7},{action:"resize",maxWidth:1440,maxHeight:900},{action:"save"}]},uploader_events:["fileuploadadd","fileuploadadded","fileuploadalways","fileuploadchange","fileuploadcompleted","fileuploaddestroy","fileuploaddestroyed","fileuploaddone","fileuploaddragover","fileuploaddrop","fileuploadfail","fileuploadfailed","fileuploadfinished","fileuploadpaste","fileuploadprogress","fileuploadprogressall","fileuploadsend","fileuploadsent","fileuploadstart","fileuploadstarted","fileuploadstop","fileuploadstopped","fileuploadsubmit"],uploader_options:{autoUpload:!0,maxNumberOfFiles:1,maxFileSize:5e6,minFileSize:0,dropZone:".dropzone",type:"POST"},beforeRender:function(e){return e.upload_policy=this.sandbox.data.storage_policy,e},afterRender:function(){this.form=this.$el.find("form");var e=_.defaults(this.uploader_options,{dataType:"xml",url:this.form.attr("action"),dropZone:this.$el.find(this.uploader_options.dropZone),acceptFileTypes:this.fileTypes.images});this.form.fileupload(e),this.uploader=this.form.data("fileupload"),this.dropzone=this.$el.find(this.uploader_options.dropZone),this.form.on("fileuploadadd",this.onAdd),this.form.on("fileuploaddragover",this.onDragOver),this.form.on("fileuploaddrop",this.onDrop),this.form.on("fileuploadsend",this.onSend),this.form.on("fileuploadprogress",this.onProgress),this.form.on("fileuploadfail",this.onFail),this.form.on("fileuploadsuccess",this.onSuccess),this.form.on("fileuploaddone",this.onDone)},start:function(){this.form.fileupload("send",this.upload_data)},cancel:function(){},"delete":function(){},onDrop:function(){this.dropzone.text("Thanks !"),this.dropzone.removeClass("dropzone")},onDragOver:function(){this.dropzone.addClass("dragover"),clearTimeout(this.dragOverEffect);var e=this;this.dragOverEffect=setTimeout(function(){e.dropzone.removeClass("dragover")},100)},onAdd:function(e,t){var n=this.$el.find('[name="key"]'),a=n.val();return n.val(a.replace("${filename}","/"+t.files[0].name)),this.$el.find('[name="Filename"]').val(t.files[0].name),this.$el.find('[name="name"]').val(t.files[0].name),this.$el.find('[name="Content-Type"]').val(t.files[0].type),this.upload_data=t},onSend:function(){this.$el.find(".progress").fadeIn()},onProgress:function(e,t){this.$el.find(".bar").css("width",t.percent+"%")},onFail:function(){this.$el.find(".error").text("Error :#{data.errorThrown}")},onDone:function(e,t){this.$el.find(".progress").fadeOut(300,function(){}),this.$el.find(".bar").css("width",0),this.onUploadDone(t)},onUploadDone:function(e){_.map(e.files,_.bind(function(e){e.url=this.fileUrl(e.name)},this)),this.sandbox.emit("hull.upload.done",e.files),this.uploader.options.maxNumberOfFiles++},multipleUpload:function(){return!1},fileUrl:function(e){var t=this.sandbox.data.storage_policy;return encodeURI(t.url+t.params.key.replace("${filename}","/"+e))},initialize:function(){_.bindAll(this)}}),this.Hull=this.Hull||{},this.Hull.templates=this.Hull.templates||{},this.Hull.templates._default=this.Hull.templates._default||{},this.Hull.templates._default["upload/upload"]=Handlebars.template(function(e,t,n,a,i){function s(e,t){var i,s,o,l="";return l+='\n  <form action="',o=n.url,o?i=o.call(e,{hash:{},data:t}):(i=e.url,i=typeof i===d?i.apply(e):i),l+=h(i)+'" method="post" enctype="multipart/form-data" class="hull_upload">\n\n    ',i=e.params,s={},o=n.key_value,i=o?o.call(e,i,{hash:s,inverse:f.noop,fn:f.program(2,r,t),data:t}):c.call(e,"key_value",i,{hash:s,inverse:f.noop,fn:f.program(2,r,t),data:t}),(i||0===i)&&(l+=i),l+='\n\n    <div class="dropzone well hidden-phone hidden-phone-tablet" height="100px;" width="100px;">Drop an image here</div>\n\n    <input type="hidden" name="Filename" value=""/>\n    <input type="hidden" name="Content-Type" value=""/>\n    <input type="hidden" name="name" value=""/>\n\n    <div class="fileupload-buttonbar row-fluid">\n      <div class=\'span12\'>\n        ',i=e,i=f.invokePartial(a.upload_file_single,"upload_file_single",i,n,a,t),(i||0===i)&&(l+=i),l+='\n      </div>\n    </div>\n\n    <div class="fileupload-progress fade row-fluid">\n      <div class=\'span12\'>\n        <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">\n          <div class="bar" style="width:0%;"></div>\n        </div>\n        <div class="progress-extended">&nbsp;</div>\n      </div>\n    </div>\n\n\n    <div class=\'error\'></div>\n    <div class=\'filescontainer\'></div>\n  </form>\n'}function r(e,t){var a,i,s="";return s+='\n      <input type="hidden" name="',i=n.key,i?a=i.call(e,{hash:{},data:t}):(a=e.key,a=typeof a===d?a.apply(e):a),s+=h(a)+'" value="',i=n.value,i?a=i.call(e,{hash:{},data:t}):(a=e.value,a=typeof a===d?a.apply(e):a),s+=h(a)+'"/>\n    '}n=n||e.helpers,a=a||e.partials,i=i||{};var o,l,p,u="",d="function",h=this.escapeExpression,f=this,c=n.helperMissing,m=n.blockHelperMissing;return u+="\n",p=n.upload_policy,p?o=p.call(t,{hash:{},inverse:f.noop,fn:f.program(1,s,i),data:i}):(o=t.upload_policy,o=typeof o===d?o.apply(t):o),l={},n.upload_policy||(o=m.call(t,o,{hash:l,inverse:f.noop,fn:f.program(1,s,i),data:i})),(o||0===o)&&(u+=o),u+="\n"}),this.Hull.templates._default["upload/upload_file_multiple"]=Handlebars.template(function(e,t,n,a,i){return n=n||e.helpers,i=i||{},'  <span class="btn btn-success fileinput-button"> <i class="icon-plus icon-white"></i> <span>Add files...</span> <input type="file" name="files[]" multiple=""> </span>\n  <button type="submit" data-hull-action="start" class="btn btn-primary start"> <i class="icon-upload icon-white"></i> <span>Start upload</span> </button>\n  <button type="reset" data-hull-action="cancel" class="btn btn-warning"> <i class="icon-ban-circle icon-white"></i> <span>Cancel upload</span> </button>\n  <button type="button" data-hull-action="delete" class="btn btn-danger"> <i class="icon-trash icon-white"></i> <span>Delete</span> </button>\n  <input type="checkbox" class="toggle">\n'}),this.Hull.templates._default["upload/upload_file_single"]=Handlebars.template(function(e,t,n,a,i){return n=n||e.helpers,i=i||{},'<span class="btn btn-success fileinput-button">\n  <i class="icon-plus icon-white"></i>\n  <span>Add files...</span>\n  <input type="file" name="file" accept="image/*" capture="camera">\n</span>\n'});
+define(['jquery.fileupload'], {
+
+  type: "Hull",
+
+  templates: [
+    'upload',
+    'upload_file_single',
+    'upload_file_multiple'
+  ],
+
+  fileTypes: {
+    images :  /(\.|\/)(gif|jpe?g|png)$/i,
+    videos :  /(\.|\/)(mov|mkv|mpg|wmv|mp4|m4v)$/i
+  },
+
+  fileProcessors: {
+    images: [
+      { action: 'load', fileTypes: /^image\/(gif|jpeg|png)$/, maxFileSize: 20000000 },
+      { action: 'resize', maxWidth: 1440, maxHeight: 900 },
+      { action: 'save' }
+    ]
+  },
+
+  uploader_events: [
+    "fileuploadadd",
+    "fileuploadadded",
+    "fileuploadalways",
+    "fileuploadchange",
+    "fileuploadcompleted",
+    "fileuploaddestroy",
+    "fileuploaddestroyed",
+    "fileuploaddone",
+    "fileuploaddragover",
+    "fileuploaddrop",
+    "fileuploadfail",
+    "fileuploadfailed",
+    "fileuploadfinished",
+    "fileuploadpaste",
+    "fileuploadprogress",
+    "fileuploadprogressall",
+    "fileuploadsend",
+    "fileuploadsent",
+    "fileuploadstart",
+    "fileuploadstarted",
+    "fileuploadstop",
+    "fileuploadstopped",
+    "fileuploadsubmit"
+  ],
+
+  uploader_options: {
+    autoUpload : true,
+    maxNumberOfFiles:1,
+    maxFileSize: 5000000,
+    minFileSize:0,
+    dropZone: '.dropzone',
+    type : 'POST'
+    // previewSourceMaxFileSize: 5000000
+    // previewMaxWidth: 80
+    // previewMaxHeight: 80
+  },
+
+  beforeRender: function(data) {
+    data.upload_policy = this.sandbox.data.storage_policy;
+    return data;
+  },
+
+  afterRender: function() {
+    this.form = this.$el.find('form');
+    var opts = _.defaults(this.uploader_options, {
+      dataType:         'xml',
+      url:              this.form.attr('action'),
+      dropZone:         this.$el.find(this.uploader_options.dropZone),
+      acceptFileTypes:  this.fileTypes.images
+    });
+
+    this.form.fileupload(opts);
+    this.uploader = this.form.data('fileupload');
+    this.dropzone = this.$el.find(this.uploader_options.dropZone);
+
+    // for event in this.uploader_events
+    //   do (event) =>
+    //     this.form.on event, (e,d)=> this.emit(event, {event:e, data:d})
+
+    this.form.on('fileuploadadd',       this.onAdd);
+    this.form.on('fileuploaddragover',  this.onDragOver);
+    this.form.on('fileuploaddrop',      this.onDrop);
+    this.form.on('fileuploadsend',      this.onSend);
+    this.form.on('fileuploadprogress',  this.onProgress);
+    this.form.on('fileuploadfail',      this.onFail);
+    this.form.on('fileuploadsuccess',   this.onSuccess);
+    this.form.on('fileuploaddone',      this.onDone);
+
+  },
+
+  start: function() {
+    this.form.fileupload('send', this.upload_data);
+  },
+
+  cancel: function() {},
+  delete: function() {},
+
+  onDrop: function() {
+    this.dropzone.text('Thanks !');
+    this.dropzone.removeClass('dropzone');
+  },
+
+  onDragOver: function() {
+    this.dropzone.addClass('dragover');
+    clearTimeout(this.dragOverEffect);
+    var self = this;
+    this.dragOverEffect = setTimeout(function() { self.dropzone.removeClass('dragover'); }, 100);
+  },
+
+  onAdd: function(e, data) {
+    var key = this.$el.find('[name="key"]');
+    var s = key.val();
+    key.val(s.replace('${filename}', "/" + data.files[0].name));
+    this.$el.find('[name="Filename"]').val(data.files[0].name);
+    this.$el.find('[name="name"]').val(data.files[0].name);
+    this.$el.find('[name="Content-Type"]').val(data.files[0].type);
+    return this.upload_data = data;
+  },
+
+  onSend: function(e, data) {
+    this.$el.find('.progress').fadeIn();
+  },
+
+  onProgress: function(e, data) {
+    this.$el.find('.bar').css('width', data.percent+'%');
+  },
+
+  onFail: function(e, data) {
+    this.$el.find('.error').text("Error :#{data.errorThrown}");
+  },
+
+  onDone: function(e, data) {
+    this.$el.find('.progress').fadeOut(300, function() {});
+    this.$el.find('.bar').css('width', 0);
+    this.onUploadDone(data);
+  },
+
+  onUploadDone: function(data) {
+    // var location = $(data.result).find('Location').text();
+    // Context.app.addImage(filename: data.files[0].name)
+    _.map(data.files, _.bind(function (file) {
+      file.url = this.fileUrl(file.name);
+    }, this));
+    this.sandbox.emit('hull.upload.done', data.files);
+    this.uploader.options.maxNumberOfFiles++;
+  },
+
+  multipleUpload: function() {
+    return false;
+    // return (this.uploader.options.maxNumberOfFiles > 1);
+  },
+
+  fileUrl: function(filename) {
+    var policy = this.sandbox.data.storage_policy;
+    return encodeURI(policy.url + policy.params.key.replace('${filename}', "/" + filename));
+  },
+
+  initialize: function() {
+    _.bindAll(this);
+  }
+
+});

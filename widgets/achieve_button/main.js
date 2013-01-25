@@ -1,1 +1,49 @@
-define({type:"Hull",templates:["achieve_button"],actions:{achieve:function(){this.api("hull/"+this.id+"/achieve","post",{secret:this.options.secret}).then(this.refresh)}},datasources:{achievement:function(){return this.api("hull/"+this.id)}},beforeRender:function(e){return e.achievement&&e.achievement.badge?e.isAchieved=!0:(e.isAchieved=!1,e.canAchieve=e.loggedIn&&this.options.secret?!0:!1),e}}),this.Hull=this.Hull||{},this.Hull.templates=this.Hull.templates||{},this.Hull.templates._default=this.Hull.templates._default||{},this.Hull.templates._default["achieve_button/achieve_button"]=Handlebars.template(function(e,t,n,i,a){function s(e){var t,n="";return n+='\n  <button class="btn btn-success">[DONE] Checked (',t=e.achievement,t=null==t||t===!1?t:t.name,t=typeof t===o?t.apply(e):t,n+=p(t)+")</button>\n"}function l(e,t){var i,a,s="";return s+='\n  <button class="btn ',i=e.canAchieve,a={},i=n.unless.call(e,i,{hash:a,inverse:v.noop,fn:v.program(4,h,t),data:t}),(i||0===i)&&(s+=i),s+='" data-hull-action="achieve">CheckIn (',i=e.achievement,i=null==i||i===!1?i:i.name,i=typeof i===o?i.apply(e):i,s+=p(i)+")</button>\n"}function h(){return"disabled"}n=n||e.helpers,a=a||{};var c,u,r="",o="function",p=this.escapeExpression,v=this;return c=t.isAchieved,u={},c=n["if"].call(t,c,{hash:u,inverse:v.program(3,l,a),fn:v.program(1,s,a),data:a}),(c||0===c)&&(r+=c),r+="\n"});
+/**
+ * Achieve Button:
+ *
+ * **Let a user achieve something**
+ *
+ * A button that lets a user achieve an achievement.
+ *
+ * * `data-hull-id="ACHIEVEMENT_ID"` : specify which achievement to unlock
+ * * `data-hull-secret="SECRET"` : specify the secret.
+ *
+ * Using this widget you can implement two very useful functionalities:
+ *
+ * * **Basic Checkins**, without any sort of verification : just specify in the secret in plain text, and the achievement will be unlockable immediately.
+ * * **Restricted Checkins** : Do not write the secret in plain text.
+ * Instead, use the server library to compute a user-specific token, and use it only when you want your user to be able to checkin.
+ * The user will then be able to unlock the achievement using a unique token, only valid for him and for a limited time.
+ * Check out the Kitchensink for a working example.
+ *
+ * * **Server-side unlocked Achievements** : Don't use this widget at all. Instead use the server library to unlock an achievement for a user.
+ * Check out the kitchensink for a working example.
+*/
+
+
+define({
+  type: "Hull",
+  templates: ["achieve_button"],
+  actions: {
+    achieve: function() {
+      this.api("hull/" + this.id + "/achieve", "post", { secret: this.options.secret }).then(this.refresh);
+    }
+  },
+  datasources: {
+    achievement: function() { return this.api('hull/' + this.id); }
+  },
+  beforeRender: function(data) {
+    if (data.achievement && data.achievement.badge) {
+      data.isAchieved = true;
+    } else {
+      data.isAchieved = false;
+      if (data.loggedIn && this.options.secret) {
+        data.canAchieve = true;
+      } else {
+        data.canAchieve = false;
+      }
+    }
+    return data;
+  }
+
+});

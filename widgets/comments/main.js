@@ -1,1 +1,28 @@
-define({type:"Hull",templates:["comments"],debug:!0,initialize:function(){this.sandbox.on("collection.hull."+this.id+".comments.**",function(){this.refresh()}.bind(this))},datasources:{comments:":id/comments"},actions:{comment:function(t,e){var n=this.$el.find("textarea").val();if(n&&n.length>0){var a=this.datasources.comments.create({description:n}),l=a.save();l.promise().then(_.bind(this.render,this,null,null))}e.stopPropagation()}}}),this.Hull=this.Hull||{},this.Hull.templates=this.Hull.templates||{},this.Hull.templates._default=this.Hull.templates._default||{},this.Hull.templates._default["comments/comments"]=Handlebars.template(function(t,e,n,a,l){function s(){return'\n  <textarea></textarea>\n  <button data-hull-action="comment">Send</button>\n'}function i(){return'\n  <button data-hull-action="login" data-hull-provider="facebook">Login first</button>\n'}function o(t,e){var a,l,s="";return s+="\n  <li>",l=n.updated_at,l?a=l.call(t,{hash:{},data:e}):(a=t.updated_at,a=typeof a===m?a.apply(t):a),s+=d(a)+": ",l=n.description,l?a=l.call(t,{hash:{},data:e}):(a=t.description,a=typeof a===m?a.apply(t):a),s+=d(a)+" (by ",a=t.user,a=null==a||a===!1?a:a.name,a=typeof a===m?a.apply(t):a,s+=d(a)+")</li>\n"}function u(){return"\n  oops... no comments for the moment\n"}n=n||t.helpers,l=l||{};var r,c,h,p="",m="function",d=this.escapeExpression,f=this,v=n.blockHelperMissing;return r=e.loggedIn,c={},r=n["if"].call(e,r,{hash:c,inverse:f.program(3,i,l),fn:f.program(1,s,l),data:l}),(r||0===r)&&(p+=r),p+="\n\n\n<ul>\n",h=n.comments,h?r=h.call(e,{hash:{},inverse:f.noop,fn:f.program(5,o,l),data:l}):(r=e.comments,r=typeof r===m?r.apply(e):r),c={},n.comments||(r=v.call(e,r,{hash:c,inverse:f.noop,fn:f.program(5,o,l),data:l})),(r||0===r)&&(p+=r),p+="\n\n",h=n.comments,h?r=h.call(e,{hash:{},inverse:f.program(7,u,l),fn:f.noop,data:l}):(r=e.comments,r=typeof r===m?r.apply(e):r),c={},n.comments||(r=v.call(e,r,{hash:c,inverse:f.program(7,u,l),fn:f.noop,data:l})),(r||0===r)&&(p+=r),p+="\n</ul>\n\n"});
+define({
+  type: 'Hull',
+  templates:  ['comments'],
+  debug: true,
+
+  initialize: function() {
+    this.sandbox.on("collection.hull." + this.id + ".comments.**", function() { this.refresh(); }.bind(this));
+  },
+
+  //@FIX Cache is broken for datasources declared as objects
+  datasources: {
+    comments: ":id/comments"
+  },
+  
+  actions: {
+    comment: function (elt, evt, data) {
+      var description = this.$el.find("textarea").val();
+      if (description && description.length > 0) {
+        var comment = this.datasources.comments.create({
+          description: description
+        });
+        var xhr = comment.save();
+        xhr.promise().then(_.bind(this.render, this, null, null));
+      }
+      evt.stopPropagation();
+    }
+  }
+});

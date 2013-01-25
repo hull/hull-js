@@ -1,1 +1,4 @@
-define({type:"Hull",templates:["identity"]}),this.Hull=this.Hull||{},this.Hull.templates=this.Hull.templates||{},this.Hull.templates._default=this.Hull.templates._default||{},this.Hull.templates._default["identity/identity"]=Handlebars.template(function(t,e,l,n,a){function s(t){var e,l="";return l+="\nHello I am ",e=t.me,e=null==e||e===!1?e:e.name,e=typeof e===r?e.apply(t):e,l+=p(e)+"\n<hr>\n<button data-hull-action='logout'>Bye bye !</button>\n"}function i(){return"\nPlease <button data-hull-action='login' data-hull-provider='facebook'>Login</button> first\n"}l=l||t.helpers,a=a||{};var o,u,r="function",p=this.escapeExpression,h=this;return o=e.loggedIn,u={},o=l["if"].call(e,o,{hash:u,inverse:h.program(3,i,a),fn:h.program(1,s,a),data:a}),o||0===o?o:""});
+define({
+  type: "Hull",
+  templates: ['identity']
+});
