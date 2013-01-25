@@ -18,4 +18,5 @@ define ['components/aura-express/lib/aura'], (Aura)->
     return hull
 
   window.Hull = Hull
+  Hull.version = __version__
   Hull
