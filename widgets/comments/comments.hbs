@@ -1,0 +1,18 @@
+{{#if loggedIn}}
+  <textarea></textarea>
+  <button data-hull-action="comment">Send</button>
+{{else}}
+  <button data-hull-action="login" data-hull-provider="facebook">Login first</button>
+{{/if}}
+
+
+<ul>
+{{#comments}}
+  <li>{{updated_at}}: {{description}} (by {{user.name}})</li>
+{{/comments}}
+
+{{^comments}}
+  oops... no comments for the moment
+{{/comments}}
+</ul>
+
