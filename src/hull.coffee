@@ -36,6 +36,7 @@ define ['components/aura-express/lib/aura'], (Aura)->
     initProcess = hull.app
         .use('aura-extensions/aura-handlebars')
         .use('aura-extensions/aura-backbone')
+        .use('aura-extensions/hull-utils')
         .use('lib/client/handlebars-helpers')
         .use('lib/client/api')
         .use('lib/client/auth')
