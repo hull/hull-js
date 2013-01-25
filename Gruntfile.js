@@ -68,7 +68,7 @@ module.exports = function (grunt) {
       client: {
         options: {
           baseUrl: '.',
-          optimize: 'none',
+          //optimize: 'none',
           preserveLicenseComments: true,
           paths: {
             aura:           'components/aura-express/dist/aura',
@@ -79,9 +79,7 @@ module.exports = function (grunt) {
             handlebars:     'components/handlebars/handlebars',
             requireLib:     'components/requirejs/require',
             jquery:         'empty:',
-            text:           'components/requirejs-text/text',
-            "jquery.fileupload": 'components/jquery-file-upload/js/jquery.fileupload',
-            "jquery.ui.widget":  'components/jquery-file-upload/js/vendor/jquery.ui.widget'
+            text:           'components/requirejs-text/text'
           },
           shim: {
             backbone:   { exports: 'Backbone', deps: ['underscore', 'jquery'] },
