@@ -1,4 +1,4 @@
-define ->
+define ['aura-extensions/hull-utils'], ->
 
   ->
     

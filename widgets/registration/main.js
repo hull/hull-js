@@ -1,4 +1,4 @@
-define(['sandbox', 'underscore', './default_fields', './jquery.h5validate'], function(sandbox, _, default_fields) {
+define(['sandbox', 'underscore', 'jquery.default_fields', 'jquery.h5validate'], function(sandbox, _, default_fields) {
 
   return {
 

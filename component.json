@@ -12,6 +12,7 @@
     "analytics": "*",
     "base64": "latest",
     "jquery-file-upload": "latest",
-    "moment": "~1.7.2"
+    "moment": "~1.7.2",
+    "underscore.string": "~2.3.1"
   }
 }

@@ -45,7 +45,7 @@ module.exports = function (grunt) {
 
     clean: {
       libs: {
-        src: ['lib', 'dist']
+        src: ['lib']
       },
       widgets: {
         src: ['tmp']
@@ -94,6 +94,8 @@ module.exports = function (grunt) {
             easyXDM:        'components/easyXDM/easyXDM',
             handlebars:     'components/handlebars/handlebars',
             requireLib:     'components/requirejs/require',
+            moment:         'components/moment/moment',
+            string:         'components/underscore.string/dist/underscore.string.min',
             jquery:         'empty:',
             text:           'components/requirejs-text/text'
           },
@@ -120,7 +122,9 @@ module.exports = function (grunt) {
             'lib/client/templates',
             'lib/client/handlebars-helpers',
             'lib/client/widget',
-            'lib/client/storage'
+            'lib/client/storage',
+            'moment',
+            'string'
           ],
           out: 'dist/' + pkg.version + '/hull.js'
         }
@@ -180,6 +184,20 @@ module.exports = function (grunt) {
             'jquery.fileupload'
           ],
           out: 'tmp/widgets/upload/deps/jquery.fileupload.js'
+        }
+      },
+      registration: {
+        options: {
+          paths: {
+            jquery: "empty:",
+            "jquery.default_fields" : "widgets/registration/default_fields",
+            "jquery.h5validate": "widgets/registration/jquery.h5validate"
+          },
+          include: [
+            'jquery.default_fields',
+            'jquery.h5validate'
+          ],
+          out: 'tmp/widgets/registration/deps/jquery.deps.js'
         }
       }
     },
@@ -257,7 +275,7 @@ module.exports = function (grunt) {
 
   // default build task
   grunt.registerTask('build_libs', ['clean:libs', 'coffee', 'requirejs:client', 'requirejs:remote']);
-  grunt.registerTask('build_widgets', ['clean:widgets', 'handlebars', 'requirejs:upload', 'concat:widgets', 'uglify:widgets']);
+  grunt.registerTask('build_widgets', ['clean:widgets', 'handlebars', 'requirejs:upload', 'requirejs:registration', 'concat:widgets', 'uglify:widgets']);
   grunt.registerTask('build', ['build_libs', 'build_widgets']);
   grunt.registerTask('default', ['connect', 'build', /*'mocha',*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
