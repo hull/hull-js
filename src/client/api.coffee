@@ -274,6 +274,7 @@ define ->
       onRemoteReady = (remoteConfig)->
         data = remoteConfig.data
         env.config.services = remoteConfig.services
+        env.config.widgets.sources.hull = remoteConfig.baseUrl + '/widgets'
         env.sandbox.config.services = remoteConfig.services
         for m in ['me', 'app', 'org']
           attrs = data[m]
@@ -284,7 +285,7 @@ define ->
         initialized.resolve(data)
 
       rpc = new easyXDM.Rpc({
-        remote: "#{env.config.orgUrl}/api/v1/#{env.config.appId}/remote.html"
+        remote: "#{env.config.orgUrl}/api/v1/#{env.config.appId}/remote.html?v=#{__version__}"
       }, {
         remote: { message: {}, ready: {} }
         local:  { message: onRemoteMessage, ready: onRemoteReady }
