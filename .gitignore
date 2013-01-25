@@ -5,3 +5,4 @@ npm-debug.log
 /lib
 app/app.js
 /tmp
+/dist
