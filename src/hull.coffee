@@ -44,7 +44,6 @@ define ['components/aura-express/lib/aura'], (Aura)->
         .use('lib/client/templates')
         .use('lib/client/widget')
         .use(myApp)
-        .registerWidgetsSource('hull', 'http://js.hull.dev/widgets')
         .start({ widgets: 'body' })
 
     initProcess.fail (err)->
