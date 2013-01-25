@@ -35,7 +35,7 @@ module.exports = function (grunt) {
         src: ['lib', 'dist']
       },
       widgets: {
-        src: ['widgets', 'tmp']
+        src: ['dist-widgets', 'tmp']
       }
     },
 
@@ -159,7 +159,7 @@ module.exports = function (grunt) {
           include: [
            'jquery.fileupload'
           ],
-          out: 'tmp/widgets/upload/jquery.fileupload.js'
+          out: 'tmp/dist-widgets/upload/jquery.fileupload.js'
         }
       }
     },
@@ -167,17 +167,17 @@ module.exports = function (grunt) {
     uglify: {
       widgets: {
         files: {
-          'widgets/achieve_button/main.js': "tmp/widgets/achieve_button/main.js",
-          'widgets/activity/main.js': 'tmp/widgets/activity/main.js',
-          'widgets/comments/main.js': 'tmp/widgets/comments/main.js',
-          'widgets/explorer/main.js': 'tmp/widgets/explorer/main.js',
-          'widgets/friends_list/main.js': 'tmp/widgets/friends_list/main.js',
-          'widgets/identity/main.js': 'tmp/widgets/identity/main.js',
-          'widgets/lists/main.js': 'tmp/widgets/lists/main.js',
-          'widgets/quiz/main.js': 'tmp/widgets/quiz/main.js',
-          'widgets/registration/main.js': 'tmp/widgets/registration/main.js',
-          'widgets/reviews/main.js': 'tmp/widgets/reviews/main.js',
-          'widgets/upload/main.js': 'tmp/widgets/upload/main.js'
+          'dist-widgets/achieve_button/main.js': "tmp/widgets/achieve_button/main.js",
+          'dist-widgets/activity/main.js': 'tmp/widgets/activity/main.js',
+          'dist-widgets/comments/main.js': 'tmp/widgets/comments/main.js',
+          'dist-widgets/explorer/main.js': 'tmp/widgets/explorer/main.js',
+          'dist-widgets/friends_list/main.js': 'tmp/widgets/friends_list/main.js',
+          'dist-widgets/identity/main.js': 'tmp/widgets/identity/main.js',
+          'dist-widgets/lists/main.js': 'tmp/widgets/lists/main.js',
+          'dist-widgets/quiz/main.js': 'tmp/widgets/quiz/main.js',
+          'dist-widgets/registration/main.js': 'tmp/widgets/registration/main.js',
+          'dist-widgets/reviews/main.js': 'tmp/widgets/reviews/main.js',
+          'dist-widgets/upload/main.js': 'tmp/widgets/upload/main.js'
         }
       }
     },
@@ -188,20 +188,20 @@ module.exports = function (grunt) {
           stripBanners: true
         },
         files: {
-          'tmp/widgets/achieve_button/main.js': ['widgets-src/achieve_button/main.js', 'tmp/widgets/achieve_button/templates.js'],
-          'tmp/widgets/activity/main.js': ['widgets-src/activity/main.js', 'tmp/widgets/activity/templates.js'],
-          'tmp/widgets/comments/main.js': ['widgets-src/comments/main.js', 'tmp/widgets/comments/templates.js'],
-          'tmp/widgets/explorer/main.js': ['widgets-src/explorer/main.js', 'tmp/widgets/explorer/templates.js'],
-          'tmp/widgets/friends_list/main.js': ['widgets-src/friends_list/main.js', 'tmp/widgets/friends_list/templates.js'],
-          'tmp/widgets/identity/main.js': ['widgets-src/identity/main.js', 'tmp/widgets/identity/templates.js'],
-          'tmp/widgets/lists/main.js': ['widgets-src/lists/main.js', 'tmp/widgets/lists/templates.js'],
-          'tmp/widgets/quiz/main.js': ['widgets-src/quiz/main.js', 'tmp/widgets/quiz/templates.js'],
-          'tmp/widgets/registration/main.js': ['widgets-src/registration/main.js', 'tmp/widgets/registration/templates.js'],
-          'tmp/widgets/reviews/main.js': ['widgets-src/reviews/main.js', 'tmp/widgets/reviews/templates.js'],
+          'tmp/widgets/achieve_button/main.js': ['widgets/achieve_button/main.js', 'tmp/widgets/achieve_button/templates.js'],
+          'tmp/widgets/activity/main.js': ['widgets/activity/main.js', 'tmp/widgets/activity/templates.js'],
+          'tmp/widgets/comments/main.js': ['widgets/comments/main.js', 'tmp/widgets/comments/templates.js'],
+          'tmp/widgets/explorer/main.js': ['widgets/explorer/main.js', 'tmp/widgets/explorer/templates.js'],
+          'tmp/widgets/friends_list/main.js': ['widgets/friends_list/main.js', 'tmp/widgets/friends_list/templates.js'],
+          'tmp/widgets/identity/main.js': ['widgets/identity/main.js', 'tmp/widgets/identity/templates.js'],
+          'tmp/widgets/lists/main.js': ['widgets/lists/main.js', 'tmp/widgets/lists/templates.js'],
+          'tmp/widgets/quiz/main.js': ['widgets/quiz/main.js', 'tmp/widgets/quiz/templates.js'],
+          'tmp/widgets/registration/main.js': ['widgets/registration/main.js', 'tmp/widgets/registration/templates.js'],
+          'tmp/widgets/reviews/main.js': ['widgets/reviews/main.js', 'tmp/widgets/reviews/templates.js'],
           'tmp/widgets/upload/main.js': [
             'tmp/widgets/upload/jquery.fileupload.js',
-            'widgets-src/upload/main.js',
-            'tmp/widgets/upload/templates.js'
+            'dist-widgets/upload/main.js',
+            'tmp/dist-widgets/upload/templates.js'
           ]
         }
       }
@@ -240,21 +240,21 @@ module.exports = function (grunt) {
           wrapped: true,
           namespace: "Hull.templates._default",
           processName: function (filename) {
-            return filename.replace("widgets-src/", "").replace(/\.hbs$/, '');
+            return filename.replace("widgets/", "").replace(/\.hbs$/, '');
           }
         },
         files: {
-          "tmp/widgets/achieve_button/templates.js" : "widgets-src/achieve_button/**/*.hbs",
-          "tmp/widgets/activity/templates.js"       : "widgets-src/activity/**/*.hbs",
-          "tmp/widgets/comments/templates.js"       : "widgets-src/comments/**/*.hbs",
-          "tmp/widgets/explorer/templates.js"       : "widgets-src/explorer/**/*.hbs",
-          "tmp/widgets/friends_list/templates.js"   : "widgets-src/friends_list/**/*.hbs",
-          "tmp/widgets/identity/templates.js"       : "widgets-src/identity/**/*.hbs",
-          "tmp/widgets/lists/templates.js"          : "widgets-src/lists/**/*.hbs",
-          "tmp/widgets/quiz/templates.js"           : "widgets-src/quiz/**/*.hbs",
-          "tmp/widgets/registration/templates.js"   : "widgets-src/registration/**/*.hbs",
-          "tmp/widgets/reviews/templates.js"        : "widgets-src/reviews/**/*.hbs",
-          "tmp/widgets/upload/templates.js"         : "widgets-src/upload/**/*.hbs",
+          "tmp/dist-widgets/achieve_button/templates.js" : "widgets/achieve_button/**/*.hbs",
+          "tmp/dist-widgets/activity/templates.js"       : "widgets/activity/**/*.hbs",
+          "tmp/dist-widgets/comments/templates.js"       : "widgets/comments/**/*.hbs",
+          "tmp/dist-widgets/explorer/templates.js"       : "widgets/explorer/**/*.hbs",
+          "tmp/dist-widgets/friends_list/templates.js"   : "widgets/friends_list/**/*.hbs",
+          "tmp/dist-widgets/identity/templates.js"       : "widgets/identity/**/*.hbs",
+          "tmp/dist-widgets/lists/templates.js"          : "widgets/lists/**/*.hbs",
+          "tmp/dist-widgets/quiz/templates.js"           : "widgets/quiz/**/*.hbs",
+          "tmp/dist-widgets/registration/templates.js"   : "widgets/registration/**/*.hbs",
+          "tmp/dist-widgets/reviews/templates.js"        : "widgets/reviews/**/*.hbs",
+          "tmp/dist-widgets/upload/templates.js"         : "widgets/upload/**/*.hbs",
         }
       }
     },
@@ -265,7 +265,7 @@ module.exports = function (grunt) {
 
     watch: {
       widgets: {
-        files: ['widgets-src/**/*'],
+        files: ['widgets/**/*'],
         tasks: ['build_widgets']
       },
       libs: {
