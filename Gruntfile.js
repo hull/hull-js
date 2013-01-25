@@ -26,9 +26,9 @@ module.exports = function (grunt) {
       concatWidgetsFiles      = {},
       handlebarsWidgetsFiles  = {};
 
-  widgetsList.forEach(function(widgetPath) {
+  widgetsList.forEach(function (widgetPath) {
     uglifyWidgetsFiles['dist/' + pkg.version + '/' + widgetPath + '/main.js'] = 'tmp/' + widgetPath + '/main.js';
-    concatWidgetsFiles['tmp/' + widgetPath + '/main.js'] = [widgetPath + '/main.js', 'tmp/' + widgetPath + '/templates.js'];
+    concatWidgetsFiles['tmp/' + widgetPath + '/main.js'] = ['tmp/' + widgetPath + '/deps/*.js', widgetPath + '/main.js', 'tmp/' + widgetPath + '/templates.js'];
     handlebarsWidgetsFiles['tmp/' + widgetPath + '/templates.js'] = widgetPath + '/**/*.hbs';
   });
 
@@ -177,20 +177,15 @@ module.exports = function (grunt) {
             "jquery.fileupload" : 'components/jquery-file-upload/js/jquery.fileupload'
           },
           include: [
-           'jquery.fileupload'
+            'jquery.fileupload'
           ],
-          out: 'tmp/dist-widgets/upload/jquery.fileupload.js'
+          out: 'tmp/widgets/upload/deps/jquery.fileupload.js'
         }
       }
     },
 
     uglify: {
       widgets: {
-        options: {
-          mangle: false,
-          beautify: true,
-          compress: false
-        },
         files: uglifyWidgetsFiles
       }
     },
@@ -261,9 +256,9 @@ module.exports = function (grunt) {
   });
 
   // default build task
-  grunt.registerTask('build_libs', ['clean:libs', 'coffee', 'requirejs']);
+  grunt.registerTask('build_libs', ['clean:libs', 'coffee', 'requirejs:client', 'requirejs:remote']);
   grunt.registerTask('build_widgets', ['clean:widgets', 'handlebars', 'requirejs:upload', 'concat:widgets', 'uglify:widgets']);
-  grunt.registerTask('build', ['build_libs', 'build_widgets'])
+  grunt.registerTask('build', ['build_libs', 'build_widgets']);
   grunt.registerTask('default', ['connect', 'build', /*'mocha',*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 };
