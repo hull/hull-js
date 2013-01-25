@@ -100,8 +100,6 @@ module.exports = function (grunt) {
             'aura-extensions/aura-handlebars',
             'handlebars',
             'text',
-            'jquery.fileupload',
-            'jquery.ui.widget',
             'lib/hull',
             'lib/client/api',
             'lib/client/auth',
@@ -153,24 +151,23 @@ module.exports = function (grunt) {
           out: 'dist/hull-remote.js'
         }
       },
-      widgets: {
+      upload: {
         options: {
-          baseUrl: 'widgets-src',
+          paths: {
+            jquery: "empty:",
+            "jquery.ui.widget" : 'components/jquery-file-upload/js/vendor/jquery.ui.widget',
+            "jquery.fileupload" : 'components/jquery-file-upload/js/jquery.fileupload'
+          },
           include: [
-            'comments/main.js'
+           'jquery.fileupload'
           ],
-          out: 'tmp/widgets/comments/widget.js'
+          out: 'tmp/widgets/upload/jquery.fileupload.js'
         }
       }
     },
 
     uglify: {
       widgets: {
-        options: {
-          mangle: false,
-          beautify: true,
-          compress: false
-        },
         files: {
           'widgets/achieve_button/main.js': "tmp/widgets/achieve_button/main.js",
           'widgets/activity/main.js': 'tmp/widgets/activity/main.js',
@@ -203,7 +200,11 @@ module.exports = function (grunt) {
           'tmp/widgets/quiz/main.js': ['widgets-src/quiz/main.js', 'tmp/widgets/quiz/templates.js'],
           'tmp/widgets/registration/main.js': ['widgets-src/registration/main.js', 'tmp/widgets/registration/templates.js'],
           'tmp/widgets/reviews/main.js': ['widgets-src/reviews/main.js', 'tmp/widgets/reviews/templates.js'],
-          'tmp/widgets/upload/main.js': ['widgets-src/upload/main.js', 'tmp/widgets/upload/templates.js']
+          'tmp/widgets/upload/main.js': [
+            'tmp/widgets/upload/jquery.fileupload.js',
+            'widgets-src/upload/main.js',
+            'tmp/widgets/upload/templates.js'
+          ]
         }
       }
     },
@@ -278,7 +279,7 @@ module.exports = function (grunt) {
 
   // default build task
   grunt.registerTask('build_libs', ['clean:libs', 'coffee', 'requirejs']);
-  grunt.registerTask('build_widgets', ['clean:widgets', 'handlebars', 'concat:widgets', 'uglify:widgets']);
+  grunt.registerTask('build_widgets', ['clean:widgets', 'handlebars', 'requirejs:upload', 'concat:widgets', 'uglify:widgets']);
   grunt.registerTask('build', ['build_libs', 'build_widgets'])
   grunt.registerTask('default', ['connect', 'build', /*'mocha',*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
