@@ -1,4 +1,4 @@
-define({
+define(['jquery.fileupload'], {
 
   type: "Hull",
 
@@ -14,10 +14,10 @@ define({
   },
 
   fileProcessors: {
-    images:[
-      { action:'load', fileTypes:/^image\/(gif|jpeg|png)$/, maxFileSize:20000000 },
-      { action:'resize', maxWidth:1440, maxHeight:900 },
-      { action:'save' }
+    images: [
+      { action: 'load', fileTypes: /^image\/(gif|jpeg|png)$/, maxFileSize: 20000000 },
+      { action: 'resize', maxWidth: 1440, maxHeight: 900 },
+      { action: 'save' }
     ]
   },
 
@@ -142,10 +142,10 @@ define({
   onUploadDone: function(data) {
     // var location = $(data.result).find('Location').text();
     // Context.app.addImage(filename: data.files[0].name)
-    if (data.files[0] && data.files[0].type && data.files[0].type.split("/")[0] === "image") {
-      var source_url = this.fileUrl(data.files[0].name);
-      this.api('hull/me/images', 'post', { source_url: source_url, name: data.files[0].name })
-    }
+    _.map(data.files, _.bind(function (file) {
+      file.url = this.fileUrl(file.name);
+    }, this));
+    this.sandbox.emit('hull.upload.done', data.files);
     this.uploader.options.maxNumberOfFiles++;
   },
 

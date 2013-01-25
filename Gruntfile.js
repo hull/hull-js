@@ -85,7 +85,6 @@ module.exports = function (grunt) {
             end: " ; window.require = require; window.define = define; }(window));"
           },
           baseUrl: '.',
-          // optimize: 'none',
           preserveLicenseComments: true,
           paths: {
             aura:           'components/aura-express/dist/aura',
@@ -96,9 +95,7 @@ module.exports = function (grunt) {
             handlebars:     'components/handlebars/handlebars',
             requireLib:     'components/requirejs/require',
             jquery:         'empty:',
-            text:           'components/requirejs-text/text',
-            "jquery.fileupload": 'components/jquery-file-upload/js/jquery.fileupload',
-            "jquery.ui.widget":  'components/jquery-file-upload/js/vendor/jquery.ui.widget'
+            text:           'components/requirejs-text/text'
           },
           shim: {
             backbone:   { exports: 'Backbone', deps: ['underscore', 'jquery'] },
@@ -117,8 +114,6 @@ module.exports = function (grunt) {
             'aura-extensions/aura-handlebars',
             'handlebars',
             'text',
-            'jquery.fileupload',
-            'jquery.ui.widget',
             'lib/hull',
             'lib/client/api',
             'lib/client/auth',
@@ -172,6 +167,19 @@ module.exports = function (grunt) {
             'lib/remote/services/hull'
           ],
           out: 'dist/' + pkg.version + '/hull-remote.js'
+        }
+      },
+      upload: {
+        options: {
+          paths: {
+            jquery: "empty:",
+            "jquery.ui.widget" : 'components/jquery-file-upload/js/vendor/jquery.ui.widget',
+            "jquery.fileupload" : 'components/jquery-file-upload/js/jquery.fileupload'
+          },
+          include: [
+           'jquery.fileupload'
+          ],
+          out: 'tmp/dist-widgets/upload/jquery.fileupload.js'
         }
       }
     },
@@ -254,8 +262,8 @@ module.exports = function (grunt) {
 
   // default build task
   grunt.registerTask('build_libs', ['clean:libs', 'coffee', 'requirejs']);
-  grunt.registerTask('build_widgets', ['clean:widgets', 'handlebars', 'concat:widgets', 'uglify:widgets']);
-  grunt.registerTask('build', ['build_libs', 'build_widgets']);
+  grunt.registerTask('build_widgets', ['clean:widgets', 'handlebars', 'requirejs:upload', 'concat:widgets', 'uglify:widgets']);
+  grunt.registerTask('build', ['build_libs', 'build_widgets'])
   grunt.registerTask('default', ['connect', 'build', /*'mocha',*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 };
