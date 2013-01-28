@@ -1,3 +1,8 @@
+/**
+ * Widget Quiz
+ *
+ * Not ready yet
+ */
 define({
   type: "Hull",
   namespace: 'quiz',

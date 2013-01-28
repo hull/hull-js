@@ -1,9 +1,31 @@
+/**
+ * ## Widget ```comment```
+ *
+ * This widget is identified as ```comments@hull```. It is used to view and add comments to an object of the crrent application.
+ *
+ * ### Parameters:
+ *
+ * * ```id```: The object you want to manipulate comments upon.
+ *
+ * ### Templates:
+ *
+ * * ```comments/comments```: Display the collection of comments and allows to post a new comment if logged in.
+ *
+ *
+ * ### Datasources:
+ *
+ * * ```comments```: The collection of all the comments related to the object.
+ *
+ * ### Actions:
+ *
+ * * ```comment```: Triggered when an user sinmits a new comment.
+ */
 define({
   type: 'Hull',
   templates:  ['comments'],
   debug: true,
 
-  initialize: function() {
+  initialize: function () {
     this.sandbox.on("collection.hull." + this.id + ".comments.**", function() { this.refresh(); }.bind(this));
   },
 

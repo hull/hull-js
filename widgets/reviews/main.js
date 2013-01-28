@@ -1,3 +1,8 @@
+/**
+ * Widget Reviews
+ *
+ * Not ready yet
+ */
 define(['sandbox'], function(sandbox) {
 
   var ReviewsCollection = sandbox.mvc.Collection({
