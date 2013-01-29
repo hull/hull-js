@@ -122,7 +122,6 @@ module.exports = function (grunt) {
             'lib/client/templates',
             'lib/client/handlebars-helpers',
             'lib/client/widget',
-            'lib/client/storage',
             'moment',
             'string'
           ],

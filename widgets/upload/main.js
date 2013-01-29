@@ -80,12 +80,39 @@ define(['jquery.fileupload'], {
     // previewMaxHeight: 80
   },
 
-  beforeRender: function(data) {
-    data.upload_policy = this.sandbox.data.storage_policy;
+  selectStoragePolicy: function () {
+    var storagePolicies = [],
+        selectedPolicy,
+        optionValue = this.options.storage;
+    if (this.sandbox.config.services.types.storage) {
+      storagePolicies = this.sandbox.config.services.types.storage;
+    }
+
+    var countPolicies = storagePolicies.length;
+    if (countPolicies === 1) {
+      selectedPolicy = storagePolicies[0];
+    } else if (countPolicies > 1) {
+      if (!optionValue) {
+        throw new TypeError("You must specify a storage policy.");
+      }
+      if (storagePolicies.hasOwnProperty(optionValue)) {
+        selectedPolicy = storagePolicies[optionValue];
+      } else {
+        throw new TypeError("Unknown storage policy: ", optionValue);
+      }
+    } else {
+      console.warn("No storage policy declared for the app. Unable to save the pictures.");
+    }
+
+    return this.sandbox.config.services.settings[selectedPolicy];
+  },
+
+  beforeRender: function (data) {
+    data.upload_policy = this.selectStoragePolicy();
     return data;
   },
 
-  afterRender: function() {
+  afterRender: function () {
     this.form = this.$el.find('form');
     var opts = _.defaults(this.uploader_options, {
       dataType:         'xml',
@@ -113,26 +140,26 @@ define(['jquery.fileupload'], {
 
   },
 
-  start: function() {
+  start: function () {
     this.form.fileupload('send', this.upload_data);
   },
 
-  cancel: function() {},
-  delete: function() {},
+  cancel: function () {},
+  delete: function () {},
 
-  onDrop: function() {
+  onDrop: function () {
     this.dropzone.text('Thanks !');
     this.dropzone.removeClass('dropzone');
   },
 
-  onDragOver: function() {
+  onDragOver: function () {
     this.dropzone.addClass('dragover');
     clearTimeout(this.dragOverEffect);
     var self = this;
-    this.dragOverEffect = setTimeout(function() { self.dropzone.removeClass('dragover'); }, 100);
+    this.dragOverEffect = setTimeout(function () { self.dropzone.removeClass('dragover'); }, 100);
   },
 
-  onAdd: function(e, data) {
+  onAdd: function (e, data) {
     var key = this.$el.find('[name="key"]');
     var s = key.val();
     key.val(s.replace('${filename}', "/" + data.files[0].name));
@@ -142,25 +169,25 @@ define(['jquery.fileupload'], {
     return this.upload_data = data;
   },
 
-  onSend: function(e, data) {
+  onSend: function (e, data) {
     this.$el.find('.progress').fadeIn();
   },
 
-  onProgress: function(e, data) {
+  onProgress: function (e, data) {
     this.$el.find('.bar').css('width', data.percent+'%');
   },
 
-  onFail: function(e, data) {
+  onFail: function (e, data) {
     this.$el.find('.error').text("Error :#{data.errorThrown}");
   },
 
-  onDone: function(e, data) {
-    this.$el.find('.progress').fadeOut(300, function() {});
+  onDone: function (e, data) {
+    this.$el.find('.progress').fadeOut(300, function () {});
     this.$el.find('.bar').css('width', 0);
     this.onUploadDone(data);
   },
 
-  onUploadDone: function(data) {
+  onUploadDone: function (data) {
     // var location = $(data.result).find('Location').text();
     // Context.app.addImage(filename: data.files[0].name)
     _.map(data.files, _.bind(function (file) {
@@ -170,18 +197,17 @@ define(['jquery.fileupload'], {
     this.uploader.options.maxNumberOfFiles++;
   },
 
-  multipleUpload: function() {
+  multipleUpload: function () {
     return false;
     // return (this.uploader.options.maxNumberOfFiles > 1);
   },
 
-  fileUrl: function(filename) {
-    var policy = this.sandbox.data.storage_policy;
+  fileUrl: function (filename) {
+    var policy = this.selectStoragePolicy();
     return encodeURI(policy.url + policy.params.key.replace('${filename}', "/" + filename));
   },
 
-  initialize: function() {
+  initialize: function () {
     _.bindAll(this);
   }
-
 });

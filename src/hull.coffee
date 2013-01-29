@@ -40,7 +40,6 @@ define ['components/aura-express/lib/aura'], (Aura)->
         .use('lib/client/handlebars-helpers')
         .use('lib/client/api')
         .use('lib/client/auth')
-        .use('lib/client/storage')
         .use('lib/client/templates')
         .use('lib/client/widget')
         .use(myApp)
