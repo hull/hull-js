@@ -91,7 +91,6 @@ define(['jquery.fileupload'], {
     if (this.sandbox.config.services.types.storage) {
       storagePolicies = this.sandbox.config.services.types.storage;
     }
-
     var countPolicies = storagePolicies.length;
     if (countPolicies === 1) {
       selectedPolicy = storagePolicies[0];
@@ -137,6 +136,7 @@ define(['jquery.fileupload'], {
     this.form.on('fileuploaddragover',  this.onDragOver);
     this.form.on('fileuploaddrop',      this.onDrop);
     this.form.on('fileuploadsend',      this.onSend);
+    this.form.on('fileuploadsubmit',    this.onSubmit);
     this.form.on('fileuploadprogress',  this.onProgress);
     this.form.on('fileuploadfail',      this.onFail);
     this.form.on('fileuploadsuccess',   this.onSuccess);
@@ -177,8 +177,23 @@ define(['jquery.fileupload'], {
     this.$el.find('.progress').fadeIn();
   },
 
+  onSubmit: function (e, data) {
+    this.toggleDescription();
+  },
+
+  toggleDescription: function () {
+    var descriptionElt = this.$el.find("[name=description]");
+    if (descriptionElt.is(':disabled')) {
+      descriptionElt.removeAttr('disabled');
+      descriptionElt.val('');
+    } else {
+      this.description = descriptionElt.val() || undefined;
+      this.$el.find("[name=description]").attr('disabled', 'disabled');
+    }
+  },
+
   onProgress: function (e, data) {
-    this.$el.find('.bar').css('width', data.percent+'%');
+    this.$el.find('.bar').css('width', data.percent + '%');
   },
 
   onFail: function (e, data) {
@@ -196,7 +211,9 @@ define(['jquery.fileupload'], {
     // Context.app.addImage(filename: data.files[0].name)
     _.map(data.files, _.bind(function (file) {
       file.url = this.fileUrl(file.name);
+      file.description = this.description;
     }, this));
+    this.toggleDescription();
     this.sandbox.emit('hull.upload.done', data.files);
     this.uploader.options.maxNumberOfFiles++;
   },
