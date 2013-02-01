@@ -165,9 +165,9 @@ define ['backbone', 'underscore'], (Backbone, _)->
       ctx = @buildContext.call(@)
       ctx.fail (err)-> console.error("Error building context: ", err)
       ctx.then (ctx)=>
-        beforeCtx = _.extend(@beforeRender.call(@, ctx), data)
+        beforeCtx = @beforeRender.call(@, ctx)
         $.when(beforeCtx).done (dataAfterBefore)=>
-          data = dataAfterBefore || ctx
+          data = _.extend(dataAfterBefore || ctx, data)
           @doRender(tpl, data)
           _.defer(@afterRender.bind(@, data))
           _.defer((-> @sandbox.start(@$el)).bind(@))
