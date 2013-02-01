@@ -1,7 +1,7 @@
-define ['components/aura-express/lib/aura'], (Aura)->
+define ['components/aura-express/lib/aura', 'lib/version'], (Aura, version)->
 
   window.Hull = Hull = _.extend({
-    version: __version__,
+    version: version,
     templates: {}
     widget: (widgetName, widgetDef)->
       widgetDef.type ?= "Hull"

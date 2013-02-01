@@ -269,13 +269,24 @@ module.exports = function (grunt) {
         files: ['aura-extensions/**/*.js', 'src/**/*.coffee', 'spec/src/**/*.coffee'],
         tasks: ['build_libs']
       }
+    },
+    template: {
+      template: "define(function () { return '<%= pkg.version %>';});",
+      dest: 'lib/version.js'     
     }
   });
 
   // default build task
-  grunt.registerTask('build_libs', ['clean:libs', 'coffee', 'requirejs:client', 'requirejs:remote']);
+  grunt.registerTask('build_libs', ['clean:libs', 'coffee', 'template', 'requirejs:client', 'requirejs:remote']);
   grunt.registerTask('build_widgets', ['clean:widgets', 'handlebars', 'requirejs:upload', 'requirejs:registration', 'concat:widgets', 'uglify:widgets']);
   grunt.registerTask('build', ['build_libs', 'build_widgets']);
   grunt.registerTask('default', ['connect', 'build', /*'mocha',*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
+
+
+  grunt.registerTask("template", "generate a file from a template", function () {
+    var conf = grunt.config("template");
+    grunt.file.write(conf.dest, grunt.template.process(conf.template));
+    grunt.log.writeln('Generated \'' + conf.dest + '\' successfully.');  
+  });
 };

@@ -16,7 +16,7 @@ define(['aura/aura'], function (aura) {
 
   var easyXDMMock = {
     Rpc: function (a1, a2) {
-      delay(a2.local.ready, {me: {name: "test"}, app: {name: "test", org: {name: "test"}}});
+      delay(a2.local.ready, {data: {me: {name: "test"}, app: {name: "test", org: {name: "test"}}}});
     }
   };
 

@@ -1,4 +1,4 @@
-define ->
+define ['lib/hull'], (Hull)->
   init: (env)->
     setupTemplate = (tplSrc, name) ->
       compiled = env.core.template.hbs(tplSrc)
@@ -23,12 +23,12 @@ define ->
           parsed = setupTemplate(localTpl.text(), name)
           ret[name] = parsed
           define path, parsed
-        else if window.Hull.templates["#{tplName}"]
-          parsed = setupTemplate(window.Hull.templates["#{tplName}"], name)
+        else if Hull.templates["#{tplName}"]
+          parsed = setupTemplate(Hull.templates["#{tplName}"], name)
           ret[name] = parsed
           define path, parsed
-        else if window.Hull.templates._default?["#{tplName}"]
-          parsed = setupTemplate(window.Hull.templates._default["#{tplName}"], name)
+        else if Hull.templates._default?["#{tplName}"]
+          parsed = setupTemplate(Hull.templates._default["#{tplName}"], name)
           ret[name] = parsed
           define path, parsed
         else

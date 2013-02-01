@@ -1,4 +1,4 @@
-define ->
+define ['lib/version'], (version)->
 
   (env)->
 
@@ -285,7 +285,7 @@ define ->
         initialized.resolve(data)
 
       rpc = new easyXDM.Rpc({
-        remote: "#{env.config.orgUrl}/api/v1/#{env.config.appId}/remote.html?v=#{__version__}"
+        remote: "#{env.config.orgUrl}/api/v1/#{env.config.appId}/remote.html?v=#{version}"
       }, {
         remote: { message: {}, ready: {} }
         local:  { message: onRemoteMessage, ready: onRemoteReady }
