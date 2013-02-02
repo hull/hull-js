@@ -1,4 +1,4 @@
-define ['aura-extensions/hull-utils'], ->
+define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
 
   ->
     
@@ -344,4 +344,4 @@ define ['aura-extensions/hull-utils'], ->
       buffer.join('')
 
 
-    Handlebars.registerHelper(k, v) for k,v of HandlebarsHelpers
+    handlebars.registerHelper(k, v) for k,v of HandlebarsHelpers

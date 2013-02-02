@@ -1,4 +1,4 @@
-define ['lib/hullbase'], (Hull)->
+define ['lib/hullbase', 'handlebars'], (Hull, Handlebars)->
   init: (env)->
     setupTemplate = (tplSrc, name) ->
       compiled = env.core.template.hbs(tplSrc)
