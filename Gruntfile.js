@@ -32,6 +32,26 @@ module.exports = function (grunt) {
     handlebarsWidgetsFiles['tmp/' + widgetPath + '/templates.js'] = widgetPath + '/**/*.hbs';
   });
 
+  // 
+  // Lookup of the available libs and injects them for the build
+  // in the requirejs conf
+  // 
+  var clientLibs = grunt.file.glob
+    .sync('src/client/**/*.coffee')
+    .map(function (clientLib) {
+      return clientLib.replace('.coffee', '').replace('src/', 'lib/');
+    });
+
+  //
+  // Lookup of the Aura Extensions and injects them in the requirejs build
+  //
+  var auraExtensions = grunt.file.glob
+    .sync('aura-extensions/**/*.js')
+    .map(function (extension) {
+      return extension.replace('.js', '');
+    });
+    
+      
   grunt.initConfig({
 
     pkg: pkg,
@@ -81,7 +101,7 @@ module.exports = function (grunt) {
       client: {
         options: {
           baseUrl: '.',
-          preserveLicenseComments: true,
+          preserveLicenseComments: false,
           paths: {
             aura:           'components/aura-express/dist',
             underscore:     'components/underscore/underscore',
@@ -98,7 +118,8 @@ module.exports = function (grunt) {
           shim: {
             backbone:   { exports: 'Backbone', deps: ['underscore', 'jquery'] },
             underscore: { exports: '_' },
-            easyXDM:    { exports: 'easyXDM' }
+            easyXDM:    { exports: 'easyXDM' },
+            handlebars:    { exports: 'Handlebars' }
           },
           include: [
             'requireLib',
@@ -108,7 +129,8 @@ module.exports = function (grunt) {
             'easyXDM',
             'text',
             'lib/hull'
-          ],
+          ].concat(auraExtensions)
+           .concat(clientLibs),
           out: 'dist/' + pkg.version + '/hull.js'
         }
       },
