@@ -80,10 +80,6 @@ module.exports = function (grunt) {
     requirejs: {
       client: {
         options: {
-          wrap: {
-            start: "(function() { var __version__ = '" + pkg.version + "';",
-            end: " ; window.require = require; window.define = define; }(window));"
-          },
           baseUrl: '.',
           preserveLicenseComments: true,
           paths: {
@@ -109,30 +105,15 @@ module.exports = function (grunt) {
             'underscore',
             'backbone',
             'handlebars',
-            'eventemitter',
             'easyXDM',
-            'aura-extensions/aura-backbone',
-            'aura-extensions/aura-handlebars',
-            'handlebars',
             'text',
-            'lib/hull',
-            'lib/client/api',
-            'lib/client/auth',
-            'lib/client/templates',
-            'lib/client/handlebars-helpers',
-            'lib/client/widget',
-            'moment',
-            'string'
+            'lib/hull'
           ],
           out: 'dist/' + pkg.version + '/hull.js'
         }
       },
       remote: {
         options: {
-          wrap: {
-            start: "(function() { var __version__ = '" + pkg.version + "';",
-            end: " ; window.require = require; window.define = define; }(window));"
-          },
           baseUrl: '.',
           // optimize: 'none',
           preserveLicenseComments: true,
@@ -164,8 +145,8 @@ module.exports = function (grunt) {
             'analytics',
             'lib/hull-remote',
             'lib/remote/services',
-            'lib/remote/services/facebook',
-            'lib/remote/services/hull'
+            'lib/remote/services/hull',
+            'lib/remote/services/facebook'
           ],
           out: 'dist/' + pkg.version + '/hull-remote.js'
         }

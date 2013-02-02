@@ -1,4 +1,4 @@
-define ['aura/aura'], (Aura)->
+define ['aura/aura', 'lib/version'], (Aura, version)->
 
   hull = null
 
@@ -18,5 +18,5 @@ define ['aura/aura'], (Aura)->
     return hull
 
   window.Hull = Hull
-  Hull.version = __version__
+  Hull.version = version
   Hull
