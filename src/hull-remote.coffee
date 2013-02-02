@@ -1,4 +1,4 @@
-define ['components/aura-express/lib/aura'], (Aura)->
+define ['aura/aura'], (Aura)->
 
   hull = null
 

@@ -1,13 +1,4 @@
-define ['components/aura-express/lib/aura', 'lib/version'], (Aura, version)->
-
-  window.Hull = Hull = _.extend({
-    version: version,
-    templates: {}
-    widget: (widgetName, widgetDef)->
-      widgetDef.type ?= "Hull"
-      define("__widget__$#{widgetName}@default", widgetDef)
-      return widgetDef
-  }, window.Hull || {});
+define ['aura/aura', 'lib/hullbase'], (Aura, HullDef)->
 
   hull = null
 
@@ -15,7 +6,7 @@ define ['components/aura-express/lib/aura', 'lib/version'], (Aura, version)->
     name: 'Hull'
     afterAppStart: (env)->
       sb = env.core.createSandbox();
-      Hull = _.extend(Hull, sb);
+      Hull = _.extend(HullDef, sb);
       Hull.me     = sb.data.api.model('me');
       Hull.app    = sb.data.api.model('app');
       Hull.org    = sb.data.api.model('org');

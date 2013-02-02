@@ -7,9 +7,9 @@
     <script src="../node_modules/mocha/mocha.js"></script>
     <script src="./support/sinon-1.5.2.js"></script>
     <script>
-      var require = { 
+      var require = {
         baseUrl: '../',
-        paths: { 
+        paths: {
           components:   'components',
           widgets:      'spec/widgets',
           aura:         'components/aura-express/lib',
@@ -19,7 +19,7 @@
         }
       };
       var runMocha = function() {
-        mocha.globals(['Backbone', 'easyXDM', 'Handlebars']);
+        mocha.globals(['Backbone', 'easyXDM', 'Handlebars', 'handlebars', 'Hull']); //@TODO What is this (lower-case) handlebars ?
         if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
         else { mocha.run(); }
       };

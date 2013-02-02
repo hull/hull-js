@@ -1,4 +1,4 @@
-define ['lib/hull'], (Hull)->
+define ['lib/hullbase'], (Hull)->
   init: (env)->
     setupTemplate = (tplSrc, name) ->
       compiled = env.core.template.hbs(tplSrc)

@@ -87,7 +87,7 @@ module.exports = function (grunt) {
           baseUrl: '.',
           preserveLicenseComments: true,
           paths: {
-            aura:           'components/aura-express/dist/aura',
+            aura:           'components/aura-express/dist',
             underscore:     'components/underscore/underscore',
             eventemitter:   'components/eventemitter2/lib/eventemitter2',
             backbone:       'components/backbone/backbone',
@@ -111,7 +111,6 @@ module.exports = function (grunt) {
             'handlebars',
             'eventemitter',
             'easyXDM',
-            'aura',
             'aura-extensions/aura-backbone',
             'aura-extensions/aura-handlebars',
             'handlebars',
@@ -138,7 +137,7 @@ module.exports = function (grunt) {
           // optimize: 'none',
           preserveLicenseComments: true,
           paths: {
-            aura:               'components/aura-express/dist/aura',
+            aura:               'components/aura-express/dist',
             underscore:         'components/underscore/underscore',
             eventemitter:       'components/eventemitter2/lib/eventemitter2',
             easyXDM:            'components/easyXDM/easyXDM',
@@ -160,7 +159,6 @@ module.exports = function (grunt) {
             'underscore',
             'eventemitter',
             'easyXDM',
-            'aura',
             'text',
             'base64',
             'analytics',
