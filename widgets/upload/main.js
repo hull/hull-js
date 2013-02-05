@@ -21,6 +21,8 @@
  *    If there are many engines available, it must correspond to a value in ```sandbox.config.services.types.storage```.
  * ### Events
  *
+ * * ```hull.upload.send```: Triggered when an upload has started.
+ * * ```hull.upload.progress```: Triggered when an upload is in progress. The total amount of data as well as the current amount of data transfered are available as a listener parameter.
  * * ```hull.upload.done```: Triggered when an upload has finished. References to the uploadded files are available in an Array as the first parameter to the listeners.
  */
 define(['jquery.fileupload'], {
@@ -175,6 +177,7 @@ define(['jquery.fileupload'], {
 
   onSend: function (e, data) {
     this.$el.find('.progress').fadeIn();
+    this.sandbox.emit('hull.upload.send');
   },
 
   onSubmit: function (e, data) {
@@ -194,6 +197,7 @@ define(['jquery.fileupload'], {
 
   onProgress: function (e, data) {
     this.$el.find('.bar').css('width', data.percent + '%');
+    this.sandbox.emit('hull.upload.progress', data);
   },
 
   onFail: function (e, data) {
