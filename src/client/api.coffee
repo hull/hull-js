@@ -167,7 +167,12 @@ define ['lib/version'], (version)->
       sync = (method, model, options={})->
         url   = if _.isFunction(model.url) then model.url() else model.url
         verb  = methodMap[method]
-        dfd = api(url, verb, model.toJSON())
+
+        data = options.data
+        if !data? && model && (method == 'create' || method == 'update' || method == 'patch')
+          data = options.attrs || model.toJSON(options)
+
+        dfd = api(url, verb, data)
         dfd.then(options.success)
         dfd.fail(options.error)
         dfd
