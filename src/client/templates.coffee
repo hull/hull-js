@@ -8,6 +8,7 @@ define ['lib/hullbase', 'handlebars'], (Hull, Handlebars)->
     env.core.template.load = (names, ref, format="hbs")->
       loadedTemplates = {}
       names = [names] if _.isString(names)
+      names ?= []
       paths = []
       dfd   = env.core.data.deferred()
       ret = {}
@@ -46,5 +47,5 @@ define ['lib/hullbase', 'handlebars'], (Hull, Handlebars)->
           dfd.reject(err))
       else
         dfd.resolve(ret)
-      dfd.promise() 
-   
+      dfd.promise()
+

@@ -118,7 +118,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
           dfd.resolve(ret)
 
       catch e
-        console.error("Caught error in buildContext", e)
+        console.error("Caught error in buildContext", e.message, e)
         dfd.reject(e)
       dfd
 
@@ -166,7 +166,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
     render: (tpl, data)=>
       @refresh ?= _.throttle(@render, 200)
       ctx = @buildContext.call(@)
-      ctx.fail (err)-> console.error("Error building context: ", err)
+      ctx.fail (err)-> console.error("Error building context: ", err.message, err)
       ctx.then (ctx)=>
         beforeCtx = @beforeRender.call(@, ctx)
         $.when(beforeCtx).done (dataAfterBefore)=>
