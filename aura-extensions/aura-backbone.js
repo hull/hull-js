@@ -31,7 +31,7 @@
 
     afterAppStart: function(env) {
       if (!historyStarted) {
-        env.core.mvc.history.start();
+        _.delay(function() { env.core.mvc.history.start(); }, 500);
         historyStarted = true;
       }
     }
