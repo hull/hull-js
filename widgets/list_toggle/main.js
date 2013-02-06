@@ -7,30 +7,37 @@ define({
     list_name: 'likes'
   },
 
-  datasources: {
-    obj: ":id",
-    list: function() {
-      if (this.loggedIn()) {
-        return this.api("hull/me/lists/" + this.options.list_name);
-      }
-    }
+  initialize: function() {
+    this.list = this.api.model("me/lists/" + this.options.list_name);
+    this.datasources.list = this.list.deferred;
   },
 
   beforeRender: function(data) {
     if (data.list && data.list.items) {
       var itemIds = _.pluck(data.list.items, "id");
-      data.isListed = _.include(itemIds, data.obj.id);
+      data.isListed = _.include(itemIds, this.id);
     }
-    this.itemPath = "hull/" + data.list.id + "/items/" + data.obj.id;
+    this.itemPath = "hull/" + data.list.id + "/items/" + this.id;
+    console.warn()
     return data;
+  },
+
+  toggle: function(verb) {
+    var list = this.list;
+
+    this.api(this.itemPath, verb).then(function() {
+      list.fetch().then(function() {
+        this.render();
+      }.bind(this));
+    }.bind(this));
   },
 
   actions: {
     addToList: function() {
-      this.api(this.itemPath, 'post').then(function() { this.render(); }.bind(this));
+      this.toggle('post');
     },
     removeFromList: function() {
-      this.api(this.itemPath, 'delete').then(function() { this.render(); }.bind(this));
+      this.toggle('delete');
     }
   }
 
