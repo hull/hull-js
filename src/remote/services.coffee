@@ -30,7 +30,9 @@ define ->
         else
           errback(catchAll(req))
 
-      rpc = new easyXDM.Rpc({}, {
+      rpc = new easyXDM.Rpc({
+        acl: env.config.appDomains
+      }, {
         remote: { message: {}, ready: {} }
         local:  { message: onRemoteMessage }
       })
