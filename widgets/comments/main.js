@@ -43,7 +43,6 @@ define({
           description: description
         });
       }
-      evt.stopPropagation();
     }
   }
 });

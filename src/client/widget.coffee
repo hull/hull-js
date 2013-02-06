@@ -150,7 +150,10 @@ define ['backbone', 'underscore'], (Backbone, _)->
         options[decamelize(k).replace("hull_", "")] = v for k,v of source.data()
         fn.call(@, source, e, options)
       catch e
-        console.error("oops... missed action?", e)
+        console.error("oops... missed action?", e.message, e)
+      finally
+        e.stopPropagation()
+        e.stopImmediatePropagation()
 
     afterRender: (data)=> data
 
