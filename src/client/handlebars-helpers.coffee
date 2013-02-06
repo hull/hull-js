@@ -32,7 +32,7 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
       return fallback unless id
       id = id.replace(/\/(large|small|medium|thumb)$/,'')
       size = 'small' unless _.isString(size)
-      "#{app.config.orgUrl}/img/#{id}/#{size}"
+      "//#{app.config.assetsUrl}/img/#{id}/#{size}"
 
 
     ###*

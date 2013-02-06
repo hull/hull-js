@@ -9,11 +9,13 @@ define({
   templates: ['quiz_intro', 'quiz_question', 'quiz_finished', 'quiz_result'],
 
   answers: {},
+  datasources: {
+    quiz: ':id'
+  },
 
   initialize: function() {
     this.quiz = this.api.model(this.id);
     this.sandbox.on('hull.model.' + this.id + '.change', function() { this.render() }.bind(this));
-    this.datasources.quiz = this.id;
     this.currentQuestionIndex = 0;
     this.answers = {};
     if (this.options.autostart) {

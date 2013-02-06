@@ -18,16 +18,14 @@
  *
  * ### Actions:
  *
- * * ```comment```: Triggered when an user sinmits a new comment.
+ * * ```comment```: Triggered when an user submits a new comment.
  */
 define({
   type: 'Hull',
   templates:  ['comments'],
-  debug: true,
 
   initialize: function () {
     this.sandbox.on("collection.hull." + this.id + ".comments.**", function() {
-      console.warn("Calling refresh !", arguments);
       this.refresh();
     }.bind(this));
   },
@@ -41,7 +39,7 @@ define({
     comment: function (elt, evt, data) {
       var description = this.$el.find("textarea").val();
       if (description && description.length > 0) {
-        var comment = this.datasources.comments.create({
+        var comment = this.data.comments.create({
           description: description
         });
       }

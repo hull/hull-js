@@ -278,9 +278,11 @@ define ['lib/version'], (version)->
 
       onRemoteReady = (remoteConfig)->
         data = remoteConfig.data
-        env.config.services = remoteConfig.services
+        env.config.assetsUrl            = remoteConfig.assetsUrl
+        env.config.services             = remoteConfig.services
         env.config.widgets.sources.hull = remoteConfig.baseUrl + '/widgets'
-        env.sandbox.config.services = remoteConfig.services
+        env.sandbox.config.assetsUrl    = remoteConfig.assetsUrl
+        env.sandbox.config.services     = remoteConfig.services
         for m in ['me', 'app', 'org']
           attrs = data[m]
           if attrs
@@ -289,8 +291,11 @@ define ['lib/version'], (version)->
 
         initialized.resolve(data)
 
+      remoteUrl = "#{env.config.orgUrl}/api/v1/#{env.config.appId}/remote.html?v=#{version}"
+      remoteUrl += "&js=#{env.config.jsUrl}" if env.config.jsUrl
+
       rpc = new easyXDM.Rpc({
-        remote: "#{env.config.orgUrl}/api/v1/#{env.config.appId}/remote.html?v=#{version}"
+        remote: remoteUrl
       }, {
         remote: { message: {}, ready: {} }
         local:  { message: onRemoteMessage, ready: onRemoteReady }

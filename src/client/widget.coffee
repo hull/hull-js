@@ -103,11 +103,11 @@ define ['backbone', 'underscore'], (Backbone, _)->
         widgetDeferred = $.when.apply($, promises)
 
         templateDeferred = @sandbox.template.load(@templates, @ref)
-
+        @data = {}
         $.when(widgetDeferred, templateDeferred).done (data, tpls)=>
           args = data
           _.map keys, (k,i)=>
-            @datasources[k] = args[i]
+            @data[k] = args[i]
             if _.isFunction args[i]?.toJSON
               ret[k] = args[i].toJSON()
             else
