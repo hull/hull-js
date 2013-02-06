@@ -20,6 +20,23 @@ define ['backbone', 'underscore'], (Backbone, _)->
     app: 'app'
     org: 'org'
 
+  actionHandler = (e)->
+    try
+      source  = $(e.currentTarget)
+      action  = source.data("hull-action")
+      fn = @actions[action] || @["#{action}Action"]
+      unless _.isFunction(fn)
+        throw new Error("Can't find action #{action} on this Widget")
+      options = {}
+      options[decamelize(k).replace("hull_", "")] = v for k,v of source.data()
+      fn.call(@, source, e, options)
+    catch e
+      console.error("oops... missed action?", e.message, e)
+    finally
+      e.stopPropagation()
+      e.stopImmediatePropagation()
+
+
   class HullWidget extends Backbone.View
 
     actions: {}
@@ -35,7 +52,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
       try
         @events = if _.isFunction(@events) then @events() else @events
         @events ?= {}
-        @events["click [data-hull-action]"] = 'actionHandler'
+        @events["click [data-hull-action]"] = actionHandler
 
         # Building actions hash
         @actions = if _.isFunction(@actions) then @actions() else @actions
@@ -46,7 +63,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
         unless @className?
           @className = "hull-widget"
           @className += " hull-#{@namespace}" if @namespace?
-        _.each _.functions(@actions), (f)=> @actions[f] = _.bind(@actions[f], @)
+
         @datasources = _.extend({}, default_datasources, @datasources || {}, options.datasources || {})
         @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
       catch e
@@ -138,22 +155,6 @@ define ['backbone', 'underscore'], (Backbone, _)->
       ret = "<!-- START #{tplName}-->#{ret}<!-- END #{tplName}-->" if debug
       @$el.html(ret)
       return @
-
-    actionHandler: (e)=>
-      try
-        source  = $(e.currentTarget)
-        action  = source.data("hull-action")
-        fn = @actions[action] || @["#{action}Action"]
-        unless _.isFunction(fn)
-          throw new Error("Can't find action #{action} on this Widget")
-        options = {}
-        options[decamelize(k).replace("hull_", "")] = v for k,v of source.data()
-        fn.call(@, source, e, options)
-      catch e
-        console.error("oops... missed action?", e.message, e)
-      finally
-        e.stopPropagation()
-        e.stopImmediatePropagation()
 
     afterRender: (data)=> data
 
