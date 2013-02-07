@@ -67,7 +67,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
         @datasources = _.extend({}, default_datasources, @datasources || {}, options.datasources || {})
         @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
       catch e
-        console.error("Error loading HullWidget", e)
+        console.error("Error loading HullWidget", e.message)
       Backbone.View.prototype.constructor.apply(@, arguments)
       @render()
 

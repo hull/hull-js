@@ -14,7 +14,7 @@ define({
 
   beforeRender: function(data) {
     if (data.list && data.list.items) {
-      var itemIds = _.pluck(data.list.items, "id");
+      var itemIds   = _.pluck(data.list.items, "id");
       data.isListed = _.include(itemIds, this.id);
     }
     this.itemPath = "hull/" + data.list.id + "/items/" + this.id;
@@ -24,9 +24,15 @@ define({
 
   toggle: function(verb) {
     var list = this.list;
-
-    this.api(this.itemPath, verb).then(function() {
+    var method = verb === 'remove' ? 'delete' : 'post';
+    this.api(this.itemPath, method).then(function() {
       list.fetch().then(function() {
+        var itemId  = this.id;
+        var item    = _.filter(list.items, function(i) { return i.id === itemId })[0];
+        this.track("list:" + verb, {
+          itemId: this.id,
+          listName: list.get("name")
+        });
         this.render();
       }.bind(this));
     }.bind(this));
@@ -34,10 +40,10 @@ define({
 
   actions: {
     addToList: function() {
-      this.toggle('post');
+      this.toggle('add');
     },
     removeFromList: function() {
-      this.toggle('delete');
+      this.toggle('remove');
     }
   }
 

@@ -27,7 +27,7 @@ define ['jquery', 'underscore'], ($, _)->
       return
 
     trackHandler = (req, route, callback, errback)->
-      eventName = req.path.replace(/^\?track\//, '')
+      eventName = req.path.replace(/^track\//, '')
       analytics.track(eventName, req.params)
       req.path    = "t"
       req.params.event ?= eventName

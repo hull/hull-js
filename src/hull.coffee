@@ -4,6 +4,8 @@ define ['aura/aura', 'lib/hullbase'], (Aura, HullDef)->
 
   myApp = {
     name: 'Hull'
+    init: (env)->
+      env.core.mediator.setMaxListeners(100)
     afterAppStart: (env)->
       sb = env.core.createSandbox();
       Hull = _.extend(HullDef, sb);
