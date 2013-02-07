@@ -37,7 +37,7 @@ define ->
 
   init: (env)->
     dfd = env.core.data.deferred()
-    FB.init(env.config.services.facebook)
+    FB.init(env.config.services.settings.facebook_app)
     FB.getLoginStatus dfd.resolve
     env.core.services.add([ { path: "/facebook/fql",    handler: fql } ])
     env.core.services.add([ { path: "/facebook/*path",  handler: api } ])

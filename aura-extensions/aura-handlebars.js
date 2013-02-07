@@ -1,5 +1,4 @@
 define({
-  name: 'The Handle of the Bars',
   config: {
     require: {
       paths:  { handlebars: 'handlebars/handlebars' },

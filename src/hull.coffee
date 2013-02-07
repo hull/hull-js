@@ -1,12 +1,14 @@
-define ['components/aura-express/lib/aura'], (Aura)->
+define ['aura/aura', 'lib/hullbase'], (Aura, HullDef)->
 
   hull = null
 
   myApp = {
     name: 'Hull'
+    init: (env)->
+      env.core.mediator.setMaxListeners(100)
     afterAppStart: (env)->
       sb = env.core.createSandbox();
-      window.Hull = sb;
+      Hull = _.extend(HullDef, sb);
       Hull.me     = sb.data.api.model('me');
       Hull.app    = sb.data.api.model('app');
       Hull.org    = sb.data.api.model('org');
@@ -24,9 +26,10 @@ define ['components/aura-express/lib/aura'], (Aura)->
     hull = { config }
     config.namespace = "hull"
     hull.app = Aura(config)
-    hull.app
+    initProcess = hull.app
         .use('aura-extensions/aura-handlebars')
         .use('aura-extensions/aura-backbone')
+        .use('aura-extensions/hull-utils')
         .use('lib/client/handlebars-helpers')
         .use('lib/client/api')
         .use('lib/client/auth')
@@ -34,6 +37,9 @@ define ['components/aura-express/lib/aura'], (Aura)->
         .use('lib/client/widget')
         .use(myApp)
         .start({ widgets: 'body' })
+
+    initProcess.fail (err)->
+      throw err
     return hull
 
 

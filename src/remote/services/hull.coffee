@@ -2,12 +2,12 @@ define ['jquery', 'underscore'], ($, _)->
 
   (env)->
 
-    config = env.config.services.hull
+    config = env.config
 
     handler = (req, route, callback, errback)=>
       path = req.path.replace(/^\/?hull\//, '')
       path = path.substring(1) if (path[0] == "/")
-      url  = config.baseUrl + "/" + path
+      url  = "/api/v1/" + path
 
       if req.method.toLowerCase() == 'delete'
         req_data = JSON.stringify(req.params || {})
@@ -27,7 +27,7 @@ define ['jquery', 'underscore'], ($, _)->
       return
 
     trackHandler = (req, route, callback, errback)->
-      eventName = req.path.replace(/^\?track\//, '')
+      eventName = req.path.replace(/^track\//, '')
       analytics.track(eventName, req.params)
       req.path    = "t"
       req.params.event ?= eventName
@@ -44,14 +44,21 @@ define ['jquery', 'underscore'], ($, _)->
 
     init: (env)->
       analytics = require('analytics')
-      analytics.initialize(config.settings.analytics)
+      analyticsSettings = {}
+
+      _.map env.config.services.types.analytics, (s)->
+        _service = env.config.services.settings[s]
+        analyticsSettings[_service.name] = _service
+
+      analytics.initialize(analyticsSettings)
       if env.config.data.me?.id?
         me = env.config.data.me
         ident = _.pick(me, 'name', 'email', 'id', 'picture')
         ident.distinct_id = me.id
         ident.$name       = me.name
         analytics.identify(env.config.data.me.id, ident)
-        analytics.track("init", { appId: config.appId })
+
+      analytics.track("init", { appId: config.appId })
       env.core.services.add([ { path: 'hull/*path', handler: handler } ])
       env.core.services.add([ { path: 'track/*path',    handler: trackHandler } ])
 

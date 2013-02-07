@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
   'use strict';
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -7,8 +7,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
+  grunt.loadNpmTasks('grunt-contrib-handlebars');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-mocha');
-  grunt.loadNpmTasks('grunt-dox');
+  // grunt.loadNpmTasks('grunt-dox');
 
   var port = 3001;
 
@@ -16,9 +19,42 @@ module.exports = function(grunt) {
   // Project configuration
   // ==========================================================================
 
+  var widgetsList = grunt.file.glob.sync('widgets/*');
+  var pkg         = grunt.file.readJSON('component.json');
+
+  var uglifyWidgetsFiles      = {},
+      concatWidgetsFiles      = {},
+      handlebarsWidgetsFiles  = {};
+
+  widgetsList.forEach(function (widgetPath) {
+    uglifyWidgetsFiles['dist/' + pkg.version + '/' + widgetPath + '/main.js'] = 'tmp/' + widgetPath + '/main.js';
+    concatWidgetsFiles['tmp/' + widgetPath + '/main.js'] = ['tmp/' + widgetPath + '/deps/*.js', widgetPath + '/main.js', 'tmp/' + widgetPath + '/templates.js'];
+    handlebarsWidgetsFiles['tmp/' + widgetPath + '/templates.js'] = widgetPath + '/**/*.hbs';
+  });
+
+  // 
+  // Lookup of the available libs and injects them for the build
+  // in the requirejs conf
+  // 
+  var clientLibs = grunt.file.glob
+    .sync('src/client/**/*.coffee')
+    .map(function (clientLib) {
+      return clientLib.replace('.coffee', '').replace('src/', 'lib/');
+    });
+
+  //
+  // Lookup of the Aura Extensions and injects them in the requirejs build
+  //
+  var auraExtensions = grunt.file.glob
+    .sync('aura-extensions/**/*.js')
+    .map(function (extension) {
+      return extension.replace('.js', '');
+    });
+    
+      
   grunt.initConfig({
 
-    pkg: grunt.file.readJSON('package.json'),
+    pkg: pkg,
 
     dox: {
       files: {
@@ -27,17 +63,28 @@ module.exports = function(grunt) {
       }
     },
 
-    clean: ['lib','dist'],
+    clean: {
+      libs: {
+        src: ['lib']
+      },
+      widgets: {
+        src: ['tmp']
+      }
+    },
 
     coffee: {
       compile: {
-        files: {
-          'lib/*.js' : 'src/**/*.coffee'
-        },
         options: {
           bare: false,
           header: true
         }
+      },
+      files: {
+        files: grunt.file.expandMapping(['src/**/*.coffee'], 'lib/', {
+          rename: function (destBase, destPath) {
+            return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
+          }
+        })
       }
     },
 
@@ -54,84 +101,120 @@ module.exports = function(grunt) {
       client: {
         options: {
           baseUrl: '.',
-          // optimize: 'none',
-          preserveLicenseComments: true,
+          preserveLicenseComments: false,
           paths: {
-            aura:           'components/aura-express/dist/aura',
+            aura:           'components/aura-express/dist',
             underscore:     'components/underscore/underscore',
             eventemitter:   'components/eventemitter2/lib/eventemitter2',
             backbone:       'components/backbone/backbone',
             easyXDM:        'components/easyXDM/easyXDM',
-            handlebars:     'components/handlebars',
+            handlebars:     'components/handlebars/handlebars',
             requireLib:     'components/requirejs/require',
+            moment:         'components/moment/moment',
+            string:         'components/underscore.string/dist/underscore.string.min',
             jquery:         'empty:',
             text:           'components/requirejs-text/text'
-
           },
           shim: {
             backbone:   { exports: 'Backbone', deps: ['underscore', 'jquery'] },
             underscore: { exports: '_' },
-            easyXDM:    { exports: 'easyXDM' }
+            easyXDM:    { exports: 'easyXDM' },
+            handlebars:    { exports: 'Handlebars' }
           },
           include: [
             'requireLib',
             'underscore',
             'backbone',
-            'eventemitter',
-            'easyXDM',
-            'aura',
-            'aura-extensions/aura-backbone',
-            'aura-extensions/aura-handlebars',
             'handlebars',
-            'hbs',
+            'easyXDM',
             'text',
-            'i18nprecompile',
-            'json2',
-            'lib/hull',
-            'lib/client/api',
-            'lib/client/auth',
-            'lib/client/templates',
-            'lib/client/handlebars-helpers',
-            'lib/client/widget'
-          ],
-          out: 'dist/hull.js'
+            'lib/hull'
+          ].concat(auraExtensions)
+           .concat(clientLibs),
+          out: 'dist/' + pkg.version + '/hull.js'
         }
       },
       remote: {
         options: {
           baseUrl: '.',
-          // optimize: '',
+          // optimize: 'none',
           preserveLicenseComments: true,
           paths: {
-            aura:         'components/aura-express/dist/aura',
-            underscore:   'components/underscore/underscore',
-            eventemitter: 'components/eventemitter2/lib/eventemitter2',
-            easyXDM:      'components/easyXDM/easyXDM',
-            requireLib:   'components/requirejs/require',
-            jquery:       'components/jquery/jquery',
-            text:           'components/requirejs-text/text',
-            'route-recognizer': 'components/route-recognizer/dist/route-recognizer.amd'
+            aura:               'components/aura-express/dist',
+            underscore:         'components/underscore/underscore',
+            eventemitter:       'components/eventemitter2/lib/eventemitter2',
+            easyXDM:            'components/easyXDM/easyXDM',
+            requireLib:         'components/requirejs/require',
+            jquery:             'components/jquery/jquery',
+            text:               'components/requirejs-text/text',
+            'route-recognizer': 'components/route-recognizer/dist/route-recognizer.amd',
+            analytics:          'components/analytics/analytics',
+            base64:             'components/base64/base64'
           },
           shim: {
             underscore: { exports: '_' },
+            analytics: { exports: 'analytics' },
             easyXDM:    { exports: 'easyXDM' }
           },
           include: [
             'requireLib',
+            'jquery',
             'underscore',
             'eventemitter',
             'easyXDM',
-            'aura',
             'text',
+            'base64',
+            'analytics',
             'lib/hull-remote',
             'lib/remote/services',
-            'lib/remote/services/facebook-service',
-            'lib/remote/services/hull-service'
+            'lib/remote/services/hull',
+            'lib/remote/services/facebook'
           ],
-          out: 'dist/hull-remote.js'
+          out: 'dist/' + pkg.version + '/hull-remote.js'
+        }
+      },
+      upload: {
+        options: {
+          paths: {
+            jquery: "empty:",
+            "jquery.ui.widget" : 'components/jquery-file-upload/js/vendor/jquery.ui.widget',
+            "jquery.fileupload" : 'components/jquery-file-upload/js/jquery.fileupload'
+          },
+          include: [
+            'jquery.fileupload'
+          ],
+          out: 'tmp/widgets/upload/deps/jquery.fileupload.js'
+        }
+      },
+      registration: {
+        options: {
+          paths: {
+            jquery: "empty:",
+            "jquery.default_fields" : "widgets/registration/default_fields",
+            "jquery.h5validate": "widgets/registration/jquery.h5validate"
+          },
+          include: [
+            'jquery.default_fields',
+            'jquery.h5validate'
+          ],
+          out: 'tmp/widgets/registration/deps/jquery.deps.js'
         }
       }
+    },
 
+    uglify: {
+      widgets: {
+        files: uglifyWidgetsFiles
+      }
+    },
+
+    concat: {
+      widgets: {
+        options: {
+          stripBanners: true
+        },
+        files: concatWidgetsFiles
+      }
     },
 
     jshint: {
@@ -161,24 +244,50 @@ module.exports = function(grunt) {
       }
     },
 
-
-    mocha: {
-      hull: {
-        src: ['http://localhost:' + port + "/spec/index.html"]
+    handlebars: {
+      widgets: {
+        options: {
+          wrapped: true,
+          namespace: "Hull.templates._default",
+          processName: function (filename) {
+            return filename.replace("widgets/", "").replace(/\.hbs$/, '');
+          }
+        },
+        files: handlebarsWidgetsFiles
       }
     },
 
+    mocha: {
+      hull: ['http://localhost:' + port + "/spec/index.html"]
+    },
+
     watch: {
-      src: {
-        files: ['src/**/*.coffee', 'spec/src/**/*.coffee'],
-        tasks: ['build']
+      widgets: {
+        files: ['widgets/**/*'],
+        tasks: ['build_widgets']
+      },
+      libs: {
+        files: ['aura-extensions/**/*.js', 'src/**/*.coffee', 'spec/src/**/*.coffee'],
+        tasks: ['build_libs']
       }
+    },
+    version: {
+      template: "define(function () { return '<%= pkg.version %>';});",
+      dest: 'lib/version.js'     
     }
   });
 
   // default build task
-  grunt.registerTask('build', ['clean', 'coffee' /*, 'requirejs' */]);
-  grunt.registerTask('default', ['connect', 'build', 'mocha', 'watch']);
+  grunt.registerTask('build_libs', ['clean:libs', 'coffee', 'version', 'requirejs:client', 'requirejs:remote']);
+  grunt.registerTask('build_widgets', ['clean:widgets', 'handlebars', 'requirejs:upload', 'requirejs:registration', 'concat:widgets', 'uglify:widgets']);
+  grunt.registerTask('build', ['build_libs', 'build_widgets']);
+  grunt.registerTask('default', ['connect', 'build', /*'mocha',*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 
+
+  grunt.registerTask("version", "generate a file from a template", function () {
+    var conf = grunt.config("version");
+    grunt.file.write(conf.dest, grunt.template.process(conf.template));
+    grunt.log.writeln('Generated \'' + conf.dest + '\' successfully.');  
+  });
 };

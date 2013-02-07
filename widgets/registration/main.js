@@ -1,4 +1,4 @@
-define(['sandbox', 'underscore', './default_fields', './jquery.h5validate'], function(sandbox, _, default_fields) {
+define(['sandbox', 'underscore', 'jquery.default_fields', 'jquery.h5validate'], function(sandbox, _, default_fields) {
 
   return {
 
@@ -26,19 +26,20 @@ define(['sandbox', 'underscore', './default_fields', './jquery.h5validate'], fun
       return this.$el.h5Validate('allValid');
     },
 
-    register: function(extra) {
+    register: function(profile) {
       var self  = this;
           me    = this.sandbox.data.api.model('me');
       if (this.loggedIn()) {
-        me.save({ extra: extra }, { silent: true, success: function() {
+        this.api('hull/me/profile', 'put', profile, function(myAttrs) {
+          me.set(myAttrs);
           self.trigger('register', this);
           self.render();
-        }});
+        });
       }
     },
 
     beforeRender: function(data) {
-      var extra = data.me && data.me.extra || {};
+      var extra = data.me && data.me.profile || {};
       data.isComplete = _.all(_.map(data.fields, function(f) {
         f.value = extra[f.name] || data.me[f.name];
         return f.value;

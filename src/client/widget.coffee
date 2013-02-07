@@ -1,10 +1,13 @@
 define ['backbone', 'underscore'], (Backbone, _)->
 
+  debug = false
+
   parseURI = (uri, bindings)->
-    placeHolders = uri.match(/(\:[a-zA-Z0-9]+)/g)
+    bindings = _.extend({}, bindings, bindings.options) if bindings.options
+    placeHolders = uri.match(/(\:[a-zA-Z0-9-_]+)/g)
     return uri unless placeHolders
     for p in placeHolders
-      uri = uri.replace(p, bindings[p.slice(1)]);
+      uri = uri.replace(p, bindings[decamelize(p).slice(1)]);
     uri
 
   slice = Array.prototype.slice
@@ -16,6 +19,23 @@ define ['backbone', 'underscore'], (Backbone, _)->
     me: 'me'
     app: 'app'
     org: 'org'
+
+  actionHandler = (e)->
+    try
+      source  = $(e.currentTarget)
+      action  = source.data("hull-action")
+      fn = @actions[action] || @["#{action}Action"]
+      unless _.isFunction(fn)
+        throw new Error("Can't find action #{action} on this Widget")
+      options = {}
+      options[decamelize(k).replace("hull_", "")] = v for k,v of source.data()
+      fn.call(@, source, e, options)
+    catch e
+      console.error("oops... missed action?", e.message, e)
+    finally
+      e.stopPropagation()
+      e.stopImmediatePropagation()
+
 
   class HullWidget extends Backbone.View
 
@@ -32,7 +52,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
       try
         @events = if _.isFunction(@events) then @events() else @events
         @events ?= {}
-        @events["click [data-hull-action]"] = 'actionHandler'
+        @events["click [data-hull-action]"] = actionHandler
 
         # Building actions hash
         @actions = if _.isFunction(@actions) then @actions() else @actions
@@ -43,11 +63,11 @@ define ['backbone', 'underscore'], (Backbone, _)->
         unless @className?
           @className = "hull-widget"
           @className += " hull-#{@namespace}" if @namespace?
-        _.each _.functions(@actions), (f)=> @actions[f] = _.bind(@actions[f], @)
+
         @datasources = _.extend({}, default_datasources, @datasources || {}, options.datasources || {})
         @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
       catch e
-        console.error("Error loading HullWidget", e)
+        console.error("Error loading HullWidget", e.message)
       Backbone.View.prototype.constructor.apply(@, arguments)
       @render()
 
@@ -100,11 +120,11 @@ define ['backbone', 'underscore'], (Backbone, _)->
         widgetDeferred = $.when.apply($, promises)
 
         templateDeferred = @sandbox.template.load(@templates, @ref)
-
+        @data = {}
         $.when(widgetDeferred, templateDeferred).done (data, tpls)=>
           args = data
           _.map keys, (k,i)=>
-            @datasources[k] = args[i]
+            @data[k] = args[i]
             if _.isFunction args[i]?.toJSON
               ret[k] = args[i].toJSON()
             else
@@ -115,7 +135,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
           dfd.resolve(ret)
 
       catch e
-        console.error("Caught error in buildContext", e)
+        console.error("Caught error in buildContext", e.message, e)
         dfd.reject(e)
       dfd
 
@@ -129,23 +149,12 @@ define ['backbone', 'underscore'], (Backbone, _)->
       tpl || @template || @templates[0]
 
     doRender: (tpl, data)=>
-      ret = @renderTemplate(@getTemplate(tpl, data), data)
+      tplName = @getTemplate(tpl, data)
+      ret = @renderTemplate(tplName, data)
       @$el.addClass(this.className)
+      ret = "<!-- START #{tplName}-->#{ret}<!-- END #{tplName}-->" if debug
       @$el.html(ret)
       return @
-
-    actionHandler: (e)=>
-      try
-        source  = $(e.currentTarget)
-        action  = source.data("hull-action")
-        fn = @actions[action] || @["#{action}Action"]
-        unless _.isFunction(fn)
-          throw new Error("Can't find action #{action} on this Widget")
-        options = {}
-        options[decamelize(k).replace("hull_", "")] = v for k,v of source.data()
-        fn.call(@, source, e, options)
-      catch e
-        console.error("oops... missed action?", e)
 
     afterRender: (data)=> data
 
@@ -156,20 +165,21 @@ define ['backbone', 'underscore'], (Backbone, _)->
     # afterRender
     # Start nested widgets...
     render: (tpl, data)=>
+      @refresh ?= _.throttle(@render, 200)
       ctx = @buildContext.call(@)
-      ctx.fail (err)-> console.error("Error building context: ", err)
+      ctx.fail (err)-> console.error("Error building context: ", err.message, err)
       ctx.then (ctx)=>
-        $.when(@beforeRender.call(@, ctx)).done (data)=>
-          throw new Error("beforeRender must return the data !") unless data?
+        beforeCtx = @beforeRender.call(@, ctx)
+        $.when(beforeCtx).done (dataAfterBefore)=>
+          data = _.extend(dataAfterBefore || ctx, data)
           @doRender(tpl, data)
           _.defer(@afterRender.bind(@, data))
           _.defer((-> @sandbox.start(@$el)).bind(@))
 
-    refresh: =>
-      @render()
 
 
   (env)->
+    debug = env.config.debug
     env.core.registerWidgetType("Hull", HullWidget.prototype)
 
 

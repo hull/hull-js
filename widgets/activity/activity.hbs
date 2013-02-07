@@ -1,0 +1,68 @@
+<a href="#" data-hull-action='previousPage'>&larr; Previous</a>
+<span>{{query.page}}</span>
+<span>VERB ?: {{query.where.verb}}</span>
+<span>ObjectType ?: {{query.where.obj_type}}</span>
+<pre>{{json query}}</pre>
+<a href="#" data-hull-action='nextPage'>Next &rarr;</a>
+
+<ul class='activities list unstyled'>
+  {{#activities}}
+    <li class='entry {{verb}}'>
+      <div class="avatar">
+        {{#actor.picture}}
+          <img src="{{actor.picture}}"/>
+        {{/actor.picture}}
+      </div>
+
+      <div class='data'>
+        <i class='icon verb'></i>
+
+        <div class='summary'>
+          <span class='actor'>{{actor.name}}</span>
+          <span class='verb'>{{verb}}</span>
+          <span class='object'>{{object.type}} - {{object.name}}</span>
+          <span class='target'>{{target.name}}</span>
+        </div>
+
+          <div class='activity content_{{object.type}}'>
+
+            {{#object}}
+              <div class='object'>
+
+                <span class="image inset_shadow"><img src="{{imageUrl id format}}"/></span>
+
+                <span class='name'> {{name}} </span>
+              </div>
+            {{/object}}
+
+            <div class="content">
+              {{#if content}}
+                {{content}}
+              {{else}}
+                {{object.name}}
+              {{/if}}
+            </div>
+
+            <div class='clear'></div>
+          </div>
+
+
+        <div class='meta'>
+          <img class='icon target' src="{{target.picture}}">
+          <span class='date'>{{fromNow published}}</span>
+          {{#target}}
+            <span class='target {{type}}'><span class='text'>{{name}}</span></span>
+          {{/target}}
+        </div>
+      </div>
+
+      <div class='clear'></div>
+    </li>
+  {{/activities}}
+  {{#if activities}}
+    <li><button data-hull-action="fetchMore">Fetch more...</button></li>
+  {{/if}}
+  {{^activities}}
+    <li>No activity</li>
+  {{/activities}}
+</ul>

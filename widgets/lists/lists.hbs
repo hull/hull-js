@@ -1,6 +1,6 @@
 {{#if loggedIn}}
-  <h1>My Collections....</h1>
-  {{#collections}}
+  <h1>My lists....</h1>
+  {{#lists}}
     <h3>{{name}}</h3>
     <ul>
     {{#items}}
@@ -14,9 +14,9 @@
       </li>
     {{/items}}
     </ul>
-  {{/collections}}
+  {{/lists}}
 
-  <h1>Create a new Collection</h1>
+  <h1>Create a new List</h1>
   <form>
     <p>
       Name:
@@ -30,5 +30,5 @@
   </form>
 
 {{else}}
-  Connect to view your collections...
+  Connect to view your lists...
 {{/if}}

@@ -1,0 +1,1 @@
+define(['moment', 'string'], function () {});

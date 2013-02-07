@@ -1,4 +1,4 @@
-define ->
+define ['lib/version'], (version)->
 
   (env)->
 
@@ -59,6 +59,13 @@ define ->
 
         ret
 
+      ###
+      # Sends the message described by @params to easyXDM
+      # @param {Object} contains the provider, uri and parameters for the message
+      # @param {Function} optional a success callback
+      # @param {Function} optional an error callback
+      # @return {Promise}
+      ###
       message = (params, callback, errback)->
         console.error("Api not initialized yet") unless rpc
         promise = core.data.deferred()
@@ -75,6 +82,17 @@ define ->
 
         promise
 
+      ###
+      # Normalizes the parameters defining a message. At this point, they can have two forms
+      # * [String, ...] where the String is an uri. The request will be made to the default provider
+      # * [Object, ...] where the Object describes more completely the request. It must provide a "path" key, can provide a "provider" key as well as some default parameters in the "params" key
+      # In the second form, the optional params can be overridden through parameters at data.api calls
+      #
+      # The normalized form is the first one.
+      #
+      # @param {Array} the parameters for the API calls
+      # @return {Array} The normalized form of parameters
+      ###
       normalizeAPIArguments = (argsArray)->
         defaultProvider = 'hull'
         description = argsArray.shift()
@@ -89,7 +107,9 @@ define ->
 
         path        = path.substring(1) if path[0] == "/"
         path        = [provider, path].join("/")
-        [path, params].concat(argsArray)
+        ret         = [path]
+        ret.push(params) if params?
+        ret.concat(argsArray)
 
       exec = (m)->
         method = m
@@ -147,7 +167,12 @@ define ->
       sync = (method, model, options={})->
         url   = if _.isFunction(model.url) then model.url() else model.url
         verb  = methodMap[method]
-        dfd = api(url, verb, model.toJSON())
+
+        data = options.data
+        if !data? && model && (method == 'create' || method == 'update' || method == 'patch')
+          data = options.attrs || model.toJSON(options)
+
+        dfd = api(url, verb, data)
         dfd.then(options.success)
         dfd.fail(options.error)
         dfd
@@ -207,7 +232,6 @@ define ->
         collection      = new Collection
         collectionURI   = path
         collection.url  = path
-
         collection.on 'all', ->
           args = slice.call(arguments)
           eventName = ("collection." + collectionURI.replace(/\//g, ".") + '.' + args[0])
@@ -252,7 +276,13 @@ define ->
 
       onRemoteMessage = -> console.warn("RPC Message", arguments)
 
-      onRemoteReady = (data)->
+      onRemoteReady = (remoteConfig)->
+        data = remoteConfig.data
+        env.config.assetsUrl            = remoteConfig.assetsUrl
+        env.config.services             = remoteConfig.services
+        env.config.widgets.sources.hull = remoteConfig.baseUrl + '/widgets'
+        env.sandbox.config.assetsUrl    = remoteConfig.assetsUrl
+        env.sandbox.config.services     = remoteConfig.services
         for m in ['me', 'app', 'org']
           attrs = data[m]
           if attrs
@@ -261,8 +291,11 @@ define ->
 
         initialized.resolve(data)
 
+      remoteUrl = "#{env.config.orgUrl}/api/v1/#{env.config.appId}/remote.html?v=#{version}"
+      remoteUrl += "&js=#{env.config.jsUrl}" if env.config.jsUrl
+
       rpc = new easyXDM.Rpc({
-        remote: "#{env.config.orgUrl}/api/v1/#{env.config.appId}/remote.html"
+        remote: remoteUrl
       }, {
         remote: { message: {}, ready: {} }
         local:  { message: onRemoteMessage, ready: onRemoteReady }

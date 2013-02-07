@@ -1,3 +1,4 @@
+/*global define:true */
 define(['aura/aura'], function (aura) {
 
   "use strict";
@@ -10,18 +11,16 @@ define(['aura/aura'], function (aura) {
     setTimeout(function () {
       var argsArray = slice.call(args);
       argsArray.shift().apply(null, argsArray);
-    }, parseInt(Math.random()*2, 10));
+    }, parseInt(Math.random() * 2, 10));
   };
 
   var easyXDMMock = {
     Rpc: function (a1, a2) {
-      console.log("constructing easyXDMMock.Rpc with params: ", arguments);
-      delay(a2.local.ready, {me: {name: "test"}, app: {name: "test", org: {name: "test"}}});
+      delay(a2.local.ready, {data: {me: {name: "test"}, app: {name: "test", org: {name: "test"}}}});
     }
   };
 
   easyXDMMock.Rpc.prototype.message = function (conf, successCb, errorCb) {
-    console.log("Calling easyXDMMock.Rpc#message with params: ", arguments);
     var cb;
     if (conf.path.indexOf('error') === 0) {
       cb = errorCb;
@@ -31,7 +30,7 @@ define(['aura/aura'], function (aura) {
     delay(cb, conf);
   };
   
-  define('easyXDM', function () { return easyXDMMock;});
+  define('easyXDM', function () { return easyXDMMock; });
 
   describe("API specs", function () {
     var env, api, app = aura();
@@ -90,7 +89,7 @@ define(['aura/aura'], function (aura) {
         var params = [123, null, undefined, Object.create(null), {}];
         params.forEach(function (param) {
           api.bind(api, param).should.throw(TypeError);
-        }); 
+        });
       });
 
       it("accepts a method as the second parameter", function (done) {
@@ -153,7 +152,7 @@ define(['aura/aura'], function (aura) {
 
       it("can be passed default params for the requests", function (done) {
         var additionalParams = {limit: 10};
-        api.get({path:'/path', provider: 'me', params: additionalParams}, function (params) {
+        api.get({path: '/path', provider: 'me', params: additionalParams}, function (params) {
           params.should.contain.keys('params');
           params.params.should.eql(additionalParams);
           done();

@@ -1,7 +1,4 @@
-<h1>({{renderCount}}) Reviewable: {{reviewable.name}}</h1>
-<div data-hull-widget="identity"></div>
-{{#reviewable}}
-{{#if ../loggedIn}}
+{{#if loggedIn}}
 <select>
   <option>1</option>
   <option>2</option>
@@ -14,8 +11,8 @@
 {{else}}
 <button data-hull-action="login" data-hull-provider="facebook">Login first</button>
 {{/if}}
+
 <ul>
-{{/reviewable}}
 {{#reviews}}
 <li>[{{rating}}] {{name}}, {{description}} (by {{user.name}})</li>
 {{/reviews}}
