@@ -8,6 +8,7 @@
     "sinon-chai": "*",
     "grunt": "0.4.0rc4",
     "grunt-lib-phantomjs": "0.1.0",
+    "grunt-dox": "git://github.com/hull/grunt-dox.git",
     "grunt-contrib-clean": "~0.4",
     "grunt-contrib-coffee": "0.3.2",
     "grunt-contrib-watch": "~0.2",

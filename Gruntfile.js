@@ -11,7 +11,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-mocha');
-  // grunt.loadNpmTasks('grunt-dox');
+  grunt.loadNpmTasks('grunt-dox');
 
   var port = 3001;
 
