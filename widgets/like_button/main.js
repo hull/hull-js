@@ -27,7 +27,6 @@ define({
 
   act: function(verb) {
     if (this.working) {
-      console.warn("Already working... !");
       return;
     }
     this.working = true;
