@@ -22,7 +22,7 @@ module.exports = function(grunt) {
 
     dox: {
       files: {
-        src: 'lib/**/*.js',
+        src: 'widgets/**/*.js',
         dest: 'docs'
       }
     },
