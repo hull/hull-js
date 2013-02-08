@@ -5,21 +5,22 @@ define({
 
   working: false,
 
-  datasources: {
-    isLiked: function() {
-      if (typeof this.isLiked === 'boolean') {
-        return this.isLiked;
-      } else {
-        return this.api('hull/' + this.id + '/likes/me');
-      }
+  initialize: function() {
+    if (this.options.liked) {
+      this.isLiked = (this.options.liked == true);
     }
   },
 
+  datasources: {
+    myLikes: "me/liked",
+  },
+
   beforeRender: function(data) {
+    var likedIds = _.pluck(data.myLikes, 'liked_id');
     if (!data.me || !data.me.id) {
       this.isLiked = undefined;
-    } else {
-      this.isLiked = this.isLiked || data.isLiked;
+    } else if (typeof this.isLiked !== 'boolean') {
+      this.isLiked = _.include(likedIds, this.id);
     }
     data.likesCount = data.likesCount || this.options.likes_count;
     data.isLiked = this.isLiked;
