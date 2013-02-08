@@ -21,6 +21,7 @@ define({
     } else {
       this.isLiked = this.isLiked || data.isLiked;
     }
+    data.likesCount = data.likesCount || this.options.likes_count;
     data.isLiked = this.isLiked;
     return data;
   },
@@ -31,12 +32,11 @@ define({
     }
     this.working = true;
     var method = verb === 'unlike' ? 'delete' : 'post';
-    this.api('hull/' + this.id + '/likes', method, function(res) {
-      this.working = false;
-      if (res) {
-        this.isLiked = !this.isLiked;
-        this.render('like_button', { liked: this.isLiked });
-      }
+    this.api('hull/' + this.id + '/likes', method, function(count) {
+      this.working    = false;
+      this.isLiked    = !this.isLiked;
+      this.likesCount = count
+      this.render('like_button', { isLiked: this.isLiked, likesCount: this.likesCount });
     }.bind(this));
   },
 
