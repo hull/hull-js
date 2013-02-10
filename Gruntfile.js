@@ -32,10 +32,10 @@ module.exports = function (grunt) {
     handlebarsWidgetsFiles['tmp/' + widgetPath + '/templates.js'] = widgetPath + '/**/*.hbs';
   });
 
-  // 
+  //
   // Lookup of the available libs and injects them for the build
   // in the requirejs conf
-  // 
+  //
   var clientLibs = grunt.file.glob
     .sync('src/client/**/*.coffee')
     .map(function (clientLib) {
@@ -50,8 +50,8 @@ module.exports = function (grunt) {
     .map(function (extension) {
       return extension.replace('.js', '');
     });
-    
-      
+
+
   grunt.initConfig({
 
     pkg: pkg,
@@ -111,12 +111,13 @@ module.exports = function (grunt) {
             handlebars:     'components/handlebars/handlebars',
             requireLib:     'components/requirejs/require',
             moment:         'components/moment/moment',
-            string:         'components/underscore.string/dist/underscore.string.min',
+            string:         'components/underscore.string/lib/underscore.string',
             jquery:         'empty:',
             text:           'components/requirejs-text/text'
           },
           shim: {
             backbone:   { exports: 'Backbone', deps: ['underscore', 'jquery'] },
+            string:     { exports: '_', deps: ['underscore'] },
             underscore: { exports: '_' },
             easyXDM:    { exports: 'easyXDM' },
             handlebars:    { exports: 'Handlebars' }
@@ -124,6 +125,8 @@ module.exports = function (grunt) {
           include: [
             'requireLib',
             'underscore',
+            'moment',
+            'string',
             'backbone',
             'handlebars',
             'easyXDM',
@@ -273,7 +276,7 @@ module.exports = function (grunt) {
     },
     version: {
       template: "define(function () { return '<%= pkg.version %>';});",
-      dest: 'lib/version.js'     
+      dest: 'lib/version.js'
     }
   });
 
@@ -288,6 +291,6 @@ module.exports = function (grunt) {
   grunt.registerTask("version", "generate a file from a template", function () {
     var conf = grunt.config("version");
     grunt.file.write(conf.dest, grunt.template.process(conf.template));
-    grunt.log.writeln('Generated \'' + conf.dest + '\' successfully.');  
+    grunt.log.writeln('Generated \'' + conf.dest + '\' successfully.');
   });
 };
