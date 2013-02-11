@@ -1,8 +1,8 @@
 define ['lib/hullbase', 'handlebars'], (Hull, Handlebars)->
   init: (env)->
-    setupTemplate = (tplSrc, name) ->
+    setupTemplate = (tplSrc, tplName) ->
       compiled = env.core.template.hbs(tplSrc)
-      Handlebars.registerPartial(name, compiled)
+      Handlebars.registerPartial(tplName, compiled)
       compiled
 
     env.core.template.load = (names, ref, format="hbs")->
@@ -18,18 +18,18 @@ define ['lib/hullbase', 'handlebars'], (Hull, Handlebars)->
         # if require.defined(path)
         #   ret[tpl] = require(path)
         # else
-        tplName = [widgetName, name].join("/")
+        tplName = [widgetName, name.replace(/^_/, '')].join("/")
         localTpl = env.core.dom.find("script[data-hull-template='#{tplName}']")
         if localTpl.length
-          parsed = setupTemplate(localTpl.text(), name)
+          parsed = setupTemplate(localTpl.text(), tplName)
           ret[name] = parsed
           define path, parsed
         else if Hull.templates["#{tplName}"]
-          parsed = setupTemplate(Hull.templates["#{tplName}"], name)
+          parsed = setupTemplate(Hull.templates["#{tplName}"],  tplName)
           ret[name] = parsed
           define path, parsed
         else if Hull.templates._default?["#{tplName}"]
-          parsed = setupTemplate(Hull.templates._default["#{tplName}"], name)
+          parsed = setupTemplate(Hull.templates._default["#{tplName}"],  tplName)
           ret[name] = parsed
           define path, parsed
         else
@@ -40,7 +40,8 @@ define ['lib/hullbase', 'handlebars'], (Hull, Handlebars)->
           res = Array.prototype.slice.call(arguments)
           for t,i in res
             name = paths[i][0]
-            ret[name] = setupTemplate(t, name)
+            tplName = [widgetName, name].join("/")
+            ret[name] = setupTemplate(t, tplName)
           dfd.resolve(ret)
         , (err)->
           console.error("Error loading templates", paths, err)
