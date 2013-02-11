@@ -40,10 +40,9 @@ define ['backbone', 'underscore'], (Backbone, _)->
   class HullWidget extends Backbone.View
 
     actions: {}
+    templates: []
 
     initialize: ->
-
-    refreshEvents: ['model.hull.me.change']
 
     constructor: (options)->
       @ref    = options.ref
@@ -118,7 +117,6 @@ define ['backbone', 'underscore'], (Backbone, _)->
             ds
 
         widgetDeferred = $.when.apply($, promises)
-
         templateDeferred = @sandbox.template.load(@templates, @ref)
         @data = {}
         $.when(widgetDeferred, templateDeferred).done (data, tpls)=>
