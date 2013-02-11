@@ -39,10 +39,10 @@ define ['aura/aura', 'lib/hullbase'], (Aura, HullDef)->
         .start({ widgets: 'body' })
 
     initProcess.fail (err)->
-      err(errcb)
+      errcb(err) if errcb
       throw err if !errcb
     initProcess.done (h)->
-      cb(h)
+      cb(h) if cb
     return hull
 
 
