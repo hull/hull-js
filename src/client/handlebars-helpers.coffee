@@ -127,29 +127,6 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
       "#{prefix}-#{__seq++}"
 
 
-    ###*
-     * Renders a singular English language noun into its plural form normal results can be overridden by passing in an alternative
-     *
-     *     {{pluralize "activity"}}
-     *     => 'activities'
-     *
-     * @param  {String} string A text string
-     * @return {String}        A processed string
-    ###
-    HandlebarsHelpers.pluralize = (string)->
-      string.pluralize()
-
-    ###*
-     * Renders a plural English language noun into its singular form normal results can be overridden by passing in an alterative
-     *
-     *     {{singularize "activies"}}
-     *     => 'activity'
-     *
-     * @param  {String} string A text string
-     * @return {String}        A processed string
-    ###
-    HandlebarsHelpers.singularize = (string)->
-      string.singularize()
 
     ###*
      * Renders a lower case underscored word into camel case.
@@ -294,6 +271,28 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
         item.index = index
         buffer.push fn(item)
       buffer.join('')
+
+    ###*
+     * joins the elements of an array
+     *
+     *     var list = ['a', 'b', 'c']
+     *
+     *     {{join list ","}}
+     *     => a,b,c
+     *
+     * @param  {Array}   array  The Array of objects
+    ###
+
+    HandlebarsHelpers.join = (items, options)->
+      if options && _.isFunction(options.fn)
+        items = _.map items, (i)-> options.fn(i)
+      sep = options.hash['sep'] || ', '
+      last = items.splice(-1) if options.hash['lastSep'] && items.length > 1
+      ret = items.join sep
+      ret += options.hash['lastSep'] + last if last
+      ret
+
+
 
 
     handlebars.registerHelper(k, v) for k,v of HandlebarsHelpers
