@@ -16,8 +16,12 @@ define({
   type: "Hull",
   templates: ['friends_list'],
   datasources: {
-    friends: function() {
-      return this.api("hull/me/friends");
+    friends: ":id/friends"
+  },
+  initialize: function() {
+    if (!this.options.id) {
+      this.options.id = 'me';
     }
   }
+
 })
