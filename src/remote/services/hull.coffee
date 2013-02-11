@@ -21,7 +21,7 @@ define ['jquery', 'underscore'], ($, _)->
         headers:
           'Hull-App-Id': config.appId
 
-      request.done((res)-> callback(res or {}))
+      request.done((res)-> callback(res))
       request.fail(errback)
 
       return

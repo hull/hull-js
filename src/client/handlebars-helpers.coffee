@@ -127,29 +127,6 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
       "#{prefix}-#{__seq++}"
 
 
-    ###*
-     * Renders a singular English language noun into its plural form normal results can be overridden by passing in an alternative
-     *
-     *     {{pluralize "activity"}}
-     *     => 'activities'
-     *
-     * @param  {String} string A text string
-     * @return {String}        A processed string
-    ###
-    HandlebarsHelpers.pluralize = (string)->
-      string.pluralize()
-
-    ###*
-     * Renders a plural English language noun into its singular form normal results can be overridden by passing in an alterative
-     *
-     *     {{singularize "activies"}}
-     *     => 'activity'
-     *
-     * @param  {String} string A text string
-     * @return {String}        A processed string
-    ###
-    HandlebarsHelpers.singularize = (string)->
-      string.singularize()
 
     ###*
      * Renders a lower case underscored word into camel case.
@@ -162,7 +139,7 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
      * @return {String}        A processed string
     ###
     HandlebarsHelpers.camelize = (string)->
-      string.camelize()
+      _.str.camelize string
 
     ###*
      * Renders a camel cased word into words seperated by underscores
@@ -175,7 +152,7 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
      * @return {String}        A processed string
     ###
     HandlebarsHelpers.underscore = (string)->
-      string.underscore()
+      _.str.underscored string
 
     ###*
      * Renders a lower case and underscored word into human readable form defaults to making the first letter capitalized unless you pass true
@@ -187,7 +164,7 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
      * @return {String}        A processed string
     ###
     HandlebarsHelpers.humanize = (string)->
-      string.humanize()
+      _.str.humanize string
 
     ###*
      * Renders all characters to lower case and then makes the first upper
@@ -199,7 +176,7 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
      * @return {String}        A processed string
     ###
     HandlebarsHelpers.capitalize = (string)->
-      string.capitalize()
+      _.str.capitalize string
 
     ###*
      * Renders all underbars and spaces as dashes
@@ -211,7 +188,7 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
      * @return {String}        A processed string
     ###
     HandlebarsHelpers.dasherize = (string)->
-      string.dasherize()
+      _.str.dasherize string
 
     ###*
      * Renders words into title casing (as for book titles)
@@ -223,68 +200,20 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
      * @return {String}        A processed string
     ###
     HandlebarsHelpers.titlelize = (string)->
-      string.titlelize()
+      _.str.titlelize string
+
 
     ###*
-     * Renders class names that are prepended by modules into just the class
+     * Renders an underscored word into its camel cased form
      *
-     *     {{demodulize "Resources::ImageGallery"}}
-     *     => 'ImageGallery'
-     *
-     * @param  {String} string A text string
-     * @return {String}        A processed string
-    ###
-    HandlebarsHelpers.demodulize = (string)->
-      string.demodulize()
-
-    ###*
-     * Renders camel cased singular words into their underscored plural form
-     *
-     *     {{tableize "ImageGallery"}}
-     *     => 'image_galleries'
-     *
-     * @param  {String} string A text string
-     * @return {String}        A processed string
-    ###
-    HandlebarsHelpers.tableize = (string)->
-      string.tableize()
-
-    ###*
-     * Renders an underscored plural word into its camel cased singular form
-     *
-     *     {{tableize "image_galleries"}}
+     *     {{classify "image_gallery"}}
      *     => 'ImageGallery'
      *
      * @param  {String} string A text string
      * @return {String}        A processed string
     ###
     HandlebarsHelpers.classify = (string)->
-      string.classify()
-
-    ###*
-     * Renders a class name (camel cased singular noun) into a foreign key.
-     * defaults to seperating the class from the id with an underbar unless you pass true
-     *
-     *     {{tableize "ImageGallery"}}
-     *     => 'image_gallery_id'
-     *
-     * @param  {String} string A text string
-     * @return {String}        A processed string
-    ###
-    HandlebarsHelpers.foreign_key = (string)->
-      string.foreign_key()
-
-    ###*
-     * Renders all numbers found in the string into their sequence like "22nd"
-     *
-     *     {{ordinalize "the 1 is before the 2 man"}}
-     *     => 'the 1st is before the 2nd man'
-     *
-     * @param  {String} string A text string
-     * @return {String}        A processed string
-    ###
-    HandlebarsHelpers.ordinalize = (string)->
-      string.ordinalize()
+      _.str.classify string
 
     ###*
      * Remove surrounding whitespace
@@ -296,7 +225,7 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
      * @return {String}        A processed string
     ###
     HandlebarsHelpers.trim = (string)->
-      string.trim()
+      _.str.trim string
 
 
     ###*
@@ -342,6 +271,28 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
         item.index = index
         buffer.push fn(item)
       buffer.join('')
+
+    ###*
+     * joins the elements of an array
+     *
+     *     var list = ['a', 'b', 'c']
+     *
+     *     {{join list ","}}
+     *     => a,b,c
+     *
+     * @param  {Array}   array  The Array of objects
+    ###
+
+    HandlebarsHelpers.join = (items, options)->
+      if options && _.isFunction(options.fn)
+        items = _.map items, (i)-> options.fn(i)
+      sep = options.hash['sep'] || ', '
+      last = items.splice(-1) if options.hash['lastSep'] && items.length > 1
+      ret = items.join sep
+      ret += options.hash['lastSep'] + last if last
+      ret
+
+
 
 
     handlebars.registerHelper(k, v) for k,v of HandlebarsHelpers
