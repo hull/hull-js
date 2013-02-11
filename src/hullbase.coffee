@@ -8,7 +8,6 @@ Hull.init       = (config)->
 Hull.widget     = (widgetName, widgetDef)->
   widgetDef = widgetDef() if _.isFunction(widgetDef)
   widgetDef.type      ?= "Hull"
-  widgetDef.templates ?= [widgetName]
   define("__widget__$#{widgetName}@default", widgetDef)
   return widgetDef
 
