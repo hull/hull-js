@@ -17,7 +17,7 @@
  *
  * ### Parameters
  *
- * * ```data-hull-s3-storage```: Specifies the storage engine to be used. If a single engine is known to the app, it will be automatically used. If there are many storage engines
+ * * ```data-hull-storage```: Specifies the storage engine to be used. If a single engine is known to the app, it will be automatically used. If there are many storage engines
  *    If there are many engines available, it must correspond to a value in ```sandbox.config.services.types.storage```.
  * ### Events
  *

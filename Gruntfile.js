@@ -58,8 +58,8 @@ module.exports = function (grunt) {
 
     dox: {
       files: {
-        src: 'widgets/**/*.js',
-        dest: 'dist/docs/widgets'
+        src: 'widgets/*/main.js',
+        dest: 'dist/<%= pkg.version%>/docs/widgets'
       }
     },
 
@@ -283,8 +283,8 @@ module.exports = function (grunt) {
   // default build task
   grunt.registerTask('build_libs', ['clean:libs', 'coffee', 'version', 'requirejs:client', 'requirejs:remote']);
   grunt.registerTask('build_widgets', ['clean:widgets', 'handlebars', 'requirejs:upload', 'requirejs:registration', 'concat:widgets', 'uglify:widgets']);
-  grunt.registerTask('build', ['build_libs', 'build_widgets', "dox"]);
-  grunt.registerTask('default', ['connect', 'build', /*'mocha',*/ 'watch']);
+  grunt.registerTask('build', ['build_libs', 'build_widgets', 'dox']);
+  grunt.registerTask('default', ['connect', 'build', /*'mocha'*/, 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 
 
