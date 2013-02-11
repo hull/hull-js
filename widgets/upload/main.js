@@ -2,13 +2,13 @@
  * Widget Upload
  *
  * Thes widgets allows the user of your applications to attach documents and files to the application
- * 
+ *
  * ### Dependencies
  *
  * * ```jquery.fileupload```: This plugin uses [jQuery File upload plugin](https://github.com/blueimp/jQuery-File-Upload) to handle the file upload gracefully.
  *     Please note that the plugin is packaged within the widget so you don't have to struggle against the dependencies
  * * ``` storage```: This plugin requires that you have attahed an S3 storage to your Hull application in the admin.
- * 
+ *
  * ### Templates
  *
  * * ```upload.hbs```: The main template. Because the jQuery plugin has some requirements, the template makes sure everything is set up as needed.
@@ -29,11 +29,7 @@ define(['jquery.fileupload'], {
 
   type: "Hull",
 
-  templates: [
-    'upload',
-    'upload_file_single',
-    'upload_file_multiple'
-  ],
+  templates: [ 'upload', 'file_single' ],
 
   fileTypes: {
     images :  /(\.|\/)(gif|jpe?g|png)$/i,
