@@ -126,9 +126,12 @@ define(['jquery.fileupload'], {
     this.uploader = this.form.data('fileupload');
     this.dropzone = this.$el.find(this.uploader_options.dropZone);
 
-    // for event in this.uploader_events
-    //   do (event) =>
-    //     this.form.on event, (e,d)=> this.emit(event, {event:e, data:d})
+    var emit = this.sandbox.emit, form = this.form;
+
+    _.each(this.uploader_events, function(evt) {
+      var n = evt.replace(/^fileupload/, '');
+      form.on(evt, function(e,d) { emit('hull.upload.' + n, { event: e, data: d }); });
+    });
 
     this.form.on('fileuploadadd',       this.onAdd);
     this.form.on('fileuploaddragover',  this.onDragOver);
@@ -173,7 +176,6 @@ define(['jquery.fileupload'], {
 
   onSend: function (e, data) {
     this.$el.find('.progress').fadeIn();
-    this.sandbox.emit('hull.upload.send');
   },
 
   onSubmit: function (e, data) {
@@ -193,7 +195,6 @@ define(['jquery.fileupload'], {
 
   onProgress: function (e, data) {
     this.$el.find('.bar').css('width', data.percent + '%');
-    this.sandbox.emit('hull.upload.progress', data);
   },
 
   onFail: function (e, data) {
@@ -214,7 +215,6 @@ define(['jquery.fileupload'], {
       file.description = this.description;
     }, this));
     this.toggleDescription();
-    this.sandbox.emit('hull.upload.done', data.files);
     this.uploader.options.maxNumberOfFiles++;
   },
 
