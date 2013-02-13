@@ -14,5 +14,15 @@ define(function() { return [
     value : "",
     placeholder : "bob@host.com",
     error : "Invalid Email"
+  },
+  {
+    name : "gender",
+    type : "select",
+    label : "Gender",
+    options: [
+      {"label": "Male", "value":"Male"},
+      {"label": "Female", "value":"Female"}
+    ],
+    error : "Please select something"
   }
 ]});

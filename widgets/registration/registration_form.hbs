@@ -1,67 +1,71 @@
-<div class="registration">
-  <form>
 
-    {{#fields}}
-    <div class="field {{name}}">
-        <label for="{{name}}">{{label}}</label>
+<div class="hull-registration">
 
-        {{#ifEqual type "text"}}
+  <form class="hull-form hull-registration__form">
 
-            <input
-              class="{{type}} h5-{{name}}"
-              type="{{type}}"
-              id="{{name}}"
-              name="{{name}}"
-              value="{{value}}"
+    <ul class="hull-form__fields">
+      {{#fields}}
+        <li class="field {{name}}">
+            <label for="{{name}}" class="hull-form__label">{{label}}</label>
 
-              {{#placeholder}}placeholder="{{placeholder}}"{{/placeholder}}
-              {{#pattern}}pattern="{{pattern}}"{{/pattern}}
-              {{#required}}required{{/required}}
+            {{#ifEqual type "text"}}
 
-              data-h5-errorid="{{name}}_error"
-            />
+                <input
+                  class="hull-form__text-input {{type}} h5-{{name}}"
+                  type="{{type}}"
+                  id="{{name}}"
+                  name="{{name}}"
+                  value="{{value}}"
+                  placeholder="{{placeholder}}"
+                  {{#pattern}}pattern="{{pattern}}"{{/pattern}}
+                  {{#required}}required{{/required}}
 
-        {{/ifEqual}}
+                  data-h5-errorid="{{name}}_error"
+                />
 
-        {{#ifEqual type "checkbox"}}
-            <input
-              class="{{type}} h5-{{name}}"
-              type="{{type}}"
-              id="{{name}}"
-              name="{{name}}"
-              {{#ifEqual value "true"}}checked{{/ifEqual}}
-              placeholder="{{placeholder}}"
-              {{#required}}required{{/required}}
-              data-h5-errorid="{{name}}_error"
-            />
+            {{/ifEqual}}
 
-        {{/ifEqual}}
+            {{#ifEqual type "checkbox"}}
+                <input
+                  class="{{type}} h5-{{name}}"
+                  type="{{type}}"
+                  id="{{name}}"
+                  name="{{name}}"
+                  {{#ifEqual value "true"}}checked{{/ifEqual}}
+                  placeholder="{{placeholder}}"
+                  {{#required}}required{{/required}}
+                  data-h5-errorid="{{name}}_error"
+                />
 
-        {{#ifEqual type "select"}}
-            <select
-            class='{{type}} h5-{{name}}'
-            type="{{type}}"
-            id="{{name}}"
-            name="{{name}}"
-            {{#required}}required{{/required}}
-            data-h5-errorid="{{name}}_error">
-              {{#options}}
-                  <option
-                    label="{{label}}"
-                    value="{{value}}"
-                    {{#ifEqual ../value value}}selected{{/ifEqual}}
-                  >{{value}}</option>
-              {{/options}}
-            </select>
-        {{/ifEqual}}
+            {{/ifEqual}}
 
-        <div id="{{name}}_error" class='error' for="{{name}}">{{error}}</div>
-    </div>
+            {{#ifEqual type "select"}}
+                <select
+                class="hull-form__select {{type}} h5-{{name}}"
+                type="{{type}}"
+                id="{{name}}"
+                name="{{name}}"
+                {{#required}}required{{/required}}
+                data-h5-errorid="{{name}}_error">
+                  {{#options}}
+                      <option
+                        label="{{label}}"
+                        value="{{value}}"
+                        {{#ifEqual ../value value}}selected{{/ifEqual}}
+                      >{{value}}</option>
+                  {{/options}}
+                </select>
+            {{/ifEqual}}
 
-    {{/fields}}
+            <div id="{{name}}_error" class="hull-form__error" for="{{name}}">{{error}}</div>
+        </li>
 
-    <div class="field">
-      <input type='submit' data-hull-action="submit" value="Valider" />
-    </div>
+        {{/fields}}
+
+      <li>
+        <input type="submit" data-hull-action="submit" class="hull-btn hull-btn--primary" value="Register" />
+      </li>
+
+    </ul>
   </form>
 </div>
