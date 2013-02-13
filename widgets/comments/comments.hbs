@@ -1,18 +1,38 @@
-{{#if loggedIn}}
-  <textarea></textarea>
-  <button data-hull-action="comment">Send</button>
-{{else}}
-  <button data-hull-action="login" data-hull-provider="facebook">Login first</button>
-{{/if}}
+<div class="hull-comment">
 
+  <div class="hull-comment__form">
+    {{#if loggedIn}}
+      <textarea class="hull-comment__text" placeholder="Write something..."></textarea>
+      <button data-hull-action="comment" class="hull-btn">Send</button>
+    {{else}}
+      <div data-hull-widget="identity@hull"></div>
+    {{/if}}
+  </div>
 
-<ul>
-{{#comments}}
-  <li>{{updated_at}}: {{description}} (by {{user.name}})</li>
-{{/comments}}
+  <hr class="hull-rule">
 
-{{^comments}}
-  oops... no comments for the moment
-{{/comments}}
-</ul>
+  {{#if comments}}
+    <ul class="hull-comment__list">
+      {{#comments}}
+        <li class="hull-comment__list__item">
+          <div class="hull-media">
+            <div class="hull-media__img">
+              <img src="{{user.picture}}" alt="{{user.name}}">
+            </div>
+            <div class="hull-media__body">
+              <div class="hull-comment__timestamp">{{fromNow updated_at}}</div>
+              <h4 class="hull-comment__name">{{user.name}}</h4>
+              <div class="hull-comment__description">
+                {{description}}
+              </div>
+            </div>
+          </div>
+        </li>
+      {{/comments}}
+    </ul>
+  {{/if}}
 
+  {{^comments}}
+    oops... no comments for the moment
+  {{/comments}}
+</div>
