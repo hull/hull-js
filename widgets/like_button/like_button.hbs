@@ -1,5 +1,11 @@
 {{#if isLiked}}
-<button data-hull-action='unlike'>Unlike</button>
+  <button data-hull-action="unlike" class="hull-btn hull-like--liked">
+    <span class="hull-like__icon">&hearts;</span>
+    Unlike
+  </button>
 {{else}}
-<button data-hull-action='like'>Like</button>
+  <button data-hull-action="like" class="hull-btn hull-like">
+    <span class="hull-like__icon">&hearts;</span>
+    Like
+  </button>
 {{/if}}
