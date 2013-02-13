@@ -12,6 +12,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-dox');
+  grunt.loadNpmTasks('grunt-compass');
 
   var port = 3001;
 
@@ -272,19 +273,39 @@ module.exports = function (grunt) {
       libs: {
         files: ['aura-extensions/**/*.js', 'src/**/*.coffee', 'spec/src/**/*.coffee'],
         tasks: ['build_libs']
+      },
+      compass: {
+        files: [
+          'stylesheets/**/*.{scss,sass}'
+        ],
+        tasks: 'compass:prod'
       }
     },
     version: {
       template: "define(function () { return '<%= pkg.version %>';});",
       dest: 'lib/version.js'
+    },
+
+    // compile .scss/.sass to .css using Compass
+    compass: {
+      prod:{
+        src: 'stylesheets',
+        dest: 'dist/'+pkg.version,
+        outputstyle: 'compressed',
+        linecomments: false,
+        forcecompile: true,
+        debugsass: false,
+        images: 'assets/images',
+        relativeassets: true
+      }
     }
   });
 
   // default build task
   grunt.registerTask('build_libs', ['clean:libs', 'coffee', 'version', 'requirejs:client', 'requirejs:remote']);
   grunt.registerTask('build_widgets', ['clean:widgets', 'handlebars', 'requirejs:upload', 'requirejs:registration', 'concat:widgets', 'uglify:widgets']);
-  grunt.registerTask('build', ['build_libs', 'build_widgets', 'dox']);
-  grunt.registerTask('default', ['connect', 'build', /*'mocha'*/, 'watch']);
+  grunt.registerTask('build', ['build_libs', 'build_widgets', 'watch']);
+  grunt.registerTask('default', ['connect', 'build', /*'mocha',*/  'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 
 
