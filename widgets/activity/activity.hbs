@@ -1,10 +1,17 @@
-<a href="#" data-hull-action="previousPage">&larr; Previous</a>
-  <span>{{query.page}}</span>
-  <span>VERB ?: {{query.where.verb}}</span>
-  <span>ObjectType ?: {{query.where.obj_type}}</span>
-  <pre>{{json query}}</pre>
-<a href="#" data-hull-action="nextPage">Next &rarr;</a>
-
+<div class="hull-pager">
+  <hr class="hull-rule" />
+    <div class="hull-pager__content">
+      <button data-hull-action="previousPage" class="hull-btn">&larr; Previous</button>
+      <button data-hull-action="nextPage" class="hull-btn">Next &rarr;</button>
+    </div>
+  <hr class="hull-rule" />
+  <div class="hull-pager__query">
+      <span>{{query.page}}</span>
+      <span>VERB ?: {{query.where.verb}}</span>
+      <span>ObjectType ?: {{query.where.obj_type}}</span>
+      <pre>{{json query}}</pre>
+  </div>
+</div>
 
 <ul class="hull-activity">
   {{#activities}}
