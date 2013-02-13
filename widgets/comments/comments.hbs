@@ -1,8 +1,8 @@
-<div class="hull-comment">
+<div class="hull-comments">
 
-  <div class="hull-comment__form">
+  <div class="hull-comments__form">
     {{#if loggedIn}}
-      <textarea class="hull-comment__text" placeholder="Write something..."></textarea>
+      <textarea class="hull-comments__text" placeholder="Write something..."></textarea>
       <button data-hull-action="comment" class="hull-btn">Send</button>
     {{else}}
       <div data-hull-widget="identity@hull"></div>
@@ -12,17 +12,17 @@
   <hr class="hull-rule">
 
   {{#if comments}}
-    <ul class="hull-comment__list">
+    <ul class="hull-comments__list">
       {{#comments}}
-        <li class="hull-comment__list__item">
+        <li class="hull-comments__list__item">
           <div class="hull-media">
             <div class="hull-media__img">
               <img src="{{user.picture}}" alt="{{user.name}}">
             </div>
             <div class="hull-media__body">
-              <div class="hull-comment__timestamp">{{fromNow updated_at}}</div>
-              <h4 class="hull-comment__name">{{user.name}}</h4>
-              <div class="hull-comment__description">
+              <div class="hull-comments__timestamp">{{fromNow updated_at}}</div>
+              <h4 class="hull-comments__name">{{user.name}}</h4>
+              <div class="hull-comments__description">
                 {{description}}
               </div>
             </div>
