@@ -153,7 +153,7 @@ define(['jquery.fileupload'], {
   delete: function () {},
 
   onDrop: function () {
-    this.dropzone.text('Thanks !');
+    this.dropzone.find('b').text('Thanks !');
     this.dropzone.removeClass('dropzone');
   },
 
