@@ -278,7 +278,7 @@ module.exports = function (grunt) {
         files: [
           'stylesheets/**/*.{scss,sass}'
         ],
-        tasks: 'compass:prod'
+        tasks: 'compass'
       }
     },
     version: {
@@ -286,15 +286,14 @@ module.exports = function (grunt) {
       dest: 'lib/version.js'
     },
 
-    // compile .scss/.sass to .css using Compass
     compass: {
-      prod:{
+      dist:{
         src: 'stylesheets',
         dest: 'dist/'+pkg.version,
-        outputstyle: 'compressed',
-        linecomments: false,
+        outputstyle: 'expanded',
+        linecomments: true,
         forcecompile: true,
-        debugsass: false,
+        debugsass: true,
         images: 'assets/images',
         relativeassets: true
       }
