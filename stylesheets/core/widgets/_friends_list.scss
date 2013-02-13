@@ -1,0 +1,18 @@
+.hull-friends{
+
+}
+  .hull-friends__list{
+    list-style-type:none;
+    margin:0 0 pem($base-spacing-unit) 0;
+    padding:0;
+  }
+    .hull-friends__list__item{
+      margin:0 0 pem($base-spacing-unit) 0;
+    }
+  .hull-friends__name{
+    font-size:pem($h6-size);
+    margin:pem($milli-spacing-unit) 0 pem($milli-spacing-unit) 0;
+  }
+  .hull-friends__created{
+    font-size:pem($milli-size);
+  }

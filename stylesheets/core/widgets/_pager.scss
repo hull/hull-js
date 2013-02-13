@@ -1,0 +1,13 @@
+.hull-pager{
+  margin:0 0 pem($base-spacing-unit) 0;
+  text-align:center;
+}
+  .hull-pager__content{
+      padding:pem($milli-spacing-unit);
+  }
+  .hull-pager .hull-rule{
+      margin:0;
+  }
+  .hull-pager__query{
+    display:none;
+  }

@@ -1,0 +1,57 @@
+/*------------------------------------*\
+    $RULES
+\*------------------------------------*/
+/**
+ * Horizontal rules, extend `hr`.
+ */
+.hull-rule{
+    color:$border-color;
+    border:none;
+    border-bottom-width:1px;
+    border-bottom-style:solid;
+    margin-bottom:pem($base-spacing-unit);
+}
+
+
+/**
+ * Dotted rules
+ */
+.hull-rule--dotted{
+    border-bottom-style:dotted;
+}
+
+
+/**
+ * Dashed rules
+ */
+.hull-rule--dashed{
+    border-bottom-style:dashed;
+}
+
+
+/**
+ * Ornamental rules. Places a § over the rule.
+ */
+.hull-rule--ornament{
+    position:relative;
+
+    &:after{
+        content:"§";
+        position:absolute;
+        top:   0;
+        right: 0;
+        left:  0;
+        line-height:0;
+        text-align:center;
+    }
+
+    /**
+    * Pass in an arbitrary ornament though a data attribute, e.g.:
+    *
+      <hr class="rule  rule--ornament" data-ornament="!">
+    *
+    */
+    &[data-ornament]:after{
+        content:attr(data-ornament);
+    }
+}

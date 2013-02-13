@@ -1,0 +1,42 @@
+.hull-reviews__form{
+    max-width:400px;
+    .hull-form__label{
+        font-weight:bold;
+        font-size:pem($milli-size);
+        margin:0 0 pem($milli-spacing-unit) 0;
+    }
+}
+  .hull-reviews__form__select{
+      width:100%;
+  }
+  .hull-reviews__form__text{
+      @include vendor(box-sizing, border-box);
+      display:block;
+      font-family: inherit;
+      font-size: 100%;
+      margin: 0;
+      overflow: auto;
+      vertical-align: top;
+      width:100%;
+      margin:0 0 pem($half-spacing-unit) 0;
+      padding:pem($half-spacing-unit);
+      font-size:pem($milli-size);
+      resize:vertical;
+      border:1px solid $border-color;
+      border-radius:$brand-round;
+      &:focus{
+          outline:0;
+          border-color:darken($border-color, 20%);
+      }
+    }
+  .hull-reviews__list{
+    list-style-type:none;
+    margin:0 0 pem($base-spacing-unit) 0;
+    padding:0;
+  }
+    .hull-reviews__list__item{
+      margin:0 0 pem($half-spacing-unit) 0;
+    }
+  .hull-reviews__content{
+      font-size:pem($h6-size);
+  }
