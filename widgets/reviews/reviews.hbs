@@ -1,23 +1,44 @@
-{{#if loggedIn}}
-<select>
-  <option>1</option>
-  <option>2</option>
-  <option>3</option>
-  <option>4</option>
-  <option>5</option>
-</select>
-<textarea></textarea>
-<button data-hull-action="review">Send</button>
-{{else}}
-<button data-hull-action="login" data-hull-provider="facebook">Login first</button>
-{{/if}}
+<div class="hull-reviews">
+  {{#if loggedIn}}
+    <div class="hull-form hull-reviews__form">
+      <ul class="hull-form__fields">
+        <li>
+          <label class="hull-form__label" for="reviewsSelect">Note:</label>
+          <select class="hull-reviews__form__select" id="reviewsSelect">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>
+        </li>
+        <li>
+          <label class="hull-form__label" for="reviewsText">Review</label>
+          <textarea class="hull-reviews__form__text" id="reviewsText"></textarea>
+        </li>
+        <li>
+          <button data-hull-action="review" class="hull-btn">Send</button>
+        </li>
+      </ul>
+    </div>
+  {{else}}
+      <div data-hull-widget="identity@hull"></div>
+  {{/if}}
 
-<ul>
-{{#reviews}}
-<li>[{{rating}}] {{name}}, {{description}} (by {{user.name}})</li>
-{{/reviews}}
-{{^reviews}}
-oops... no reviews for the moment
-{{/reviews}}
-</ul>
+  {{#if reviews}}
+    <ul class="hull-reviews__list">
+      {{#reviews}}
+        <li class="hull-reviews__list__item">
+          <span class="hull-pill">{{rating}}</span>
+          <span class="hull-reviews__content">
+            {{description}} (by <strong>{{user.name}}</strong>)
+          </span>
+        </li>
+      {{/reviews}}
+    </ul>
+  {{/if}}
 
+  {{^reviews}}
+    oops... no reviews for the moment
+  {{/reviews}}
+</div>
