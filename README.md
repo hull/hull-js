@@ -1,14 +1,13 @@
 
-### Rebuilding the library 
+### Rebuilding the library
 
 Checkout
 
     git@github.com:hull/hull-js.git
 
-First, install grunt
+First, install grunt and bower
 
-    sudo npm install -g grunt-cli
-
+    sudo npm install -g grunt-cli bower
 
 Switch to hull-js dir
 
@@ -30,5 +29,5 @@ Start grunt
 Open in your browser
 
     open http://js.hull.dev
-    
+
 Drink your coffee.

@@ -2,13 +2,13 @@
  * Widget Upload
  *
  * Thes widgets allows the user of your applications to attach documents and files to the application
- * 
+ *
  * ### Dependencies
  *
  * * ```jquery.fileupload```: This plugin uses [jQuery File upload plugin](https://github.com/blueimp/jQuery-File-Upload) to handle the file upload gracefully.
  *     Please note that the plugin is packaged within the widget so you don't have to struggle against the dependencies
  * * ``` storage```: This plugin requires that you have attahed an S3 storage to your Hull application in the admin.
- * 
+ *
  * ### Templates
  *
  * * ```upload.hbs```: The main template. Because the jQuery plugin has some requirements, the template makes sure everything is set up as needed.
@@ -29,11 +29,7 @@ define(['jquery.fileupload'], {
 
   type: "Hull",
 
-  templates: [
-    'upload',
-    'upload_file_single',
-    'upload_file_multiple'
-  ],
+  templates: [ 'upload', 'file_single' ],
 
   fileTypes: {
     images :  /(\.|\/)(gif|jpe?g|png)$/i,
@@ -130,9 +126,12 @@ define(['jquery.fileupload'], {
     this.uploader = this.form.data('fileupload');
     this.dropzone = this.$el.find(this.uploader_options.dropZone);
 
-    // for event in this.uploader_events
-    //   do (event) =>
-    //     this.form.on event, (e,d)=> this.emit(event, {event:e, data:d})
+    var emit = this.sandbox.emit, form = this.form;
+
+    _.each(this.uploader_events, function(evt) {
+      var n = evt.replace(/^fileupload/, '');
+      form.on(evt, function(e,d) { emit('hull.upload.' + n, { event: e, data: d }); });
+    });
 
     this.form.on('fileuploadadd',       this.onAdd);
     this.form.on('fileuploaddragover',  this.onDragOver);
@@ -177,7 +176,6 @@ define(['jquery.fileupload'], {
 
   onSend: function (e, data) {
     this.$el.find('.progress').fadeIn();
-    this.sandbox.emit('hull.upload.send');
   },
 
   onSubmit: function (e, data) {
@@ -197,7 +195,6 @@ define(['jquery.fileupload'], {
 
   onProgress: function (e, data) {
     this.$el.find('.bar').css('width', data.percent + '%');
-    this.sandbox.emit('hull.upload.progress', data);
   },
 
   onFail: function (e, data) {
@@ -218,7 +215,6 @@ define(['jquery.fileupload'], {
       file.description = this.description;
     }, this));
     this.toggleDescription();
-    this.sandbox.emit('hull.upload.done', data.files);
     this.uploader.options.maxNumberOfFiles++;
   },
 
