@@ -26,6 +26,11 @@
     /* Default */
     @include hull-button($low-color);
 
+    /* Alt */
+    &.hull-btn--primary{
+        @include hull-button($high-color);
+    }
+
     /* Providers */
     &[data-hull-provider="facebook"]{
         @include hull-button(#335795);

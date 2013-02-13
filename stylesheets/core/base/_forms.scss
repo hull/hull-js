@@ -14,10 +14,30 @@
  * Text inputs
  */
 .hull-form__text-input,
-.hull-form__textarea{
-
+.hull-form__text-input--textarea{
+  @include vendor(box-sizing, border-box);
+  display:block;
+  font-family: inherit;
+  font-size: 100%;
+  margin: 0;
+  overflow: auto;
+  vertical-align: top;
+  width:100%;
+  line-height:1;
+  margin:0 0 pem($half-spacing-unit) 0;
+  padding:0 pem($milli-spacing-unit);
+  font-size:pem($milli-size);
+  border:1px solid $border-color;
+  border-radius:$brand-round;
+  &:focus{
+      outline:0;
+      border-color:darken($border-color, 20%);
+  }
 }
-
+.hull-form__text-input--textarea{
+    padding:pem($half-spacing-unit);
+    resize:vertical;
+}
 
 /**
  * Group sets of form fields in a list, e.g.:
@@ -44,7 +64,7 @@
     padding:0;
 }
     .hull-form__fields > li{
-        margin:0 0 pem($half-spacing-unit) 0;
+        margin:0 0 pem($base-spacing-unit) 0;
     }
     .hull-form__fields > li:last-child{
         margin-bottom:0;
@@ -79,6 +99,9 @@
  */
 .hull-form__label{
     display:block;
+    font-weight:bold;
+    font-size:pem($milli-size);
+    margin:0 0 pem($milli-spacing-unit) 0;
 }
     /**
      * Extra help text in `label`s, e.g.:
@@ -87,7 +110,7 @@
      *
      */
     .hull-form__label__additional{
-        display:block;
+        display:inline-block;
         font-weight:normal;
     }
 
@@ -140,4 +163,14 @@
 .hull-form__text-input:active + .hull-form__extra-help,
 .hull-form__text-input:focus + .hull-form__extra-help{
     visibility:visible;
+}
+
+
+.hull-form__error{
+ font-size:pem($milli-size);
+ color:#d93636;
+}
+
+.hull-form__select{
+    width:100%;
 }
