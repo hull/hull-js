@@ -1,52 +1,96 @@
 
 <div class="hull-registration">
 
-  <form class="hull-form hull-registration__form">
+  <form class="hull-form hull-registration__form" id="{{formId}}">
 
     <ul class="hull-form__fields">
       {{#fields}}
-        <li class="field {{name}}">
-            <label for="{{name}}" class="hull-form__label">{{label}}</label>
+        <li class="hull-form__fields__item hull-form__fields__item--{{type}}">
+            <label for="hull-form-{{name}}" class="hull-form__label">{{label}}</label>
 
             {{#ifEqual type "text"}}
 
                 <input
-                  class="hull-form__text-input {{type}} h5-{{name}}"
+                  class="hull-form__text-input"
+                  data-hull-input
                   type="{{type}}"
-                  id="{{name}}"
+                  id="hull-form-{{name}}"
                   name="{{name}}"
                   value="{{value}}"
                   placeholder="{{placeholder}}"
-                  {{#pattern}}pattern="{{pattern}}"{{/pattern}}
-                  {{#required}}required{{/required}}
-
-                  data-h5-errorid="{{name}}_error"
+                  {{#if autocomplete}}autocomplete="{{autocomplete}}"{{/if}}
+                  {{#if pattern}}pattern="{{pattern}}"{{/if}}
+                  {{#if required}}required{{/if}}
+                  {{#if error}}data-error-message="{{error}}"{{/if}}
                 />
 
             {{/ifEqual}}
 
-            {{#ifEqual type "checkbox"}}
+            {{#ifEqual type "email"}}
+
                 <input
-                  class="{{type}} h5-{{name}}"
+                  class="hull-form__text-input hull-form__text-input--email"
+                  data-hull-input
                   type="{{type}}"
-                  id="{{name}}"
+                  id="hull-form-{{name}}"
                   name="{{name}}"
-                  {{#ifEqual value "true"}}checked{{/ifEqual}}
+                  value="{{value}}"
                   placeholder="{{placeholder}}"
-                  {{#required}}required{{/required}}
-                  data-h5-errorid="{{name}}_error"
+                  {{#if autocomplete}}autocomplete="{{autocomplete}}"{{/if}}
+                  {{#if pattern}}pattern="{{pattern}}"{{/if}}
+                  {{#if required}}required{{/if}}
+                  {{#if error}}data-error-message="{{error}}"{{/if}}
+                />
+
+            {{/ifEqual}}
+
+            {{#ifEqual type "url"}}
+
+                <input
+                  class="hull-form__text-input hull-form__text-input--email"
+                  data-hull-input
+                  type="{{type}}"
+                  id="hull-form-{{name}}"
+                  name="{{name}}"
+                  value="{{value}}"
+                  placeholder="{{placeholder}}"
+                  {{#if autocomplete}}autocomplete="{{autocomplete}}"{{/if}}
+                  {{#if pattern}}pattern="{{pattern}}"{{/if}}
+                  {{#if required}}required{{/if}}
+                  {{#if error}}data-error-message="{{error}}"{{/if}}
+                />
+
+            {{/ifEqual}}
+
+            {{#ifEqual type "tel"}}
+
+                <input
+                  class="hull-form__text-input hull-form__text-input--email"
+                  data-hull-input
+                  type="{{type}}"
+                  id="hull-form-{{name}}"
+                  name="{{name}}"
+                  value="{{value}}"
+                  placeholder="{{placeholder}}"
+                  {{#if autocomplete}}autocomplete="{{autocomplete}}"{{/if}}
+                  {{#if pattern}}pattern="{{pattern}}"{{/if}}
+                  {{#if required}}required{{/if}}
+                  {{#if error}}data-error-message="{{error}}"{{/if}}
                 />
 
             {{/ifEqual}}
 
             {{#ifEqual type "select"}}
                 <select
-                class="hull-form__select {{type}} h5-{{name}}"
+                class="hull-form__select"
+                data-hull-input
                 type="{{type}}"
-                id="{{name}}"
+                id="hull-form-{{name}}"
                 name="{{name}}"
-                {{#required}}required{{/required}}
-                data-h5-errorid="{{name}}_error">
+                {{#if autocomplete}}autocomplete="{{autocomplete}}"{{/if}}
+                {{#if pattern}}pattern="{{pattern}}"{{/if}}
+                {{#if required}}required{{/if}}
+                {{#if error}}data-error-message="{{error}}"{{/if}}>
                   {{#options}}
                       <option
                         label="{{label}}"
@@ -57,7 +101,26 @@
                 </select>
             {{/ifEqual}}
 
-            <div id="{{name}}_error" class="hull-form__error" for="{{name}}">{{error}}</div>
+            {{#ifEqual type "checkbox"}}
+                <label>
+                  <input
+                    class="hull-form__checkbox"
+                    data-hull-input
+                    type="{{type}}"
+                    id="hull-form-{{name}}"
+                    name="{{name}}"
+                    {{#ifEqual value "true"}}checked{{/ifEqual}}
+                    placeholder="{{placeholder}}"
+                    {{#if autocomplete}}autocomplete="{{autocomplete}}"{{/if}}
+                    {{#if pattern}}pattern="{{pattern}}"{{/if}}
+                    {{#if required}}required{{/if}}
+                    {{#if error}}data-error-message="{{error}}"{{/if}}
+                  />
+                  {{checkboxLabel}}
+                </label>
+            {{/ifEqual}}
+
+            <div id="hull-form-{{name}}-error" class="hull-form__error"></div>
         </li>
 
         {{/fields}}
