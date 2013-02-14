@@ -9,7 +9,15 @@
      </div>
   </div>
 {{else}}
-  <button data-hull-action="login" data-hull-provider="facebook" class="hull-btn">
-    Sign In with facebook
+  {{#authServices}}
+  <button data-hull-action="login" data-hull-provider="{{.}}" class="hull-btn">
+    Sign In with {{classify .}}
   </button>
+  {{/authServices}}
+
+  {{^authServices}}
+  {{#if debug}}
+    No Auth Services configured, please add at least one in the admin.
+  {{/if}}
+  {{/authServices}}
 {{/if}}

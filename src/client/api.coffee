@@ -280,6 +280,7 @@ define ['lib/version'], (version) ->
         app.config.services             = remoteConfig.services
         app.config.widgets.sources.hull = remoteConfig.baseUrl + '/widgets'
         app.sandbox.config ?= {}
+        app.sandbox.config.debug        = app.config.debug
         app.sandbox.config.assetsUrl    = remoteConfig.assetsUrl
         app.sandbox.config.appId        = app.config.appId
         app.sandbox.config.orgUrl       = app.config.orgUrl
