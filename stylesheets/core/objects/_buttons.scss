@@ -1,70 +1,67 @@
 /*------------------------------------*\
     $BUTTONS
 \*------------------------------------*/
-.hull-btn{
-    @include vendor(user-select, none);
-    position:relative;
-    cursor: pointer;
-    text-transform: none;
-    font:inherit;
-    cursor:pointer;
-    border:none;
-    display:inline-block;
-    margin: 0;
-    line-height:1;
-    -webkit-font-smoothing: antialiased;
-    @include vendor(background-clip, padding-box);
+@if ($theme) {
+    .hull-btn{
+        @include vendor(user-select, none);
+        position:relative;
+        cursor: pointer;
+        text-transform: none;
+        font:inherit;
+        cursor:pointer;
+        border:none;
+        display:inline-block;
+        margin: 0;
+        line-height:1;
+        -webkit-font-smoothing: antialiased;
+        @include vendor(background-clip, padding-box);
+
+        /**
+         * Set padding in ems so we can change the size of a button by merely
+         * altering its `font-size`.
+         */
+        padding:0.6em;
+        font-size:pem($milli-size);
+        border-radius:$brand-round;
+
+        /* Default */
+        @include hull-button($low-color);
+        /* Alt */
+        &.hull-btn--primary{
+            @include hull-button($high-color);
+        }
+        /* Providers */
+        &[data-hull-provider="facebook"]{
+            @include hull-button(#335795);
+        }
+        &[data-hull-provider="twitter"]{
+            @include hull-button(#30D8F0);
+        }
+        &[data-hull-provider="github"]{
+            @include hull-button(#fafafa);
+        }
+        /* Fixes */
+        &::-moz-focus-inner,
+        &::-moz-focus-inner {
+            border: 0;
+            padding: 0;
+        }
+        &[disabled] {
+            cursor: default;
+        }
+    }
 
     /**
-     * Set padding in ems so we can change the size of a button by merely
-     * altering its `font-size`.
+     * Basic button modifiers
      */
-    padding:0.6em;
-    font-size:pem($milli-size);
-    border-radius:$brand-round;
+    .hull-btn--sml { font-size:pem($micro-size); }
+    .hull-btn--lrg { font-size:pem($h6-size);padding:0.8em; }
 
-    /* Default */
-    @include hull-button($low-color);
-
-    /* Alt */
-    &.hull-btn--primary{
-        @include hull-button($high-color);
+    .hull-btn--full{
+        display:block;
+        text-align:center;
+        padding-right:0;
+        padding-left: 0;
+        width:100%;
     }
-
-    /* Providers */
-    &[data-hull-provider="facebook"]{
-        @include hull-button(#335795);
-    }
-    &[data-hull-provider="twitter"]{
-        @include hull-button(#30D8F0);
-    }
-    &[data-hull-provider="github"]{
-        @include hull-button(#fafafa);
-    }
-
-    /* Fixes */
-    &::-moz-focus-inner,
-    &::-moz-focus-inner {
-        border: 0;
-        padding: 0;
-    }
-    &[disabled] {
-        cursor: default;
-    }
-
-}
-
-
-/**
- * Basic button modifiers
- */
-.hull-btn--sml { font-size:pem($micro-size); }
-.hull-btn--lrg { font-size:pem($h6-size);padding:0.8em; }
-
-.hull-btn--full{
-    display:block;
-    text-align:center;
-    padding-right:0;
-    padding-left: 0;
-    width:100%;
 }
