@@ -1,9 +1,11 @@
-{{#if isAchieved}}
-  <button class="hull-btn">
-    [DONE] Checked ({{achievement.name}})
-  </button>
-{{else}}
-  <button class="hull-btn {{#unless canAchieve}}disabled{{/unless}}" data-hull-action="achieve">
-    CheckIn ({{achievement.name}})
-  </button>
-{{/if}}
+<div class="hull-achieve">
+  {{#if isAchieved}}
+    <button class="hull-btn">
+      [DONE] Checked ({{achievement.name}})
+    </button>
+  {{else}}
+    <button class="hull-btn {{#unless canAchieve}}disabled{{/unless}}" data-hull-action="achieve">
+      CheckIn ({{achievement.name}})
+    </button>
+  {{/if}}
+</div>

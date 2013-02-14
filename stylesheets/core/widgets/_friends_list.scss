@@ -10,9 +10,7 @@
       @extend %base-margin-bottom;
     }
   .hull-friends__name{
-    font-size:pem($h6-size);
     margin:pem($milli-spacing-unit) 0 pem($milli-spacing-unit) 0;
   }
   .hull-friends__created{
-    font-size:pem($milli-size);
   }

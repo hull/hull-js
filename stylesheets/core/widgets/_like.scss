@@ -1,3 +1,6 @@
-.hull-like--liked .hull-like__icon{
-  color:#d93636;
+.hull-like{
+  @extend %base-margin-bottom;
 }
+  .hull-like--liked .hull-like__icon{
+    color:#d93636;
+  }

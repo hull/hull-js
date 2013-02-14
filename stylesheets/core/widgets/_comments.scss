@@ -19,12 +19,9 @@
     }
     .hull-comments__timestamp{
       float:right;
-      font-size:pem($micro-size);
     }
     .hull-comments__name{
       @extend %milli-margin-bottom;
-      font-size:pem($h6-size);
     }
     .hull-comments__description{
-      font-size:pem($milli-size);
     }

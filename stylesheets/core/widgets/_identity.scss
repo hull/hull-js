@@ -2,10 +2,6 @@
   @extend %base-margin-bottom;
 }
   .hull-identity__name{
-    @extend %milli-margin-bottom;
-    font-size:pem($h5-size);
   }
   .hull-identity__description{
-    @extend %base-margin-bottom;
-    font-size:pem($milli-size);
   }

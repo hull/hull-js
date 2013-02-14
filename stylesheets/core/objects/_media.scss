@@ -23,7 +23,9 @@
         }
 
     .hull-media__body{
-        overflow:hidden;
+        //overflow:hidden;
+        display:table-cell;
+        width:10000px;
     }
         .hull-media__body,
         .hull-media__body > :last-child{

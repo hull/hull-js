@@ -10,17 +10,13 @@
 
   .hull-activity__summary{
     @extend %milli-margin-bottom;
-    font-weight:normal;
-    font-size:pem($h6-size);
   }
     .hull-activity__summary__actor{
-      @extend %bold;
     }
     .hull-activity__summary__verb{
 
     }
     .hull-activity__summary__object{
-      @extend %bold;
     }
     .hull-activity__summary__target{
 
@@ -45,10 +41,8 @@
       }
     .hull-activity__content__object__name{
       margin:0;
-      font-size:pem($h6-size);
     }
     .hull-activity__content__content{
-      font-size:pem($milli-size);
     }
 
   .hull-activity__meta{
@@ -61,5 +55,4 @@
 
     }
     .hull-activity__meta__date{
-      font-size:pem($micro-size);
     }
