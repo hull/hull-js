@@ -174,12 +174,6 @@ define ['backbone', 'underscore'], (Backbone, _)->
           _.defer(@afterRender.bind(@, data))
           _.defer((-> @sandbox.start(@$el)).bind(@))
 
-
-
-  (env)->
-    debug = env.config.debug
-    env.core.registerWidgetType("Hull", HullWidget.prototype)
-
-
-
-
+  (app)->
+    debug = app.config.debug
+    app.core.registerWidgetType("Hull", HullWidget.prototype)
