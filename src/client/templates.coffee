@@ -1,16 +1,16 @@
-define ['lib/hullbase', 'handlebars'], (Hull, Handlebars)->
-  init: (env)->
+define ['lib/hullbase', 'handlebars'], (Hull, Handlebars) ->
+  init: (app) ->
     setupTemplate = (tplSrc, tplName) ->
-      compiled = env.core.template.hbs(tplSrc)
+      compiled = app.core.template.hbs(tplSrc)
       Handlebars.registerPartial(tplName, compiled)
       compiled
 
-    env.core.template.load = (names, ref, format="hbs")->
+    app.core.template.load = (names, ref, format="hbs") ->
       loadedTemplates = {}
       names = [names] if _.isString(names)
       names ?= []
       paths = []
-      dfd   = env.core.data.deferred()
+      dfd   = app.core.data.deferred()
       ret = {}
       widgetName = ref.replace('__widget__$', '').split('@')[0]
       for name in names
@@ -19,7 +19,7 @@ define ['lib/hullbase', 'handlebars'], (Hull, Handlebars)->
         #   ret[tpl] = require(path)
         # else
         tplName = [widgetName, name.replace(/^_/, '')].join("/")
-        localTpl = env.core.dom.find("script[data-hull-template='#{tplName}']")
+        localTpl = app.core.dom.find("script[data-hull-template='#{tplName}']")
         if localTpl.length
           parsed = setupTemplate(localTpl.text(), tplName)
           ret[name] = parsed

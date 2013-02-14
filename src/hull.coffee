@@ -1,13 +1,13 @@
-define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _)->
+define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
 
   hull = null
 
   myApp = {
     name: 'Hull'
-    init: (env)->
-      env.core.mediator.setMaxListeners(100)
-    afterAppStart: (env)->
-      sb = env.core.createSandbox();
+    init: (app)->
+      app.core.mediator.setMaxListeners(100)
+    afterAppStart: (app)->
+      sb = app.createSandbox();
       Hull = _.extend(HullDef, sb);
       Hull.me     = sb.data.api.model('me');
       Hull.app    = sb.data.api.model('app');
@@ -21,7 +21,7 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _)->
     catch e
       console.warn("Error: " + e)
 
-  (config, cb, errcb)->
+  (config, cb, errcb) ->
     return hull if hull && hull.app
     hull = { config }
     config.namespace = "hull"
@@ -56,5 +56,3 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _)->
 
       cb(h) if cb
     return hull
-
-

@@ -1,9 +1,12 @@
-<h1>Yeah... a great result ! {{renderCount}}</h1>
+<h1>Bravo...</h1>
+
+<h3>Badge</h3>
+<pre>{{json result}}</pre>
 
 {{#result.data}}
-You Have {{score}} points !
+<p>You Have {{score}} points !</p>
+<p>It took {{timing}} seconds to answer !</p>
 {{/result.data}}
-
 
 <button data-hull-action="start">Start over...</button>
 

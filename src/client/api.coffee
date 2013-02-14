@@ -1,21 +1,19 @@
-define ['lib/version'], (version)->
+define ['lib/version'], (version) ->
 
-  (env)->
-
+  (app) ->
     rpc = false
 
-    config:
-      require:
-        paths:
-          easyXDM: 'easyXDM/easyXDM'
-          backbone: 'backbone/backbone'
-        shim:
-          easyXDM: { exports: 'easyXDM' }
-          backbone: { exports: 'Backbone', deps: ['underscore', 'jquery'] }
+    require:
+      paths:
+        easyXDM: 'components/easyXDM/easyXDM'
+        backbone: 'components/backbone/backbone'
+      shim:
+        easyXDM: { exports: 'easyXDM' }
+        backbone: { exports: 'Backbone', deps: ['underscore', 'jquery'] }
 
-    init: (env)->
-      core    = env.core
-      sandbox = env.sandbox
+    init: (app)->
+      core    = app.core
+      sandbox = app.sandbox
 
       _         = require('underscore')
       Backbone  = require('backbone')
@@ -278,12 +276,14 @@ define ['lib/version'], (version)->
 
       onRemoteReady = (remoteConfig)->
         data = remoteConfig.data
-        env.config.assetsUrl            = remoteConfig.assetsUrl
-        env.config.services             = remoteConfig.services
-        env.config.widgets.sources.hull = remoteConfig.baseUrl + '/widgets'
-        env.sandbox.config.appId        = env.config.appId
-        env.sandbox.config.orgUrl       = env.config.orgUrl
-        env.sandbox.config.services     = remoteConfig.services
+        app.config.assetsUrl            = remoteConfig.assetsUrl
+        app.config.services             = remoteConfig.services
+        app.config.widgets.sources.hull = remoteConfig.baseUrl + '/widgets'
+        app.sandbox.config ?= {}
+        app.sandbox.config.assetsUrl    = remoteConfig.assetsUrl
+        app.sandbox.config.appId        = app.config.appId
+        app.sandbox.config.orgUrl       = app.config.orgUrl
+        app.sandbox.config.services     = remoteConfig.services
         for m in ['me', 'app', 'org']
           attrs = data[m]
           if attrs
@@ -292,8 +292,8 @@ define ['lib/version'], (version)->
 
         initialized.resolve(data)
 
-      remoteUrl = "#{env.config.orgUrl}/api/v1/#{env.config.appId}/remote.html?v=#{version}"
-      remoteUrl += "&js=#{env.config.jsUrl}" if env.config.jsUrl
+      remoteUrl = "#{app.config.orgUrl}/api/v1/#{app.config.appId}/remote.html?v=#{version}"
+      remoteUrl += "&js=#{app.config.jsUrl}" if app.config.jsUrl
 
       rpc = new easyXDM.Rpc({
         remote: remoteUrl
@@ -303,4 +303,3 @@ define ['lib/version'], (version)->
       })
 
       initialized
-

@@ -5,18 +5,17 @@ define ->
     console.warn("CatchAll Handler: ", res)
     res
 
-  (env)->
-    config:
-      require:
-        paths:
-          'easyXDM':            'easyXDM/easyXDM'
-          'route-recognizer' :  'route-recognizer/dist/route-recognizer.amd'
-        shim:
-          easyXDM: { exports: 'easyXDM' }
+  (app)->
+    require:
+      paths:
+        'easyXDM':            'components/easyXDM/easyXDM'
+        'route-recognizer' :  'components/route-recognizer/dist/route-recognizer.amd'
+      shim:
+        easyXDM: { exports: 'easyXDM' }
 
 
-    init: (env)->
-      core = env.core
+    init: (app)->
+      core = app.core
       Router = require('route-recognizer')
       core.services = new Router
 
@@ -31,13 +30,11 @@ define ->
           errback(catchAll(req))
 
       rpc = new easyXDM.Rpc({
-        acl: env.config.appDomains
+        acl: app.config.appDomains
       }, {
         remote: { message: {}, ready: {} }
         local:  { message: onRemoteMessage }
       })
       true
 
-    afterAppStart: -> rpc.ready(env.config)
-
-
+    afterAppStart: -> rpc.ready(app.config)
