@@ -22,5 +22,8 @@
   },
   "scripts": {
     "test": "grunt build"
+  },
+  "dependencies": {
+    "grunt-hull-widgets": "~0.4.0"
   }
 }
