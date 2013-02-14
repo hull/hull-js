@@ -1,7 +1,7 @@
 <h1>Hey, a super intro !</h1>
 
 {{#if loggedIn}}
-<button data-hull-action='start'>Start !</button>
+  <button data-hull-action="start" class="hull-btn">Start !</button>
 {{else}}
-<button data-hull-action='login' data-hull-provider="facebook">Login first... !</button>
+  <div data-hull-widget="identity@hull"></div>
 {{/if}}
