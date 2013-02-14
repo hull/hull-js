@@ -128,6 +128,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
             else
               ret[k] = args[i]
           ret.loggedIn    = @loggedIn()
+          ret.debug       = @sandbox.config.debug
           ret.renderCount = @_renderCount
           @_templates     = tpls
           dfd.resolve(ret)
@@ -150,7 +151,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
       tplName = @getTemplate(tpl, data)
       ret = @renderTemplate(tplName, data)
       @$el.addClass(this.className)
-      ret = "<!-- START #{tplName}-->#{ret}<!-- END #{tplName}-->" if debug
+      ret = "<!-- START #{tplName} RenderCount: #{@_renderCount} -->#{ret}<!-- END #{tplName}-->" if debug
       @$el.html(ret)
       return @
 
