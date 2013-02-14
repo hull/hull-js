@@ -33,7 +33,10 @@ define(['aura/aura'], function (aura) {
   define('easyXDM', function () { return easyXDMMock; });
 
   describe("API specs", function () {
-    var env, api, app = aura();
+    var env, api, app = aura({
+      appId: "fakeId",
+      orgUrl: "orgUrl"
+    });
 
     var extension = {
       init: function (appEnv) {

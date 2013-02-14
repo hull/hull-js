@@ -29,4 +29,13 @@ define(['lib/hullbase'], function (hullbase) {
       hullbase.widget.should.be.a('function');
     });
   });
+
+  describe("Initializing the application", function () {
+    it("must stop if the applicationId is missing", function () {
+      var noAppIdFn = function () {
+        Hull.init({orgUrl: "..."});
+      }
+      expect(noAppIdFn).to.throw(Error);
+    });
+  });
 });
