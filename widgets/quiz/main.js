@@ -7,6 +7,7 @@ define({
   type: "Hull",
   namespace: 'quiz',
   templates: ['quiz_intro', 'quiz_question', 'quiz_finished', 'quiz_result'],
+  refreshEvents: ['model.hull.me.change'],
 
   answers: {},
   datasources: {

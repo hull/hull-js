@@ -4,15 +4,12 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-coffee');
-  grunt.loadNpmTasks('grunt-contrib-requirejs');
-  grunt.loadNpmTasks('grunt-contrib-handlebars');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-dox');
   grunt.loadNpmTasks('grunt-compass');
+
+  grunt.loadNpmTasks('grunt-hull-widgets');
 
   var port = 3001;
 
@@ -20,18 +17,7 @@ module.exports = function (grunt) {
   // Project configuration
   // ==========================================================================
 
-  var widgetsList = grunt.file.glob.sync('widgets/*');
   var pkg         = grunt.file.readJSON('component.json');
-
-  var uglifyWidgetsFiles      = {},
-      concatWidgetsFiles      = {},
-      handlebarsWidgetsFiles  = {};
-
-  widgetsList.forEach(function (widgetPath) {
-    uglifyWidgetsFiles['dist/' + pkg.version + '/' + widgetPath + '/main.js'] = 'tmp/' + widgetPath + '/main.js';
-    concatWidgetsFiles['tmp/' + widgetPath + '/main.js'] = ['tmp/' + widgetPath + '/deps/*.js', widgetPath + '/main.js', 'tmp/' + widgetPath + '/templates.js'];
-    handlebarsWidgetsFiles['tmp/' + widgetPath + '/templates.js'] = widgetPath + '/**/*.hbs';
-  });
 
   //
   // Lookup of the available libs and injects them for the build
@@ -67,9 +53,6 @@ module.exports = function (grunt) {
     clean: {
       libs: {
         src: ['lib']
-      },
-      widgets: {
-        src: ['tmp']
       }
     },
 
@@ -206,21 +189,6 @@ module.exports = function (grunt) {
       }
     },
 
-    uglify: {
-      widgets: {
-        files: uglifyWidgetsFiles
-      }
-    },
-
-    concat: {
-      widgets: {
-        options: {
-          stripBanners: true
-        },
-        files: concatWidgetsFiles
-      }
-    },
-
     jshint: {
       files: {
         src: ['lib/**/*.js', 'spec/lib/**/*.js']
@@ -248,19 +216,6 @@ module.exports = function (grunt) {
       }
     },
 
-    handlebars: {
-      widgets: {
-        options: {
-          wrapped: true,
-          namespace: "Hull.templates._default",
-          processName: function (filename) {
-            return filename.replace("widgets/", "").replace(/\.hbs$/, '');
-          }
-        },
-        files: handlebarsWidgetsFiles
-      }
-    },
-
     mocha: {
       hull: ['http://localhost:' + port + "/spec/index.html"]
     },
@@ -285,7 +240,6 @@ module.exports = function (grunt) {
       template: "define(function () { return '<%= pkg.version %>';});",
       dest: 'lib/version.js'
     },
-
     compass: {
       dist:{
         src: 'stylesheets',
@@ -297,14 +251,20 @@ module.exports = function (grunt) {
         images: 'assets/images',
         relativeassets: true
       }
+    },
+    hull_widgets: {
+      hull: {
+        src: 'widgets',
+        before: ['requirejs:upload', 'requirejs:registration'],
+        dest: 'dist/<%= pkg.version%>/widgets'
+      }
     }
   });
 
   // default build task
   grunt.registerTask('build_libs', ['clean:libs', 'coffee', 'version', 'requirejs:client', 'requirejs:remote']);
-  grunt.registerTask('build_widgets', ['clean:widgets', 'handlebars', 'requirejs:upload', 'requirejs:registration', 'concat:widgets', 'uglify:widgets']);
-  grunt.registerTask('build', ['build_libs', 'build_widgets', 'watch']);
-  grunt.registerTask('default', ['connect', 'build', /*'mocha',*/  'watch']);
+  grunt.registerTask('build', ['build_libs', 'hull_widgets', 'dox']);
+  grunt.registerTask('default', ['connect', 'build', /*'mocha',*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 
 

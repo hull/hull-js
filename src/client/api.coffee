@@ -281,7 +281,8 @@ define ['lib/version'], (version)->
         env.config.assetsUrl            = remoteConfig.assetsUrl
         env.config.services             = remoteConfig.services
         env.config.widgets.sources.hull = remoteConfig.baseUrl + '/widgets'
-        env.sandbox.config.assetsUrl    = remoteConfig.assetsUrl
+        env.sandbox.config.appId        = env.config.appId
+        env.sandbox.config.orgUrl       = env.config.orgUrl
         env.sandbox.config.services     = remoteConfig.services
         for m in ['me', 'app', 'org']
           attrs = data[m]

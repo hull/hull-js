@@ -1,4 +1,4 @@
-define ['aura/aura', 'lib/hullbase'], (Aura, HullDef)->
+define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _)->
 
   hull = null
 
@@ -42,6 +42,18 @@ define ['aura/aura', 'lib/hullbase'], (Aura, HullDef)->
       errcb(err) if errcb
       throw err if !errcb
     initProcess.done (h)->
+      if !config.debug
+        _h = {
+          widget: window.Hull.widget,
+          templates: window.Hull.templates,
+          emit: window.Hull.emit,
+          on: window.Hull.on
+        }
+        if _.isArray(config.expose)
+          _.map config.expose, (i) ->
+            _h[i] = window.Hull[i];
+        window.Hull = _h
+
       cb(h) if cb
     return hull
 
