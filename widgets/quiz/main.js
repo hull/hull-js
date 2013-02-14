@@ -39,7 +39,7 @@ define({
 
     answerAndNext: function(source, e, opts) {
       this.actions.answer.apply(this, arguments);
-      this.actions.next();
+      this.actions.next.apply(this);
     },
 
     start: function() {
@@ -64,7 +64,7 @@ define({
         timing  = (new Date() - this.startedAt) / 1000;
       }
 
-      var res  = this.api.post("hull", this.id + "/achieve", {
+      var res  = this.api("hull/" + this.id + "/achieve", 'post', {
         data: { answers: this.answers },
         timing: timing
       });
@@ -73,6 +73,7 @@ define({
       res.done(function(badge) {
         self.submitted = true;
         self.quiz.set('badge', badge);
+        self.render('quiz_result');
       });
     }
   },
