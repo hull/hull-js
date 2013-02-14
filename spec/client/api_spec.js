@@ -48,7 +48,7 @@ define(['aura/aura'], function (aura) {
     var initStatus = app.start();
     before(function (done) {
       initStatus.then(function () {
-        api = env.core.createSandbox().data.api;
+        api = env.createSandbox().data.api;
         done();
       });
     });
