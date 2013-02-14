@@ -4,7 +4,7 @@
   "main": "./lib/hull.js",
   "dependencies": {
     "jquery": "1.8.3",
-    "aura-express": "latest",
+    "aura": "latest",
     "backbone": "0.9.9",
     "easyXDM": "2.4.17",
     "route-recognizer": "latest",
