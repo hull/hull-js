@@ -79,7 +79,7 @@ module.exports = function (grunt) {
           baseUrl: '.',
           preserveLicenseComments: false,
           paths: {
-            aura:           'components/aura-express/dist',
+            aura:           'components/aura/dist',
             underscore:     'components/underscore/underscore',
             eventemitter:   'components/eventemitter2/lib/eventemitter2',
             backbone:       'components/backbone/backbone',
@@ -119,7 +119,7 @@ module.exports = function (grunt) {
           // optimize: 'none',
           preserveLicenseComments: true,
           paths: {
-            aura:               'components/aura-express/dist',
+            aura:               'components/aura/dist',
             underscore:         'components/underscore/underscore',
             eventemitter:       'components/eventemitter2/lib/eventemitter2',
             easyXDM:            'components/easyXDM/easyXDM',
