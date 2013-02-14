@@ -21,7 +21,6 @@ define({
   },
   beforeRender: function(data) {
     data.authServices = this.authServices || [];
-    console.warn("Bah alors, debug :?", data);
     return data;
   }
 });
