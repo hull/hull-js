@@ -15,11 +15,12 @@
           aura:         'components/aura/lib',
           chai:         'node_modules/chai/chai',
           sinonChai:    'node_modules/sinon-chai/lib/sinon-chai',
-          fixtures:     'spec/fixtures'
+          fixtures:     'spec/fixtures',
+          underscore:   'components/underscore/underscore-min'
         }
       };
       var runMocha = function() {
-        mocha.globals(['Backbone', 'easyXDM', 'Handlebars', 'handlebars', 'Hull']); //@TODO What is this (lower-case) handlebars ?
+        mocha.globals(['Backbone', 'easyXDM', 'Handlebars', 'handlebars', 'Hull', 'errorProps']); //@TODO What is this (lower-case) handlebars ?
         if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
         else { mocha.run(); }
       };
