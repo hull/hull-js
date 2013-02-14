@@ -55,7 +55,7 @@ define ['jquery', 'underscore'], ($, _)->
         ident = _.pick(me, 'name', 'email', 'id', 'picture')
         ident.distinct_id = me.id
         ident.$name       = me.name
-        analytics.identify(app.config.data.me.id, ident)
+        analytics.identify(ident.$name, ident)
 
       analytics.track("init", { appId: config.appId })
       app.core.services.add([ { path: 'hull/*path', handler: handler } ])

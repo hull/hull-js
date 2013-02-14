@@ -1,7 +1,15 @@
 {{#if loggedIn}}
-Hello I am {{me.name}}
-<hr>
-<button data-hull-action='logout'>Bye bye !</button>
+  <div class="hull-media hull-idendity">
+     <img src="{{me.picture}}" alt="{{me.name}}" class="hull-media__img">
+     <div class="hull-media__body">
+       <h1 class="hull-identity__name">{{me.name}}</h1>
+       <p class="hull-identity__description">{{me.description}}</p>
+       <hr class="hull-rule">
+        <button data-hull-action="logout" class="hull-btn">Logout</button>
+     </div>
+  </div>
 {{else}}
-Please <button data-hull-action='login' data-hull-provider='facebook'>Login</button> first
+  <button data-hull-action="login" data-hull-provider="facebook" class="hull-btn">
+    Sign In with facebook
+  </button>
 {{/if}}

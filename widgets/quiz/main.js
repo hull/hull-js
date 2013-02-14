@@ -5,10 +5,14 @@
  */
 define({
   type: "Hull",
-  namespace: 'quiz',
+
   templates: ['quiz_intro', 'quiz_question', 'quiz_finished', 'quiz_result'],
+  refreshEvents: ['model.hull.me.change'],
+
+  initialized: false,
 
   answers: {},
+
   datasources: {
     quiz: ':id'
   },
@@ -25,6 +29,12 @@ define({
     }
   },
 
+  trackEvent: function(eventName, eventData) {
+    eventData = _.extend({ quizId: this.data.quiz.id, quizName: this.data.quiz.get('name') }, (eventData || {}));
+    eventName = "quiz." + eventName;
+    this.track(eventName, eventData);
+  },
+
   actions: {
 
     login: function(source, e, options) {
@@ -32,6 +42,7 @@ define({
     },
 
     answer: function(source, e, opts) {
+      this.trackEvent("answer");
       this.answers[opts.question_id] = opts.answer_id;
       this.quiz.set('answers', this.answers);
     },
@@ -42,6 +53,7 @@ define({
     },
 
     start: function() {
+      this.trackEvent("start");
       this.startQuiz();
     },
 
@@ -58,6 +70,7 @@ define({
     },
 
     submit: function() {
+      this.trackEvent("submit");
       var timing = 0;
       if (this.startedAt) {
         timing  = (new Date() - this.startedAt) / 1000;
@@ -73,6 +86,7 @@ define({
         self.submitted = true;
         self.quiz.set('badge', res && res.badge);
         self.render('quiz_result');
+        self.trackEvent('result', { score: res.badge.data.score, timing: res.badge.data.timing });
       });
     }
   },
@@ -114,6 +128,10 @@ define({
   },
 
   beforeRender: function(data) {
+    if (!this.initialized) {
+      this.trackEvent("init");
+      this.initialized = true;
+    }
 
     if (data.me.id != this.currentUserId) {
       this.template = "quiz_intro";
@@ -134,10 +152,11 @@ define({
   getCurrent: function(data) {
     this.currentQuestion = data.questions[this.currentQuestionIndex];
     return {
-      index:        this.currentQuestionIndex,
-      question:     this.currentQuestion,
-      next:         data.questions[this.currentQuestionIndex + 1],
-      previous:     data.questions[this.currentQuestionIndex - 1]
+      index:            this.currentQuestionIndex,
+      indexDisplayable: this.currentQuestionIndex+1,
+      question:         this.currentQuestion,
+      next:             data.questions[this.currentQuestionIndex + 1],
+      previous:         data.questions[this.currentQuestionIndex - 1]
     };
   },
 

@@ -1,0 +1,8 @@
+.hull-registration,
+.hull-registration--complete{
+  @extend %base-margin-bottom;
+}
+  .hull-registration--complete__title{
+    @extend %half-margin-bottom;
+    font-size:pem($milli-size);
+  }

@@ -6,7 +6,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-mocha');
-  grunt.loadNpmTasks('grunt-dox');
+  grunt.loadNpmTasks('grunt-compass');
 
   grunt.loadNpmTasks('grunt-hull-widgets');
 
@@ -41,13 +41,6 @@ module.exports = function (grunt) {
   grunt.initConfig({
 
     pkg: pkg,
-
-    dox: {
-      files: {
-        src: 'widgets/*/main.js',
-        dest: 'dist/<%= pkg.version%>/docs/widgets'
-      }
-    },
 
     clean: {
       libs: {
@@ -177,11 +170,11 @@ module.exports = function (grunt) {
           paths: {
             jquery: "empty:",
             "jquery.default_fields" : "widgets/registration/default_fields",
-            "jquery.h5validate": "widgets/registration/jquery.h5validate"
+            "h5f": "widgets/registration/h5f"
           },
           include: [
             'jquery.default_fields',
-            'jquery.h5validate'
+            'h5f'
           ],
           out: 'tmp/widgets/registration/deps/jquery.deps.js'
         }
@@ -227,11 +220,29 @@ module.exports = function (grunt) {
       libs: {
         files: ['aura-extensions/**/*.js', 'src/**/*.coffee', 'spec/src/**/*.coffee'],
         tasks: ['build_libs']
+      },
+      compass: {
+        files: [
+          'stylesheets/**/*.{scss,sass}'
+        ],
+        tasks: 'compass'
       }
     },
     version: {
       template: "define(function () { return '<%= pkg.version %>';});",
       dest: 'lib/version.js'
+    },
+    compass: {
+      dist:{
+        src: 'stylesheets',
+        dest: 'dist/'+pkg.version,
+        outputstyle: 'expanded',
+        linecomments: true,
+        forcecompile: true,
+        debugsass: true,
+        images: 'assets/images',
+        relativeassets: true
+      }
     },
     hull_widgets: {
       hull: {
@@ -244,7 +255,7 @@ module.exports = function (grunt) {
 
   // default build task
   grunt.registerTask('build_libs', ['clean:libs', 'coffee', 'version', 'requirejs:client', 'requirejs:remote']);
-  grunt.registerTask('build', ['build_libs', 'hull_widgets']);
+  grunt.registerTask('build', ['build_libs', 'hull_widgets', 'compass']);
   grunt.registerTask('default', ['connect', 'build', /*'mocha'*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 

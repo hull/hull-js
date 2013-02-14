@@ -1,4 +1,4 @@
-define(['sandbox', 'underscore', 'jquery.default_fields', 'jquery.h5validate'], function(sandbox, _, default_fields) {
+define(['sandbox', 'underscore', 'jquery.default_fields', 'h5f'], function(sandbox, _, default_fields) {
 
   return {
 
@@ -7,6 +7,7 @@ define(['sandbox', 'underscore', 'jquery.default_fields', 'jquery.h5validate'], 
     templates: ['registration_form', 'registration_complete'],
     complete: false,
     default_fields: default_fields,
+    formId: (new Date()).getTime(),
 
     events: {
       'submit form' : 'submitForm'
@@ -23,7 +24,14 @@ define(['sandbox', 'underscore', 'jquery.default_fields', 'jquery.h5validate'], 
     },
 
     validate: function() {
-      return this.$el.h5Validate('allValid');
+      var isValid = document.getElementById(this.formId).checkValidity();
+      if(isValid) return isValid;
+      this.$el.find('[data-hull-input]').each(function(key,el){
+        var $el = $(el),
+            id = $el.attr('id');
+        $('#'+id+'-error').text( (el.checkValidity()) ? '' : $el.attr('data-error-message'));
+      });
+      return false;
     },
 
     register: function(profile) {
@@ -40,6 +48,7 @@ define(['sandbox', 'underscore', 'jquery.default_fields', 'jquery.h5validate'], 
 
     beforeRender: function(data) {
       var extra = data.me && data.me.profile || {};
+      data.formId = this.formId;
       data.isComplete = _.all(_.map(data.fields, function(f) {
         f.value = extra[f.name] || data.me[f.name];
         return f.value;
@@ -54,7 +63,12 @@ define(['sandbox', 'underscore', 'jquery.default_fields', 'jquery.h5validate'], 
     },
 
     afterRender: function() {
-      this.$el.h5Validate();
+      H5F.setup(document.getElementById(this.formId),{
+          validClass: "hull-form__input--valid",
+          invalidClass: "hull-form__input--invalid",
+          requiredClass: "hull-form__input--required",
+          placeholderClass: "hull-form__input--placeholder"
+      });
     },
 
     submitForm: function() {
