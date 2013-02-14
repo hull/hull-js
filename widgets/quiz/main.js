@@ -65,14 +65,14 @@ define({
       }
 
       var res  = this.api("hull/" + this.id + "/achieve", 'post', {
-        data: { answers: this.answers },
+        answers: this.answers,
         timing: timing
       });
 
       var self = this;
-      res.done(function(badge) {
+      res.done(function(res) {
         self.submitted = true;
-        self.quiz.set('badge', badge);
+        self.quiz.set('badge', res && res.badge);
         self.render('quiz_result');
       });
     }
