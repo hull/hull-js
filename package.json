@@ -16,12 +16,13 @@
     "grunt-contrib-requirejs": "~0.3",
     "grunt-contrib-jshint": "~0.1",
     "grunt-mocha": "0.2.1",
+    "grunt-hull-widgets": "~0.4.2",
+    "grunt-contrib-handlebars": "~0.3.3",
+    "grunt-contrib-concat": "~0.1.1",
+    "grunt-contrib-uglify": "~0.1.0"
     "grunt-compass" : "0.3.8"
   },
   "scripts": {
     "test": "grunt build"
-  },
-  "dependencies": {
-    "grunt-hull-widgets": "~0.4.0"
   }
 }
