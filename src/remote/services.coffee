@@ -14,7 +14,7 @@ define ->
         easyXDM: { exports: 'easyXDM' }
 
 
-    init: (app)->
+    initialize: (app)->
       core = app.core
       Router = require('route-recognizer')
       core.services = new Router

@@ -7,7 +7,7 @@
       shim:   { backbone: { exports: 'Backbone', deps: ['underscore', 'jquery'] } }
     },
 
-    init: function(app) {
+    initialize: function(app) {
       var core = app.core, sandbox = app.sandbox;
       var Backbone = require('backbone');
 

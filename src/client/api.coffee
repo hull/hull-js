@@ -11,7 +11,7 @@ define ['lib/version'], (version) ->
         easyXDM: { exports: 'easyXDM' }
         backbone: { exports: 'Backbone', deps: ['underscore', 'jquery'] }
 
-    init: (app)->
+    initialize: (app)->
       core    = app.core
       sandbox = app.sandbox
 
