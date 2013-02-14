@@ -5,11 +5,11 @@
  * Horizontal rules, extend `hr`.
  */
 .hull-rule{
+    @extend %base-margin-bottom;
     color:$border-color;
     border:none;
     border-bottom-width:1px;
     border-bottom-style:solid;
-    margin-bottom:pem($base-spacing-unit);
 }
 
 

@@ -3,7 +3,7 @@
 \*------------------------------------*/
 
 .hull-form{
-  margin:0 0 pem($base-spacing-unit) 0;
+  @extend %base-margin-bottom;
 }
   .hull-form__fieldset{
       padding:$base-spacing-unit;
@@ -16,15 +16,14 @@
 .hull-form__text-input,
 .hull-form__text-input--textarea{
   @include vendor(box-sizing, border-box);
+  @extend %half-margin-bottom;
   display:block;
   font-family: inherit;
   font-size: 100%;
-  margin: 0;
   overflow: auto;
   vertical-align: top;
   width:100%;
   line-height:1;
-  margin:0 0 pem($half-spacing-unit) 0;
   padding:0 pem($milli-spacing-unit);
   font-size:pem($milli-size);
   border:1px solid $border-color;
@@ -64,7 +63,7 @@
     padding:0;
 }
     .hull-form__fields > li{
-        margin:0 0 pem($base-spacing-unit) 0;
+        @extend %base-margin-bottom;
     }
     .hull-form__fields > li:last-child{
         margin-bottom:0;
@@ -98,10 +97,10 @@
  *
  */
 .hull-form__label{
-    display:block;
-    font-weight:bold;
-    font-size:pem($milli-size);
-    margin:0 0 pem($milli-spacing-unit) 0;
+  @extend %bold;
+  @extend %milli-margin-bottom;
+  display:block;
+  font-size:pem($milli-size);
 }
     /**
      * Extra help text in `label`s, e.g.:

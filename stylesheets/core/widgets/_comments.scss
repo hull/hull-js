@@ -3,44 +3,27 @@
 }
 
   .hull-comments__form{
-    margin:0 0 pem($base-spacing-unit) 0;
+    @extend %base-margin-bottom;
   }
     .hull-comments__text{
-      @include vendor(box-sizing, border-box);
-      display:block;
-      font-family: inherit;
-      font-size: 100%;
-      margin: 0;
-      overflow: auto;
-      vertical-align: top;
-      width:100%;
-      margin:0 0 pem($half-spacing-unit) 0;
-      padding:pem($half-spacing-unit);
-      font-size:pem($milli-size);
-      resize:vertical;
-      border:1px solid $border-color;
-      border-radius:$brand-round;
-      &:focus{
-          outline:0;
-          border-color:darken($border-color, 20%);
-      }
+      @extend .hull-form__text-input--textarea;
     }
 
   .hull-comments__list{
+    @extend %base-margin-bottom;
     list-style-type:none;
-    margin:0 0 pem($base-spacing-unit) 0;
     padding:0;
   }
     .hull-comments__list__item{
-      margin:0 0 pem($base-spacing-unit) 0;
+      @extend %base-margin-bottom;
     }
     .hull-comments__timestamp{
       float:right;
       font-size:pem($micro-size);
     }
     .hull-comments__name{
+      @extend %milli-margin-bottom;
       font-size:pem($h6-size);
-      margin:0 0 pem($milli-spacing-unit) 0;
     }
     .hull-comments__description{
       font-size:pem($milli-size);

@@ -1,11 +1,11 @@
 .hull-idendity{
-  margin-bottom:pem($base-spacing-unit);
+  @extend %base-margin-bottom;
 }
   .hull-identity__name{
-      font-size:pem($h5-size);
-      margin:0 0 pem($milli-spacing-unit) 0;
+    @extend %milli-margin-bottom;
+    font-size:pem($h5-size);
   }
   .hull-identity__description{
-      font-size:pem($milli-size);
-      margin:0 0 pem($base-spacing-unit) 0;
+    @extend %base-margin-bottom;
+    font-size:pem($milli-size);
   }

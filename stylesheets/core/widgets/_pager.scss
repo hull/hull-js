@@ -1,5 +1,5 @@
 .hull-pager{
-  margin:0 0 pem($base-spacing-unit) 0;
+  @extend %base-margin-bottom;
   text-align:center;
 }
   .hull-pager__content{

@@ -8,12 +8,12 @@
       @extend .hull-form__text-input--textarea;
     }
   .hull-reviews__list{
+    @extend %base-margin-bottom;
     list-style-type:none;
-    margin:0 0 pem($base-spacing-unit) 0;
     padding:0;
   }
     .hull-reviews__list__item{
-      margin:0 0 pem($half-spacing-unit) 0;
+      @extend %half-margin-bottom;
     }
   .hull-reviews__content{
       font-size:pem($h6-size);

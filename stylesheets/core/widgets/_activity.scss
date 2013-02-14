@@ -5,29 +5,29 @@
 }
 
   .hull-activity__item{
-    margin:0 0 pem($base-spacing-unit) 0;
+    @extend %base-margin-bottom;
   }
 
   .hull-activity__summary{
+    @extend %milli-margin-bottom;
     font-weight:normal;
     font-size:pem($h6-size);
-    margin:0 0 pem($milli-spacing-unit) 0;
   }
     .hull-activity__summary__actor{
-      font-weight:bold;
+      @extend %bold;
     }
     .hull-activity__summary__verb{
 
     }
     .hull-activity__summary__object{
-      font-weight:bold;
+      @extend %bold;
     }
     .hull-activity__summary__target{
 
     }
 
   .hull-activity__content{
-    margin:0 0 pem($milli-spacing-unit) 0;
+    @extend %milli-margin-bottom;
   }
     .hull-activity__content--image{
 
@@ -39,9 +39,9 @@
 
     }
       .hull-activity__content__object img{
-          display:block;
-          max-width:100%;
-          margin:0 0 pem($milli-spacing-unit) 0;
+        @extend %milli-margin-bottom;
+        display:block;
+        max-width:100%;
       }
     .hull-activity__content__object__name{
       margin:0;
