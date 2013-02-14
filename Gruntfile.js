@@ -7,11 +7,12 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
-  grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-dox');
+
+  grunt.loadNpmTasks('grunt-hull-widgets');
 
   var port = 3001;
 
@@ -66,9 +67,6 @@ module.exports = function (grunt) {
     clean: {
       libs: {
         src: ['lib']
-      },
-      widgets: {
-        src: ['tmp']
       }
     },
 
@@ -247,19 +245,6 @@ module.exports = function (grunt) {
       }
     },
 
-    handlebars: {
-      widgets: {
-        options: {
-          wrapped: true,
-          namespace: "Hull.templates._default",
-          processName: function (filename) {
-            return filename.replace("widgets/", "").replace(/\.hbs$/, '');
-          }
-        },
-        files: handlebarsWidgetsFiles
-      }
-    },
-
     mocha: {
       hull: ['http://localhost:' + port + "/spec/index.html"]
     },
@@ -277,6 +262,12 @@ module.exports = function (grunt) {
     version: {
       template: "define(function () { return '<%= pkg.version %>';});",
       dest: 'lib/version.js'
+    },
+    hull_widgets: {
+      hull: {
+        src: 'widgets',
+        dest: 'dist/widgets'
+      }
     }
   });
 
