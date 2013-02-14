@@ -222,7 +222,7 @@ module.exports = function (grunt) {
     watch: {
       widgets: {
         files: ['widgets/**/*'],
-        tasks: ['build_widgets']
+        tasks: ['hull_widgets']
       },
       libs: {
         files: ['aura-extensions/**/*.js', 'src/**/*.coffee', 'spec/src/**/*.coffee'],
@@ -244,8 +244,8 @@ module.exports = function (grunt) {
 
   // default build task
   grunt.registerTask('build_libs', ['clean:libs', 'coffee', 'version', 'requirejs:client', 'requirejs:remote']);
-  grunt.registerTask('build', ['build_libs', 'hull_widgets', 'dox']);
-  grunt.registerTask('default', ['connect', 'build', /*'mocha'*/, 'watch']);
+  grunt.registerTask('build', ['build_libs', 'hull_widgets']);
+  grunt.registerTask('default', ['connect', 'build', /*'mocha'*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 
 
