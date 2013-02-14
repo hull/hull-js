@@ -195,11 +195,11 @@ module.exports = function (grunt) {
           paths: {
             jquery: "empty:",
             "jquery.default_fields" : "widgets/registration/default_fields",
-            "jquery.h5validate": "widgets/registration/jquery.h5validate"
+            "h5f": "widgets/registration/h5f"
           },
           include: [
             'jquery.default_fields',
-            'jquery.h5validate'
+            'h5f'
           ],
           out: 'tmp/widgets/registration/deps/jquery.deps.js'
         }
