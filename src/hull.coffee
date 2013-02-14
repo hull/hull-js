@@ -6,6 +6,9 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
     name: 'Hull'
     init: (app)->
       app.core.mediator.setMaxListeners(100)
+      if app.config.debug
+        app.core.mediator.onAny ->
+          console.log('[Hull Event]', arguments)
     afterAppStart: (app)->
       sb = app.createSandbox();
       Hull = _.extend(HullDef, sb);
