@@ -6,7 +6,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-mocha');
-  grunt.loadNpmTasks('grunt-dox');
   grunt.loadNpmTasks('grunt-compass');
 
   grunt.loadNpmTasks('grunt-hull-widgets');
@@ -42,13 +41,6 @@ module.exports = function (grunt) {
   grunt.initConfig({
 
     pkg: pkg,
-
-    dox: {
-      files: {
-        src: 'widgets/*/main.js',
-        dest: 'dist/<%= pkg.version%>/docs/widgets'
-      }
-    },
 
     clean: {
       libs: {
@@ -263,7 +255,7 @@ module.exports = function (grunt) {
 
   // default build task
   grunt.registerTask('build_libs', ['clean:libs', 'coffee', 'version', 'requirejs:client', 'requirejs:remote']);
-  grunt.registerTask('build', ['build_libs', 'hull_widgets', 'dox']);
+  grunt.registerTask('build', ['build_libs', 'hull_widgets']);
   grunt.registerTask('default', ['connect', 'build', /*'mocha',*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 
