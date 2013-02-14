@@ -1,35 +1,48 @@
-{{#quiz}}
-<h1>{{name}}</h1>
-<p>{{description}}</p>
-{{/quiz}}
-{{#current}}
-{{#question}}
-<div>
-  <h3>{{name}}</h3>
-  <p>{{description}}</p>
-  <div>
-    {{#answers}}
-    <button data-hull-action="answerAndNext"
-            data-hull-answer-id="{{id}}"
-            data-hull-question-id="{{../id}}"
-    >{{name}}</button>
-    {{/answers}}
+<div class="hull-quiz hull-quiz__question">
+
+  <div class="hull-quiz__header">
+    <h1 class="hull-quiz__title">{{quiz.name}}</h1>
+    <p class="hull-quiz__description">{{quiz.description}}</p>
+  </div>
+
+  <div class="hull-quiz__current">
+      <div class="hull-quiz__current__header">
+        <h4 class="hull-quiz__current__title">
+          <strong>Question {{current.indexDisplayable}}</strong> of {{quiz.questions.length}}
+        </h4>
+      </div>
+
+    {{#current}}
+        {{#question}}
+          <ol class="hull-quiz__current__questions">
+              {{#answers}}
+              <li>
+                <button data-hull-action="answerAndNext"
+                    data-hull-answer-id="{{id}}"
+                    data-hull-question-id="{{../id}}">
+                      {{name}}
+                </button>
+              </li>
+              {{/answers}}
+          </ol>
+        {{/question}}
+
+      <div class="hull-pager">
+        <hr class="hull-rule" />
+          <div class="hull-pager__content">
+            {{#if previous}}
+              <button data-hull-action="previous" class="hull-btn">&larr; Previous</button>
+            {{/if}}
+
+            {{#if next}}
+              <button data-hull-action="next" class="hull-btn">Next &rarr;</button>
+            {{else}}
+              <button data-hull-action="submit" class="hull-btn">Submit</button>
+            {{/if}}
+          </div>
+        <hr class="hull-rule" />
+      </div>
+
+    {{/current}}
   </div>
 </div>
-{{/question}}
-
-<div>
-{{#if previous}}
-<button data-hull-action="previous">&larr; Previous</button>
-{{/if}}
-
-Current: {{index}}
-
-{{#if next}}
-<button data-hull-action="next">Next &rarr;</button>
-{{else}}
-<button data-hull-action="submit">Submit</button>
-{{/if}}
-</div>
-
-{{/current}}

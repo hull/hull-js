@@ -1,9 +1,23 @@
-<h1>My Friends</h1>
-<ul>
-  {{#friends}}
-  <li>
-    <img src="{{picture}}" alt="{{name}}">
-    {{name}}
-  </li>
+<div class="hull-friends">
+  {{#if friends}}
+    <ul class="hull-friends__list">
+      {{#friends}}
+        <li class="hull-friends__list__item">
+          <div class="hull-media">
+            <div class="hull-media__img">
+              <img src="{{picture}}" alt="{{name}}">
+            </div>
+            <div class="hull-media__body">
+              <h4 class="hull-friends__name">{{name}}</h4>
+              <span class="hull-friends__created">Member since {{fromNow created_at}}</span>
+            </div>
+          </div>
+        </li>
+      {{/friends}}
+    </ul>
+  {{/if}}
+
+  {{^friends}}
+    oops... no friends for the moment
   {{/friends}}
-</ul>
+</div>

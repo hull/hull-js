@@ -22,7 +22,7 @@ define({
     } else if (typeof this.isLiked !== 'boolean') {
       this.isLiked = _.include(likedIds, this.id);
     }
-    data.likesCount = data.likesCount || this.options.likes_count;
+    data.likesCount = data.renderCount || this.options.likes_count;
     data.isLiked = this.isLiked;
     return data;
   },

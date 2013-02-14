@@ -1,7 +1,13 @@
-<h1>Hey, a super intro !</h1>
+<div class="hull-quiz hull-quiz--intro">
+  <div class="hull-quiz__header">
+    <h1 class="hull-quiz__title">{{quiz.name}}</h1>
+    <p class="hull-quiz__description">{{quiz.description}}</p>
+  </div>
 
-{{#if loggedIn}}
-<button data-hull-action='start'>Start !</button>
-{{else}}
-<button data-hull-action='login' data-hull-provider="facebook">Login first... !</button>
-{{/if}}
+  {{#if loggedIn}}
+    <button data-hull-action="start" class="hull-btn">Start !</button>
+  {{else}}
+    <div data-hull-widget="identity@hull"></div>
+  {{/if}}
+
+</div>

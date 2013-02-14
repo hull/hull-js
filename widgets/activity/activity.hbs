@@ -1,68 +1,85 @@
-<a href="#" data-hull-action='previousPage'>&larr; Previous</a>
-<span>{{query.page}}</span>
-<span>VERB ?: {{query.where.verb}}</span>
-<span>ObjectType ?: {{query.where.obj_type}}</span>
-<pre>{{json query}}</pre>
-<a href="#" data-hull-action='nextPage'>Next &rarr;</a>
+<div class="hull-pager">
+  <hr class="hull-rule" />
+    <div class="hull-pager__content">
+      <button data-hull-action="previousPage" class="hull-btn">&larr; Previous</button>
+      <button data-hull-action="nextPage" class="hull-btn">Next &rarr;</button>
+    </div>
+  <hr class="hull-rule" />
+  <div class="hull-pager__query">
+      <span>{{query.page}}</span>
+      <span>VERB ?: {{query.where.verb}}</span>
+      <span>ObjectType ?: {{query.where.obj_type}}</span>
+      <pre>{{json query}}</pre>
+  </div>
+</div>
 
-<ul class='activities list unstyled'>
+<ul class="hull-activity">
   {{#activities}}
-    <li class='entry {{verb}}'>
-      <div class="avatar">
-        {{#actor.picture}}
-          <img src="{{actor.picture}}"/>
-        {{/actor.picture}}
-      </div>
-
-      <div class='data'>
-        <i class='icon verb'></i>
-
-        <div class='summary'>
-          <span class='actor'>{{actor.name}}</span>
-          <span class='verb'>{{verb}}</span>
-          <span class='object'>{{object.type}} - {{object.name}}</span>
-          <span class='target'>{{target.name}}</span>
+    <li class="hull-media hull-activity__item hull-activity__item--{{verb}}">
+      {{#if actor.picture}}
+        <div class="hull-media__img">
+            <img src="{{actor.picture}}"/>
         </div>
+      {{/if}}
+      <div class="hull-media__body">
 
-          <div class='activity content_{{object.type}}'>
+        <h3 class="hull-activity__summary">
+          <span class="hull-activity__summary__actor">{{actor.name}}</span>
+          <span class="hull-activity__summary__verb">{{verb}}</span>
+          <span class="hull-activity__summary__object">{{object.type}} - {{object.name}}</span>
+          <span class="hull-activity__summary__target">{{target.name}}</span>
+        </h3>
 
-            {{#object}}
-              <div class='object'>
+        <div class="hull-activity__content hull-activity__content--{{object.type}}">
 
-                <span class="image inset_shadow"><img src="{{imageUrl id format}}"/></span>
-
-                <span class='name'> {{name}} </span>
-              </div>
-            {{/object}}
-
-            <div class="content">
-              {{#if content}}
-                {{content}}
-              {{else}}
-                {{object.name}}
-              {{/if}}
+          <div class="hull-media">
+            <div class="hull-media__img">
+                {{#target}}
+                  <div class="hull-activity__meta__target hull-activity__meta__target--{{type}}">
+                     <img src="{{imageUrl id "thumb"}}"/>
+                  </div>
+                {{/target}}
             </div>
+            <div class="hull-media__body">
+               {{#object}}
+                  <div class="hull-activity__content__object">
+                    <img src="{{imageUrl id "original"}}"/>
+                    <h4 class="hull-activity__content__object__name">{{name}}</h4>
+                  </div>
+                {{/object}}
 
-            <div class='clear'></div>
+                {{#if content}}
+                  <div class="hull-activity__content__content">
+                    {{content}}
+                  </div>
+                {{/if}}
+
+            </div>
           </div>
 
-
-        <div class='meta'>
-          <img class='icon target' src="{{target.picture}}">
-          <span class='date'>{{fromNow published}}</span>
-          {{#target}}
-            <span class='target {{type}}'><span class='text'>{{name}}</span></span>
-          {{/target}}
         </div>
+
+        <div class="hull-activity__meta">
+          {{#if target.picture}}
+            <img class="hull-activity__meta__target--icon" src="{{target.picture id "thumb"}}">
+          {{/if}}
+          <span class="hull-activity__meta__date">{{fromNow published}}</span>
+        </div>
+
       </div>
 
-      <div class='clear'></div>
     </li>
   {{/activities}}
   {{#if activities}}
-    <li><button data-hull-action="fetchMore">Fetch more...</button></li>
+    <li class="hull-media hull-activity__item">
+      <button data-hull-action="fetchMore" class="hull-btn hull-btn--lrg hull-btn--full">
+        Fetch more...
+      </button>
+    </li>
   {{/if}}
   {{^activities}}
-    <li>No activity</li>
+    <li class="hull-media hull-activity__item">
+      <h4>No activity</h4>
+    </li>
   {{/activities}}
 </ul>

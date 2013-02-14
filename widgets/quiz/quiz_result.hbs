@@ -1,12 +1,14 @@
-<h1>Bravo...</h1>
+<div class="hull-quiz hull-quiz--result">
+  <div class="hull-quiz__header">
+    <h1 class="hull-quiz__title">Bravo...</h1>
+  </div>
 
-<h3>Badge</h3>
-<pre>{{json result}}</pre>
+  <div class="hull-quiz__result">
+    {{#result.data}}
+      <p class="hull-quiz__result__score">You Have <strong>{{score}}</strong> points !</p>
+      <p class="hull-quiz__result__timing">It took <strong>{{timing}}</strong> seconds to answer !</p>
+    {{/result.data}}
+  </div>
 
-{{#result.data}}
-<p>You Have {{score}} points !</p>
-<p>It took {{timing}} seconds to answer !</p>
-{{/result.data}}
-
-<button data-hull-action="start">Start over...</button>
-
+  <button data-hull-action="start" class="hull-btn">Start over...</button>
+</div>

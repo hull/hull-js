@@ -7,6 +7,7 @@ define({
   type: "Hull",
 
   templates: ['quiz_intro', 'quiz_question', 'quiz_finished', 'quiz_result'],
+  refreshEvents: ['model.hull.me.change'],
 
   initialized: false,
 
@@ -151,10 +152,11 @@ define({
   getCurrent: function(data) {
     this.currentQuestion = data.questions[this.currentQuestionIndex];
     return {
-      index:        this.currentQuestionIndex,
-      question:     this.currentQuestion,
-      next:         data.questions[this.currentQuestionIndex + 1],
-      previous:     data.questions[this.currentQuestionIndex - 1]
+      index:            this.currentQuestionIndex,
+      indexDisplayable: this.currentQuestionIndex+1,
+      question:         this.currentQuestion,
+      next:             data.questions[this.currentQuestionIndex + 1],
+      previous:         data.questions[this.currentQuestionIndex - 1]
     };
   },
 
