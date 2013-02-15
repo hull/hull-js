@@ -39,7 +39,7 @@ define(['aura/aura'], function (aura) {
     });
 
     var extension = {
-      init: function (appEnv) {
+      initialize: function (appEnv) {
         env = appEnv;
       }
     };
