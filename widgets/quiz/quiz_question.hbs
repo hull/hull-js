@@ -30,19 +30,17 @@
         {{/question}}
 
       <div class="hull-pager">
-        <hr class="hull-rule" />
-          <div class="hull-pager__content">
-            {{#if previous}}
-              <button data-hull-action="previous" class="hull-btn">&larr; Previous</button>
-            {{/if}}
+        <div class="hull-pager__content">
+          {{#if previous}}
+            <button data-hull-action="previous" class="hull-btn">&larr; Previous</button>
+          {{/if}}
 
-            {{#if next}}
-              <button data-hull-action="next" class="hull-btn">Next &rarr;</button>
-            {{else}}
-              <button data-hull-action="submit" class="hull-btn">Submit</button>
-            {{/if}}
-          </div>
-        <hr class="hull-rule" />
+          {{#if next}}
+            <button data-hull-action="next" class="hull-btn">Next &rarr;</button>
+          {{else}}
+            <button data-hull-action="submit" class="hull-btn">Submit</button>
+          {{/if}}
+        </div>
       </div>
 
     {{/current}}
