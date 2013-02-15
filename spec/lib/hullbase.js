@@ -30,12 +30,17 @@ define(['lib/hullbase'], function (hullbase) {
     });
   });
 
+  // When the errback is not provided, an exception is thrown, supposed to be uncaught.
+  // But as we are backed by requireJS, it catches it and redisplays it nicely
+  // That's not a bad situation after all
   describe("Initializing the application", function () {
-    it("must stop if the applicationId is missing", function () {
-      var noAppIdFn = function () {
-        Hull.init({orgUrl: "..."});
-      }
-      expect(noAppIdFn).to.throw(Error);
+    it("must fail if the organizationUrl is missing", function (done) {
+      Hull.init({appId: "..."}, null, function () { done(); });
+    });
+
+    it("must fail if the applicationId (param: orgUrl) is missing", function (done) {
+      debugger
+      Hull.init({orgUrl: "..."}, null, function () { done(); });
     });
   });
 });

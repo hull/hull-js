@@ -293,8 +293,8 @@ define ['lib/version'], (version) ->
 
         initialized.resolve(data)
 
-      initialized.reject('no organizationURL provided. Can\'t proceed') unless app.config.orgUrl
-      initialized.reject('no applicationID provided. Can\'t proceed') unless app.config.appId
+      initialized.reject(new TypeError 'no organizationURL provided. Can\'t proceed') unless app.config.orgUrl
+      initialized.reject(new TypeError 'no applicationID provided. Can\'t proceed') unless app.config.appId
       remoteUrl = "#{app.config.orgUrl}/api/v1/#{app.config.appId}/remote.html?v=#{version}"
       remoteUrl += "&js=#{app.config.jsUrl}" if app.config.jsUrl
 
