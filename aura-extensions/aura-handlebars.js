@@ -4,7 +4,7 @@ define({
     shim:   { handlebars: { exports: 'Handlebars' } }
   },
 
-  init: function(app) {
+  initialize: function(app) {
     // TODO: make it easier to inject multiple templating languages ?
     // cf. https://github.com/visionmedia/consolidate.js
     var Handlebars = require('handlebars');

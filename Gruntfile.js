@@ -77,7 +77,8 @@ module.exports = function (grunt) {
       client: {
         options: {
           baseUrl: '.',
-          preserveLicenseComments: false,
+          // optimize: 'none',
+          preserveLicenseComments: true,
           paths: {
             aura:           'components/aura/dist',
             underscore:     'components/underscore/underscore',

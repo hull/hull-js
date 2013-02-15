@@ -6,7 +6,7 @@ define ->
     sandbox = app.sandbox
     core    = app.core
 
-    init: ->
+    initialize: ->
       sandbox.authenticating = ->
         authenticating
 

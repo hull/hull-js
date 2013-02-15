@@ -34,7 +34,7 @@ define ->
     shim:
       facebook: { exports: 'FB' }
 
-  init: (app)->
+  initialize: (app)->
     dfd = app.core.data.deferred()
     FB.init(app.config.services.settings.facebook_app)
     FB.getLoginStatus dfd.resolve

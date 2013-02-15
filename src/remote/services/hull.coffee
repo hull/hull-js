@@ -41,7 +41,7 @@ define ['jquery', 'underscore'], ($, _)->
       shim:
         analytics: { exports: 'analytics' }
 
-    init: (app)->
+    initialize: (app)->
       analytics = require('analytics')
       analyticsSettings = {}
 

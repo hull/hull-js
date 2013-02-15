@@ -43,7 +43,7 @@ define({
 
     answer: function(source, e, opts) {
       this.trackEvent("answer");
-      this.answers[opts.question_id] = opts.answer_id;
+      this.answers[opts.questionId] = opts.answerId;
       this.quiz.set('answers', this.answers);
     },
 
