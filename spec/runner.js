@@ -18,7 +18,7 @@ define(['chai', 'sinonChai'], function(chai, sinonChai) {
   var specs = [
     'spec/lib/extensions/templates_spec',
     'spec/client/api_spec',
-    'spec/lib/hullbase'
+    'spec/lib/hullbase_spec'
   ];
   require(specs, runMocha);
  

@@ -210,7 +210,9 @@ module.exports = function (grunt) {
     },
 
     mocha: {
-      hull: ['http://localhost:' + port + "/spec/index.html"]
+      hull: {
+        src: ["spec/index.html"]
+      }
     },
 
     watch: {

@@ -14,3 +14,4 @@ Hull.widget     = (widgetName, widgetDef)->
 define ['lib/version', 'underscore'], (version, _) ->
   window.Hull.version ||= version
   window.Hull
+
