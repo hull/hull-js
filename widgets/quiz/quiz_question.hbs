@@ -8,7 +8,7 @@
   <div class="hull-quiz__current hull-quiz__current--{{current.index}}">
       <div class="hull-quiz__current__header">
         <h4 class="hull-quiz__current__title">
-          <strong>Question {{current.indexDisplayable}}</strong> of {{quiz.questions.length}}
+          <strong>Question {{current.indexDisplayable}}</strong> <span>of {{quiz.questions.length}}</span>
         </h4>
       </div>
 
@@ -19,11 +19,11 @@
           <ol class="hull-quiz__current__questions">
               {{#answers}}
               <li>
-                <button data-hull-action="answerAndNext"
+                <span class="hull-btn" data-hull-action="answerAndNext"
                     data-hull-answer-id="{{id}}"
                     data-hull-question-id="{{../id}}">
                       {{name}}
-                </button>
+                </span>
               </li>
               {{/answers}}
           </ol>
