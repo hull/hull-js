@@ -39,7 +39,6 @@ define(['lib/hullbase'], function (hullbase) {
     });
 
     it("must fail if the applicationId (param: orgUrl) is missing", function (done) {
-      debugger
       Hull.init({orgUrl: "..."}, null, function () { done(); });
     });
   });
