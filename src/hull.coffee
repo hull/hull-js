@@ -43,6 +43,8 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
 
     initProcess.fail (err)->
       errcb(err) if errcb
+      hull.app.stop()
+      delete hull.app
       throw err if !errcb
     initProcess.done (h)->
       if !config.debug
