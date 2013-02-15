@@ -226,7 +226,7 @@ module.exports = function (grunt) {
         files: [
           'stylesheets/**/*.{scss,sass}'
         ],
-        tasks: 'compass'
+        tasks: 'compass:dev'
       }
     },
     version: {
@@ -234,7 +234,7 @@ module.exports = function (grunt) {
       dest: 'lib/version.js'
     },
     compass: {
-      dist:{
+      dev:{
         src: 'stylesheets',
         dest: 'dist/'+pkg.version,
         outputstyle: 'expanded',
@@ -243,6 +243,16 @@ module.exports = function (grunt) {
         debugsass: true,
         images: 'assets/images',
         relativeassets: true
+      },
+      prod: {
+        src: 'stylesheets',
+        dest: 'dist/'+pkg.version,
+        outputstyle: 'compressed',
+        linecomments: false,
+        forcecompile: true,
+        debugsass: false,
+        images: 'assets/images',
+        relativeassets: false
       }
     },
     hull_widgets: {
@@ -256,7 +266,7 @@ module.exports = function (grunt) {
 
   // default build task
   grunt.registerTask('build_libs', ['clean:libs', 'coffee', 'version', 'requirejs:client', 'requirejs:remote']);
-  grunt.registerTask('build', ['build_libs', 'hull_widgets', 'compass']);
+  grunt.registerTask('build', ['build_libs', 'hull_widgets', 'compass:prod']);
   grunt.registerTask('default', ['connect', 'build', /*'mocha'*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 
