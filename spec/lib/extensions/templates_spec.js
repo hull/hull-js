@@ -25,7 +25,7 @@ define(['aura/aura'], function(aura) {
     var app = aura();
     
     var extension = {
-      init: function (appEnv) {
+      initialize: function (appEnv) {
         env = appEnv;
       } 
     };
