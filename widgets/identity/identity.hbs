@@ -10,9 +10,11 @@
   </div>
 {{else}}
   {{#authServices}}
-  <button data-hull-action="login" data-hull-provider="{{.}}" class="hull-btn">
-    Sign In with {{classify .}}
-  </button>
+  <div class="hull-idendity--disconnected">
+    <button data-hull-action="login" data-hull-provider="{{.}}" class="hull-btn">
+      Sign In with {{classify .}}
+    </button>
+  </div>
   {{/authServices}}
 
   {{^authServices}}
