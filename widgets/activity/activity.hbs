@@ -77,9 +77,10 @@
       </button>
     </li>
   {{/if}}
-  {{^activities}}
-    <li class="hull-media hull-activity__item">
-      <h4>No activity</h4>
-    </li>
-  {{/activities}}
 </ul>
+
+{{^activities}}
+<div class="hull-empty">
+  No activity
+</div>
+{{/activities}}
