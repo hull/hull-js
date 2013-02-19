@@ -21,25 +21,74 @@
 <script id="quiz_admin_question" type="text/x-handlebars-template">
   <li class="hull-form__fields__item">
 
-    <input class="hull-form__text-input" type="text" placeholder="Enter a question" />
-    <span class="hull-quiz_admin__delete" data-hull-action="deleteitem">&times;</span>
+    <div class="hull-quiz_admin__details">
+      <button class="hull-btn" data-hull-action="deletequestion">&times;</button>
+      <h3>Details</h3>
 
-    <ul class="hull-form__fields">
-      <li class="hull-form__fields__item">
-        <input class="hull-form__text-input" type="text" placeholder="Enter a choice" />
-        <span class="hull-quiz_admin__delete" data-hull-action="deleteitem">&times;</span>
-      </li>
-      <li class="hull-form__fields__item--add--choice">
-        <button class="hull-btn" data-hull-action="addchoice">Add choice</button>
-      </li>
-    </ul>
+      <label class="hull-form__label">Name</label>
+      <input class="hull-form__text-input" type="text" placeholder="Enter a name" />
+
+      <label class="hull-form__label">Description</label>
+      <input class="hull-form__text-input" type="text" placeholder="Enter a description" />
+    </div>
+
+    <div class="hull-quiz_admin__choices">
+      <h3>Choices</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <td>
+              Title
+            </td>
+            <td>
+              Description
+            </td>
+            <td>
+              Points
+            </td>
+            <td>
+
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <input class="hull-form__text-input" type="text" placeholder="Titre" />
+            </td>
+            <td>
+              <input class="hull-form__text-input" type="text" placeholder="Description" />
+            </td>
+            <td>
+              <input class="hull-form__text-input" type="text" placeholder="Points" />
+            </td>
+            <td>
+              <button class="hull-btn" data-hull-action="deleteitem">&times;</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <button class="hull-btn" data-hull-action="addchoice">Add choice</button>
+    </div>
 
   </li>
 </script>
 
 <script id="quiz_admin_choice" type="text/x-handlebars-template">
-  <li class="hull-form__fields__item">
-    <input class="hull-form__text-input" type="text" placeholder="Enter a choice" />
-    <span class="hull-quiz_admin__delete" data-hull-action="deleteitem">&times;</span>
-  </li>
+  <tr>
+    <td>
+      <input class="hull-form__text-input" type="text" placeholder="Titre" />
+    </td>
+    <td>
+      <input class="hull-form__text-input" type="text" placeholder="Description" />
+    </td>
+    <td>
+      <input class="hull-form__text-input" type="text" placeholder="Points" />
+    </td>
+    <td>
+      <button class="hull-btn" data-hull-action="deletechoice">&times;</span>
+    </td>
+  </tr>
 </script>

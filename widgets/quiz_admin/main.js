@@ -12,16 +12,19 @@ define({
 
   actions: {
     addchoice: function(source, e, options) {
-      source.parent('li').before(this.tplChoice);
+      source.prev('table').find('tbody').append(this.tplChoice);
       return false;
     },
     addquestion: function(source, e, options) {
       source.parent('li').before(this.tplQuestion);
       return false;
     },
-    deleteitem: function(source,e,options) {
-      source.parent('li').remove();
+    deletequestion: function(source,e,options) {
+      source.parents('li').remove();
       return false;
+    },
+    deletechoice: function(source,e,options) {
+      source.parents('tr').remove();
     }
   }
 
