@@ -1,0 +1,29 @@
+.hull-quiz_admin{
+    @extend %base-margin-bottom;
+}
+
+  ol.hull-form__fields{
+    counter-reset: item;
+    margin-left:30px;
+    li{position:relative;}
+    > .hull-form__fields__item:before {
+      content: counter(item);
+      counter-increment: item;
+      width:30px;
+      position:absolute;
+      left:-30px;
+      text-align:center;
+      display:block;
+      line-height:2;
+    }
+  }
+
+  .hull-quiz_admin__delete{
+      position:absolute;
+      right:0;
+      top:0;
+      cursor:pointer;
+      line-height:2;
+      width:20px;
+      text-align:center;
+  }
