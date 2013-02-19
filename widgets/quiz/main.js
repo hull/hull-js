@@ -82,11 +82,15 @@ define({
       });
 
       var self = this;
-      res.done(function(res) {
-        self.submitted = true;
-        self.quiz.set('badge', res && res.badge);
-        self.render('quiz_result');
-        self.trackEvent('result', { score: res.badge.data.score, timing: res.badge.data.timing });
+      res.done(function(badge) {
+        if (badge) {
+          self.submitted = true;
+          self.quiz.set('badge', badge);
+          self.render('quiz_result');
+          self.trackEvent('result', { score: badge.data.score, timing: badge.data.timing });
+        } else {
+          console.warn("Bah alors ? mon badge ?", badge);
+        }
       });
     }
   },
