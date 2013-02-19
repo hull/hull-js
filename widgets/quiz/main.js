@@ -6,7 +6,7 @@
 define({
   type: "Hull",
 
-  templates: ['quiz_intro', 'quiz_question', 'quiz_finished', 'quiz_result'],
+  templates: ['quiz_intro', 'quiz_question', 'quiz_finished', 'quiz_result', 'quiz_answer'],
   refreshEvents: ['model.hull.me.change'],
 
   initialized: false,
@@ -82,11 +82,13 @@ define({
       });
 
       var self = this;
-      res.done(function(res) {
-        self.submitted = true;
-        self.quiz.set('badge', res && res.badge);
-        self.render('quiz_result');
-        self.trackEvent('result', { score: res.badge.data.score, timing: res.badge.data.timing });
+      res.done(function(badge) {
+        if (badge) {
+          self.submitted = true;
+          self.quiz.set('badge', badge);
+          self.render('quiz_result');
+          self.trackEvent('result', { score: badge.data.score, timing: badge.data.timing });
+        }
       });
     }
   },
@@ -147,6 +149,10 @@ define({
     }
 
     return data;
+  },
+
+  afterRender: function(data) {
+    this.sandbox.emit('hull.quiz.' + this.id, data);
   },
 
   getCurrent: function(data) {
