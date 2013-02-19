@@ -88,6 +88,8 @@ define({
           self.quiz.set('badge', badge);
           self.render('quiz_result');
           self.trackEvent('result', { score: badge.data.score, timing: badge.data.timing });
+        } else {
+          console.warn("Bah alors ? mon badge ?", badge);
         }
       });
     }
