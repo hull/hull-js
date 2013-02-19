@@ -6,7 +6,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-mocha');
-  grunt.loadNpmTasks('grunt-compass');
+  grunt.loadNpmTasks('grunt-contrib-compass');
 
   grunt.loadNpmTasks('grunt-hull-widgets');
 
@@ -236,25 +236,29 @@ module.exports = function (grunt) {
       dest: 'lib/version.js'
     },
     compass: {
-      dev:{
-        src: 'stylesheets',
-        dest: 'dist/'+pkg.version,
-        outputstyle: 'expanded',
-        linecomments: true,
-        forcecompile: true,
-        debugsass: true,
-        images: 'assets/images',
-        relativeassets: true
+      dev: {
+        options: {
+          sassDir: 'stylesheets',
+          cssDir: 'dist/' + pkg.version,
+          outputStyle: 'expanded',
+          noLineComments: false,
+          force: true,
+          debugInfo: true,
+          imagesDir: 'assets/images',
+          relativeAssets: true
+        },
       },
       prod: {
-        src: 'stylesheets',
-        dest: 'dist/'+pkg.version,
-        outputstyle: 'compressed',
-        linecomments: false,
-        forcecompile: true,
-        debugsass: false,
-        images: 'assets/images',
-        relativeassets: false
+        options: {
+          sassDir: 'stylesheets',
+          cssDir: 'dist/' + pkg.version,
+          outputStyle: 'compressed',
+          noLineComments: true,
+          force: true,
+          debugInfo: false,
+          imagesDir: 'assets/images',
+          relativeAssets: false
+        },
       }
     },
     hull_widgets: {
