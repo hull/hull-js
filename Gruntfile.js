@@ -148,7 +148,8 @@ module.exports = function (grunt) {
             'lib/hull-remote',
             'lib/remote/services',
             'lib/remote/services/hull',
-            'lib/remote/services/facebook'
+            'lib/remote/services/facebook',
+            'lib/remote/services/github'
           ],
           out: 'dist/' + pkg.version + '/hull-remote.js'
         }
