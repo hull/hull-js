@@ -1,6 +1,6 @@
 define({
   type: "Hull",
-  templates: ['form'],
+  templates: ['quiz_admin_form','quiz_admin_header','quiz_admin_details','quiz_admin_question','quiz_admin_choices','quiz_admin_answer','quiz_admin_addquestion','quiz_admin_save'],
   datasources: {
     quiz: ':id'
   },
@@ -8,18 +8,19 @@ define({
   },
   beforeRender: function(data) {
     this.quiz = data.quiz;
-    console.log(this.quiz);
   },
 
   afterRender: function() {
-    this.tplQuestion = $('#quiz_admin_question').html();
-    this.tplChoice = $('#quiz_admin_choice').html();
+    this.tplQuestion = this.renderTemplate('quiz_admin_question');
+    this.tplChoice = this.renderTemplate('quiz_admin_answer');
     this.$form = $('#hull-quiz_admin__form');
   },
 
   submit: function(quiz) {
     //this.data.quiz.save();
-    this.api('/hull/'+quiz.id, 'put', quiz);
+    this.api('/hull/'+quiz.id, 'put', quiz, function(){
+      this.render('quiz_admin_form');
+    }.bind(this));
   },
 
   actions: {
@@ -37,6 +38,7 @@ define({
     },
     deletechoice: function(source,e,options) {
       source.parents('tr').remove();
+      return false;
     },
     submit: function(source,e,options) {
       var quiz = _.clone(this.quiz),

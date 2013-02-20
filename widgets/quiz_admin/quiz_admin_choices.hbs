@@ -1,0 +1,27 @@
+<h3>Choices</h3>
+<table>
+  <thead>
+    <tr>
+      <td>
+        Title
+      </td>
+      <td>
+        Description
+      </td>
+      <td>
+        Points
+      </td>
+      <td>
+
+      </td>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each answers}}
+      {{> quiz_admin/quiz_admin_answer }}
+    {{/each}}
+  </tbody>
+</table>
+
+{{! add a new choice }}
+<button class="hull-btn" data-hull-action="addchoice">Add choice</button>
