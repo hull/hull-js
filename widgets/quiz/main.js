@@ -5,21 +5,21 @@
  */
 define({
   type: "Hull",
-
   templates: ['quiz_intro', 'quiz_question', 'quiz_finished', 'quiz_result', 'quiz_answer'],
-  refreshEvents: ['model.hull.me.change'],
-
   initialized: false,
-
   answers: {},
-
   datasources: {
     quiz: ':id'
   },
 
   initialize: function() {
     this.quiz = this.api.model(this.id);
-    this.sandbox.on('hull.model.' + this.id + '.change', function() { this.render() }.bind(this));
+    this.sandbox.on('hull.model.' + this.id + '.change', function() {
+      this.render();
+    }.bind(this));
+    this.sandbox.on('model.hull.me.change', function() {
+      if(this.loggedIn()) {this.actions.start.apply(this); }
+    }.bind(this));
     this.currentQuestionIndex = 0;
     this.answers = {};
     if (this.options.autostart) {
