@@ -92,6 +92,19 @@ define({
           console.warn("Bah alors ? mon badge ?", badge);
         }
       });
+    },
+
+    share: function (source, e, data) {
+      var currentUrl = document.URL,
+          text = data.text;
+      switch (data.network){
+        case 'facebook':
+          console.log("Hey");
+          break;
+        case 'twitter':
+          window.open('https://twitter.com/share?url='+currentUrl+'&text='+text);
+          break;
+      }
     }
   },
 

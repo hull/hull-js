@@ -12,7 +12,10 @@
 
   <div class="hull-pager">
     <div class="hull-pager__content">
-      <button data-hull-action="start" class="hull-btn">Try again</button>
+      <button class="hull-btn" data-hull-action="share" data-hull-network="twitter" data-hull-text="I just scored {{result.data.score}} on Quiz: {{result.name}}. Can you beat me?">Share your score on Twitter</button>
+      <button class="hull-btn" data-hull-action="share" data-hull-network="facebook" data-hull-text="I just scored {{result.data.score}} on Quiz: {{result.name}}. Can you beat me?">Share your score on Facebook</button>
+      <small>or</small>
+      <span data-hull-action="start">Try again</span>
     </div>
   </div>
 
