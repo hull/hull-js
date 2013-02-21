@@ -1,0 +1,29 @@
+<h1> {{capitalize inspect}} </h1>
+
+{{#dox}}
+  {{#widget}}
+    {{#description}}
+      {{{full}}}
+    {{/description}}
+    {{#if tags}}
+      <table>
+        <thead>
+          <tr> <th>Parameters</th> </tr>
+        </thead>
+        <thead>
+          <tr> <th>name</th> <th>type</th> <th>description</th> </tr>
+        </thead>
+        <tbody>
+          {{#tags}}
+            <tr> <td><code>{{name}}</code></td> <td>{{#types}}<code>{{this}}</code>{{/types}}</td> <td>{{description}}</td> </tr>
+          {{/tags}}
+        </tbody>
+      </table>
+    {{/if}}
+    <pre class='language-javascript'><code>{{code}}</code></pre>
+  {{/widget}}
+  {{#key_value templates}}
+    <h4>Template : {{key}}</h4>
+    <pre class='language-markup'><code>{{value}}</code></pre>
+  {{/key_value}}
+{{/dox}}
