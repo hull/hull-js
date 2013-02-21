@@ -60,5 +60,5 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
             _h[i] = window.Hull[i];
         window.Hull = _h
 
-      cb(h) if cb
+      cb(_h) if cb
     return hull
