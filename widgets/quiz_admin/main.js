@@ -1,5 +1,6 @@
 define({
   type: "Hull",
+  refreshEvents: ['model.hull.me.change'],
   datasources: {
     quizzes: function() {
       return this.api('hull/app/achievements', {
