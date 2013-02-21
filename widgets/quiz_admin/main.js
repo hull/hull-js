@@ -22,8 +22,8 @@ define({
 
   afterRender: function() {
     if(this.quiz){
-      this.tplQuestion = this.renderTemplate('quiz_admin_question');
-      this.tplChoice = this.renderTemplate('quiz_admin_answer');
+      this.tplQuestion = this.renderTemplate('quiz_admin_form_question');
+      this.tplChoice = this.renderTemplate('quiz_admin_form_answer');
       this.$form = $('#hull-quiz_admin__form');
     }
   },

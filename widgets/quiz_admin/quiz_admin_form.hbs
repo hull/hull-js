@@ -22,7 +22,14 @@
     {{! delete quiz }}
     {{> quiz_admin/quiz_admin_form_delete}}
 
-
   </ol>
 
 </form>
+
+<div class="hull-quiz_admin__help">
+  <h3 class="hull-quiz_admin__help__title">Paste this in your page to instanciate your quiz.</h3>
+  <pre class="hull-quiz_admin__help__code">
+&lt;!-- Quiz:  {{quiz.name}} --&gt;
+&lt;div data-hull-widget=&quot;quiz@hull&quot; data-hull-id=&quot;{{quiz.id}}&quot;&gt;&lt;/div&gt;
+  </pre>
+</div>
