@@ -95,11 +95,11 @@ define({
     },
 
     share: function (source, e, data) {
-      var currentUrl = document.URL,
-          text = data.text;
-      switch (data.network){
+      var currentUrl = document.URL, text = data.text;
+
+      switch (data.provider){
         case 'facebook':
-          console.log("Hey");
+          // @TODO :-)
           break;
         case 'twitter':
           window.open('https://twitter.com/share?url='+currentUrl+'&text='+text);
