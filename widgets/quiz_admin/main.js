@@ -1,19 +1,30 @@
 define({
   type: "Hull",
-  templates: ['quiz_admin_form','quiz_admin_header','quiz_admin_details','quiz_admin_question','quiz_admin_choices','quiz_admin_answer','quiz_admin_addquestion','quiz_admin_save'],
   datasources: {
-    quiz: ':id'
+    quizzes: function() {
+      return this.api('hull/app/achievements', {
+        where: {
+          _type: 'Quiz'
+        }
+      });
+    }
   },
+  templates: ['quiz_admin','quiz_admin_list','quiz_admin_form','quiz_admin_form_header','quiz_admin_form_details','quiz_admin_form_question','quiz_admin_form_choices','quiz_admin_form_answer','quiz_admin_form_addquestion','quiz_admin_form_save','quiz_admin_form_cancel','quiz_admin_form_delete'],
+
   initialize: function() {
+
   },
+
   beforeRender: function(data) {
-    this.quiz = data.quiz;
+    data.quiz = this.quiz;
   },
 
   afterRender: function() {
-    this.tplQuestion = this.renderTemplate('quiz_admin_question');
-    this.tplChoice = this.renderTemplate('quiz_admin_answer');
-    this.$form = $('#hull-quiz_admin__form');
+    if(this.quiz){
+      this.tplQuestion = this.renderTemplate('quiz_admin_question');
+      this.tplChoice = this.renderTemplate('quiz_admin_answer');
+      this.$form = $('#hull-quiz_admin__form');
+    }
   },
 
   submit: function(quiz) {
@@ -24,6 +35,36 @@ define({
   },
 
   actions: {
+    edit: function(source, e, options) {
+      this.api('hull/'+options.id, {}, function(data){
+        this.quiz = data;
+        this.render();
+      }.bind(this));
+      return false;
+    },
+    add:  function(source, e, options) {
+      var name = this.$el.find('#quiz-name').val();
+      console.log(name);
+      this.api('/hull/app/achievements', 'post', {name: name, type: 'quiz'}, function(data){
+        this.quiz = data;
+        this.render();
+      }.bind(this));
+      return false;
+    },
+    delete: function(source, e, options) {
+      if(window.confirm("Are you sure you want to delete this quiz?")) {
+        this.api('/hull/'+this.quiz.id, 'delete', {name: name, type: 'quiz'}, function(){
+          this.quiz = null;
+          this.render();
+        }.bind(this));
+      }
+      return false;
+    },
+    cancel: function(source, e, options) {
+      this.quiz = null;
+      this.render();
+      return false;
+    },
     addchoice: function(source, e, options) {
       source.prev('table').find('tbody').append(this.tplChoice);
       return false;
@@ -41,8 +82,7 @@ define({
       return false;
     },
     submit: function(source,e,options) {
-      var quiz = _.clone(this.quiz),
-          extra = {};
+      var quiz = _.clone(this.quiz);
 
       quiz.name = this.$form.find('[name="name"]').val();
       quiz.description = this.$form.find('[name="description"]').val();
