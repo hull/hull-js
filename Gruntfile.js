@@ -1,36 +1,29 @@
 module.exports = function (grunt) {
   'use strict';
 
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-coffee');
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-contrib-requirejs');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-mocha');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-compass');
   grunt.loadNpmTasks('grunt-hull-dox');
   grunt.loadNpmTasks('grunt-hull-widgets');
 
+  var pkg = grunt.file.readJSON('component.json');
   var port = 3001;
 
-  // ==========================================================================
-  // Project configuration
-  // ==========================================================================
-
-  var pkg         = grunt.file.readJSON('component.json');
-
-  //
   // Lookup of the available libs and injects them for the build
   // in the requirejs conf
-  //
   var clientLibs = grunt.file.glob
     .sync('src/client/**/*.coffee')
     .map(function (clientLib) {
       return clientLib.replace('.coffee', '').replace('src/', 'lib/');
     });
 
-  //
   // Lookup of the Aura Extensions and injects them in the requirejs build
-  //
   var auraExtensions = grunt.file.glob
     .sync('aura-extensions/**/*.js')
     .map(function (extension) {
@@ -39,14 +32,9 @@ module.exports = function (grunt) {
 
 
   grunt.initConfig({
-
     pkg: pkg,
 
-    clean: {
-      libs: {
-        src: ['lib']
-      }
-    },
+    clean: ['lib'],
     dox: {
       files: {
         src: 'widgets/**/main.js',
@@ -56,7 +44,6 @@ module.exports = function (grunt) {
     coffee: {
       compile: {
         options: {
-          bare: false,
           header: true
         }
       },
@@ -72,7 +59,6 @@ module.exports = function (grunt) {
       server: {
         options: {
           port: port,
-          base: '.'
         }
       }
     },
@@ -236,6 +222,7 @@ module.exports = function (grunt) {
       template: "define(function () { return '<%= pkg.version %>';});",
       dest: 'lib/version.js'
     },
+
     compass: {
       dev: {
         options: {
@@ -262,6 +249,7 @@ module.exports = function (grunt) {
         },
       }
     },
+
     hull_widgets: {
       hull: {
         src: 'widgets',
@@ -271,12 +259,10 @@ module.exports = function (grunt) {
     }
   });
 
-  // default build task
-  grunt.registerTask('build_libs', ['clean:libs', 'coffee', 'version', 'requirejs:client', 'requirejs:remote']);
+  grunt.registerTask('build_libs', ['clean', 'coffee', 'version', 'requirejs:client', 'requirejs:remote']);
   grunt.registerTask('build', ['build_libs', 'hull_widgets', 'compass:prod']);
   grunt.registerTask('default', ['connect', 'build', /*'mocha'*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
-
 
   grunt.registerTask("version", "generate a file from a template", function () {
     var conf = grunt.config("version");
