@@ -1,13 +1,45 @@
 /**
- * Widget Quiz
+ * # Quiz
  *
- * Not ready yet
+ * A quiz is a form of game in which the player attempt to answer questions correctly.
+ *
+ * ## Parameters
+ *
+ * - `id`: The id of the quiz you want to display
+ *
+ * ## Templates
+ *
+ * - `quiz_intro`: Show the title and the description of the quiz. And secondarily the identity widget if the user is not connected..
+ * - `quiz_question`: Show a question and its answers.
+ * - `quiz_answer`: A partial template used in the `quiz_question` template. It shows the name and the description of the answer.
+ * - `quiz_finished`: Say to the user that the quiz is finish.
+ * - `quiz_result`: Show to the user his score.
+ *
+ * ## Datasources
+ *
+ * - `quiz`: The collection of all the questions and its answers related to the quiz.
+ *
+ * ## Actions
+ *
+ * - `login`: Triggered when the user logs in and call the `startQuiz` method.
+ * - `submit`: Triggered when the user click on the submit button and push his score to the api.
+ *
  */
 define({
   type: "Hull",
-  templates: ['quiz_intro', 'quiz_question', 'quiz_finished', 'quiz_result', 'quiz_answer'],
+
+  templates: [
+    'quiz_intro',
+    'quiz_question',
+    'quiz_answer',
+    'quiz_finished',
+    'quiz_result'
+  ],
+
   initialized: false,
+
   answers: {},
+
   datasources: {
     quiz: ':id'
   },
@@ -22,11 +54,32 @@ define({
     }.bind(this));
     this.currentQuestionIndex = 0;
     this.answers = {};
-    if (this.options.autostart) {
-      this.started = true;
-    } else {
-      this.started = false;
+  },
+
+  beforeRender: function(data) {
+    if (!this.initialized) {
+      this.trackEvent("init");
+      this.initialized = true;
     }
+
+    if (data.me.id != this.currentUserId) {
+      this.template = "quiz_intro";
+      this.reset();
+      return data;
+    }
+
+    data.result             = this.getResult(data);
+
+    if (this.started) {
+      data.questions        = this.getQuestions(data);
+      data.current          = this.getCurrent(data);
+    }
+
+    return data;
+  },
+
+  afterRender: function(data) {
+    this.sandbox.emit('hull.quiz.' + this.id, data);
   },
 
   trackEvent: function(eventName, eventData) {
@@ -34,6 +87,63 @@ define({
     eventName = "quiz." + eventName;
     this.track(eventName, eventData);
   },
+
+  startQuiz: function() {
+    this.reset();
+    this.startedAt = new Date();
+    this.started = true;
+    this.render('quiz_question');
+  },
+
+  reset: function() {
+    this.started = false;
+    this.submitted = false;
+    this.answers = {};
+    this.currentQuestionIndex = 0;
+    this.currentUserId = this.api.model('me').id;
+  },
+
+  // TODO : Refactor this please !!!!
+  getTemplate: function(tpl, data) {
+    if (tpl) {
+      return tpl;
+    }
+    if (!this.loggedIn()) {
+      return "quiz_intro";
+    } else if (this.submitted && data.result) {
+      return "quiz_result";
+    } else if (data.current) {
+      if (data.current.question) {
+        return "quiz_question";
+      } else {
+        return "quiz_finished";
+      }
+    } else if (data.result) {
+      return "quiz_result";
+    }
+    return "quiz_intro";
+  },
+
+
+  getCurrent: function(data) {
+    this.currentQuestion = data.questions[this.currentQuestionIndex];
+    return {
+      index:            this.currentQuestionIndex,
+      indexDisplayable: this.currentQuestionIndex+1,
+      question:         this.currentQuestion,
+      next:             data.questions[this.currentQuestionIndex + 1],
+      previous:         data.questions[this.currentQuestionIndex - 1]
+    };
+  },
+
+  getQuestions: function(data) {
+    return data.quiz.questions;
+  },
+
+  getResult: function(data) {
+    return data.quiz.badge;
+  },
+
 
   actions: {
 
@@ -106,87 +216,6 @@ define({
           break;
       }
     }
-  },
-
-  startQuiz: function() {
-    this.reset();
-    this.startedAt = new Date();
-    this.started = true;
-    this.render('quiz_question');
-  },
-
-  reset: function() {
-    this.started = false;
-    this.submitted = false;
-    this.answers = {};
-    this.currentQuestionIndex = 0;
-    this.currentUserId = this.api.model('me').id;
-  },
-
-  // TODO : Refactor this please !!!!
-  getTemplate: function(tpl, data) {
-    if (tpl) {
-      return tpl;
-    }
-    if (!this.loggedIn()) {
-      return "quiz_intro";
-    } else if (this.submitted && data.result) {
-      return "quiz_result";
-    } else if (data.current) {
-      if (data.current.question) {
-        return "quiz_question";
-      } else {
-        return "quiz_finished";
-      }
-    } else if (data.result) {
-      return "quiz_result";
-    }
-    return "quiz_intro";
-  },
-
-  beforeRender: function(data) {
-    if (!this.initialized) {
-      this.trackEvent("init");
-      this.initialized = true;
-    }
-
-    if (data.me.id != this.currentUserId) {
-      this.template = "quiz_intro";
-      this.reset();
-      return data;
-    }
-
-    data.result             = this.getResult(data);
-
-    if (this.started) {
-      data.questions        = this.getQuestions(data);
-      data.current          = this.getCurrent(data);
-    }
-
-    return data;
-  },
-
-  afterRender: function(data) {
-    this.sandbox.emit('hull.quiz.' + this.id, data);
-  },
-
-  getCurrent: function(data) {
-    this.currentQuestion = data.questions[this.currentQuestionIndex];
-    return {
-      index:            this.currentQuestionIndex,
-      indexDisplayable: this.currentQuestionIndex+1,
-      question:         this.currentQuestion,
-      next:             data.questions[this.currentQuestionIndex + 1],
-      previous:         data.questions[this.currentQuestionIndex - 1]
-    };
-  },
-
-  getQuestions: function(data) {
-    return data.quiz.questions;
-  },
-
-  getResult: function(data) {
-    return data.quiz.badge;
   }
 
 });
