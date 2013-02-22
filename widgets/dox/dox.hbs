@@ -1,0 +1,36 @@
+<h1>Widget : {{capitalize inspect}} </h1>
+{{#dox}}
+  <div class='dox'>
+    {{#widget}}
+      <div class="block">
+        {{#name}}
+          <h3>{{string}}</h3>
+        {{/name}}
+        {{#description}}
+          {{{full}}}
+        {{/description}}
+        {{#if tags}}
+          <table>
+            <thead>
+              <tr> <th>Parameters</th> </tr>
+            </thead>
+            <thead>
+              <tr> <th>name</th> <th>type</th> <th>description</th> </tr>
+            </thead>
+            <tbody>
+              {{#tags}}
+                <tr> <td><code>{{name}}</code></td> <td>{{#types}}<code>{{this}}</code>{{/types}}</td> <td>{{description}}</td> </tr>
+              {{/tags}}
+            </tbody>
+          </table>
+        {{/if}}
+      </div>
+    {{/widget}}
+    {{#key_value templates}}
+      <div class="template">
+        <h4>Template : {{key}}</h4>
+        <pre class='language-markup'><code>{{value}}</code></pre>
+      </div>
+    {{/key_value}}
+  </div>
+{{/dox}}
