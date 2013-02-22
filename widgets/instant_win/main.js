@@ -12,8 +12,6 @@
  *   us if the user has win or lost.
  */
 define({
-  type: 'Hull',
-
   templates: [
     /**
      * Show the button to play to the game.
@@ -45,14 +43,12 @@ define({
     'instant_ended'
   ],
 
-  refreshEvents: ['model.hull.me.change'],
-
   datasources: {
     /**
-     * The user's badge for the InstantWin
+     * The user's badges.
      */
-    badge: function() {
-      return this.loggedIn() ? this.api('hull/me/badges/' + this.options.id) : [];
+    badges: function() {
+      return this.loggedIn() ? this.api('hull/me/badges') : [];
     }
   },
 
@@ -131,7 +127,7 @@ define({
    * @return {Boolean}
    */
   userCanPlay: function() {
-    var badge = this.data.badge;
+    var badge = _.where(this.data.badges, { 'achievement_id': this.id })[0];
     if (badge === null || badge === undefined) { return true; }
     var d = new Date().toISOString().slice(0,10);
     return !badge.data.attempts[d];
