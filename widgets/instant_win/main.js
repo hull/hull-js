@@ -12,61 +12,43 @@
  *   us if the user has win or lost.
  */
 define({
-  type: 'Hull',
-
   templates: [
-    /**
-     * Instant win Header
-     */
-    'header',
-    /**
-     * Instant win footer
-     */
-    'footer',
     /**
      * Show the button to play to the game.
      */
-    'intro',
+    'instant_intro',
     /**
      * Show a loading message.
      */
-    'working',
+    'instant_working',
     /**
      * Say to the user that he has won
      */
-    'won',
+    'instant_won',
     /**
      * Say to the user that he has lost.
      */
-    'lost',
+    'instant_lost',
     /**
      * Say to the user that he has already played.
      */
-    'played',
+    'instant_played',
     /**
      * Say to the user that the game hasn't started yet.
      */
-    'unstarted',
+    'instant_unstarted',
     /**
      * Say to the user that the game has ended.
      */
-    'ended'
+    'instant_ended'
   ],
-
-  refreshEvents: ['model.hull.me.change'],
 
   datasources: {
     /**
-     * The InstantWin achievement
+     * The user's badges.
      */
-    achievement: function() {
-      return this.api('hull/' + this.options.id);
-    },
-    /**
-     * The user's badge for the InstantWin
-     */
-    badge: function() {
-      return this.loggedIn() ? this.api('hull/me/badges/' + this.options.id) : null;
+    badges: function() {
+      return this.loggedIn() ? this.api('hull/me/badges') : [];
     }
   },
 
@@ -91,34 +73,28 @@ define({
   },
 
   beforeRender: function(data) {
-    this.data.screen = this.getInitialTemplate()
-    // this.template = this.getInitialTemplate();
+    this.template = this.getInitialTemplate();
     data.authProviders = this.authProviders;
-
-    console.log(data);
   },
 
   /**
    * Return the template name that the user should see when he lands on the
    * game.
    *
-   * - `intro`: if the user hasn't played during the current day.
-   * - `won`: if the user has won a prize.
-   * - `played`: if the user has played during the current day.
-   * - `unstarted`: if the game hasn't started.
-   * - `ended`: if the game has ended.
+   * - `instant_intro`: if the user hasn't played during the current day.
+   * - `instant_played`: if the user has played during the current day.
+   * - `instant_unstarted`: if the game hasn't started.
+   * - `instant_ended`: if the game has ended.
    *
    * @return {String}
    */
   getInitialTemplate: function() {
-    if (this.userHasWon()) {
-      return 'won';
-    } else if (this.hasEnded()) {
-      return 'ended';
+    if (this.hasEnded()) {
+      return 'instant_ended';
     } else if (this.hasStarted()) {
-      return this.userCanPlay() ? 'intro' : 'played';
+      return this.userCanPlay() ? 'instant_intro' : 'instant_played';
     } else {
-      return 'unstarted';
+      return 'instant_unstarted';
     }
   },
 
@@ -134,7 +110,7 @@ define({
   },
 
   /**
-   * Determine if the game has ended. Return `true` if it has `false` if it
+   * Determine if the game has ended. return `true` if it has `false` if it
    * hasn't.
    *
    * @return {Boolean}
@@ -145,50 +121,38 @@ define({
   },
 
   /**
-   * Determine if the user can play. Return `true` if he can `false` if he
+   * Determine if the user can play. return `true` if he can `false` if he
    * cannot.
    *
    * @return {Boolean}
    */
   userCanPlay: function() {
-    if (!this.data.badge) { return true; }
-    var d = new Date().toISOString().slice(0, 10);
-    return !this.data.badge.data.attempts[d];
-  },
-
-  /**
-   * Determine if user has won. Return `true` if the he has, `false` if he
-   * hasn't.
-   *
-   * @return {Boolean}
-   */
-  userHasWon: function() {
-    if (!this.data.badge) { return false; }
-    return this.data.badge.data.winner;
+    var badge = _.where(this.data.badges, { 'achievement_id': this.id })[0];
+    if (badge === null || badge === undefined) { return true; }
+    var d = new Date().toISOString().slice(0,10);
+    return !badge.data.attempts[d];
   },
 
   /**
    * Play to the game and render a template:
    *
-   * - `won`: if the user has won.
-   * - `lost`: if the user has lost.
-   * - `played`: if the user has played during the current day.
+   * - `instant_won`: if the user has won.
+   * - `instant_lost`: if the user has lost.
+   * - `instant_played`: if the user has played during the current day.
    *
-   * When the function is called we render `working` and display it
+   * When the function is called we render `instant_working` and display it
    * until we know if the user has won.
    */
   play: function() {
-    if (this.userHasWon()) { return; }
-
-    var delay = this.wait(this.options.delay || 0);
-    this.render('working');
+    var suspense = this.wait(this.options.delay || 0);
+    this.render('instant_working');
 
     this.api('hull/' + this.id + '/achieve', 'post', _.bind(function(res) {
-      var template = 'played';
+      var template = 'instant_played';
       if (this.userCanPlay()) {
-        template = res.data.winner ? 'won' : 'lost';
+        template = 'instant_' + (res.data.winner ? 'won' : 'lost');
       }
-      delay.then(_.bind(function() {
+      suspense.then(_.bind(function() {
         this.render(template);
       }, this));
     }, this));
@@ -201,15 +165,8 @@ define({
    * @return {Promise}
    */
   wait: function(time) {
-    var deferred = this.sandbox.data.deferred();
-    time = parseInt(time, 10) || 0;
-
-    if (time <= 0) {
-      deferred.resolve();
-    } else {
-      setTimeout(deferred.resolve, time);
-    }
-
-    return deferred.promise();
+    return this.sandbox.data.deferred(function(dfd) {
+      setTimeout(dfd.resolve, time);
+    }).promise();
   }
 });
