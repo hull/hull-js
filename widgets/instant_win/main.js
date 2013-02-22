@@ -12,6 +12,8 @@
  *   us if the user has win or lost.
  */
 define({
+  type: 'Hull',
+
   templates: [
     /**
      * Show the button to play to the game.
