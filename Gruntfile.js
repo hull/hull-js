@@ -7,7 +7,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-contrib-compass');
-  grunt.loadNpmTasks('grunt-dox');
+  grunt.loadNpmTasks('grunt-hull-dox');
   grunt.loadNpmTasks('grunt-hull-widgets');
 
   var port = 3001;
