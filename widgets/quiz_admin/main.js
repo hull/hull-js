@@ -1,6 +1,30 @@
+/**
+ * # Quiz Admin
+ *
+ * This widget allow you to edit and add quizzes in your application.
+ *
+ * ## Templates
+ *
+ * - `quiz_admin`: The main template. It shows the list of your quizzes or the form to edit a quiz.
+ * - `quiz_admin_list'`: Show the list of your quizzes and a form to add new quizzes.
+ * - `quiz_admin_form'`: Show the form to edit a quiz.
+ * - `quiz_admin_form_header'`: A partial template used in the `quiz_admin_form` template. It shows the name, the description and a snippet of code to show how to instanciate the quiz.
+ * - `quiz_admin_form_question'`: A partial template used in the `quiz_admin_form` template. It shows a question, its answers and some actions you can execute on the current question.
+ * - `quiz_admin_form_details'`: A partial template used in the `quiz_admin_form_question` template. It shows the name and the description of the current question.
+ * - `quiz_admin_form_choices'`: A partial template used in the `quiz_admin_form_question` template. It shows a table of answers displayed by the current question.
+ * - `quiz_admin_form_answer`: A partial template used in the `quiz_admin_form_choices` template. It's a row of the answers table which shows the name and the description of the current answer.
+ *
+ * ## Datasources
+ *
+ * - `quiz`: The collection of all the quizzes available in the application.
+ *
+ */
 define({
+
   type: "Hull",
+
   refreshEvents: ['model.hull.me.change'],
+
   datasources: {
     quizzes: function() {
       return this.api('hull/app/achievements', {
@@ -10,11 +34,17 @@ define({
       });
     }
   },
-  templates: ['quiz_admin','quiz_admin_list','quiz_admin_form','quiz_admin_form_header','quiz_admin_form_details','quiz_admin_form_question','quiz_admin_form_choices','quiz_admin_form_answer','quiz_admin_form_addquestion','quiz_admin_form_save','quiz_admin_form_cancel','quiz_admin_form_delete'],
 
-  initialize: function() {
-
-  },
+  templates: [
+    'quiz_admin',
+    'quiz_admin_list',
+    'quiz_admin_form',
+    'quiz_admin_form_header',
+    'quiz_admin_form_question',
+    'quiz_admin_form_details',
+    'quiz_admin_form_choices',
+    'quiz_admin_form_answer'
+  ],
 
   beforeRender: function(data) {
     data.quiz = this.quiz;
@@ -29,7 +59,6 @@ define({
   },
 
   submit: function(quiz) {
-    //this.data.quiz.save();
     this.api('/hull/'+quiz.id, 'put', quiz, function(){
       this.quiz = null;
       this.render();
@@ -37,6 +66,7 @@ define({
   },
 
   actions: {
+
     edit: function(source, e, options) {
       this.api('hull/'+options.id, {}, function(data){
         this.quiz = data;
@@ -44,15 +74,16 @@ define({
       }.bind(this));
       return false;
     },
+
     add:  function(source, e, options) {
-      var name = this.$el.find('#quiz-name').val();
-      console.log(name);
+      var name = this.$el.find('#hull-quiz-name').val();
       this.api('/hull/app/achievements', 'post', {name: name, type: 'quiz'}, function(data){
         this.quiz = data;
         this.render();
       }.bind(this));
       return false;
     },
+
     delete: function(source, e, options) {
       if(window.confirm("Are you sure you want to delete this quiz?")) {
         this.api('/hull/'+this.quiz.id, 'delete', {}, function(){
@@ -62,19 +93,23 @@ define({
       }
       return false;
     },
+
     cancel: function(source, e, options) {
       this.quiz = null;
       this.render();
       return false;
     },
+
     addchoice: function(source, e, options) {
-      source.prev('table').find('tbody').append(this.tplChoice);
+      source.parents('.hull-form__fields__item').find('tbody').append(this.tplChoice);
       return false;
     },
+
     addquestion: function(source, e, options) {
       source.parent('li').before(this.tplQuestion);
       return false;
     },
+
     deletequestion: function(source,e,options) {
       if(window.confirm("Are you sure you want to delete this question?")) {
         source.parents('li').remove();
@@ -84,10 +119,12 @@ define({
       }
       return false;
     },
+
     deletechoice: function(source,e,options) {
       source.parents('tr').remove();
       return false;
     },
+
     submit: function(source,e,options) {
       var quiz = _.clone(this.quiz);
 

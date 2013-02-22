@@ -5,4 +5,10 @@
   <div class="hull-quiz_admin__choices">
     {{> quiz_admin/quiz_admin_form_choices}}
   </div>
+  <div class="hull-quiz_admin__actions">
+    {{! add a new choice }}
+    <button class="hull-btn" data-hull-action="addchoice">Add choice</button>
+    {{! Delete question }}
+    <button class="hull-btn" data-hull-action="deletequestion" data-hull-question-id="{{id}}">Delete question</button>
+  </div>
 </li>
