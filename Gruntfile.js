@@ -9,6 +9,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-compass');
+  grunt.loadNpmTasks('grunt-hull-dox');
   grunt.loadNpmTasks('grunt-hull-widgets');
 
   var pkg = grunt.file.readJSON('component.json');
@@ -34,7 +35,12 @@ module.exports = function (grunt) {
     pkg: pkg,
 
     clean: ['lib'],
-
+    dox: {
+      files: {
+        src: 'widgets/**/main.js',
+        dest: 'dist/'+ pkg.version +'/docs'
+      }
+    },
     coffee: {
       compile: {
         options: {
@@ -49,7 +55,6 @@ module.exports = function (grunt) {
         })
       }
     },
-
     connect: {
       server: {
         options: {
@@ -57,7 +62,6 @@ module.exports = function (grunt) {
         }
       }
     },
-
     requirejs: {
       client: {
         options: {
@@ -167,7 +171,6 @@ module.exports = function (grunt) {
         }
       }
     },
-
     jshint: {
       files: {
         src: ['lib/**/*.js', 'spec/lib/**/*.js']
@@ -194,13 +197,11 @@ module.exports = function (grunt) {
         }
       }
     },
-
     mocha: {
       hull: {
         src: ["spec/index.html"]
       }
     },
-
     watch: {
       widgets: {
         files: ['widgets/**/*'],
@@ -252,7 +253,7 @@ module.exports = function (grunt) {
     hull_widgets: {
       hull: {
         src: 'widgets',
-        before: ['requirejs:upload', 'requirejs:registration'],
+        // before: ['requirejs:upload', 'requirejs:registration'],
         dest: 'dist/<%= pkg.version%>/widgets'
       }
     }
