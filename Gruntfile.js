@@ -11,8 +11,10 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-compass');
   grunt.loadNpmTasks('grunt-hull-dox');
   grunt.loadNpmTasks('grunt-hull-widgets');
+  grunt.loadNpmTasks('grunt-s3');
 
   var pkg = grunt.file.readJSON('component.json');
+  var aws = grunt.file.readJSON('grunt-aws.json');
   var port = 3001;
 
   // ==========================================================================
@@ -42,6 +44,27 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     pkg: pkg,
+
+    aws: aws,
+
+    s3: {
+      key: '<%= aws.key %>',
+      secret: '<%= aws.secret %>',
+      bucket: '<%= aws.bucket %>',
+      access: 'public-read',
+      // debug: true,
+      options:{
+        encodePaths: true,
+        maxOperations: 20
+      },
+      upload: [
+        {
+          src: 'dist/'+pkg.version+'/**',
+          dest: '/',
+          rel: 'dist/'
+        }
+      ]
+    },
 
     clean: ['lib'],
     dox: {
