@@ -1,18 +1,18 @@
 <div class="hull-quiz_admin__list">
-  <div class="hull-form hull-quiz_admin__list__title">
+  <div class="hull-quiz_admin__list__title">
     <h1>My quizzes</h1>
   </div>
   <ul>
     {{#quizzes}}
-      <li>
-        <button data-hull-id="{{id}}" data-hull-action="edit">{{name}}</button>
+      <li class="hull-quiz_admin__list__item">
+        <span data-hull-id="{{id}}" data-hull-action="edit">{{name}}</span>
       </li>
     {{/quizzes}}
   </ul>
 </div>
 
 <form id="hull-quiz_admin__form--add" class="hull-form hull-quiz_admin__form--add">
-  <div class="hull-form hull-quiz_admin__form--add__title">
+  <div class="hull-quiz_admin__form--add__title">
     <h1>Create a new quiz</h1>
   </div>
   <ul class="hull-form__fields">

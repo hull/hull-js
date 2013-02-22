@@ -31,7 +31,8 @@ define({
   submit: function(quiz) {
     //this.data.quiz.save();
     this.api('/hull/'+quiz.id, 'put', quiz, function(){
-      this.render('quiz_admin_form');
+      this.quiz = null;
+      this.render();
     }.bind(this));
   },
 
@@ -54,7 +55,7 @@ define({
     },
     delete: function(source, e, options) {
       if(window.confirm("Are you sure you want to delete this quiz?")) {
-        this.api('/hull/'+this.quiz.id, 'delete', {name: name, type: 'quiz'}, function(){
+        this.api('/hull/'+this.quiz.id, 'delete', {}, function(){
           this.quiz = null;
           this.render();
         }.bind(this));
@@ -75,7 +76,12 @@ define({
       return false;
     },
     deletequestion: function(source,e,options) {
-      source.parents('li').remove();
+      if(window.confirm("Are you sure you want to delete this question?")) {
+        source.parents('li').remove();
+        if(options.question_id){
+          this.api('/hull/'+options.question_id, 'delete');
+        }
+      }
       return false;
     },
     deletechoice: function(source,e,options) {
