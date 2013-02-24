@@ -1,0 +1,48 @@
+<div class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" data-toggle="tab" href="#oahu_inspector_{{name}}">{{name}}</a>
+    <ul class='nav'>
+      <li class='dropdown'>
+        <a class='dropdown-toggle' data-toggle="dropdown" href="#oahu_inspector_{{name}}_methods"> Reference <b class="caret"></b> </a>
+        <ul class="dropdown-menu">
+          {{#if ctx}}{{^ignore}}{{^isPrivate}}
+            <li><a data-toggle="tab" href="#oahu_inspector_{{../../name}}_method_{{ctx.name}}">{{ctx.name}}</a></li>
+          {{/isPrivate}}{{/ignore}}{{/if}}
+        </ul>
+      </li>
+      <li class="divider-vertical"></li>
+      <li class='dropdown'>
+        <a class='dropdown-toggle' data-toggle="dropdown" href="#oahu_inspector_{{name}}_templates"> Templates <b class="caret"></b> </a>
+        <ul class="dropdown-menu">
+          {{#templates.data}}
+            <li><a data-toggle="tab" href="#oahu_inspector_{{../name}}_template_{{name}}">{{name}}</a></li>
+          {{/templates.data}}
+        </ul>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="tab-content">
+  <div class="tab-pane active" id="oahu_inspector_{{name}}">
+    {{{description.summary}}}
+    {{{description.body}}}
+  </div>
+      {{^ignore}}
+      {{^isPrivate}}
+      {{#if ctx.name}}
+        <div class="tab-pane methods" id="oahu_inspector_{{../../name}}_method_{{ctx.name}}">
+          <div id="ctx_{{ctx.name}}">
+            <div class="page-header">
+              <h3 class='{{ctx.type}}'>
+                {{ctx.name}}
+                <small>{{ctx.type}}</small>
+              </h3>
+            </div>
+            {{> inspect_method}}
+          </div>
+        </div>
+      {{/if}}
+      {{/isPrivate}}
+      {{/ignore}}
+</div>
