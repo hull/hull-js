@@ -17,6 +17,8 @@ module.exports = function (grunt) {
   // ==========================================================================
 
   var pkg         = grunt.file.readJSON('component.json');
+  var clientSrc = ['src/hullbase.coffee', 'src/hull.coffee', 'src/client/**/*.coffee'];
+  var remoteSrc = ['src/hullbase.coffee', 'src/hull-remote.coffee', 'src/remote/**/*.coffee'];
 
   //
   // Lookup of the available libs and injects them for the build
@@ -55,8 +57,15 @@ module.exports = function (grunt) {
           header: true
         }
       },
-      files: {
-        files: grunt.file.expandMapping(['src/**/*.coffee'], 'lib/', {
+      remote: {
+        files: grunt.file.expandMapping(remoteSrc, 'lib/', {
+          rename: function (destBase, destPath) {
+            return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
+          }
+        })
+      },
+      client: {
+        files: grunt.file.expandMapping(clientSrc, 'lib/', {
           rename: function (destBase, destPath) {
             return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
           }
@@ -77,7 +86,7 @@ module.exports = function (grunt) {
       client: {
         options: {
           baseUrl: '.',
-          // optimize: 'none',
+          optimize: 'none',
           preserveLicenseComments: true,
           paths: {
             aura:           'components/aura/dist',
@@ -221,9 +230,13 @@ module.exports = function (grunt) {
         files: ['widgets/**/*'],
         tasks: ['hull_widgets']
       },
-      libs: {
-        files: ['aura-extensions/**/*.js', 'src/**/*.coffee', 'spec/src/**/*.coffee'],
-        tasks: ['build_libs']
+      remote: {
+        files: remoteSrc,
+        tasks: ['build_remote']
+      },
+      client: {
+        files: clientSrc,
+        tasks: ['build_client']
       },
       compass: {
         files: [
@@ -272,7 +285,9 @@ module.exports = function (grunt) {
   });
 
   // default build task
-  grunt.registerTask('build_libs', ['clean:libs', 'coffee', 'version', 'requirejs:client', 'requirejs:remote']);
+  grunt.registerTask('build_remote', ['clean:libs', 'coffee:remote', 'version', 'requirejs:remote']);
+  grunt.registerTask('build_client', ['clean:libs', 'coffee:client', 'version', 'requirejs:client']);
+  grunt.registerTask('build_libs', ['build_client', 'build_remote']);
   grunt.registerTask('build', ['build_libs', 'hull_widgets', 'compass:prod']);
   grunt.registerTask('default', ['connect', 'build', /*'mocha'*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
