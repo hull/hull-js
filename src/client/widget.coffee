@@ -1,24 +1,14 @@
 define ['backbone', 'underscore'], (Backbone, _)->
 
+  Datasource = null
   debug = false
-
-  parseURI = (uri, bindings)->
-    bindings = _.extend({}, bindings, bindings.options) if bindings.options
-    placeHolders = uri.match(/(\:[a-zA-Z0-9-_]+)/g)
-    return uri unless placeHolders
-    for p in placeHolders
-      uri = uri.replace(p, bindings[decamelize(p).slice(1)]);
-    uri
 
   slice = Array.prototype.slice
 
   decamelize = (camelCase)->
     camelCase.replace(/([A-Z])/g, '_' + '$1').toLowerCase()
 
-  default_datasources =
-    me: 'me'
-    app: 'app'
-    org: 'org'
+  default_datasources = {}
 
   actionHandler = (e)->
     try
@@ -45,9 +35,11 @@ define ['backbone', 'underscore'], (Backbone, _)->
     initialize: ->
 
     constructor: (options)->
-      @ref    = options.ref
-      @api    = @sandbox.data.api
-      @track  = @sandbox.track
+      @ref          = options.ref
+      @api          = @sandbox.data.api
+      @track        = @sandbox.track
+      @datasources  = _.extend {}, default_datasources, @datasources, options.datasources
+
       try
         @events = if _.isFunction(@events) then @events() else @events
         @events ?= {}
@@ -63,7 +55,10 @@ define ['backbone', 'underscore'], (Backbone, _)->
           @className = "hull-widget"
           @className += " hull-#{@namespace}" if @namespace?
 
-        @datasources = _.extend({}, default_datasources, @datasources || {}, options.datasources || {})
+        _.each @datasources, (ds, i)=>
+          ds = _.bind ds, @ if _.isFunction ds
+          @datasources[i] = new Datasource ds unless ds instanceof Datasource
+        
         @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
       catch e
         console.error("Error loading HullWidget", e.message)
@@ -94,29 +89,10 @@ define ['backbone', 'underscore'], (Backbone, _)->
         keys      = _.keys(@datasources)
         promises  = _.map keys, (k)=>
           ds = @datasources[k]
-          if _.isString(ds)
-            uri = ds
-            completeURI = parseURI(uri, @)
-            isModel = uri.lastIndexOf('/') in [-1, 0]
-            if isModel
-              @sandbox.data.api.model(completeURI).deferred
-            else
-              @sandbox.data.api.collection(completeURI).deferred
-          else if _.isFunction(ds)
-            ds.call(@)
-          else if ds.provider && ds.path #@TODO Enhance check
-            type = ds.type || 'collection'
-            ds.path = parseURI(ds.path, @)
-            if type == 'model'
-              @sandbox.data.api.model(ds).deferred
-            else if type == 'collection'
-              @sandbox.data.api.collection(ds).deferred
-            else
-              throw new TypeError('Unknown type: ' + type);
-          else
-            ds
+          ds.parse(_.extend({}, @, @options || {}))
+          ds.fetch()
 
-        widgetDeferred = $.when.apply($, promises)
+        widgetDeferred = @sandbox.data.when.apply(undefined, promises)
         templateDeferred = @sandbox.template.load(@templates, @ref)
         @data = {}
         $.when(widgetDeferred, templateDeferred).done (data, tpls)=>
@@ -176,5 +152,10 @@ define ['backbone', 'underscore'], (Backbone, _)->
           _.defer((-> @sandbox.start(@$el)).bind(@))
 
   (app)->
+    Datasource = app.core.datasource
+    default_datasources =
+      me: new Datasource 'me'
+      app: new Datasource 'app'
+      org: new Datasource 'org'
     debug = app.config.debug
     app.core.registerWidgetType("Hull", HullWidget.prototype)
