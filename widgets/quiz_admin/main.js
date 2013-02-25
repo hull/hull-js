@@ -76,12 +76,26 @@ define({
     },
 
     add:  function(source, e, options) {
-      var name = this.$el.find('#hull-quiz-name').val();
+      var name = $('#hull-quiz-name').val();
       this.api('/hull/app/achievements', 'post', {name: name, type: 'quiz'}, function(data){
         this.quiz = data;
         this.render();
       }.bind(this));
       return false;
+    },
+
+    import: function(source, e, options) {
+      e.preventDefault();
+      var val = $('#hull-quiz-json').val();
+      try {
+        var json = jQuery.parseJSON(val);
+        this.api('/hull/app/achievements', 'post', json, function(data){
+          this.quiz = data;
+          this.render();
+        }.bind(this));
+      } catch(e) {
+         alert('invalid json');
+      }
     },
 
     delete: function(source, e, options) {
