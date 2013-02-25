@@ -7,3 +7,4 @@ app/app.js
 /tmp
 /dist
 .sass-cache
+grunt-aws.json
