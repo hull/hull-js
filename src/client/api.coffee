@@ -187,7 +187,7 @@ define ['lib/version'], (version) ->
           core.mediator.emit(eventName, { eventName: eventName, model: model, changes: args[1]?.changes })
         dfd   = model.deferred = core.data.deferred()
         model._id = attrs._id
-        models[attrs._id] = model
+        models[attrs._id] = model #caching
         if model.id
           model._fetched = true
           dfd.resolve(model)
@@ -203,6 +203,7 @@ define ['lib/version'], (version) ->
 
       api.model = (attrs)->
         attrs = { _id: attrs } if _.isString(attrs)
+        attrs._id = attrs.path unless attrs._id
         throw new Error('A model must have an identifier...') unless attrs?._id?
         models[attrs._id] || setupModel(attrs)
 

@@ -11,10 +11,21 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-compass');
   grunt.loadNpmTasks('grunt-hull-dox');
   grunt.loadNpmTasks('grunt-hull-widgets');
+  grunt.loadNpmTasks('grunt-s3');
 
   var pkg = grunt.file.readJSON('component.json');
+  var aws = grunt.file.readJSON('grunt-aws.json');
   var port = 3001;
 
+  // ==========================================================================
+  // Project configuration
+  // ==========================================================================
+
+  var pkg         = grunt.file.readJSON('component.json');
+  var clientSrc = ['src/hullbase.coffee', 'src/hull.coffee', 'src/client/**/*.coffee'];
+  var remoteSrc = ['src/hullbase.coffee', 'src/hull-remote.coffee', 'src/remote/**/*.coffee'];
+
+  //
   // Lookup of the available libs and injects them for the build
   // in the requirejs conf
   var clientLibs = grunt.file.glob
@@ -33,7 +44,25 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     pkg: pkg,
-
+    aws: aws,
+    s3: {
+      key: '<%= aws.key %>',
+      secret: '<%= aws.secret %>',
+      bucket: '<%= aws.bucket %>',
+      access: 'public-read',
+      // debug: true,
+      options:{
+        encodePaths: true,
+        maxOperations: 20
+      },
+      upload: [
+        {
+          src: 'dist/'+pkg.version+'/**',
+          dest: '/',
+          rel: 'dist/'
+        }
+      ]
+    },
     clean: ['lib'],
     dox: {
       files: {
@@ -47,8 +76,15 @@ module.exports = function (grunt) {
           header: true
         }
       },
-      files: {
-        files: grunt.file.expandMapping(['src/**/*.coffee'], 'lib/', {
+      remote: {
+        files: grunt.file.expandMapping(remoteSrc, 'lib/', {
+          rename: function (destBase, destPath) {
+            return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
+          }
+        })
+      },
+      client: {
+        files: grunt.file.expandMapping(clientSrc, 'lib/', {
           rename: function (destBase, destPath) {
             return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
           }
@@ -66,7 +102,7 @@ module.exports = function (grunt) {
       client: {
         options: {
           baseUrl: '.',
-          // optimize: 'none',
+          optimize: 'none',
           preserveLicenseComments: true,
           paths: {
             aura:           'components/aura/dist',
@@ -207,9 +243,13 @@ module.exports = function (grunt) {
         files: ['widgets/**/*'],
         tasks: ['hull_widgets']
       },
-      libs: {
-        files: ['aura-extensions/**/*.js', 'src/**/*.coffee', 'spec/src/**/*.coffee'],
-        tasks: ['build_libs']
+      remote: {
+        files: remoteSrc,
+        tasks: ['build_remote']
+      },
+      client: {
+        files: clientSrc,
+        tasks: ['build_client']
       },
       compass: {
         files: [
@@ -222,7 +262,6 @@ module.exports = function (grunt) {
       template: "define(function () { return '<%= pkg.version %>';});",
       dest: 'lib/version.js'
     },
-
     compass: {
       dev: {
         options: {
@@ -249,7 +288,6 @@ module.exports = function (grunt) {
         },
       }
     },
-
     hull_widgets: {
       hull: {
         src: 'widgets',
@@ -259,10 +297,14 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('build_libs', ['clean', 'coffee', 'version', 'requirejs:client', 'requirejs:remote']);
+  // default build task
+  grunt.registerTask('build_remote', ['clean', 'coffee:remote', 'version', 'requirejs:remote']);
+  grunt.registerTask('build_client', ['clean', 'coffee:client', 'version', 'requirejs:client']);
+  grunt.registerTask('build_libs', ['build_client', 'build_remote']);
   grunt.registerTask('build', ['build_libs', 'hull_widgets', 'compass:prod']);
   grunt.registerTask('default', ['connect', 'build', /*'mocha'*/ 'watch']);
-  grunt.registerTask('dist', ['connect', 'build']);
+  grunt.registerTask('dist', ['build', 'dox']);
+  grunt.registerTask('deploy', ['dist', 's3']);
 
   grunt.registerTask("version", "generate a file from a template", function () {
     var conf = grunt.config("version");

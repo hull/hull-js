@@ -1,5 +1,5 @@
 {{#if loggedIn}}
-  <div class="hull-media hull-idendity">
+  <div class="hull-media hull-identity">
      <img src="{{me.picture}}" alt="{{me.name}}" class="hull-media__img">
      <div class="hull-media__body">
        <h1 class="hull-identity__name">{{me.name}}</h1>
@@ -10,7 +10,7 @@
   </div>
 {{else}}
   {{#authServices}}
-  <div class="hull-idendity--disconnected">
+  <div class="hull-identity-disconnected">
     <button data-hull-action="login" data-hull-provider="{{.}}" class="hull-btn">
       Sign In with {{classify .}}
     </button>
