@@ -18,7 +18,11 @@ define ['backbone', 'underscore'], (Backbone, _)->
       unless _.isFunction(fn)
         throw new Error("Can't find action #{action} on this Widget")
       options = {}
-      options[decamelize(k).replace("hull_", "")] = v for k,v of source.data()
+      for k,v of source.data()
+        do ->
+          key = k.replace(/^hull/, "")
+          key = key.charAt(0).toLowerCase() + key.slice(1)
+          options[key] = v
       fn.call(@, source, e, options)
     catch e
       console.error("oops... missed action?", e.message, e)
@@ -58,7 +62,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
         _.each @datasources, (ds, i)=>
           ds = _.bind ds, @ if _.isFunction ds
           @datasources[i] = new Datasource ds unless ds instanceof Datasource
-        
+
         @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
       catch e
         console.error("Error loading HullWidget", e.message)

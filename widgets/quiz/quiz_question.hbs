@@ -16,14 +16,14 @@
         {{#question}}
           <h4 class="hull-quiz__question__name">{{name}}</h4>
           <h5 class="hull-quiz__question__description">{{description}}</h5>
-          <ol class="hull-quiz__current__questions">
+          <ol class="hull-quiz__question__anwsers">
               {{#answers}}
               <li>
-                <span class="hull-btn" data-hull-action="answerAndNext"
+                <div class="hull-btn" data-hull-action="answerAndNext"
                     data-hull-answer-id="{{id}}"
                     data-hull-question-id="{{../id}}">
-                      {{name}}
-                </span>
+                {{> quiz/quiz_answer}}
+                </div>
               </li>
               {{/answers}}
           </ol>
