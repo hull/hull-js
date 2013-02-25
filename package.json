@@ -1,6 +1,6 @@
 {
   "name": "hull-express",
-  "version": "0.2.0",
+  "version": "develop",
   "devDependencies": {
     "mocha": "*",
     "chai": "*",
