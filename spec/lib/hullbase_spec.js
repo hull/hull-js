@@ -12,32 +12,22 @@ define(function () {
     }
   };
 
-  var spy = sinon.spy();
+  var superSpy = sinon.spy();
 
   after(function () {
     require.undef('lib/hull');
     require.undef('lib/version');
-  });
-
-  // Mocking dependencies of  lib/hullbase
-  before(function (done) {
-    define('lib/hull', function () {
-      return spy;
-    });
-    require(['lib/hull'], function () { done(); });
-  });
-  before(function (done) {
-    define('lib/version', function () {
-      return 'Mock_Version';
-    });
-    require(['lib/version'], function () { done(); });
+    require.undef('lib/hullbase');
   });
 
   var hullbase;
+  // Mocking dependencies of  lib/hullbase
   before(function (done) {
-    require(['lib/hullbase'], function (_hull) {
-      hullbase = _hull;
-      done();
+    define('lib/hull', function () { return superSpy; });
+    define('lib/version', function () { return 'Mock_Version'; });
+    require(['lib/hullbase', 'lib/hull', 'lib/version'], function (base) {
+      hullbase = base;
+      done(); 
     });
   });
 
@@ -108,13 +98,37 @@ define(function () {
   // But as we are backed by requireJS, it catches it and redisplays it nicely
   // That's not a bad situation after all
   describe("Initializing the application", function () {
-    console.log(require.defined('lib/version'), require.defined('lib/hull'))
-    it("should call the module lib/hull", function () {
+
+
+    var spy = sinon.spy();
+    var libHullMock = function (conf, cb, errb) {
+      spy();
+      cb();
+    };
+
+    var hullbase;
+    // Mocking dependencies of  lib/hullbase
+    before(function (done) {
+      require.undef('lib/hull')
+      require.undef('lib/version')
+      require.undef('lib/hullbase')
+      define('lib/hull', function () { return libHullMock;} );
+      define('lib/version', function () { return 'Mock_Version'; });
+      require(['lib/hullbase', 'lib/hull', 'lib/version'], function (base) {
+        hullbase = base;
+        done();
+      });
+    });
+
+
+    it("should call the module lib/hull", function (done) {
       var arg1 = {},
           arg2 = {},
           arg3 = {};
-      hullbase.init(arg1, arg2, arg3);
-      spy.should.have.been.called;
+      hullbase.init({}, function() {
+        spy.should.have.been.called;
+        done();
+      });
     });
   });
 });
