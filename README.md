@@ -12,6 +12,11 @@ Switch to hull-js dir
 
     cd hull-js
     npm install; bower install
+    # First install : Build Aura
+    cd components/aura ; npm install ; bower install ; grunt build
+    cd ../..
+    grunt build
+
 
 Serve it to js.hull.dev via pow
 
