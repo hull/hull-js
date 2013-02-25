@@ -44,9 +44,7 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     pkg: pkg,
-
     aws: aws,
-
     s3: {
       key: '<%= aws.key %>',
       secret: '<%= aws.secret %>',
@@ -65,7 +63,6 @@ module.exports = function (grunt) {
         }
       ]
     },
-
     clean: ['lib'],
     dox: {
       files: {
@@ -265,7 +262,6 @@ module.exports = function (grunt) {
       template: "define(function () { return '<%= pkg.version %>';});",
       dest: 'lib/version.js'
     },
-
     compass: {
       dev: {
         options: {
@@ -292,7 +288,6 @@ module.exports = function (grunt) {
         },
       }
     },
-
     hull_widgets: {
       hull: {
         src: 'widgets',
@@ -306,7 +301,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build_remote', ['clean', 'coffee:remote', 'version', 'requirejs:remote']);
   grunt.registerTask('build_client', ['clean', 'coffee:client', 'version', 'requirejs:client']);
   grunt.registerTask('build_libs', ['build_client', 'build_remote']);
-  grunt.registerTask('build', ['build_libs', 'hull_widgets', 'compass:prod']);
+  grunt.registerTask('build', ['build_libs', 'hull_widgets', 'compass:prod', 'dox']);
   grunt.registerTask('default', ['connect', 'build', /*'mocha'*/ 'watch']);
   grunt.registerTask('dist', ['connect', 'build']);
 
