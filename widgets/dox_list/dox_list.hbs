@@ -1,4 +1,21 @@
+<p>Here is the list of our currently available widgets.</p>
+
+<ul>
+  {{#widgets}}
+    <li>
+      <a href="#hull-widget-{{this}}">
+        {{humanize this}}
+      </a>
+    </li>
+  {{/widgets}}
+</ul>
+
+<p>
+  Before using the widgets, please read about <a href="/docs/widgets/declaring_widgets">Declaring widgets</a>
+  and <a href="/docs/widgets/creating_widgets#widgets_sources">Sources</a>.
+</p>
+
 {{#widgets}}
-  <div class="widget" data-hull-widget="dox@hull" data-hull-inspect="{{this}}" data-hull-source="{{../source}}"></div>
+  <div id="hull-widget-{{this}}" class="hull-widget" data-hull-widget="dox@hull" data-hull-inspect="{{this}}" data-hull-source="{{../source}}"></div>
   <hr/>
 {{/widgets}}
