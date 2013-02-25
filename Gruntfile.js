@@ -34,6 +34,12 @@ module.exports = function (grunt) {
       return clientLib.replace('.coffee', '').replace('src/', 'lib/');
     });
 
+  var remoteLibs = grunt.file.glob
+    .sync('src/remote/**/*.coffee')
+    .map(function (clientLib) {
+      return clientLib.replace('.coffee', '').replace('src/', 'lib/');
+    });
+
   // Lookup of the Aura Extensions and injects them in the requirejs build
   var auraExtensions = grunt.file.glob
     .sync('aura-extensions/**/*.js')
@@ -44,6 +50,14 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     pkg: pkg,
+    clean: {
+      client: {
+        src: clientLibs
+      },
+      remote: {
+        src: remoteLibs
+      }
+    },
     aws: aws,
     s3: {
       key: '<%= aws.key %>',
@@ -63,11 +77,10 @@ module.exports = function (grunt) {
         }
       ]
     },
-    clean: ['lib'],
     dox: {
       files: {
         src: 'widgets/**/main.js',
-        dest: 'dist/'+ pkg.version +'/docs'
+        dest: 'dist/' + pkg.version + '/docs'
       }
     },
     coffee: {
