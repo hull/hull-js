@@ -1,0 +1,29 @@
+<form id="hull-quiz_admin__form" class="hull-form hull-quiz_admin__form">
+
+  <div class="hull-quiz_admin__header">
+   {{> quiz_admin/quiz_admin_form_header }}
+  </div>
+
+  <ol class="hull-form__fields">
+
+    {{#each quiz.questions}}
+      {{> quiz_admin/quiz_admin_form_question}}
+    {{/each}}
+
+    <li class="hull-form__fields__item--actions">
+      {{! add a new question }}
+      <button data-hull-action="addquestion" class="hull-btn">Add question</button>
+
+      {{! submit form }}
+      <button data-hull-action="submit" class="hull-btn">Save</button>
+
+      {{! cancel / back to list }}
+      <button data-hull-action="cancel" class="hull-btn">Cancel</button>
+
+      {{! delete quiz }}
+      <button data-hull-action="delete" class="hull-btn">Delete quiz</button>
+    </li>
+  </ol>
+
+</form>
+
