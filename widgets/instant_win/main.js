@@ -45,12 +45,14 @@ define({
     'instant_ended'
   ],
 
+  refreshEvents: ['model.hull.me.change'],
+
   datasources: {
     /**
-     * The user's badges.
+     * The user's badge for the InstantWin
      */
-    badges: function() {
-      return this.loggedIn() ? this.api('hull/me/badges') : [];
+    badge: function() {
+      return this.loggedIn() ? this.api('hull/me/badges/' + this.options.id) : [];
     }
   },
 
@@ -129,7 +131,7 @@ define({
    * @return {Boolean}
    */
   userCanPlay: function() {
-    var badge = _.where(this.data.badges, { 'achievement_id': this.id })[0];
+    var badge = this.data.badge;
     if (badge === null || badge === undefined) { return true; }
     var d = new Date().toISOString().slice(0,10);
     return !badge.data.attempts[d];
