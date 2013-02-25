@@ -14,5 +14,5 @@ define({
     data.widgets = data.widgets[0].widgets;
     data.source = this.options.source;
     return data;
-  },
+  }
 });
