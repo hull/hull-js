@@ -1,5 +1,5 @@
 {
-  "name": "hull-express",
+  "name": "hull-js",
   "version": "develop",
   "main": "./lib/hull.js",
   "dependencies": {
