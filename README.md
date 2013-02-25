@@ -1,5 +1,4 @@
-
-### Rebuilding the library
+# Building the library
 
 Checkout
 
@@ -22,6 +21,8 @@ Serve it to js.hull.dev via pow
 Configure ```app/app.js``` with the correct settings
 
 
+# Using locally
+
 Start grunt
 
     grunt
@@ -31,3 +32,17 @@ Open in your browser
     open http://js.hull.dev
 
 Drink your coffee.
+
+
+# Deploying to S3 : 
+
+Create a `grunt-aws.json` file at the root, with the following content : 
+
+    {
+      "key":"YOUR_AWS_KEY",
+      "secret":"YOUR_AWS_SECRET",
+      "bucket":"YOUR_AWS_BUCKET" // Without the "s3.amazonaws.com" part
+    }
+
+
+
