@@ -49,6 +49,12 @@ define({
 
   datasources: {
     /**
+     * The InstantWin achievement
+     */
+    achievement: function() {
+      return this.api('hull/' + this.options.id);
+    },
+    /**
      * The user's badge for the InstantWin
      */
     badge: function() {
@@ -79,6 +85,8 @@ define({
   beforeRender: function(data) {
     this.template = this.getInitialTemplate();
     data.authProviders = this.authProviders;
+
+    console.log(data);
   },
 
   /**

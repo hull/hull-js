@@ -1,11 +1,11 @@
 <div class="hull-instant hull-instant--intro">
-  <h1 class="hull-instant__title">Hull Instant</h1>
-  <p class="hull-instant__description">Play for a chance to win a prize adipiscing elit. Phasellus sodales magna mi. Fusce dapibus est eu justo. Suspendisse quis neque nunc, id tincidunt sapien.</p>
+  <h1 class="hull-instant__title">{{achievement.name}}</h1>
+  <p class="hull-instant__description">{{achievement.description}}</p>
   {{#if loggedIn}}
-    <button class="hull-btn--instant" data-hull-action="play">Play</button>
+    <button class="hull-btn" data-hull-action="play">Play</button>
   {{else}}
     {{#each authProviders}}
-      <button class="hull-btn--instant" data-hull-action="play" data-hull-provider={{this}}>Loggin with with {{this}} and play.</button>
+      <button class="hull-btn" data-hull-action="play" data-hull-provider={{this}}>Login with with {{this}} and play</button>
     {{/each}}
   {{/if}}
 </div>
