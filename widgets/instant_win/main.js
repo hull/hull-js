@@ -161,6 +161,8 @@ define({
    * until we know if the user has won.
    */
   play: function() {
+    if (this.userHasWon()) { return; }
+
     var delay = this.wait(this.options.delay || 0);
     this.render('instant_working');
 
@@ -182,8 +184,15 @@ define({
    * @return {Promise}
    */
   wait: function(time) {
-    return this.sandbox.data.deferred(function(dfd) {
-      setTimeout(dfd.resolve, time);
-    }).promise();
+    var deferred = this.sandbox.data.deferred();
+    time = parseInt(time, 10) || 0;
+
+    if (time <= 0) {
+      deferred.resolve();
+    } else {
+      setTimeout(deferred.resolve, time);
+    }
+
+    return deferred.promise();
   }
 });
