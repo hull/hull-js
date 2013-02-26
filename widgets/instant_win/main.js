@@ -94,8 +94,6 @@ define({
     this.data.screen = this.getInitialTemplate()
     // this.template = this.getInitialTemplate();
     data.authProviders = this.authProviders;
-
-    console.log(data);
   },
 
   /**
