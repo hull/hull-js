@@ -15,17 +15,6 @@ define({
   type: 'Hull',
 
   templates: [
-    /**
-     * Instant win Header
-     */
-    'header',
-    /**
-     * Instant win footer
-     */
-    'footer',
-    /**
-     * Show the button to play to the game.
-     */
     'intro',
     /**
      * Show a loading message.
