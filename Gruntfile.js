@@ -115,7 +115,7 @@ module.exports = function (grunt) {
       client: {
         options: {
           baseUrl: '.',
-          optimize: 'none',
+          // optimize: 'none',
           preserveLicenseComments: true,
           paths: {
             aura:           'components/aura/dist',
