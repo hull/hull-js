@@ -24,7 +24,6 @@ module.exports = function (grunt) {
   // Project configuration
   // ==========================================================================
 
-  var pkg         = grunt.file.readJSON('component.json');
   var clientSrc = ['src/hullbase.coffee', 'src/hull.coffee', 'src/client/**/*.coffee'];
   var remoteSrc = ['src/hullbase.coffee', 'src/hull-remote.coffee', 'src/remote/**/*.coffee'];
 
@@ -291,7 +290,7 @@ module.exports = function (grunt) {
         dest: 'dist/<%= pkg.version%>/widgets'
       }
     }
-  }
+  };
 
   if (awsConfig) {
     gruntConfig.s3 = {
@@ -300,19 +299,19 @@ module.exports = function (grunt) {
       bucket: '<%= awsConfig.bucket %>',
       access: 'public-read',
       // debug: true,
-      options:{
+      options: {
         encodePaths: true,
         maxOperations: 20
       },
       upload: [
         {
-          src: 'dist/'+pkg.version+'/**',
+          src: 'dist/' + pkg.version + '/**',
           dest: '/',
           rel: 'dist/'
         }
       ]
     };
-    gruntConfig.aws = aws;
+    gruntConfig.aws = awsConfig;
   }
   grunt.initConfig(gruntConfig);
 
