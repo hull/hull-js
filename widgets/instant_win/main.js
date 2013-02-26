@@ -16,6 +16,14 @@ define({
 
   templates: [
     /**
+     * Instant win Header
+     */
+    'header',
+    /**
+     * Instant win footer
+     */
+    'footer',
+    /**
      * Show the button to play to the game.
      */
     'intro',
@@ -83,7 +91,8 @@ define({
   },
 
   beforeRender: function(data) {
-    this.template = this.getInitialTemplate();
+    this.data.screen = this.getInitialTemplate()
+    // this.template = this.getInitialTemplate();
     data.authProviders = this.authProviders;
 
     console.log(data);
