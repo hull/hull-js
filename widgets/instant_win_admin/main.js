@@ -1,7 +1,7 @@
 define({
   type: 'Hull',
 
-  templates: ['instant_admin'],
+  templates: ['intro'],
 
   datasources: {
     achievements: function() {
