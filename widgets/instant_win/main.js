@@ -18,31 +18,31 @@ define({
     /**
      * Show the button to play to the game.
      */
-    'instant_intro',
+    'intro',
     /**
      * Show a loading message.
      */
-    'instant_working',
+    'working',
     /**
      * Say to the user that he has won
      */
-    'instant_won',
+    'won',
     /**
      * Say to the user that he has lost.
      */
-    'instant_lost',
+    'lost',
     /**
      * Say to the user that he has already played.
      */
-    'instant_played',
+    'played',
     /**
      * Say to the user that the game hasn't started yet.
      */
-    'instant_unstarted',
+    'unstarted',
     /**
      * Say to the user that the game has ended.
      */
-    'instant_ended'
+    'ended'
   ],
 
   refreshEvents: ['model.hull.me.change'],
@@ -93,23 +93,23 @@ define({
    * Return the template name that the user should see when he lands on the
    * game.
    *
-   * - `instant_intro`: if the user hasn't played during the current day.
-   * - `instant_won`: if the user has won a prize.
-   * - `instant_played`: if the user has played during the current day.
-   * - `instant_unstarted`: if the game hasn't started.
-   * - `instant_ended`: if the game has ended.
+   * - `intro`: if the user hasn't played during the current day.
+   * - `won`: if the user has won a prize.
+   * - `played`: if the user has played during the current day.
+   * - `unstarted`: if the game hasn't started.
+   * - `ended`: if the game has ended.
    *
    * @return {String}
    */
   getInitialTemplate: function() {
     if (this.userHasWon()) {
-      return 'instant_won';
+      return 'won';
     } else if (this.hasEnded()) {
-      return 'instant_ended';
+      return 'ended';
     } else if (this.hasStarted()) {
-      return this.userCanPlay() ? 'instant_intro' : 'instant_played';
+      return this.userCanPlay() ? 'intro' : 'played';
     } else {
-      return 'instant_unstarted';
+      return 'unstarted';
     }
   },
 
@@ -161,23 +161,23 @@ define({
   /**
    * Play to the game and render a template:
    *
-   * - `instant_won`: if the user has won.
-   * - `instant_lost`: if the user has lost.
-   * - `instant_played`: if the user has played during the current day.
+   * - `won`: if the user has won.
+   * - `lost`: if the user has lost.
+   * - `played`: if the user has played during the current day.
    *
-   * When the function is called we render `instant_working` and display it
+   * When the function is called we render `working` and display it
    * until we know if the user has won.
    */
   play: function() {
     if (this.userHasWon()) { return; }
 
     var delay = this.wait(this.options.delay || 0);
-    this.render('instant_working');
+    this.render('working');
 
     this.api('hull/' + this.id + '/achieve', 'post', _.bind(function(res) {
-      var template = 'instant_played';
+      var template = 'played';
       if (this.userCanPlay()) {
-        template = 'instant_' + (res.data.winner ? 'won' : 'lost');
+        template = res.data.winner ? 'won' : 'lost';
       }
       delay.then(_.bind(function() {
         this.render(template);
