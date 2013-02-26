@@ -130,5 +130,12 @@ define(function () {
         done();
       });
     });
+
+    it("should return window.Hull", function (done) {
+      require(['lib/hullbase'], function (base) {
+        base.should.eql(window.Hull);
+        done();
+      });
+    });
   });
 });
