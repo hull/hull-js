@@ -52,7 +52,7 @@ define({
      * The user's badge for the InstantWin
      */
     badge: function() {
-      return this.loggedIn() ? this.api('hull/me/badges/' + this.options.id) : [];
+      return this.loggedIn() ? this.api('hull/me/badges/' + this.options.id) : null;
     }
   },
 
@@ -86,6 +86,7 @@ define({
    * game.
    *
    * - `instant_intro`: if the user hasn't played during the current day.
+   * - `instant_won`: if the user has won a prize.
    * - `instant_played`: if the user has played during the current day.
    * - `instant_unstarted`: if the game hasn't started.
    * - `instant_ended`: if the game has ended.
@@ -93,7 +94,9 @@ define({
    * @return {String}
    */
   getInitialTemplate: function() {
-    if (this.hasEnded()) {
+    if (this.userHasWon()) {
+      return 'instant_won';
+    } else if (this.hasEnded()) {
       return 'instant_ended';
     } else if (this.hasStarted()) {
       return this.userCanPlay() ? 'instant_intro' : 'instant_played';
@@ -114,7 +117,7 @@ define({
   },
 
   /**
-   * Determine if the game has ended. return `true` if it has `false` if it
+   * Determine if the game has ended. Return `true` if it has `false` if it
    * hasn't.
    *
    * @return {Boolean}
@@ -125,16 +128,26 @@ define({
   },
 
   /**
-   * Determine if the user can play. return `true` if he can `false` if he
+   * Determine if the user can play. Return `true` if he can `false` if he
    * cannot.
    *
    * @return {Boolean}
    */
   userCanPlay: function() {
-    var badge = this.data.badge;
-    if (badge === null || badge === undefined) { return true; }
-    var d = new Date().toISOString().slice(0,10);
-    return !badge.data.attempts[d];
+    if (!this.data.badge) { return true; }
+    var d = new Date().toISOString().slice(0, 10);
+    return !this.data.badge.data.attempts[d];
+  },
+
+  /**
+   * Determine if user has won. Return `true` if the he has, `false` if he
+   * hasn't.
+   *
+   * @return {Boolean}
+   */
+  userHasWon: function() {
+    if (!this.data.badge) { return false; }
+    return this.data.badge.data.winner;
   },
 
   /**
@@ -148,7 +161,7 @@ define({
    * until we know if the user has won.
    */
   play: function() {
-    var suspense = this.wait(this.options.delay || 0);
+    var delay = this.wait(this.options.delay || 0);
     this.render('instant_working');
 
     this.api('hull/' + this.id + '/achieve', 'post', _.bind(function(res) {
@@ -156,7 +169,7 @@ define({
       if (this.userCanPlay()) {
         template = 'instant_' + (res.data.winner ? 'won' : 'lost');
       }
-      suspense.then(_.bind(function() {
+      delay.then(_.bind(function() {
         this.render(template);
       }, this));
     }, this));
