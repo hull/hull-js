@@ -14,6 +14,7 @@ define({
   afterRender: function() {
     this.$achievementsSelector = this.$el.find('#hull-achievement-id');
     this.$achievementName = this.$el.find('#hull-instant-update-name');
+    this.$achievementId = this.$el.find('#hull-instant-update-id');
     this.$achievementDescription = this.$el.find('#hull-instant-update-description');
     this.$achievementSecret = this.$el.find('#hull-instant-update-secret');
     this.$achievementPrizes = this.$el.find('#hull-prizes-json');
@@ -28,6 +29,7 @@ define({
     var achievement = _.where(this.data.achievements, { id: id })[0];
     if(achievement){
       this.$achievementName.val(achievement.name);
+      this.$achievementId.text(achievement.id);
       this.$achievementDescription.val(achievement.description);
       this.$achievementSecret.val(achievement.secret);
 
