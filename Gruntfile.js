@@ -14,14 +14,16 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-s3');
 
   var pkg = grunt.file.readJSON('component.json');
-  var aws = grunt.file.readJSON('grunt-aws.json');
+  var awsConfig = false;
+  if (grunt.file.exists('grunt-aws.json')) {
+    awsConfig = grunt.file.readJSON('grunt-aws.json');
+  }
   var port = 3001;
 
   // ==========================================================================
   // Project configuration
   // ==========================================================================
 
-  var pkg         = grunt.file.readJSON('component.json');
   var clientSrc = ['src/hullbase.coffee', 'src/hull.coffee', 'src/client/**/*.coffee'];
   var remoteSrc = ['src/hullbase.coffee', 'src/hull-remote.coffee', 'src/remote/**/*.coffee'];
 
@@ -47,8 +49,7 @@ module.exports = function (grunt) {
       return extension.replace('.js', '');
     });
 
-
-  grunt.initConfig({
+  var gruntConfig = {
     pkg: pkg,
     clean: {
       client: {
@@ -57,25 +58,6 @@ module.exports = function (grunt) {
       remote: {
         src: remoteLibs
       }
-    },
-    aws: aws,
-    s3: {
-      key: '<%= aws.key %>',
-      secret: '<%= aws.secret %>',
-      bucket: '<%= aws.bucket %>',
-      access: 'public-read',
-      // debug: true,
-      options:{
-        encodePaths: true,
-        maxOperations: 20
-      },
-      upload: [
-        {
-          src: 'dist/'+pkg.version+'/**',
-          dest: '/',
-          rel: 'dist/'
-        }
-      ]
     },
     dox: {
       files: {
@@ -115,7 +97,7 @@ module.exports = function (grunt) {
       client: {
         options: {
           baseUrl: '.',
-          optimize: 'none',
+          // optimize: 'none',
           preserveLicenseComments: true,
           paths: {
             aura:           'components/aura/dist',
@@ -308,7 +290,30 @@ module.exports = function (grunt) {
         dest: 'dist/<%= pkg.version%>/widgets'
       }
     }
-  });
+  };
+
+  if (awsConfig) {
+    gruntConfig.s3 = {
+      key: '<%= awsConfig.key %>',
+      secret: '<%= awsConfig.secret %>',
+      bucket: '<%= awsConfig.bucket %>',
+      access: 'public-read',
+      // debug: true,
+      options: {
+        encodePaths: true,
+        maxOperations: 20
+      },
+      upload: [
+        {
+          src: 'dist/' + pkg.version + '/**',
+          dest: '/',
+          rel: 'dist/'
+        }
+      ]
+    };
+    gruntConfig.aws = awsConfig;
+  }
+  grunt.initConfig(gruntConfig);
 
   // default build task
   grunt.registerTask('build_remote', ['clean', 'coffee:remote', 'version', 'requirejs:remote']);
