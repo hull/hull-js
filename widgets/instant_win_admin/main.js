@@ -26,19 +26,20 @@ define({
   showAchievement: function() {
     var id = this.$achievementsSelector.val();
     var achievement = _.where(this.data.achievements, { id: id })[0];
+    if(achievement){
+      this.$achievementName.val(achievement.name);
+      this.$achievementDescription.val(achievement.description);
+      this.$achievementSecret.val(achievement.secret);
 
-    this.$achievementName.val(achievement.name);
-    this.$achievementDescription.val(achievement.description);
-    this.$achievementSecret.val(achievement.secret);
-
-    this.api('hull/' + id + '/prizes').then(_.bind(function(res) {
-      var code = {
-        prizes: _.map(res || [], function(p) {
-          return _.pick(p, 'id', 'name', 'description', 'available_at', 'extra');
-        })
-      };
-      this.$achievementPrizes.val(JSON.stringify(code, null, 2));
-    }, this));
+      this.api('hull/' + id + '/prizes').then(_.bind(function(res) {
+        var code = {
+          prizes: _.map(res || [], function(p) {
+            return _.pick(p, 'id', 'name', 'description', 'available_at', 'extra');
+          })
+        };
+        this.$achievementPrizes.val(JSON.stringify(code, null, 2));
+      }, this));
+    }
   },
 
   actions: {
