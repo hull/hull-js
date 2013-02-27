@@ -307,6 +307,13 @@ module.exports = function (grunt) {
         },
         upload: [
           {
+            gzip:  true,
+            src: 'dist/' + pkg.version + '/**',
+            dest: '/',
+            rel: 'dist/'
+          },
+          {
+            gzip:  false,
             src: 'dist/' + pkg.version + '/**',
             dest: '/',
             rel: 'dist/'
