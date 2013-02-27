@@ -14,10 +14,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-s3');
 
   var pkg = grunt.file.readJSON('component.json');
-  var awsConfig = false;
-  if (grunt.file.exists('grunt-aws.json')) {
-    awsConfig = grunt.file.readJSON('grunt-aws.json');
-  }
+
   var port = 3001;
 
   // ==========================================================================
@@ -292,26 +289,31 @@ module.exports = function (grunt) {
     }
   };
 
-  if (awsConfig) {
-    gruntConfig.s3 = {
-      key: '<%= awsConfig.key %>',
-      secret: '<%= awsConfig.secret %>',
-      bucket: '<%= awsConfig.bucket %>',
-      access: 'public-read',
-      // debug: true,
-      options: {
-        encodePaths: true,
-        maxOperations: 20
-      },
-      upload: [
-        {
-          src: 'dist/' + pkg.version + '/**',
-          dest: '/',
-          rel: 'dist/'
-        }
-      ]
-    };
-    gruntConfig.aws = awsConfig;
+
+  var aws = false;
+  if (grunt.file.exists('grunt-aws.json')) {
+    aws = grunt.file.readJSON('grunt-aws.json');
+    if (aws) {
+      gruntConfig.aws = aws;
+      gruntConfig.s3 = {
+        key: '<%= aws.key %>',
+        secret: '<%= aws.secret %>',
+        bucket: '<%= aws.bucket %>',
+        access: 'public-read',
+        // debug: true,
+        options: {
+          encodePaths: true,
+          maxOperations: 20
+        },
+        upload: [
+          {
+            src: 'dist/' + pkg.version + '/**',
+            dest: '/',
+            rel: 'dist/'
+          }
+        ]
+      };
+    }
   }
   grunt.initConfig(gruntConfig);
 
