@@ -12,11 +12,11 @@ define({
   },
 
   afterRender: function() {
-    this.$achievementsSelector = $('#hull-achievement-id');
-    this.$achievementName = $('#hull-instant-update-name');
-    this.$achievementDescription = $('#hull-instant-update-description');
-    this.$achievementSecret = $('#hull-instant-update-secret');
-    this.$achievementPrizes = $('#hull-prizes-json');
+    this.$achievementsSelector = this.$el.find('#hull-achievement-id');
+    this.$achievementName = this.$el.find('#hull-instant-update-name');
+    this.$achievementDescription = this.$el.find('#hull-instant-update-description');
+    this.$achievementSecret = this.$el.find('#hull-instant-update-secret');
+    this.$achievementPrizes = this.$el.find('#hull-prizes-json');
 
     this.showAchievement();
     this.$achievementsSelector.on('change', _.bind(this.showAchievement, this));
@@ -46,11 +46,11 @@ define({
     create: function(source, e) {
       e.preventDefault();
 
-      var description = $('#hull-instant-description').val();
-      var secret = $('#hull-instant-secret').val();
+      var description = this.$el.find('#hull-instant-description').val();
+      var secret = this.$el.find('#hull-instant-secret').val();
       var data = {
         type: 'instant_win',
-        name: $('#hull-instant-name').val()
+        name: this.$el.find('#hull-instant-name').val()
       }
       if (description.length) { data.description = description; }
       if (secret.length) { data.secret = secret; }
