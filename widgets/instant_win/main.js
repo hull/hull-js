@@ -77,79 +77,83 @@ define({
   },
 
   initialize: function() {
-    this.authProviders = _.map(this.sandbox.config.services.types.auth, function(s) {
-      return s.replace(/_app$/, '');
-    });
-  },
+      this.authProviders = _.map(this.sandbox.config.services.types.auth, function(s) {
+        return s.replace(/_app$/, '');
+      });
+    },
 
-  beforeRender: function(data) {
-    this.template = this.getInitialTemplate();
-    data.authProviders = this.authProviders;
-  },
+    beforeRender: function(data) {
+      this.template = this.getInitialTemplate();
+      data.authProviders = this.authProviders;
+    },
 
-  /**
-   * Return the template name that the user should see when he lands on the
-   * game.
-   *
-   * - `intro`: if the user hasn't played during the current day.
-   * - `won`: if the user has won a prize.
-   * - `played`: if the user has played during the current day.
-   * - `unstarted`: if the game hasn't started.
-   * - `ended`: if the game has ended.
-   *
-   * @return {String}
-   */
-  getInitialTemplate: function() {
-    if (this.userHasWon()) {
-      return 'won';
-    } else if (this.hasEnded()) {
-      return 'ended';
-    } else if (this.hasStarted()) {
-      return this.userCanPlay() ? 'intro' : 'played';
-    } else {
-      return 'unstarted';
-    }
-  },
+    afterRender: function() {
+      this.sandbox.emit('hull.instant_win.' + this.options.id + '.template.render', this.template);
+    },
 
-  /**
-   * Determine if the game has started. return `true` if it has `false` if it
-   * hasn't.
-   *
-   * @return {Boolean}
-   */
-  hasStarted: function() {
-    // TODO Need achievement `start_date`
-    return true;
-  },
+    /**
+     * Return the template name that the user should see when he lands on the
+     * game.
+     *
+     * - `intro`: if the user hasn't played during the current day.
+     * - `won`: if the user has won a prize.
+     * - `played`: if the user has played during the current day.
+     * - `unstarted`: if the game hasn't started.
+     * - `ended`: if the game has ended.
+     *
+     * @return {String}
+     */
+    getInitialTemplate: function() {
+      if (this.userHasWon()) {
+        return 'won';
+      } else if (this.hasEnded()) {
+        return 'ended';
+      } else if (this.hasStarted()) {
+        return this.userCanPlay() ? 'intro' : 'played';
+      } else {
+        return 'unstarted';
+      }
+    },
 
-  /**
-   * Determine if the game has ended. Return `true` if it has `false` if it
-   * hasn't.
-   *
-   * @return {Boolean}
-   */
-  hasEnded: function() {
-    // TODO Need achievement `end_date`
-    return false;
-  },
+    /**
+     * Determine if the game has started. return `true` if it has `false` if it
+     * hasn't.
+     *
+     * @return {Boolean}
+     */
+    hasStarted: function() {
+      // TODO Need achievement `start_date`
+      return true;
+    },
 
-  /**
-   * Determine if the user can play. Return `true` if he can `false` if he
-   * cannot.
-   *
-   * @return {Boolean}
-   */
-  userCanPlay: function() {
-    if (!this.data.badge) { return true; }
-    var d = new Date().toISOString().slice(0, 10);
-    return !this.data.badge.data.attempts[d];
-  },
+    /**
+     * Determine if the game has ended. Return `true` if it has `false` if it
+     * hasn't.
+     *
+     * @return {Boolean}
+     */
+    hasEnded: function() {
+      // TODO Need achievement `end_date`
+      return false;
+    },
 
-  /**
-   * Determine if user has won. Return `true` if the he has, `false` if he
-   * hasn't.
-   *
-   * @return {Boolean}
+    /**
+     * Determine if the user can play. Return `true` if he can `false` if he
+     * cannot.
+     *
+     * @return {Boolean}
+     */
+    userCanPlay: function() {
+      if (!this.data.badge) { return true; }
+      var d = new Date().toISOString().slice(0, 10);
+      return !this.data.badge.data.attempts[d];
+    },
+
+    /**
+     * Determine if user has won. Return `true` if the he has, `false` if he
+     * hasn't.
+     *
+     * @return {Boolean}
    */
   userHasWon: function() {
     if (!this.data.badge) { return false; }
