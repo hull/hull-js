@@ -1,5 +1,10 @@
 <div class="hull-instant hull-instant--won">
-  <div class="hull-instant-result">
-    <h1 class="hull-instant-result__title">You Won !</h1>
-  </div>
+  {{#with badge.data}}
+    <div class="hull-instant-result">
+      <h1 class="hull-instant-result__title">You won a {{prize.name}} !</h1>
+      {{#if prize.description}}
+        <p class="hull-instant-result__description">{{prize.description}}</p>
+      {{/if}}
+    </div>
+  {{/with}}
 </div>
