@@ -6,19 +6,24 @@
 
     <div>
       <label for="hull-instant-name">Name: </label>
-      <input id="hull-instant-name" name="hull-instant-name" type="text">
+      <input id="hull-instant-name" name="hull-instant-name" type="text"/>
     </div>
 
     <div>
-      <label for="hull-instant-description">Description: </label>
-      <input id="hull-instant-description" name="hull-instant-description" type="text">
+      <label for="hull-instant-description">Description: optional</label>
+      <input id="hull-instant-description" name="hull-instant-description" type="text"/>
+    </div>
+
+    <div>
+      <label for="hull-instant-secret">Secret: optional</label>
+      <input id="hull-instant-secret" name="hull-instant-secret" type="text"/>
     </div>
 
     <button data-hull-action="create">Create</button>
   </div>
 
   <div class="hull-instant-admin__section">
-    <h2 class="hull-instant-admin__section-title">Update Instant Win</h2>
+    <h2 class="hull-instant-admin__section-title">Update Achievement</h2>
 
     <div>
       <label for="hull-achievement-id">Select an Instant Win to Edit: </label>
@@ -33,15 +38,25 @@
   <div class="hull-instant-admin__section">
     <div>
       <label for="hull-instant-update-name">Name: </label>
-      <input id="hull-instant-update-name" name="hull-instant-update-name" type="text">
+      <input id="hull-instant-update-name" name="hull-instant-update-name" type="text"/>
+    </div>
+
+    <div>
+      <label for="hull-instant-update-id">ID (use this in your widget): </label>
+      <pre id="hull-instant-update-id" name="hull-instant-update-id" type="text"></pre>
     </div>
 
     <div>
       <label for="hull-instant-update-description">Description: </label>
-      <input id="hull-instant-update-description" name="hull-instant-update-description" type="text">
+      <input id="hull-instant-update-description" name="hull-instant-update-description" type="text"/>
     </div>
 
-    <button data-hull-action="updateAchievement">Update Instant Win</button>
+    <div>
+      <label for="hull-instant-update-secret">Secret: </label>
+      <input id="hull-instant-update-secret" name="hull-instant-update-secret" type="text"/>
+    </div>
+
+    <button data-hull-action="updateAchievement">Update Achievement</button>
   </div>
 
   <div class="hull-instant-admin__section">
@@ -52,5 +67,4 @@
 
     <button data-hull-action="updatePrizes">Update Prize</button>
   </div>
-
 </div>
