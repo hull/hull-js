@@ -1,67 +1,49 @@
-/*global define:true, describe:true, it:true */
+/*global sinon:true, define:true, describe:true, it:true, before:true, after:true */
 define(function () {
   "use strict";
 
+  var hullModule;
+
   // Mocking dependencies of  lib/hull
   before(function () {
-    define('lib/hull', function () {
-      return sinon.spy();
+    require.undef('aura/aura');
+    define('aura/aura', function () {
+      return function () {
+        console.log("lll")
+        sinon.spy();
+      };
     });
-    define('lib/version', function () {
-      return 'Mock_Version';
+    define('lib/hullbase', function () {
+      return {};
+    });
+    require(['lib/hull', 'aura/aura', 'lib/hullbase'], function (hull) {
+      hullModule = hull;
     });
   });
 
   after(function () {
     require.undef('lib/hull');
-    require.undef('lib/version');
+    require.undef('aura/aura');
+    require.undef('lib/hullbase');
   });
 
-  require(['lib/hull'], function (hull) {
-
-    describe("Initializing the application", function () {
-      it("should call the module lib/hull", function () {
-        var arg1 = {};
-        var arg2 = {};
-        var arg3 = {};
-        hullbase.init(arg1, arg2, arg3);
-        spy.should.have.been.calledWith(arg1, arg2, arg3);
-
+  describe("Booting the application", function () {
+    describe("Evaluating the module", function () {
+      it("should return a function", function () {
+        hullModule.should.be.a('Function');
       });
-      it("should fail if the organizationUrl is missing", function (done) {
-        hullbase.init({appId: "..."}, null, function () { done(); });
+    });
+
+    describe("The evaluated module", function () {
+      it("should return the config passed to the function with an 'app' property", function () {
+        var conf = {
+          foo: "FOO",
+          bar: "BAR",
+          baz: "BAZ"
+        };
+        hullModule(conf).should.contain.keys(Object.keys(conf));
+        hullModule(conf).should.contain.keys('app');
       });
-
-      it("must fail if the applicationId (param: orgUrl) is missing", function (done) {
-        Hull.init({orgUrl: "..."}, null, function () { done(); });
-      });
-
-      it("should run only the errback if failed", function (done) {
-        var spy = sinon.spy();
-        Hull.init({orgUrl: "..."}, spy, function () {
-          spy.should.not.have.beenCalled;
-          done();
-        });
-      });
-
-      it("should run only the callback if succeeded", function (done) {
-        var spy = sinon.spy();
-        Hull.init({orgUrl: "...", appId: ".."}, function () {
-          spy.should.not.have.beenCalled;
-          done();
-        }, spy);
-      });
-
-      //@TODO Does not work because Hull is a singleton, once it is started
-      //      it can not be stopped
-      //
-      //it("should expose only some properties", function (done) {
-      //  done(new Error("untested"));
-      //});
-
-      //it("should allow to specify which properties to expose additionnally", function (done) {
-      //  done(new Error("untested"));
-      //});
     });
   });
 });

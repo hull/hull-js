@@ -12,8 +12,6 @@ define(function () {
     }
   };
 
-  var superSpy = sinon.spy();
-
   after(function () {
     require.undef('lib/hull');
     require.undef('lib/version');
@@ -23,11 +21,11 @@ define(function () {
   var hullbase;
   // Mocking dependencies of  lib/hullbase
   before(function (done) {
-    define('lib/hull', function () { return superSpy; });
+    define('lib/hull', function () { sinon.spy(); });
     define('lib/version', function () { return 'Mock_Version'; });
     require(['lib/hullbase', 'lib/hull', 'lib/version'], function (base) {
       hullbase = base;
-      done(); 
+      done();
     });
   });
 
@@ -109,10 +107,10 @@ define(function () {
     var hullbase;
     // Mocking dependencies of  lib/hullbase
     before(function (done) {
-      require.undef('lib/hull')
-      require.undef('lib/version')
-      require.undef('lib/hullbase')
-      define('lib/hull', function () { return libHullMock;} );
+      require.undef('lib/hull');
+      require.undef('lib/version');
+      require.undef('lib/hullbase');
+      define('lib/hull', function () { return libHullMock;});
       define('lib/version', function () { return 'Mock_Version'; });
       require(['lib/hullbase', 'lib/hull', 'lib/version'], function (base) {
         hullbase = base;
@@ -122,10 +120,7 @@ define(function () {
 
 
     it("should call the module lib/hull", function (done) {
-      var arg1 = {},
-          arg2 = {},
-          arg3 = {};
-      hullbase.init({}, function() {
+      hullbase.init({}, function () {
         spy.should.have.been.called;
         done();
       });
