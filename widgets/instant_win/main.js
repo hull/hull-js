@@ -20,6 +20,10 @@ define({
      */
     'intro',
     /**
+     * The play buttons partial.
+     */
+    'buttons',
+    /**
      * Show a loading message.
      */
     'working',
@@ -173,8 +177,6 @@ define({
    */
   play: function() {
     if (this.userHasWon()) { return; }
-
-    var delay = this.wait(this.options.delay || 0);
     this.render('working');
 
     this.api('hull/' + this.id + '/achieve', 'post', _.bind(function(res) {
@@ -182,28 +184,9 @@ define({
       if (this.userCanPlay()) {
         template = res.data.winner ? 'won' : 'lost';
       }
-      delay.then(_.bind(function() {
+      _.delay(_.bind(function() {
         this.render(template);
-      }, this));
+      }, this), parseInt(this.options.delay, 10) || 0);
     }, this));
-  },
-
-  /**
-   * Wait a given `time` before resolving the returned deferred.
-   *
-   * @param {Integer} time Number of milliseconds to wait.
-   * @return {Promise}
-   */
-  wait: function(time) {
-    var deferred = this.sandbox.data.deferred();
-    time = parseInt(time, 10) || 0;
-
-    if (time <= 0) {
-      deferred.resolve();
-    } else {
-      setTimeout(deferred.resolve, time);
-    }
-
-    return deferred.promise();
   }
 });
