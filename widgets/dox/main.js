@@ -2,11 +2,10 @@ define(['./prism'], function(){
   return {
     type: "Hull",
     templates: ["dox", "widget","template"],
-
     datasources: {
       dox: function() {
         var widgets=this.options.inspect.split(',');
-        var source = this.options.source || 'http://hull-js.s3.amazonaws.com/0.2.0/docs/'
+        var source = this.options.source || 'http://hull-js.s3.amazonaws.com/' + Hull.version + '/docs/'
         var promises = _.map(widgets,function(w){
           var s = w.replace(/^\s+|\s+$/g, ''); //IE-compatible .trim()
           var dfd = $.getJSON(source+s+'/main.json');
