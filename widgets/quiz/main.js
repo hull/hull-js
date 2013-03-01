@@ -1,11 +1,15 @@
 /**
  * # Quiz
  *
- * A quiz is a form of game in which the player attempt to answer questions correctly.
+ * A quiz is a game in which the player attempts to find the answer to questions from multiple possible answers.
+ * To create a quiz, use the quiz_admin` widget in an admin page, which will let you create a new Quiz (which is a particular type of achievement).
+ * Then, use this quiz's ID as a parameter for your widget.
  *
  * ## Parameters
  *
  * - `id`: The id of the quiz you want to display
+ *
+ *      <div data-hull-widget="quiz@hull" data-hull-id="YOUR_QUIZ_ID"></div>
  *
  * ## Templates
  *
@@ -17,12 +21,15 @@
  *
  * ## Datasources
  *
- * - `quiz`: The collection of all the questions and its answers related to the quiz.
+ * - `quiz`: A collection of all the questions and their possible answers.
  *
  * ## Actions
  *
  * - `login`: Triggered when the user logs in and call the `startQuiz` method.
  * - `submit`: Triggered when the user click on the submit button and push his score to the api.
+ *
+ *    <button data-hull-action="login">Log in</div>
+ *    <button data-hull-action="submit">Submit</div>
  *
  */
 define({
