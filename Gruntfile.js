@@ -307,7 +307,6 @@ module.exports = function (grunt) {
         },
         upload: [
           {
-<<<<<<< HEAD
             gzip:  true,
             src: 'dist/' + pkg.version + '/**',
             dest: '/',
@@ -315,8 +314,6 @@ module.exports = function (grunt) {
           },
           {
             gzip:  false,
-=======
->>>>>>> Fix aws s3
             src: 'dist/' + pkg.version + '/**',
             dest: '/',
             rel: 'dist/'
