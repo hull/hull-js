@@ -5,9 +5,9 @@ define({
 
   datasources: {
     achievements: function() {
-      return this.api('hull/app/achievements', {
+      return this.api('hull/app/achievements', this.signRequest({
         where: { _type: 'InstantWin' }
-      });
+      }));
     }
   },
 
@@ -98,7 +98,7 @@ define({
       }
 
       var id = this.$achievementsSelector.val();
-      this.api('hull/' + id + '/prizes', 'put', prizes).done(function() {
+      this.api('hull/' + id + '/prizes', 'put', this.signRequest(prizes)).done(function() {
         alert('Prizes updated!');
       }).fail(function() {
         alert('Ooops... check your JSON...');
