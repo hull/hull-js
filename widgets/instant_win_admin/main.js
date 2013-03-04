@@ -12,6 +12,7 @@ define({
   },
 
   afterRender: function() {
+    this.$appSecret = this.$el.find('#hull-app-secret');
     this.$achievementsSelector = this.$el.find('#hull-achievement-id');
     this.$achievementName = this.$el.find('#hull-instant-update-name');
     this.$achievementId = this.$el.find('#hull-instant-update-id');
@@ -33,7 +34,7 @@ define({
       this.$achievementDescription.val(achievement.description);
       this.$achievementSecret.val(achievement.secret);
 
-      this.api('hull/' + id + '/prizes').then(_.bind(function(res) {
+      this.api('hull/' + id + '/prizes', this.signRequest()).then(_.bind(function(res) {
         var code = {
           prizes: _.map(res || [], function(p) {
             return _.pick(p, 'id', 'name', 'description', 'available_at', 'extra');
@@ -42,6 +43,12 @@ define({
         this.$achievementPrizes.val(JSON.stringify(code, null, 2));
       }, this));
     }
+  },
+
+  signRequest: function(data) {
+    return _.extend(data || {}, {
+      access_token: this.appSecret
+    });
   },
 
   actions: {
@@ -53,11 +60,11 @@ define({
       var data = {
         type: 'instant_win',
         name: this.$el.find('#hull-instant-name').val()
-      }
+      };
       if (description.length) { data.description = description; }
       if (secret.length) { data.secret = secret; }
 
-      this.api('hull/app/achievements', 'post', data).done(_.bind(function(res) {
+      this.api('hull/app/achievements', 'post', this.signRequest(data)).done(_.bind(function(res) {
         alert('Instant Win Created');
         this.refresh();
       }, this)).fail(function() {
@@ -75,7 +82,7 @@ define({
       if (description.length) { data.description = description; }
       if (secret.length) { data.secret = secret; }
 
-      this.api('hull/' + id, 'put', data).done(function() {
+      this.api('hull/' + id, 'put', this.signRequest(data)).done(function() {
         alert('Achievement Updated');
       }).fail(function() {
         alert('Ooops... Check the form...');
@@ -83,19 +90,24 @@ define({
     },
 
     updatePrizes: function() {
+      var prizes;
       try {
-        var prizes = $.parseJSON(this.$achievementPrizes.val());
+        prizes = $.parseJSON(this.$achievementPrizes.val());
       } catch (error) {
         alert('Invalid JSON');
       }
 
       var id = this.$achievementsSelector.val();
-
       this.api('hull/' + id + '/prizes', 'put', prizes).done(function() {
         alert('Prizes updated!');
       }).fail(function() {
         alert('Ooops... check your JSON...');
       });
+    },
+
+    sign: function() {
+      this.appSecret = this.$appSecret.val();
+      this.refresh();
     }
   }
 });
