@@ -59,9 +59,7 @@ define({
     /**
      * The InstantWin achievement
      */
-    achievement: function() {
-      return this.api('hull/' + this.options.id);
-    },
+    achievement: ':id',
     /**
      * The user's badge for the InstantWin
      */
