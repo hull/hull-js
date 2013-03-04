@@ -1,0 +1,28 @@
+.hull-instant-admin {
+  margin: auto;
+  width: 500px;
+
+  label {
+    display: block;
+    margin-top: 10px;
+  }
+
+  input,
+  select,
+  textarea {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  textarea {
+    padding: 10px;
+    font-family: monospace;
+  }
+}
+
+  .hull-instant-admin__section {
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #ccc;
+  }

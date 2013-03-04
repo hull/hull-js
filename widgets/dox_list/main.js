@@ -1,8 +1,9 @@
 define({
   type: "Hull",
   templates: ["dox_list"],
-  options: {
-    source:'http://hull-js.s3.amazonaws.com/0.2.0/docs/'
+
+  initialize: function () {
+    this.options.source = 'http://hull-js.s3.amazonaws.com/' + Hull.version + '/docs/';
   },
 
   datasources: {
