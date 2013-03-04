@@ -1,7 +1,11 @@
 /**
  * # Instant Win
  *
- * A type of game where the player win or lose instantly.
+ * An instant-win is a game where the player finds out immediately if he or she
+ * is a winner of one of the prizes the administrators put at stake.
+ *
+ * A player can play once a day provided he or she loses at each attempt. A
+ * player that wins the prize will not be allowed to play the game anymore.
  *
  * ## Parameters
  *
