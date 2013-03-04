@@ -75,7 +75,8 @@ define({
         this.play();
       } else {
         var provider = data.provider || this.options.provider;
-        Hull.login(provider, {}, _.bind(this.play, this));
+        this.sandbox.login(provider);
+        this.autoPlay = true;
       }
     }
   },
@@ -94,6 +95,11 @@ define({
 
   afterRender: function() {
     this.sandbox.emit('hull.instant_win.' + this.options.id + '.template.render', this.template);
+
+    if (this.autoPlay) {
+      this.autoPlay = false;
+      this.play();
+    }
   },
 
   /**
