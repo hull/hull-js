@@ -10,6 +10,7 @@ define({
     if (this.options.provider) { this.template = this.options.provider; }
 
     data.label = this.options.label;
-    data.text = this.options.text;
+    data.text = encodeURIComponent(this.options.text);
+    data.url = encodeURIComponent(this.options.url);
   }
 });
