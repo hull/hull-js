@@ -73,13 +73,16 @@ define({
      * Ensure that the user is logged and call the `play` method.
      */
     play: function(source, event, data) {
-      if (this.loggedIn()) {
+      var userLoggedIn = !!this.loggedIn();
+      if (userLoggedIn) {
         this.play();
       } else {
         var provider = data.provider || this.options.provider;
         this.sandbox.login(provider);
         this.autoPlay = true;
       }
+
+      this.track('start', { userLoggedIn: userLoggedIn });
     }
   },
 
@@ -93,6 +96,10 @@ define({
     this.template = this.getInitialTemplate();
 
     data.authProviders = this.authProviders;
+
+    if (!this.isInitialized) {
+      this.track('init', { initialTemplate: this.template });
+    }
   },
 
   afterRender: function() {
@@ -100,7 +107,15 @@ define({
 
     if (this.autoPlay) {
       this.autoPlay = false;
-      this.play();
+
+      if (this.userHasWon()) {
+        this.track('finish', {
+          result: 'won',
+          attempts: this.data.badge.data.attempts
+        });
+      } else {
+        this.play();
+      }
     }
   },
 
@@ -184,17 +199,15 @@ define({
    * until we know if the user has won.
    */
   play: function() {
-    if (this.userHasWon()) { return; }
     this.render('working');
-
     this.api('hull/' + this.id + '/achieve', 'post', _.bind(function(res) {
       var template = 'played';
-      if (this.userCanPlay()) {
-        template = res.data.winner ? 'won' : 'lost';
-      }
+      if (this.userCanPlay()) { template = res.data.winner ? 'won' : 'lost'; }
       _.delay(_.bind(function() {
         this.render(template);
       }, this), parseInt(this.options.delay, 10) || 0);
+
+      this.track('finish', { result: template, attempts: res.data.attempts });
     }, this));
   }
 });
