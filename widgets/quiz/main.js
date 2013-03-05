@@ -2,9 +2,9 @@
  * # Quiz
  *
  * A quiz is a game in which the player attempts to find the answer to questions from multiple possible answers.
- * 
+ *
  * To create a quiz, use the `quiz_admin` widget in an admin page, which will let you create a new Quiz (which is a particular type of achievement).
- * 
+ *
  * Then use this quiz's ID as a parameter for your widget.
  *
  * ## Parameters
@@ -40,8 +40,6 @@ define({
     'quiz_result'
   ],
 
-  initialized: false,
-
   answers: {},
 
   datasources: {
@@ -61,10 +59,7 @@ define({
   },
 
   beforeRender: function(data) {
-    if (!this.initialized) {
-      this.trackEvent("init");
-      this.initialized = true;
-    }
+    if (!this.isInitialized) { this.track('init'); }
 
     if (data.me.id != this.currentUserId) {
       this.template = "quiz_intro";
@@ -84,12 +79,6 @@ define({
 
   afterRender: function(data) {
     this.sandbox.emit('hull.quiz.' + this.id, data);
-  },
-
-  trackEvent: function(eventName, eventData) {
-    eventData = _.extend({ quizId: this.data.quiz.id, quizName: this.data.quiz.get('name') }, (eventData || {}));
-    eventName = "quiz." + eventName;
-    this.track(eventName, eventData);
   },
 
   startQuiz: function() {
@@ -156,7 +145,7 @@ define({
     },
 
     answer: function(source, e, opts) {
-      this.trackEvent("answer");
+      this.track("answer");
       this.answers[opts.questionId] = opts.answerId;
       this.quiz.set('answers', this.answers);
     },
@@ -167,7 +156,7 @@ define({
     },
 
     start: function() {
-      this.trackEvent("start");
+      this.track("start");
       this.startQuiz();
     },
 
@@ -184,7 +173,7 @@ define({
     },
 
     submit: function() {
-      this.trackEvent("submit");
+      this.track("submit");
       var timing = 0;
       if (this.startedAt) {
         timing  = (new Date() - this.startedAt) / 1000;
@@ -201,7 +190,7 @@ define({
           self.submitted = true;
           self.quiz.set('badge', badge);
           self.render('quiz_result');
-          self.trackEvent('result', { score: badge.data.score, timing: badge.data.timing });
+          self.track('finish', { score: badge.data.score, timing: badge.data.timing });
         } else {
           console.warn("Bah alors ? mon badge ?", badge);
         }
