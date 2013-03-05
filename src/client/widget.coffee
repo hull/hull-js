@@ -32,11 +32,13 @@ define ['backbone', 'underscore'], (Backbone, _)->
 
 
   class HullWidget extends Backbone.View
-
     actions: {}
+
     templates: []
 
     initialize: ->
+
+    isInitialized: false
 
     constructor: (options)->
       @ref          = options.ref
@@ -153,6 +155,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
           @doRender(tpl, data)
           _.defer(@afterRender.bind(@, data))
           _.defer((-> @sandbox.start(@$el)).bind(@))
+          @isInitialized = true;
 
     track: (name, data) ->
       data = _.extend data || {},
