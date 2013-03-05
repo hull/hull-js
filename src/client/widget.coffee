@@ -157,12 +157,11 @@ define ['backbone', 'underscore'], (Backbone, _)->
           _.defer((-> @sandbox.start(@$el)).bind(@))
           @isInitialized = true;
 
-    track: (name, data) ->
-      data = _.extend data || {},
-        id: @id
-        name: @options.name
-        type: @type
+    trackData: ->
 
+    track: (name, data={}) ->
+      defaultData = if _.isFunction(@trackData) then @trackData.call(@) else @trackData
+      data = _.extend { id: @id, widget: @options.name }, (defaultData || {}), data
       @sandbox.track(name, data)
 
   (app)->

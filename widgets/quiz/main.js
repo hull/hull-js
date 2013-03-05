@@ -32,6 +32,11 @@
 define({
   type: "Hull",
 
+  trackData: function() {
+    var quiz = this.data.quiz || { };
+    return { name: quiz.name };
+  },
+
   templates: [
     'quiz_intro',
     'quiz_question',
