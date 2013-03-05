@@ -41,7 +41,6 @@ define ['backbone', 'underscore'], (Backbone, _)->
     constructor: (options)->
       @ref          = options.ref
       @api          = @sandbox.data.api
-      @track        = @sandbox.track
       @datasources  = _.extend {}, default_datasources, @datasources, options.datasources
 
       try
@@ -154,6 +153,14 @@ define ['backbone', 'underscore'], (Backbone, _)->
           @doRender(tpl, data)
           _.defer(@afterRender.bind(@, data))
           _.defer((-> @sandbox.start(@$el)).bind(@))
+
+    track: (name, data) ->
+      data = _.extend data || {},
+        id: @id
+        name: @options.name
+        type: @type
+
+      @sandbox.track(name, data)
 
   (app)->
     Datasource = app.core.datasource
