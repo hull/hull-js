@@ -54,7 +54,8 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
           widget: window.Hull.widget,
           templates: window.Hull.templates,
           emit: window.Hull.emit,
-          on: window.Hull.on
+          on: window.Hull.on,
+          version: window.Hull.version
         }
         if _.isArray(config.expose)
           _.map config.expose, (i) ->

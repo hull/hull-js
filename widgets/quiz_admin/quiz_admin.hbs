@@ -1,13 +1,9 @@
 <div class="hull-quiz_admin">
-  {{#if loggedIn}}
-    {{#if quiz}}
-      {{>quiz_admin/quiz_admin_form}}
-    {{/if}}
-
-    {{#unless quiz}}
-      {{>quiz_admin/quiz_admin_list}}
-    {{/unless}}
-  {{else}}
-    <div data-hull-widget="identity@hull"></div>
+  {{#if quiz}}
+    {{>quiz_admin/quiz_admin_form}}
   {{/if}}
+
+  {{#unless quiz}}
+    {{>quiz_admin/quiz_admin_list}}
+  {{/unless}}
 </div>

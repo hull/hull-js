@@ -3,7 +3,7 @@
   "version": "develop",
   "main": "./lib/hull.js",
   "dependencies": {
-    "jquery": "1.8.3",
+    "jquery": "1.9.1",
     "aura": "latest",
     "backbone": "0.9.9",
     "easyXDM": "2.4.17",
