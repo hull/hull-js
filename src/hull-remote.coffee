@@ -5,7 +5,7 @@ define ['aura/aura', 'lib/version'], (Aura, version)->
   Hull = (config)->
     return hull if hull && hull.app
     hull = { config }
-    config.debug = true
+    config.debug ?= false
     hull.app = Aura(config)
     hull.app.use('lib/remote/services')
     hull.app.use('lib/remote/services/hull')
