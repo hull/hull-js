@@ -53,6 +53,10 @@ define({
     'ended'
   ],
 
+  trackingData: function() {
+    return { name: this.data.achievement.get('name') };
+  },
+
   refreshEvents: ['model.hull.me.change'],
 
   datasources: {
