@@ -4,6 +4,15 @@ define ['jquery', 'underscore'], ($, _)->
 
     config = app.config
 
+    identify = (me)->
+      return unless me
+      analytics = require('analytics')
+      ident = _.pick(me, 'name', 'email', 'id', 'picture')
+      ident.created = me.created_at
+      ident.distinct_id = me.id
+      analytics.identify(me.id, ident)
+
+
     handler = (req, route, callback, errback)=>
       path = req.path.replace(/^\/?hull\//, '')
       path = path.substring(1) if (path[0] == "/")
@@ -21,14 +30,18 @@ define ['jquery', 'underscore'], ($, _)->
         headers:
           'Hull-App-Id': config.appId
 
-      request.done((res)-> callback(res))
+      request.done (res)->
+        identify(_.clone(res)) if path == 'me'
+        callback(res)
+
       request.fail(errback)
 
       return
 
     trackHandler = (req, route, callback, errback)->
+      analytics = require('analytics')
       eventName = req.path.replace(/^track\//, '')
-      analytics.track(eventName, req.params)
+      _.delay (-> analytics.track(eventName, req.params)), 500
       req.path    = "t"
       req.params.event ?= eventName
       req.params  = { t: btoa(JSON.stringify(req.params)) }
@@ -38,8 +51,6 @@ define ['jquery', 'underscore'], ($, _)->
       paths:
         analytics: 'components/analytics/analytics'
         base64:    'components/base64/base64'
-      shim:
-        analytics: { exports: 'analytics' }
 
     initialize: (app)->
       analytics = require('analytics')
@@ -49,13 +60,14 @@ define ['jquery', 'underscore'], ($, _)->
         _service = app.config.services.settings[s]
         analyticsSettings[_service.name] = _service
 
+      if analyticsSettings?.Mixpanel
+        analyticsSettings.Mixpanel.nameTag = true
+        analyticsSettings.Mixpanel.pageview = false
+
       analytics.initialize(analyticsSettings)
+
       if app.config.data.me?.id?
-        me = app.config.data.me
-        ident = _.pick(me, 'name', 'email', 'id', 'picture')
-        ident.distinct_id = me.id
-        ident.$name       = me.name
-        analytics.identify(ident.$name, ident)
+        identify(app.config.data.me)
 
       analytics.track("init", { appId: config.appId })
       app.core.services.add([ { path: 'hull/*path', handler: handler } ])
