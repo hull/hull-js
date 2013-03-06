@@ -214,7 +214,10 @@ define({
         this.render(template);
       }, this), parseInt(this.options.delay, 10) || 0);
 
-      this.track('finish', { result: template, attempts: res.data.attempts });
+      this.track('finish', {
+        result: template,
+        attemptsCount: res.data.attempts.length
+      });
     }, this));
   }
 });
