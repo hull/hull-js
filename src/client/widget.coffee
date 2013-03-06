@@ -32,16 +32,17 @@ define ['backbone', 'underscore'], (Backbone, _)->
 
 
   class HullWidget extends Backbone.View
-
     actions: {}
+
     templates: []
 
     initialize: ->
 
+    isInitialized: false
+
     constructor: (options)->
       @ref          = options.ref
       @api          = @sandbox.data.api
-      @track        = @sandbox.track
       @datasources  = _.extend {}, default_datasources, @datasources, options.datasources
 
       try
@@ -154,6 +155,15 @@ define ['backbone', 'underscore'], (Backbone, _)->
           @doRender(tpl, data)
           _.defer(@afterRender.bind(@, data))
           _.defer((-> @sandbox.start(@$el)).bind(@))
+          @isInitialized = true;
+
+    trackingData: {}
+
+    track: (name, data = {}) ->
+      defaultData = _.result(this, 'trackingData')
+      defaultData = if _.isObject(defaultData) then defaultData else {}
+      data = _.extend { id: @id, widget: @options.name }, defaultData, data
+      @sandbox.track(name, data)
 
   (app)->
     Datasource = app.core.datasource
