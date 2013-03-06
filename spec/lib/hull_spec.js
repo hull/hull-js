@@ -4,16 +4,18 @@ define(function () {
 
   var hullInitFn;
   var auraStub;
+  var initPromise;
 
   // Mocking dependencies of  lib/hull
   before(function (done) {
+    initPromise = $.Deferred();
     auraStub = sinon.stub({
       use: function () { },
       start: function () { },
       stop: function () { }
     });
     auraStub.use.returns(auraStub);
-    auraStub.start.returns($.Deferred().promise());
+    auraStub.start.returns(initPromise);
     var auraModule = sinon.spy(function () {
       return auraStub;
     });
@@ -37,6 +39,7 @@ define(function () {
     require.undef('lib/hull');
     require.undef('aura/aura');
     require.undef('lib/hullbase');
+    delete hullInitFn({}).app;
   });
 
   describe("Booting the application", function () {
@@ -46,7 +49,7 @@ define(function () {
       });
     });
 
-    describe("The evaluated module", function () {
+    describe("Evaluating the module", function () {
       beforeEach(function () {
         delete hullInitFn({}).app; // Forces the reset
       });
@@ -71,6 +74,40 @@ define(function () {
         var conf = {};
         hullInitFn(conf).config.should.contain.keys('namespace');
         hullInitFn(conf).config.namespace.should.eql('hull');
+      });
+    });
+
+    describe("should give feedback", function () {
+      beforeEach(function () {
+        delete hullInitFn({}).app;
+      });
+      it("should throw an exception if the init fails and no errback is provided", function (done) {
+        initPromise.always(function () { done(); });
+        try {
+          hullInitFn({});
+        } catch (e) {
+          done();
+        }
+        initPromise.reject();
+      });
+
+      it("should execute the errback in case of error", function () {
+        initPromise = $.Deferred();
+        auraStub.start.returns(initPromise);
+        var errb = sinon.spy();
+        hullInitFn({}, null, errb);
+        initPromise.reject();
+        errb.should.have.been.called;
+      });
+
+      it("should execute the callback in case of success", function () {
+        initPromise = $.Deferred();
+        auraStub.start.returns(initPromise);
+        var cb = sinon.spy();
+        hullInitFn({}, cb);
+        initPromise.resolve();
+        cb.should.have.been.called;
+        cb.should.have.been.calledWith(window.Hull);
       });
     });
   });
