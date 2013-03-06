@@ -118,7 +118,7 @@ define({
       if (this.userHasWon()) {
         this.track('finish', {
           result: 'won',
-          attempts: this.data.badge.data.attempts
+          attemptsCount: this.data.badge.data.attempts.length
         });
       } else {
         this.play();
