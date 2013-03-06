@@ -54,7 +54,10 @@ define({
   ],
 
   trackingData: function() {
-    return { name: this.data.achievement.get('name') };
+    var data = { type: 'instant_win' };
+    var achievement = this.data.achievement;
+    if (achievement && achievement.get) { data.name = achievement.get('name'); }
+    return data;
   },
 
   refreshEvents: ['model.hull.me.change'],
