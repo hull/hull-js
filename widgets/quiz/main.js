@@ -32,9 +32,8 @@
 define({
   type: "Hull",
 
-  trackData: function() {
-    var quiz = this.data.quiz || { };
-    return { name: quiz.name };
+  trackingData: function() {
+    return { name: this.data.quiz.get('name') };
   },
 
   templates: [
@@ -153,6 +152,13 @@ define({
       this.track("answer");
       this.answers[opts.questionId] = opts.answerId;
       this.quiz.set('answers', this.answers);
+
+      this.track('progress', {
+        questionId: opts.questionId,
+        answerId: opts.answerId,
+        questionIndex: this.currentQuestionIndex,
+        questionsCount: this.data.quiz.get('questions').length
+      });
     },
 
     answerAndNext: function(source, e, opts) {
