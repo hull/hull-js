@@ -50,16 +50,11 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
       throw err if !errcb
     initProcess.done (h)->
       if !config.debug
-        _h = {
-          widget: window.Hull.widget,
-          templates: window.Hull.templates,
-          emit: window.Hull.emit,
-          on: window.Hull.on,
-          version: window.Hull.version
-        }
-        if _.isArray(config.expose)
-          _.map config.expose, (i) ->
-            _h[i] = window.Hull[i];
+        props = ['widget', 'templates', 'emit', 'on', 'version', 'track']
+        props.concat(config.expose || [])
+        _h = {}
+        _.map props, (k)->
+          _h[k] = window.Hull[k]
         window.Hull = _h
 
       cb(window.Hull) if cb
