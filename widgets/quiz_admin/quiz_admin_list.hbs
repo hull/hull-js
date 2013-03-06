@@ -1,5 +1,4 @@
 <div class="hull-quiz_admin__list">
-
   <div class="hull-quiz_admin__header">
     <h1 class="hull-quiz_admin__title">My quizzes</h1>
   </div>
@@ -14,35 +13,11 @@
       </li>
     {{/quizzes}}
   </ul>
-
 </div>
 
-<form id="hull-quiz_admin__form--add" class="hull-form hull-quiz_admin__form--add">
-
+<form id="hull-quiz_admin__form--import" class="hull-form hull-quiz_admin__form--import">
   <div class="hull-quiz_admin__header">
     <h1 class="hull-quiz_admin__title">Create a new quiz</h1>
-  </div>
-
-  <ul class="hull-form__fields">
-
-    <li class="hull-form__fields__item">
-      <label for="hull-quiz-name" class="hull-form__label">Quiz name:</label>
-      <input id="hull-quiz-name" name="quiz-name" class="hull-form__text-input" type="text" placeholder="Enter a name" />
-    </li>
-
-    <li class="hull-form__fields__item--submit">
-      <button data-hull-action="add" class="hull-btn">Create</button>
-    </li>
-
-  </ul>
-
-</form>
-
-
-<form id="hull-quiz_admin__form--import" class="hull-form hull-quiz_admin__form--import">
-
-  <div class="hull-quiz_admin__header">
-    <h1 class="hull-quiz_admin__title">Import a quiz</h1>
   </div>
 
   <ul class="hull-form__fields">
@@ -53,9 +28,7 @@
     </li>
 
     <li class="hull-form__fields__item--submit">
-      <button data-hull-action="import" class="hull-btn">Import</button>
+      <button data-hull-action="create" class="hull-btn">Import</button>
     </li>
-
   </ul>
-
 </form>
