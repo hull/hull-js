@@ -33,7 +33,10 @@ define({
   type: "Hull",
 
   trackingData: function() {
-    return { name: this.data.quiz.get('name') };
+    var data = { type: 'quiz' };
+    var quiz = this.data.quiz;
+    if (quiz && quiz.get) { data.name = quiz.get('name'); }
+    return data;
   },
 
   templates: [
