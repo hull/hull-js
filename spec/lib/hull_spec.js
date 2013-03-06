@@ -7,7 +7,6 @@ define(function () {
 
   // Mocking dependencies of  lib/hull
   before(function (done) {
-   console.log('globalBefore'); 
     auraStub = sinon.stub({
       use: function () { },
       start: function () { },
