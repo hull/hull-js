@@ -8,8 +8,8 @@ define ['jquery', 'underscore'], ($, _)->
       return unless me
       analytics = require('analytics')
       ident = _.pick(me, 'name', 'email', 'id', 'picture')
+      ident.created = me.created_at
       ident.distinct_id = me.id
-      ident.$name       = me.name
       analytics.identify(me.id, ident)
 
 
@@ -31,7 +31,7 @@ define ['jquery', 'underscore'], ($, _)->
           'Hull-App-Id': config.appId
 
       request.done (res)->
-        identify(res) if path == 'me'
+        identify(_.clone(res)) if path == 'me'
         callback(res)
 
       request.fail(errback)
@@ -39,8 +39,9 @@ define ['jquery', 'underscore'], ($, _)->
       return
 
     trackHandler = (req, route, callback, errback)->
+      analytics = require('analytics')
       eventName = req.path.replace(/^track\//, '')
-      analytics.track(eventName, req.params)
+      _.delay (-> analytics.track(eventName, req.params)), 500
       req.path    = "t"
       req.params.event ?= eventName
       req.params  = { t: btoa(JSON.stringify(req.params)) }
@@ -58,6 +59,10 @@ define ['jquery', 'underscore'], ($, _)->
       _.map app.config.services.types.analytics, (s)->
         _service = app.config.services.settings[s]
         analyticsSettings[_service.name] = _service
+
+      if analyticsSettings?.Mixpanel
+        analyticsSettings.Mixpanel.nameTag = true
+        analyticsSettings.Mixpanel.pageview = false
 
       analytics.initialize(analyticsSettings)
 
