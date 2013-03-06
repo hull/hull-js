@@ -60,10 +60,6 @@ define ['jquery', 'underscore'], ($, _)->
         _service = app.config.services.settings[s]
         analyticsSettings[_service.name] = _service
 
-      if analyticsSettings?.Mixpanel
-        analyticsSettings.Mixpanel.nameTag = true
-        analyticsSettings.Mixpanel.pageview = false
-
       analytics.initialize(analyticsSettings)
 
       if app.config.data.me?.id?
