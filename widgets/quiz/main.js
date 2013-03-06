@@ -149,7 +149,6 @@ define({
     },
 
     answer: function(source, e, opts) {
-      this.track("answer");
       this.answers[opts.questionId] = opts.answerId;
       this.quiz.set('answers', this.answers);
 
