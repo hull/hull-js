@@ -21,6 +21,9 @@ define(function () {
   var hullbase;
   // Mocking dependencies of  lib/hullbase
   before(function (done) {
+    require.undef('lib/hull');
+    require.undef('lib/version');
+    require.undef('lib/hullbase');
     define('lib/hull', function () { sinon.spy(); });
     define('lib/version', function () { return 'Mock_Version'; });
     require(['lib/hullbase', 'lib/hull', 'lib/version'], function (base) {
@@ -38,12 +41,12 @@ define(function () {
     it("should not override the default values for Hull.templates", function () {
       hullbase.templates.should.equal(window.Hull.templates);
     });
-    
+
     it("should expose Hull.init", function () {
       hullbase.should.contain.key('init');
       hullbase.widget.should.be.a('function');
     });
-    
+
     it("should expose Hull.widget", function () {
       hullbase.should.contain.key('widget');
       hullbase.widget.should.be.a('function');

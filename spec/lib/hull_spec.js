@@ -2,22 +2,35 @@
 define(function () {
   "use strict";
 
-  var hullModule;
+  var hullInitFn;
+  var auraStub;
 
   // Mocking dependencies of  lib/hull
-  before(function () {
+  before(function (done) {
+   console.log('globalBefore'); 
+    auraStub = sinon.stub({
+      use: function () { },
+      start: function () { },
+      stop: function () { }
+    });
+    auraStub.use.returns(auraStub);
+    auraStub.start.returns($.Deferred().promise());
+    var auraModule = sinon.spy(function () {
+      return auraStub;
+    });
+
+
     require.undef('aura/aura');
+    require.undef('lib/hull');
     define('aura/aura', function () {
-      return function () {
-        console.log("lll")
-        sinon.spy();
-      };
+      return auraModule;
     });
     define('lib/hullbase', function () {
       return {};
     });
     require(['lib/hull', 'aura/aura', 'lib/hullbase'], function (hull) {
-      hullModule = hull;
+      hullInitFn = hull;
+      done();
     });
   });
 
@@ -30,19 +43,35 @@ define(function () {
   describe("Booting the application", function () {
     describe("Evaluating the module", function () {
       it("should return a function", function () {
-        hullModule.should.be.a('Function');
+        hullInitFn.should.be.a('Function');
       });
     });
 
     describe("The evaluated module", function () {
-      it("should return the config passed to the function with an 'app' property", function () {
+      beforeEach(function () {
+        delete hullInitFn({}).app; // Forces the reset
+      });
+      it("should return an object with 'app' and 'config key'", function () {
+        var conf = {};
+        hullInitFn(conf).should.contain.keys('config');
+        hullInitFn(conf).should.contain.keys('app');
+      });
+      it("should have an Aura application as the value of the 'app' config", function () {
+        var conf = {};
+        hullInitFn(conf).app.should.eql(auraStub);
+      });
+      it("should return the config passed to the function into the 'config' property", function () {
         var conf = {
           foo: "FOO",
           bar: "BAR",
           baz: "BAZ"
         };
-        hullModule(conf).should.contain.keys(Object.keys(conf));
-        hullModule(conf).should.contain.keys('app');
+        hullInitFn(conf).config.should.contain.keys(Object.keys(conf));
+      });
+      it("should add a 'namespace property in the onfig and set it to 'Hull'", function () {
+        var conf = {};
+        hullInitFn(conf).config.should.contain.keys('namespace');
+        hullInitFn(conf).config.namespace.should.eql('hull');
       });
     });
   });
