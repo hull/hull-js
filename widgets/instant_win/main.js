@@ -19,37 +19,21 @@ define({
   type: 'Hull',
 
   templates: [
-    /**
-     * Show the button to play to the game.
-     */
+    /* Show the button to play to the game. */
     'intro',
-    /**
-     * The play buttons partial.
-     */
+    /* The play buttons partial. */
     'buttons',
-    /**
-     * Show a loading message.
-     */
+    /* Show a loading message. */
     'working',
-    /**
-     * Say to the user that he has won
-     */
+    /* Say to the user that he has won */
     'won',
-    /**
-     * Say to the user that he has lost.
-     */
+    /* Say to the user that he has lost. */
     'lost',
-    /**
-     * Say to the user that he has already played.
-     */
+    /* Say to the user that he has already played. */
     'played',
-    /**
-     * Say to the user that the game hasn't started yet.
-     */
+    /* Say to the user that the game hasn't started yet. */
     'unstarted',
-    /**
-     * Say to the user that the game has ended.
-     */
+    /* Say to the user that the game has ended. */
     'ended'
   ],
 
@@ -63,22 +47,16 @@ define({
   refreshEvents: ['model.hull.me.change'],
 
   datasources: {
-    /**
-     * The InstantWin achievement
-     */
+    /* The InstantWin achievement */
     achievement: ':id',
-    /**
-     * The user's badge for the InstantWin
-     */
+    /* The user's badge for the InstantWin */
     badge: function() {
       return this.loggedIn() ? this.api('hull/me/badges/' + this.options.id) : null;
     }
   },
 
   actions: {
-    /**
-     * Ensure that the user is logged and call the `play` method.
-     */
+    /* Ensure that the user is logged and call the `play` method. */
     play: function(source, event, data) {
       var userLoggedIn = !!this.loggedIn();
       if (userLoggedIn) {
@@ -126,7 +104,7 @@ define({
     }
   },
 
-  /**
+  /*!
    * Return the template name that the user should see when he lands on the
    * game.
    *
@@ -150,7 +128,7 @@ define({
     }
   },
 
-  /**
+  /*!
    * Determine if the game has started. return `true` if it has `false` if it
    * hasn't.
    *
@@ -161,7 +139,7 @@ define({
     return true;
   },
 
-  /**
+  /*!
    * Determine if the game has ended. Return `true` if it has `false` if it
    * hasn't.
    *
@@ -172,7 +150,7 @@ define({
     return false;
   },
 
-  /**
+  /*!
    * Determine if the user can play. Return `true` if he can `false` if he
    * cannot.
    *
@@ -184,7 +162,7 @@ define({
     return !this.data.badge.data.attempts[d];
   },
 
-  /**
+  /*!
    * Determine if user has won. Return `true` if the he has, `false` if he
    * hasn't.
    *
@@ -195,7 +173,7 @@ define({
     return this.data.badge.data.winner;
   },
 
-  /**
+  /*!
    * Play to the game and render a template:
    *
    * - `won`: if the user has won.
