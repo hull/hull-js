@@ -329,7 +329,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build_client', ['clean', 'coffee:client', 'version', 'requirejs:client']);
   grunt.registerTask('build_libs', ['build_client', 'build_remote']);
   grunt.registerTask('build', ['build_libs', 'hull_widgets', 'compass:prod']);
-  grunt.registerTask('default', ['connect', 'build', /*'mocha'*/ 'watch']);
+  grunt.registerTask('default', ['connect', 'build', 'mocha', 'watch']);
   grunt.registerTask('dist', ['build', 'dox']);
   grunt.registerTask('deploy', ['dist', 's3']);
 
