@@ -278,10 +278,10 @@ define ['lib/version'], (version) ->
       timeout = setTimeout(
         ()->
           initialized.reject('Remote loading has failed. Please check "orgUrl" and "appId" in your configuration. This may also be about connectivity.')
-        , 30000) 
+        , 30000)
 
       onRemoteReady = (remoteConfig)->
-        timeout.clear()
+        window.clearTimeout(timeout)
         data = remoteConfig.data
         app.config.assetsUrl            = remoteConfig.assetsUrl
         app.config.services             = remoteConfig.services
