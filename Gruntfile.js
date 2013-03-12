@@ -12,6 +12,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-hull-dox');
   grunt.loadNpmTasks('grunt-hull-widgets');
   grunt.loadNpmTasks('grunt-s3');
+  grunt.loadNpmTasks('grunt-git-describe');
 
   var pkg = grunt.file.readJSON('component.json');
 
@@ -286,6 +287,9 @@ module.exports = function (grunt) {
         // before: ['requirejs:upload', 'requirejs:registration'],
         dest: 'dist/<%= pkg.version%>/widgets'
       }
+    },
+    describe: {
+      out: 'dist/<%= pkg.version%>/REVISION'
     }
   };
 
@@ -331,7 +335,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', ['build_libs', 'hull_widgets', 'compass:prod']);
   grunt.registerTask('default', ['connect', 'build', 'mocha', 'watch']);
   grunt.registerTask('dist', ['build', 'dox']);
-  grunt.registerTask('deploy', ['dist', 's3']);
+  grunt.registerTask('deploy', ['dist', 'describe', 's3']);
 
   grunt.registerTask("version", "generate a file from a template", function () {
     var conf = grunt.config("version");
