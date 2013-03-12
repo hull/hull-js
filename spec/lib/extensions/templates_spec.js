@@ -23,11 +23,11 @@ define(['aura/aura'], function(aura) {
   describe("Template loader", function() {
     var env;
     var app = aura();
-    
+
     var extension = {
       initialize: function (appEnv) {
         env = appEnv;
-      } 
+      }
     };
 
     app
@@ -46,7 +46,7 @@ define(['aura/aura'], function(aura) {
       it("Should be available in the environment", function() {
         env.core.template.should.be.a('object');
       });
-      
+
       it("should contain a load function", function () {
         env.core.template.load.should.be.a("function");
       });
@@ -57,8 +57,12 @@ define(['aura/aura'], function(aura) {
         var tplName = "doesNotExist";
         var prefix = "test";
         var ret = env.core.template.load(tplName, prefix);
-        var spy = sinon.spy(done.bind(null, null));
-        ret.fail(spy);
+        ret.fail(function () {
+          done();
+        });
+        ret.then(function () {
+          done(new Error('Should not have been called.'));
+        });
       });
     });
 
@@ -69,7 +73,7 @@ define(['aura/aura'], function(aura) {
       var templateContents = "Woow, what a template!";
 
       before(insertTemplateHelper(hullTemplateName, templateContents));
-      
+
       it("should contain the template as the return value of the promise", function (done) {
         var ret = env.core.template.load(tplName, prefix);
         var spy = sinon.spy(function (ret) {
@@ -95,7 +99,7 @@ define(['aura/aura'], function(aura) {
         });
       });
     });
-    
+
     describe("Order of precedence", function () {
       var tplContents = "That's a DOM template!";
       before(insertTemplateHelper('fixtures/test1', tplContents));
@@ -115,7 +119,7 @@ define(['aura/aura'], function(aura) {
       before(insertTemplateHelper("multiple/tpl2", "Second template"));
 
       it("should load an array of templates", function () {
-        var ret = env.core.template.load(["tpl1", "tpl2"], "multiple"); 
+        var ret = env.core.template.load(["tpl1", "tpl2"], "multiple");
         ret.done(function (tpls) {
           tpls.should.contain.keys("tpl1");
           tpls.should.contain.keys("tpl2");
