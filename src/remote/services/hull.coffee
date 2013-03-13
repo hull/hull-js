@@ -41,10 +41,12 @@ define ['jquery', 'underscore'], ($, _)->
     trackHandler = (req, route, callback, errback)->
       analytics = require('analytics')
       eventName = req.path.replace(/^track\//, '')
-      _.delay (-> analytics.track(eventName, req.params)), 500
-      req.path    = "t"
+
+      analytics.track(eventName, req.params)
+
+      req.path = "t"
       req.params.event ?= eventName
-      req.params  = { t: btoa(JSON.stringify(req.params)) }
+      req.params = { t: btoa(JSON.stringify(req.params)) }
       handler(req, route, callback, errback)
 
     require:
