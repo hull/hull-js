@@ -54,14 +54,11 @@ define(['aura/aura'], function(aura) {
 
     describe("Error management", function () {
       it("should fail the promise", function (done) {
-        var tplName = "doesNotExist";
-        var prefix = "test";
-        var ret = env.core.template.load(tplName, prefix);
-        ret.fail(function () {
+        var promise = env.core.template.load("does_not_exist", "test");
+        promise.always(function () {
+          var state = promise.state();
+          state.should.equal("rejected");
           done();
-        });
-        ret.then(function () {
-          done(new Error('Should not have been called.'));
         });
       });
     });
