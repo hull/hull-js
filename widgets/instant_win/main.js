@@ -87,21 +87,17 @@ define({
     }
   },
 
-  afterRender: function() {
-    this.sandbox.emit('hull.instant_win.' + this.options.id + '.template.render', this.template);
-
+  afterRender: function(data) {
     if (this.autoPlay) {
       this.autoPlay = false;
-
-      if (this.userHasWon()) {
-        this.track('finish', {
-          result: 'won',
-          attemptsCount: this.data.badge.data.attempts.length
-        });
-      } else {
-        this.play();
-      }
+      if (!this.userHasWon()) { this.play(); }
     }
+
+    if (this.template === 'won' || this.template === 'lost') {
+      this.track('finish', { result: this.template });
+    }
+
+    this.sandbox.emit('hull.instant_win.' + this.options.id + '.template.render', this.template);
   },
 
   /*!
@@ -191,11 +187,6 @@ define({
       _.delay(_.bind(function() {
         this.render(template);
       }, this), parseInt(this.options.delay, 10) || 0);
-
-      this.track('finish', {
-        result: template,
-        attemptsCount: res.data.attempts.length
-      });
     }, this));
   }
 });
