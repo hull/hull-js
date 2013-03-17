@@ -57,6 +57,15 @@ define ['lib/version'], (version) ->
 
         ret
 
+      setCookies = (headers)->
+        return unless app.config.appId && headers
+        cookieName = "hull_#{app.config.appId}"
+        if headers && headers['Hull-User-Id']
+          val = btoa(JSON.stringify(headers))
+          $.cookie(cookieName, val, path: "/")
+        else
+          $.removeCookie(cookieName, path: "/")
+
       ###
       # Sends the message described by @params to easyXDM
       # @param {Object} contains the provider, uri and parameters for the message
@@ -69,8 +78,9 @@ define ['lib/version'], (version) ->
         promise = core.data.deferred()
 
         onSuccess = (res)->
-          callback(res)
-          promise.resolve(res)
+          setCookies(res.headers)
+          callback(res.response)
+          promise.resolve(res.response)
 
         onError = (err)->
           errback(err)
@@ -283,6 +293,7 @@ define ['lib/version'], (version) ->
       onRemoteReady = (remoteConfig)->
         window.clearTimeout(timeout)
         data = remoteConfig.data
+        setCookies(data.headers)
         app.config.assetsUrl            = remoteConfig.assetsUrl
         app.config.services             = remoteConfig.services
         app.config.widgets.sources.hull = remoteConfig.baseUrl + '/widgets'

@@ -30,9 +30,13 @@ define ['jquery', 'underscore'], ($, _)->
         headers:
           'Hull-App-Id': config.appId
 
-      request.done (res)->
-        identify(_.clone(res)) if path == 'me'
-        callback(res)
+      _headers = ['Hull-User-Id', 'Hull-User-Sig']
+
+      request.done (response)->
+        identify(_.clone(response)) if path == 'me'
+        headers = {}
+        _.map _headers, (h)-> headers[h] = request.getResponseHeader(h)
+        callback({ response: response, headers: headers })
 
       request.fail(errback)
 

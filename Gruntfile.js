@@ -106,22 +106,26 @@ module.exports = function (grunt) {
             handlebars:     'components/handlebars/handlebars',
             requireLib:     'components/requirejs/require',
             moment:         'components/moment/moment',
+            cookie:         'components/jquery.cookie/jquery.cookie',
             string:         'components/underscore.string/lib/underscore.string',
             jquery:         'empty:',
-            text:           'components/requirejs-text/text'
+            text:           'components/requirejs-text/text',
+            base64:         'components/base64/base64'
           },
           shim: {
             backbone:   { exports: 'Backbone', deps: ['underscore', 'jquery'] },
             string:     { exports: '_', deps: ['underscore'] },
             underscore: { exports: '_' },
             easyXDM:    { exports: 'easyXDM' },
-            handlebars:    { exports: 'Handlebars' }
+            handlebars: { exports: 'Handlebars' }
           },
           include: [
             'requireLib',
             'underscore',
             'moment',
             'string',
+            'cookie',
+            'base64',
             'backbone',
             'handlebars',
             'easyXDM',
