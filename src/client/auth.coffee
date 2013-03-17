@@ -56,5 +56,6 @@ define ->
           sandbox.data.api.model('me').clear()
           sandbox.data.api.model('me').trigger('change')
           sandbox.data.api.model.clearAll()
+          $.removeCookie("hull_#{app.config.appId}", path: "/")
           callback() if _.isFunction(callback)
         dfd
