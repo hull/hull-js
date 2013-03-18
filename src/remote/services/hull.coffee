@@ -10,9 +10,9 @@ define ['jquery', 'underscore'], ($, _)->
       return unless me
 
       analytics = require('analytics')
-      sign_in_count = me.stats?.sign_in_count || 0
+      signInCount = me.stats?.sign_in_count || 0
 
-      if identified && sign_in_count <= 1
+      if identified && signInCount == 1
         analytics.alias(me.id)
         identified = true
 
