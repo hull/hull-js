@@ -10,8 +10,9 @@ define ['jquery', 'underscore'], ($, _)->
       return unless me
 
       analytics = require('analytics')
+      sign_in_count = me.stats?.sign_in_count || 0
 
-      if identified && me.stats.sign_in_count <= 1
+      if identified && sign_in_count <= 1
         analytics.alias(me.id)
         identified = true
 
@@ -81,5 +82,6 @@ define ['jquery', 'underscore'], ($, _)->
         identify(app.config.data.me)
 
       analytics.track("init", { appId: config.appId })
-      app.core.services.add([ { path: 'hull/*path', handler: handler } ])
+      app.core.services.add([ { path: 'hull/*path',  handler: handler } ])
       app.core.services.add([ { path: 'track/*path', handler: trackHandler } ])
+
