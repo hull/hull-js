@@ -1,4 +1,4 @@
-/*global sinon:true, define:true, describe:true, it:true, before:true, after:true */
+/*global sinon:true, define:true, describe:true, it:true, before:true, after:true, jQuery:true */
 define(function () {
   "use strict";
 
