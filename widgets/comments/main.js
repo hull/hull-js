@@ -1,43 +1,44 @@
 /**
- * ## Widget ```comment```
+ * # Comments
  *
- * This widget is identified as ```comments@hull```. It is used to view and add comments to an object of the crrent application.
+ * Allow to list and add comments on an object of the current application.
  *
- * ### Parameters:
+ * ## Parameter:
  *
- * * ```id```: The object you want to manipulate comments upon.
+ * - `id`: The object you want to manipulate comments upon.
  *
- * ### Templates:
+ * ## Template:
  *
- * * ```comments/comments```: Display the collection of comments and allows to post a new comment if logged in.
+ * - `comments`: Display a list of comments and a form that allows logged users
+ *   to post new comments.
  *
+ * ## Datasource:
  *
- * ### Datasources:
+ * - `comments`: Collection of all the comments related to the object.
  *
- * * ```comments```: The collection of all the comments related to the object.
+ * ## Action:
  *
- * ### Actions:
- *
- * * ```comment```: Triggered when an user submits a new comment.
+ * - `comment`: Submits a new comment.
  */
 define({
   type: 'Hull',
+
   templates:  ['comments'],
 
   initialize: function () {
-    this.sandbox.on("collection.hull." + this.id + ".comments.**", function() {
+    this.sandbox.on('collection.hull.' + this.id + '.comments.**', function() {
       this.refresh();
     }.bind(this));
   },
 
   //@FIX Cache is broken for datasources declared as objects
   datasources: {
-    comments: ":id/comments"
+    comments: ':id/comments'
   },
 
   actions: {
     comment: function (elt, evt, data) {
-      var description = this.$el.find("textarea").val();
+      var description = this.$el.find('textarea').val();
       if (description && description.length > 0) {
         var comment = this.data.comments.create({
           description: description
