@@ -9,10 +9,11 @@
  *
  * ## Parameters
  *
- * - `provider`: The identity provider to log with before playing. By default it
- *   will list all your identity providers.
- * - `delay`: Time in milliseconds to wait before displaying the game's results.
- *   By default the results are displayed imediatly after that the server tell
+ * - `id`: Required, the InstantWin achievement id.
+ * - `provider`: Optional, the identity provider to log with before playing. By
+ *   default it will list all your identity providers.
+ * - `delay`: Optional, time in milliseconds to wait before displaying the game's
+ *   results. By default the results are displayed imediatly after that the server tell
  *   us if the user has win or lost.
  *
  * ## Templates
