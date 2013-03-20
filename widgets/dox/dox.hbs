@@ -1,6 +1,7 @@
 {{#dox}}
   <div class='dox'>
     {{#widget}}
+      {{#unless ignore}}
       <div class="block">
         {{#name}}
           <h3>{{string}}</h3>
@@ -24,6 +25,7 @@
           </table>
         {{/if}}
       </div>
+      {{/unless}}
     {{/widget}}
     {{#key_value templates}}
       <div class="template">
