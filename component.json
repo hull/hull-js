@@ -13,6 +13,7 @@
     "base64": "0.1.1",
     "jquery-file-upload": "7.2.1",
     "moment": "1.7.2",
-    "underscore.string": "2.3.1"
+    "underscore.string": "2.3.1",
+    "jquery.cookie": "latest"
   }
 }

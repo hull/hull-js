@@ -27,9 +27,9 @@ define(['aura/aura'], function (aura) {
     } else {
       cb = successCb;
     }
-    delay(cb, conf);
+    delay(cb, { response: conf });
   };
-  
+
   define('easyXDM', function () { return easyXDMMock; });
 
   describe("API specs", function () {
@@ -47,7 +47,7 @@ define(['aura/aura'], function (aura) {
     app
       .use(extension)
       .use('lib/client/api');
-    
+
     var initStatus = app.start();
     before(function (done) {
       initStatus.then(function () {

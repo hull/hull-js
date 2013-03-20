@@ -4,14 +4,23 @@ define ['jquery', 'underscore'], ($, _)->
 
     config = app.config
 
-    identify = (me)->
+    identified = false
+
+    identify = (me) ->
       return unless me
+
       analytics = require('analytics')
+      signInCount = me.stats?.sign_in_count || 0
+
+      if identified && signInCount == 1
+        analytics.alias(me.id)
+        identified = true
+
       ident = _.pick(me, 'name', 'email', 'id', 'picture')
       ident.created = me.created_at
       ident.distinct_id = me.id
-      analytics.identify(me.id, ident)
 
+      analytics.identify(me.id, ident)
 
     handler = (req, route, callback, errback)=>
       path = req.path.replace(/^\/?hull\//, '')
@@ -30,9 +39,13 @@ define ['jquery', 'underscore'], ($, _)->
         headers:
           'Hull-App-Id': config.appId
 
-      request.done (res)->
-        identify(_.clone(res)) if path == 'me'
-        callback(res)
+      _headers = ['Hull-User-Id', 'Hull-User-Sig']
+
+      request.done (response)->
+        identify(_.clone(response)) if path == 'me'
+        headers = {}
+        _.map _headers, (h)-> headers[h] = request.getResponseHeader(h)
+        callback({ response: response, headers: headers })
 
       request.fail(errback)
 
@@ -65,8 +78,10 @@ define ['jquery', 'underscore'], ($, _)->
       analytics.initialize(analyticsSettings)
 
       if app.config.data.me?.id?
+        identified = true
         identify(app.config.data.me)
 
       analytics.track("init", { appId: config.appId })
-      app.core.services.add([ { path: 'hull/*path', handler: handler } ])
-      app.core.services.add([ { path: 'track/*path',    handler: trackHandler } ])
+      app.core.services.add([ { path: 'hull/*path',  handler: handler } ])
+      app.core.services.add([ { path: 'track/*path', handler: trackHandler } ])
+
