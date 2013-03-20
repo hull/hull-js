@@ -14,26 +14,38 @@
  * - `delay`: Time in milliseconds to wait before displaying the game's results.
  *   By default the results are displayed imediatly after that the server tell
  *   us if the user has win or lost.
+ *
+ * ## Templates
+
+ * - `intro`: Show the button to play to the game.
+ * - `buttons`: The play buttons partial.
+ * - `working`: Show a loading message.
+ * - `won`: Say to the user that he has won
+ * - `lost`: Say to the user that he has lost.
+ * - `played`: Say to the user that he has already played.
+ * - `unstarted`: Say to the user that the game hasn`t started yet.
+ * - `ended`: Say to the user that the game has ended.
+ *
+ * ## Datasources
+ *
+ * - `achievement`: The InstantWin achievement.
+ * - `badge`: The user's badge for the InstantWin.
+ *
+ * ## Action
+ *
+ * - `play`: Ensure that the user is logged and play.
  */
 define({
   type: 'Hull',
 
   templates: [
-    /* Show the button to play to the game. */
     'intro',
-    /* The play buttons partial. */
     'buttons',
-    /* Show a loading message. */
     'working',
-    /* Say to the user that he has won */
     'won',
-    /* Say to the user that he has lost. */
     'lost',
-    /* Say to the user that he has already played. */
     'played',
-    /* Say to the user that the game hasn't started yet. */
     'unstarted',
-    /* Say to the user that the game has ended. */
     'ended'
   ],
 
@@ -47,16 +59,13 @@ define({
   refreshEvents: ['model.hull.me.change'],
 
   datasources: {
-    /* The InstantWin achievement */
     achievement: ':id',
-    /* The user's badge for the InstantWin */
     badge: function() {
       return this.loggedIn() ? this.api('hull/me/badges/' + this.options.id) : null;
     }
   },
 
   actions: {
-    /* Ensure that the user is logged and call the `play` method. */
     play: function(source, event, data) {
       var userLoggedIn = !!this.loggedIn();
       if (userLoggedIn) {
