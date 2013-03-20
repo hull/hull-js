@@ -44,6 +44,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
       @ref          = options.ref
       @api          = @sandbox.data.api
       @datasources  = _.extend {}, default_datasources, @datasources, options.datasources
+      @refresh     ?= _.throttle(@render, 200)
 
       try
         @events = if _.isFunction(@events) then @events() else @events
@@ -145,7 +146,6 @@ define ['backbone', 'underscore'], (Backbone, _)->
     # afterRender
     # Start nested widgets...
     render: (tpl, data)=>
-      @refresh ?= _.throttle(@render, 200)
       ctx = @buildContext.call(@)
       ctx.fail (err)-> console.error("Error building context: ", err.message, err)
       ctx.then (ctx)=>
