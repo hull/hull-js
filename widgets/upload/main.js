@@ -1,44 +1,28 @@
 /**
  * # Upload
  *
- * Thes widgets allows the user of your applications to attach documents and
- * files to the application.
+ * Thes widgets allows the user of your applications to attach documents and files to the application.
  *
  * ## Dependencies
  *
- * - `jquery.fileupload`: This plugin uses [jQuery File upload plugin](https://github.com/blueimp/jQuery-File-Upload)
- *   to handle the file upload gracefully. Please note that the plugin is
- *   packaged within the widget so you don't have to struggle against the
- *   dependencies.
- * - ` storage`: This plugin requires that you have attahed an S3 storage to
- *   your Hull application in the admin.
+ * - `jquery.fileupload`: This plugin uses [jQuery File upload plugin](https://github.com/blueimp/jQuery-File-Upload) to handle the file upload gracefully. Please note that the plugin is packaged within the widget so you don't have to struggle against the dependencies.
+ * - ` storage`: This plugin requires that you have attahed an S3 storage to your Hull application in the admin.
  *
  * ## Templates
  *
- * - `upload`: The main template. Because the jQuery plugin has some
- *   requirements, the template makes sure everything is set up as needed.
- * - `upload_file_multiple`: Partial used to upload multiple files at once.
- *   Override this partial to ustomize the file upload to your needs.
- * - `upload_file_single`: Partial used to upload a single file. Override this
- *   partial to ustomize the file upload to your needs.
+ * - `upload`: The main template. Because the jQuery plugin has some requirements, the template makes sure everything is set up as needed.
+ * - `upload_file_multiple`: Partial used to upload multiple files at once. Override this partial to ustomize the file upload to your needs.
+ * - `upload_file_single`: Partial used to upload a single file. Override this partial to ustomize the file upload to your needs.
  *
- * ## Parameters
+ * ## Options
  *
- * - `storage`: Specifies the storage engine to be used. If a single engine is
- *   known to the app, it will be automatically used. If there are many storage
- *   engines.
- *   If there are many engines available, it must correspond to a value in
- *   `sandbox.config.services.types.storage`.
+ * - `storage`: Specifies the storage engine to be used. If a single engine is known to the app, it will be automatically used. If there are many engines available, it must correspond to a value in `sandbox.config.services.types.storage`.
  *
  * ## Events
  *
  * - `hull.upload.send`: Triggered when an upload has started.
- * - `hull.upload.progress`: Triggered when an upload is in progress. The total
- *   amount of data as well as the current amount of data transfered are
- *   available as a listener parameter.
- * - `hull.upload.done`: Triggered when an upload has finished. References to
- *   the uploadded files are available in an Array as the first parameter to the
- *   listeners.
+ * - `hull.upload.progress`: Triggered when an upload is in progress. The total amount of data as well as the current amount of data transfered are available as a listener parameter.
+ * - `hull.upload.done`: Triggered when an upload has finished. References to the uploadded files are available in an Array as the first parameter to the listeners.
  */
 define(['jquery.fileupload'], {
   type: 'Hull',

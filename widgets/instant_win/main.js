@@ -1,20 +1,15 @@
 /**
  * # Instant Win
  *
- * An instant-win is a game where the player finds out immediately if he or she
- * is a winner of one of the prizes the administrators put at stake.
+ * An instant-win is a game where the player finds out immediately if he or she is a winner of one of the prizes the administrators put at stake.
  *
- * A player can play once a day provided he or she loses at each attempt. A
- * player that wins the prize will not be allowed to play the game anymore.
+ * A player can play once a day provided he or she loses at each attempt. A player that wins the prize will not be allowed to play the game anymore.
  *
- * ## Parameters
+ * ## Options
  *
  * - `id`: Required, the InstantWin achievement id.
- * - `provider`: Optional, the identity provider to log with before playing. By
- *   default it will list all your identity providers.
- * - `delay`: Optional, time in milliseconds to wait before displaying the game's
- *   results. By default the results are displayed imediatly after that the server tell
- *   us if the user has win or lost.
+ * - `provider`: Optional, the identity provider to log with before playing. By default it will list all your identity providers.
+ * - `delay`: Optional, time in milliseconds to wait before displaying the game's results. By default the results are displayed imediatly after that the server tell us if the user has win or lost.
  *
  * ## Templates
 

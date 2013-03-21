@@ -3,7 +3,7 @@
  *
  * Allow to list and add comments on an object of the current application.
  *
- * ## Parameter:
+ * ## Option:
  *
  * - `id`: The object you want to manipulate comments upon.
  *

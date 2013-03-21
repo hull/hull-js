@@ -13,7 +13,7 @@
  * The user will then be able to unlock the achievement using a unique token, only valid for him and for a limited time.
  * Check out the Kitchensink for a working example.
  *
- * ### Parameters
+ * ### Options
  *
  * * ```id```: The achievement to unlock
  * * ```secret```: The secret code to the achievement. Optional

@@ -7,7 +7,7 @@
  *
  * Then use this quiz's ID as a parameter for your widget.
  *
- * ## Parameters
+ * ## Options
  *
  * - `id`: The id of the quiz you want to display
  *
