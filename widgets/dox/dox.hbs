@@ -38,14 +38,14 @@
       {{/unless}}
     {{/widget}}
 
-    {{#key_value templates}}
+    {{#each templates}}
       <div class="template">
         <dl>
-          <dt>Template:</dt>
-          <dd><code>{{inspect}}/{{key}}</code></dd>
+          <dt>Template path:</dt>
+          <dd><code>{{path}}</code></dd>
         </dl>
-        <pre class="language-markup"><code>{{value}}</code></pre>
+        <pre class="language-markup"><code>{{content}}</code></pre>
       </div>
-    {{/key_value}}
+    {{/each}}
   </div>
 {{/dox}}
