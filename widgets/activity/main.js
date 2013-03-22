@@ -114,9 +114,6 @@ define({
   beforeRender: function(data) {
     data.isPaged = (this.options.navigation === 'paged');
     data.query = this.query;
-
-    console.log("DATA", data);
-
     return data;
   }
 });
