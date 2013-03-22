@@ -35,7 +35,8 @@ define({
 
   datasources: {
     activities: function() {
-      return this.api('hull/app/activity', this.query);
+      var id = this.id || 'app';
+      return this.api('hull/' + id + '/activity', this.query);
     }
   },
 
@@ -114,9 +115,6 @@ define({
   beforeRender: function(data) {
     data.isPaged = (this.options.navigation === 'paged');
     data.query = this.query;
-
-    console.log("DATA", data);
-
     return data;
   }
 });
