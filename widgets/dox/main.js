@@ -21,7 +21,7 @@ define(['./prism'], function(){
         return {
           name: name,
           content: content,
-          path: [this.options.inspect, '/', name, '.hbs'].join('')
+          path: [this.options.inspect, '/', name].join('')
         };
       }, this);
 
