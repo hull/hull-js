@@ -7,6 +7,10 @@
  *
  * Then use this quiz's ID as a parameter for your widget.
  *
+ * ## Example
+ *
+ *     <div data-hull-widget="quiz@hull"  data-hull-id="QUIZ_ID"></div>
+ *
  * ## Options
  *
  * - `id`: The id of the quiz you want to display

@@ -3,9 +3,13 @@
  *
  * Allow to list and add comments on an object of the current application.
  *
+ * ## Example
+ *
+ *     <div data-hull-widget="comments@hull" data-hull-id="OBJECT_ID"></div>
+ *
  * ## Option:
  *
- * - `id`: The object you want to manipulate comments upon.
+ * - `id`: Required, The object you want to manipulate comments upon.
  *
  * ## Template:
  *

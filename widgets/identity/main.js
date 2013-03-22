@@ -3,6 +3,10 @@
  *
  * Allow users to log in with auth services that you have hooked on your app.
  *
+ * ## Example
+ *
+ *     <div data-hull-widget="identity@hull"></div>
+ *
  * ## Template
  *
  * - `identity`: Show loggin buttons if the user isn't logged, display his name

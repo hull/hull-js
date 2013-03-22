@@ -35,6 +35,7 @@ define(['./prism'], function(){
     },
 
     afterRender: function(){
+      this.$('pre').not('[class*="language"]').addClass('language-markup');
       Prism.highlightAll();
     },
 

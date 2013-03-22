@@ -5,6 +5,12 @@
  *
  * A player can play once a day provided he or she loses at each attempt. A player that wins the prize will not be allowed to play the game anymore.
  *
+ * To create am instant, use the `instant_win@hull` which will let you create an instant win and add prizes to it.
+ *
+ * ## Example
+ *
+ *     <div data-hull-widget="instant_win@hull"  data-hull-id="INSTANT_WIN_ID"></div>
+ *
  * ## Options
  *
  * - `id`: Required, the InstantWin achievement id.
