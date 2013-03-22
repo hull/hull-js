@@ -1,20 +1,5 @@
-<div class="hull-pager">
-  <hr class="hull-rule" />
-    <div class="hull-pager__content">
-      <button data-hull-action="previousPage" class="hull-btn">&larr; Previous</button>
-      <button data-hull-action="nextPage" class="hull-btn">Next &rarr;</button>
-    </div>
-  <hr class="hull-rule" />
-  <div class="hull-pager__query">
-      <span>{{query.page}}</span>
-      <span>VERB ?: {{query.where.verb}}</span>
-      <span>ObjectType ?: {{query.where.obj_type}}</span>
-      <pre>{{json query}}</pre>
-  </div>
-</div>
-
 <ul class="hull-activity">
-  {{#activities}}
+  {{#each activities}}
     <li class="hull-media hull-activity__item hull-activity__item--{{verb}}">
       {{#if actor.picture}}
         <div class="hull-media__img">
@@ -22,7 +7,6 @@
         </div>
       {{/if}}
       <div class="hull-media__body">
-
         <h3 class="hull-activity__summary">
           <span class="hull-activity__summary__actor">{{actor.name}}</span>
           <span class="hull-activity__summary__verb">{{verb}}</span>
@@ -31,7 +15,6 @@
         </h3>
 
         <div class="hull-activity__content hull-activity__content--{{object.type}}">
-
           <div class="hull-media">
             <div class="hull-media__img">
                 {{#target}}
@@ -47,40 +30,35 @@
                     <h4 class="hull-activity__content__object__name">{{name}}</h4>
                   </div>
                 {{/object}}
-
                 {{#if content}}
                   <div class="hull-activity__content__content">
                     {{content}}
                   </div>
                 {{/if}}
-
             </div>
           </div>
-
         </div>
-
         <div class="hull-activity__meta">
           {{#if target.picture}}
             <img class="hull-activity__meta__target--icon" src="{{target.picture id "thumb"}}">
           {{/if}}
           <span class="hull-activity__meta__date">{{fromNow published}}</span>
         </div>
-
       </div>
-
     </li>
-  {{/activities}}
-  {{#if activities}}
-    <li class="hull-media hull-activity__item">
-      <button data-hull-action="fetchMore" class="hull-btn hull-btn--lrg hull-btn--full">
-        Fetch more...
-      </button>
-    </li>
-  {{/if}}
+  {{/each}}
+  {{#unless activities}}
+    <li class="hull-media hull-activity__item hull-activity__item--empty">No activity</li>
+  {{/unless}}
 </ul>
 
-{{^activities}}
-<div class="hull-empty">
-  No activity
+<div class="hull-navigation">
+  {{#if isPaged}}
+    <div class="hull-pager__content">
+      <button data-hull-action="previousPage" class="hull-btn">&larr; Previous</button>
+      <button data-hull-action="nextPage" class="hull-btn">Next &rarr;</button>
+    </div>
+  {{else}}
+    <button data-hull-action="fetchMore" class="hull-btn">Fetch more...</button>
+  {{/if}}
 </div>
-{{/activities}}

@@ -1,15 +1,38 @@
 /**
- * Widget Activity
+ * # Activity
  *
- * Not ready yet
+ * Activity streams from the actions on your app.
+ *
+ * ## Example
+ *
+ *     <div data-hull-widget="activity@hull"></div>
+ *
+ * ## Options
+ *
+ * - `navigation`: Optional, Choose between `infinite` or `paged` navigation. `infinite` by default.
+ * - `perPage`: Optional, number of item to display per page. 10 by default.
+ * - `startPage`: Optional, the first page that will be displayed. By default the first page will be retrieve. If you use `infinite` navigation and set `startPage` to another page, your user will not be able to see all items.
+ *
+ * ## Template
+ *
+ * - `activity`: Display items or a message that say that there is no activity.
+ *
+ * ## Datasource
+ *
+ * - `activities`: The actiity stream that will be displayed.
  */
 define({
-  type: "Hull",
-  templates: ["activity"],
+  type: 'Hull',
+
+  templates: [
+    'activity'
+  ],
+
   options: {
-    per_page: 5,
+    perPage: 10,
     page: 1
   },
+
   datasources: {
     activities: function() {
       return this.api('hull/app/activity', this.query);
@@ -19,22 +42,29 @@ define({
   actions: {
     nextPage: function() {
       delete this.query.skip;
-      this.query.limit = this.options.limit || this.options.per_page;
+
+      this.query.limit = this.options.limit || this.options.perPage;
       this.query.page = this.query.page || 1;
       this.query.page += 1;
       this.render();
     },
+
     previousPage: function() {
       delete this.query.skip;
-      this.query.limit = this.options.limit || this.options.per_page;
+
+      this.query.limit = this.options.limit || this.options.perPage;
       this.query.page = this.query.page || 1;
+
       if (this.query.page > 1) {
         this.query.page -= 1;
         this.render();
       }
     },
-    fetchMore: function() {
-      var originalLimit = this.options.limit || this.options.per_page;
+
+    fetchMore: function($el) {
+      $el.text('loading items...');
+
+      var originalLimit = this.options.limit || this.options.perPage;
       this.query.limit += originalLimit;
       this.render();
     }
@@ -43,13 +73,13 @@ define({
   initialize: function() {
     var query = {};
 
-    if (this.options.page) {
-      query.page = this.options.page;
+    if (this.options.startPage) {
+      query.page = this.options.startPage;
     } else {
       query.skip = this.options.skip || 0;
     }
 
-    query.limit = this.options.limit || this.options.per_page;
+    query.limit = this.options.limit || this.options.perPage;
     query.where = this.options.where || {};
 
     if (this.options.verb) {
@@ -82,10 +112,11 @@ define({
   },
 
   beforeRender: function(data) {
+    data.isPaged = (this.options.navigation === 'paged');
     data.query = this.query;
+
+    console.log("DATA", data);
+
     return data;
   }
-
-
-
 });
