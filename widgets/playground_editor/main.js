@@ -20,7 +20,7 @@ define({
 
     this.editor = new CodeMirror(this.$('.hull-playground-editor')[0], {
       mode: 'htmlmixed',
-      value: this.options.code || '',
+      value: code,
       tabMode: 'indent',
       theme: 'solarized dark',
       lineNumbers: false
