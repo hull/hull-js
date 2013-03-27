@@ -20,7 +20,7 @@
     "grunt-contrib-uglify": "0.1.1",
     "grunt-contrib-watch": "0.2.0",
     "grunt-hull-dox": "git://github.com/hull/grunt-hull-dox.git",
-    "grunt-hull-widgets": "0.4.2",
+    "grunt-hull-widgets": "git://github.com/hull/grunt-hull-widgets.git",
     "grunt-mocha": "0.2.1"
   },
   "scripts": {

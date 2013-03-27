@@ -102,7 +102,7 @@ module.exports = function (grunt) {
             eventemitter:   'components/eventemitter2/lib/eventemitter2',
             backbone:       'components/backbone/backbone',
             easyXDM:        'components/easyXDM/easyXDM',
-            handlebars:     'components/handlebars/handlebars',
+            handlebars:     'components/require-handlebars-plugin/Handlebars',
             requireLib:     'components/requirejs/require',
             moment:         'components/moment/moment',
             cookie:         'components/jquery.cookie/jquery.cookie',
@@ -114,8 +114,7 @@ module.exports = function (grunt) {
           shim: {
             backbone:   { exports: 'Backbone', deps: ['underscore', 'jquery'] },
             underscore: { exports: '_' },
-            easyXDM:    { exports: 'easyXDM' },
-            handlebars: { exports: 'Handlebars' }
+            easyXDM:    { exports: 'easyXDM' }
           },
           include: [
             'requireLib',
@@ -171,6 +170,7 @@ module.exports = function (grunt) {
             'aura/ext/debug',
             'aura/ext/mediator',
             'aura/ext/widgets',
+            'lib/hull',
             'lib/hull-remote',
             'lib/remote/services',
             'lib/remote/services/hull',
