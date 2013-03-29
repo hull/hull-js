@@ -1,0 +1,22 @@
+<div class="hull-friends">
+  {{#if friends}}
+    <ul class="hull-list hull-list--friends">
+      {{#each friends}}
+        <li class="hull-list__item">
+          <div class="hull-media">
+            <div class="hull-media__img">
+              <img src="{{avatar}}" alt="{{name}}" width="50" height="50">
+            </div>
+            <div class="hull-media__body">
+              <p>{{name}}</p>
+            </div>
+          </div>
+        </li>
+      {{/each}}
+    </ul>
+  {{else}}
+    <div class="hull-empty">
+      <p>Oops… No friends for the moment</p>
+    </div>
+  {{/if}}
+</div>
