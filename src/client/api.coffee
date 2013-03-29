@@ -84,10 +84,14 @@ define ['lib/version'], (version) ->
         console.error("Api not initialized yet") unless rpc
         promise = core.data.deferred()
 
-        onSuccess = (res, headers)->
-          setCookies(headers || {})
-          callback(res)
-          promise.resolve(res)
+        onSuccess = (res)->
+          setCurrentUser(res.headers)
+          if _.has(res, 'headers') && _.has(res, 'response')
+            ret = res.response
+          else
+            ret = res
+          callback(ret)
+          promise.resolve(ret)
 
         onError = (err)->
           errback(err)
