@@ -26,6 +26,10 @@ define(['underscore'], {
     'friends'
   ],
 
+  initialize: function() {
+    this.limit = this.options.limit || 10;
+  },
+
   datasources: {
     friends: function() {
       var deferred = this.sandbox.data.deferred();
@@ -42,7 +46,7 @@ define(['underscore'], {
 
         var provider = this.options.provider || 'hull';
         if (provider === 'hull' || user.identities[provider]) {
-          return this.api(this.paths[provider](user)).then(_.bind(function(res) {
+          return this.request(provider, user).then(_.bind(function(res) {
             deferred.resolve(this.serializers[provider](res));
           }, this));
         } else {
@@ -54,20 +58,25 @@ define(['underscore'], {
     }
   },
 
-  paths: {
-    hull: function(user) {
-      return 'hull/' + user.id + '/friends';
-    },
+  request: function(provider, user) {
+    var path, params;
 
-    facebook: function(user) {
-      var identity = user.identities.facebook;
-      return 'facebook/' + identity.uid + '/friends';
-    },
-
-    github: function(user) {
-      var identity = user.identities.github;
-      return 'github/users/' + identity.login + '/following';
+    switch (provider) {
+      case 'hull':
+        path = 'hull/' + user.id + '/friends';
+        params = { per_page: this.limit };
+        break;
+      case 'facebook':
+        path = 'facebook/' + user.identities.facebook.uid + '/friends';
+        params = { limit: this.limit };
+        break;
+      case 'github':
+        path = 'github/users/' + user.identities.github.login + '/following';
+        params = { per_page: this.limit };
+        break;
     }
+
+    return this.api(path, params);
   },
 
   serializers: {
