@@ -32,5 +32,4 @@ define ->
       return
 
     initialize: (app)->
-      console.warn("Init twitter service handler")
       app.core.services.add([ { path: "/twitter/*path",  handler: handler } ])
