@@ -176,7 +176,7 @@ define({
    * @return {Boolean}
    */
   userHasWon: function() {
-    if (!this.data.badge) { return false; }
+    if (!this.data.badge || !this.data.badge.data) { return false; }
     return this.data.badge.data.winner;
   },
 
