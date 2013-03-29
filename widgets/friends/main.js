@@ -47,9 +47,12 @@ define(['underscore'], {
         }, {});
 
         var provider = this.options.provider || 'hull';
-        if (provider === 'hull' || user.identities[provider]) {
+        if (provider === 'twitter' && !this.loggedIn().twitter) {
+          return deferred.resolve([]);
+        } else if (provider === 'hull' || user.identities[provider]) {
           return this.request(provider, user).then(_.bind(function(res) {
-            deferred.resolve(this.serializers[provider](res));
+            var friends = this.serializers[provider](res).slice(0, this.limit);
+            deferred.resolve(friends);
           }, this));
         } else {
           return deferred.resolve([]);
@@ -71,6 +74,10 @@ define(['underscore'], {
       case 'facebook':
         path = 'facebook/' + user.identities.facebook.uid + '/friends';
         params = { limit: this.limit };
+        break;
+      case 'twitter':
+        path = 'twitter/friends/list';
+        params = { user_id: user.identities.twitter.uid };
         break;
       case 'github':
         path = 'github/users/' + user.identities.github.login + '/following';
@@ -98,6 +105,16 @@ define(['underscore'], {
           provider: 'facebook',
           name: f.name,
           avatar: 'http://graph.facebook.com/' + f.id + '/picture'
+        };
+      });
+    },
+
+    twitter: function(res) {
+      return _.map(res.users, function(f) {
+        return {
+          provider: 'twitter',
+          name: f.name,
+          avatar: f.profile_image_url
         };
       });
     },
