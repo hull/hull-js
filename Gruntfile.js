@@ -98,7 +98,7 @@ module.exports = function (grunt) {
           // optimize: 'none',
           preserveLicenseComments: true,
           paths: {
-            aura:           'components/aura/dist',
+            aura:           'components/aura/lib',
             underscore:     'components/underscore/underscore',
             eventemitter:   'components/eventemitter2/lib/eventemitter2',
             backbone:       'components/backbone/backbone',
@@ -114,7 +114,6 @@ module.exports = function (grunt) {
           },
           shim: {
             backbone:   { exports: 'Backbone', deps: ['underscore', 'jquery'] },
-            string:     { exports: '_', deps: ['underscore'] },
             underscore: { exports: '_' },
             easyXDM:    { exports: 'easyXDM' },
             handlebars: { exports: 'Handlebars' }
@@ -130,6 +129,9 @@ module.exports = function (grunt) {
             'handlebars',
             'easyXDM',
             'text',
+            'aura/ext/debug',
+            'aura/ext/mediator',
+            'aura/ext/widgets',
             'lib/hull'
           ].concat(auraExtensions)
            .concat(clientLibs),
@@ -142,7 +144,7 @@ module.exports = function (grunt) {
           // optimize: 'none',
           preserveLicenseComments: true,
           paths: {
-            aura:               'components/aura/dist',
+            aura:               'components/aura/lib',
             underscore:         'components/underscore/underscore',
             eventemitter:       'components/eventemitter2/lib/eventemitter2',
             easyXDM:            'components/easyXDM/easyXDM',
@@ -167,11 +169,15 @@ module.exports = function (grunt) {
             'text',
             'base64',
             'analytics',
+            'aura/ext/debug',
+            'aura/ext/mediator',
+            'aura/ext/widgets',
             'lib/hull-remote',
             'lib/remote/services',
             'lib/remote/services/hull',
             'lib/remote/services/facebook',
-            'lib/remote/services/github'
+            'lib/remote/services/github',
+            'lib/remote/services/twitter'
           ],
           out: 'dist/' + pkg.version + '/hull-remote.js'
         }
