@@ -16,6 +16,9 @@ define ['aura/aura', 'lib/version'], (Aura, version)->
     if config.services.settings.github_app
       hull.app.use('lib/remote/services/github')
 
+    if config.services.settings.twitter_app
+      hull.app.use('lib/remote/services/twitter')
+
     hull.app.start()
 
     return hull
