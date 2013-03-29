@@ -19,14 +19,7 @@ define ->
         headers:
           'Hull-App-Id': app.config.appId
 
-      _headers = ['Hull-User-Id', 'Hull-User-Sig']
-
-      request.done (response)->
-        identify(_.clone(response)) if path == 'me'
-        headers = {}
-        _.map _headers, (h)-> headers[h] = request.getResponseHeader(h)
-        callback({ response: response, headers: headers })
-
+      request.done(callback)
       request.fail(errback)
 
       return
