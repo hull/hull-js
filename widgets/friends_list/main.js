@@ -1,23 +1,25 @@
 /**
- * # Friends List
+ * # Friends
  *
- * Displays the list of your friends in the application.
+ * Displays friends for a given user and a given service.
  *
  * ## Example
  *
  *     <div data-hull-widget="friends_list@hull"></div>
  *
- * ## Option
+ * ## Options
  *
  * - `id`: Optional, the id of the user whose friends we want to list. By default, it will list the friends of the current user.
+ * - `provider`: Optional, service from which we will fetch friends. Can be `hull`, `facebook` or `github`, by default it will list friends fron `hull`.
+ * - `limit`: Optional, the number of friends to display. Be default it will display 10 friends.
  *
  * ## Template
  *
- * - `friends_list`: Displays the list of the user's friends.
+ * - `friends`: Displays the list of the user's friends.
  *
  * ## Datasource
  *
- * - `friends`: Specify how the list should be displayed
+ * - `friends`: The user's friends.
  */
 define(['underscore'], {
   type: 'Hull',
