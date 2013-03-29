@@ -58,14 +58,20 @@ define ['lib/version'], (version) ->
 
         ret
 
-      setCookies = (headers)->
-        return unless app.config.appId && headers
+      app.core.setCurrentUser = setCurrentUser = (headers={})->
+        return unless app.config.appId
         cookieName = "hull_#{app.config.appId}"
+        currentUserId = app.core.currentUser?.id
         if headers && headers['Hull-User-Id']
           val = btoa(JSON.stringify(headers))
           $.cookie(cookieName, val, path: "/")
+          if currentUserId != headers['Hull-User-Id']
+            app.core.currentUser = { id: headers['Hull-User-Id'], sig: headers['Hull-User-Sig'] }
+            app.core.mediator.emit('hull.currentUser', app.core.currentUser)
         else
           $.removeCookie(cookieName, path: "/")
+          app.core.currentUser = false
+          app.core.mediator.emit('hull.currentUser', app.core.currentUser)
 
       ###
       # Sends the message described by @params to easyXDM
@@ -294,7 +300,7 @@ define ['lib/version'], (version) ->
       onRemoteReady = (remoteConfig)->
         window.clearTimeout(timeout)
         data = remoteConfig.data
-        setCookies(data.headers)
+        setCurrentUser(data.headers)
         app.config.assetsUrl            = remoteConfig.assetsUrl
         app.config.services             = remoteConfig.services
         app.config.widgets.sources.hull = remoteConfig.baseUrl + '/widgets'
