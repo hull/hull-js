@@ -79,8 +79,12 @@ define ['lib/version'], (version) ->
 
         onSuccess = (res)->
           setCookies(res.headers)
-          callback(res?.response || res)
-          promise.resolve(res?.response || res)
+          if _.has(res, 'headers') && _.has(res, 'response')
+            ret = res.response
+          else
+            ret = res
+          callback(ret)
+          promise.resolve(ret)
 
         onError = (err)->
           errback(err)
