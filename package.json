@@ -9,7 +9,8 @@
     "grunt": "0.4.0",
     "grunt-s3": "0.1.0",
     "grunt-git-describe": "git://github.com/hull/grunt-git-describe.git",
-    "grunt-lib-phantomjs": "0.1.0",
+    "phantomjs" : "1.8.1-1",
+    "grunt-lib-phantomjs": "0.2.0",
     "grunt-contrib-clean": "0.4.0",
     "grunt-contrib-coffee": "0.4.0",
     "grunt-contrib-concat": "0.1.2",
@@ -21,7 +22,7 @@
     "grunt-contrib-watch": "0.2.0",
     "grunt-hull-dox": "git://github.com/hull/grunt-hull-dox.git",
     "grunt-hull-widgets": "git://github.com/hull/grunt-hull-widgets.git",
-    "grunt-mocha": "0.2.1"
+    "grunt-mocha": "0.3.0"
   },
   "scripts": {
     "test": "grunt build"
