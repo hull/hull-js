@@ -10,7 +10,9 @@
  * ## Options
  *
  * - `id`: Optional, the id of the user whose friends we want to list. By default, it will list the friends of the current user.
- * - `provider`: Optional, service from which we will fetch friends. Can be `hull`, `current`, `instagram`, `twitter`, `facebook` or `github`, by default it will list friends from `hull`. If you specify `current`, will fetch friends from the provider which the user has used to login.
+ * - `provider`: Optional, service from which we will fetch friends. Can be `hull`, `current`, `instagram`, `twitter`, `facebook` or `github`, by default it will list friends from `hull`.  
+ *   `hull` will show the user's friends who also have interacted with the app.  
+ *   `current` will show all friends from the provider which the user has used to login.
  * - `limit`: Optional, the number of friends to display. Be default it will display 10 friends.
  *
  * ## Template
