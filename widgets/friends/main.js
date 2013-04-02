@@ -28,6 +28,8 @@ define(['underscore'], {
     'friends'
   ],
 
+  refreshEvents: ['model.hull.me.change'],
+
   initialize: function() {
     this.limit = this.options.limit || 10;
   },
