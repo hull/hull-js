@@ -291,8 +291,22 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
       ret = items.join sep
       ret += options.hash['lastSep'] + last if last
       ret
+    ###*
+    * THE DEBUG HELPER
+    *
+    *      usage: {{debug}} or {{debug someValue}}
+    *
+    * @param  {Anything}  optional value to debug
+    ###
+    HandlebarsHelpers.debug = (optionalValue)->
+        console.log("Current Context")
+        console.log("====================")
+        console.log(@)
 
-
+        if (optionalValue)
+          console.log("Value")
+          console.log("====================")
+          console.log(optionalValue)
 
 
     handlebars.registerHelper(k, v) for k,v of HandlebarsHelpers
