@@ -180,6 +180,7 @@ define({
     next: function() {
       this.currentQuestionIndex += 1;
       this.render();
+      return false;
     },
 
     previous: function(source, e, data) {
@@ -187,6 +188,7 @@ define({
         this.currentQuestionIndex -= 1;
         this.render('quiz_question');
       }
+      return false;
     },
 
     submit: function() {
@@ -212,6 +214,7 @@ define({
           console.warn("Bah alors ? mon badge ?", badge);
         }
       });
+      return false;
     },
 
     share: function (source, e, data) {
