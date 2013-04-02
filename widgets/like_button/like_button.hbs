@@ -1,13 +1,11 @@
-<div class="hull-like">
-  {{#if isLiked}}
-    <button data-hull-action="unlike" class="hull-btn hull-like--liked">
-      <span class="hull-like__icon">&hearts;</span>
-      Unlike
-    </button>
-  {{else}}
-    <button data-hull-action="like" class="hull-btn hull-like">
-      <span class="hull-like__icon">&hearts;</span>
-      Like
-    </button>
-  {{/if}}
-</div>
+{{#if isLiked}}
+  <button data-hull-action="unlike" class="btn hull-like--liked">
+    <i class="icon-heart"></i>
+    Unlike
+  </button>
+{{else}}
+  <button data-hull-action="like" class="btn hull-like">
+    <i class="icon-heart"></i>
+    Like
+  </button>
+{{/if}}

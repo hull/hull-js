@@ -1,17 +1,13 @@
 <div class="hull-quiz hull-quiz--intro">
-  <div class="hull-quiz__header">
-    <h1 class="hull-quiz__title">{{quiz.name}}</h1>
-    <p class="hull-quiz__description">{{quiz.description}}</p>
+  <div class="page-header">
+    <h1>{{quiz.name}}</h1>
+    <p class="lead">{{quiz.description}}</p>
   </div>
 
-  <div class="hull-pager">
-    <div class="hull-pager__content">
-      {{#if loggedIn}}
-        <button data-hull-action="start" class="hull-btn">Start</button>
-      {{else}}
-          <div data-hull-widget="identity@hull"></div>
-      {{/if}}
-    </div>
-  </div>
+  {{#if loggedIn}}
+    <button data-hull-action="start" class="btn btn-large btn-primary">Start</button>
+  {{else}}
+      <div data-hull-widget="identity@hull"></div>
+  {{/if}}
 
 </div>

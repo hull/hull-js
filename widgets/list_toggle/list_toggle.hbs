@@ -1,7 +1,5 @@
-<div class="hull-list_toggle">
-  {{#if isListed}}
-    <button class="hull-btn" data-hull-action="removeFromList">Remove {{obj.name}} from {{list.name}}</button>
-  {{else}}
-    <button class="hull-btn" data-hull-action="addToList">Add {{obj.name}} to {{list.name}}</button>
-  {{/if}}
-</div>
+{{#if isListed}}
+  <button class="btn" data-hull-action="removeFromList">Remove {{obj.name}} from {{list.name}}</button>
+{{else}}
+  <button class="btn" data-hull-action="addToList">Add {{obj.name}} to {{list.name}}</button>
+{{/if}}
