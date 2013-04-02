@@ -41,13 +41,14 @@ define({
   },
 
   actions: {
-    nextPage: function() {
+    nextPage: function(e) {
       delete this.query.skip;
 
       this.query.limit = this.options.limit || this.options.perPage;
       this.query.page = this.query.page || 1;
       this.query.page += 1;
       this.render();
+      return false;
     },
 
     previousPage: function() {
@@ -60,6 +61,7 @@ define({
         this.query.page -= 1;
         this.render();
       }
+      return false;
     },
 
     fetchMore: function($el) {
