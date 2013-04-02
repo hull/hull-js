@@ -40,6 +40,9 @@ define(['underscore'], {
     friends: function() {
       var deferred = this.sandbox.data.deferred();
 
+      var id = this.options.id || 'me'
+      var provider = this.options.provider || 'hull';
+
       this.api('hull/' + (this.options.id || 'me')).then(_.bind(function(user) {
         if (user.identities === null || user.identities === undefined) {
           return deferred.resolve([]);
@@ -56,44 +59,44 @@ define(['underscore'], {
           provider = _.keys(user.identities)[0]
         }
 
-        if (provider === 'twitter' && !this.loggedIn().twitter) {
-          return deferred.resolve([]);
-        } else if (provider === 'hull' || user.identities[provider]) {
-          return this.request(provider, user).then(_.bind(function(res) {
+        if (provider === 'hull' || user.identities[provider]){
+          return this.request(provider, user, id).then(_.bind(function(res) {
             var friends = this.serializers[provider](res).slice(0, this.limit);
             deferred.resolve(friends);
           }, this));
         } else {
           return deferred.resolve([]);
         }
+
+
       }, this));
 
       return deferred.promise();
     }
   },
 
-  request: function(provider, user) {
+  request: function(provider, user, id) {
     var path, params;
 
     switch (provider) {
       case 'hull':
-        path = 'hull/' + user.id + '/friends';
+        path = 'hull/' + ((id==='me')?'me':user.id) + '/friends';
         params = { per_page: this.limit };
         break;
       case 'facebook':
-        path = 'facebook/' + user.identities.facebook.uid + '/friends';
+        path = 'facebook/' + ((id==='me')?user.identities.facebook.uid:id) + '/friends';
         params = { limit: this.limit };
         break;
       case 'twitter':
         path = 'twitter/friends/list';
-        params = { user_id: user.identities.twitter.uid };
+        params = { user_id: ((id==='me')?user.identities.twitter.uid:id) };
         break;
       case 'instagram':
-        path = 'instagram/users/self/follows';
+        path = 'instagram/users/'+((id==='me')?'self':id)+'/follows';
         params = { per_page: this.limit };
         break;
       case 'github':
-        path = 'github/users/' + user.identities.github.login + '/following';
+        path = 'github/users/' + ((id==='me')?user.identities.github.login:id) + '/following';
         params = { per_page: this.limit };
         break;
     }
