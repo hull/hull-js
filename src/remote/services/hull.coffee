@@ -45,7 +45,7 @@ define ['jquery', 'underscore'], ($, _)->
         identify(_.clone(response)) if path == 'me'
         headers = {}
         _.map _headers, (h)-> headers[h] = request.getResponseHeader(h)
-        callback({ response: response, headers: headers })
+        callback response, headers
 
       request.fail(errback)
 

@@ -7,6 +7,7 @@ define ['lib/version'], (version) ->
       paths:
         easyXDM: 'components/easyXDM/easyXDM'
         backbone: 'components/backbone/backbone'
+        cookie: 'components/jquery.cookie/jquery.cookie'
       shim:
         easyXDM: { exports: 'easyXDM' }
         backbone: { exports: 'Backbone', deps: ['underscore', 'jquery'] }
@@ -77,14 +78,10 @@ define ['lib/version'], (version) ->
         console.error("Api not initialized yet") unless rpc
         promise = core.data.deferred()
 
-        onSuccess = (res)->
-          setCookies(res.headers)
-          if _.has(res, 'headers') && _.has(res, 'response')
-            ret = res.response
-          else
-            ret = res
-          callback(ret)
-          promise.resolve(ret)
+        onSuccess = (res, headers)->
+          setCookies(headers || {})
+          callback(res)
+          promise.resolve(res)
 
         onError = (err)->
           errback(err)
