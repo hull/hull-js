@@ -10,7 +10,7 @@
  * ## Options
  *
  * - `id`: Optional, the id of the user whose friends we want to list. By default, it will list the friends of the current user.
- * - `provider`: Optional, service from which we will fetch friends. Can be `hull`, `facebook` or `github`, by default it will list friends fron `hull`.
+ * - `provider`: Optional, service from which we will fetch friends. Can be `hull`, `current`, `instagram`, `twitter`, `facebook` or `github`, by default it will list friends from `hull`. If you specify `current`, will fetch friends from the provider which the user has used to login.
  * - `limit`: Optional, the number of friends to display. Be default it will display 10 friends.
  *
  * ## Template
@@ -49,6 +49,11 @@ define(['underscore'], {
         }, {});
 
         var provider = this.options.provider || 'hull';
+
+        if(provider=='current'){
+          provider = _.keys(user.identities)[0]
+        }
+
         if (provider === 'twitter' && !this.loggedIn().twitter) {
           return deferred.resolve([]);
         } else if (provider === 'hull' || user.identities[provider]) {
