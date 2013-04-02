@@ -86,6 +86,10 @@ define(['underscore'], {
         path = 'twitter/friends/list';
         params = { user_id: user.identities.twitter.uid };
         break;
+      case 'instagram':
+        path = 'instagram/users/self/follows';
+        params = { per_page: this.limit };
+        break;
       case 'github':
         path = 'github/users/' + user.identities.github.login + '/following';
         params = { per_page: this.limit };
@@ -111,7 +115,8 @@ define(['underscore'], {
         return {
           provider: 'facebook',
           name: f.name,
-          avatar: 'http://graph.facebook.com/' + f.id + '/picture'
+          avatar: 'http://graph.facebook.com/' + f.id + '/picture',
+          uid: f.id
         };
       });
     },
@@ -123,6 +128,17 @@ define(['underscore'], {
           name: f.name,
           avatar: f.profile_image_url
         };
+      });
+    },
+
+    instagram: function(res){
+      return _.map(res, function(f){
+        return {
+          provider: 'instagram',
+          name: f.full_name,
+          avatar: f.profile_picture,
+          uid: f.id
+        }
       });
     },
 
