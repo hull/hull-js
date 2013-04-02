@@ -177,7 +177,8 @@ module.exports = function (grunt) {
             'lib/remote/services/hull',
             'lib/remote/services/facebook',
             'lib/remote/services/github',
-            'lib/remote/services/twitter'
+            'lib/remote/services/twitter',
+            'lib/remote/services/instagram'
           ],
           out: 'dist/' + pkg.version + '/hull-remote.js'
         }
