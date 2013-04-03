@@ -30,35 +30,41 @@ define(['underscore'], {
     'pictures'
   ],
 
-  refreshEvents: ['model.hull.me.change'],
-
-  initialize: function() {
-    this.limit = this.options.limit || 10;
+  options: {
+    id:'me',
+    provider:'hull',
+    limit: 10
   },
+
+  refreshEvents: ['model.hull.me.change'],
 
   datasources: {
     pictures: function() {
       var deferred = this.sandbox.data.deferred();
 
-      var id = this.options.id || 'me'
-      var provider = this.options.provider || 'hull';
+      // If we're using an external provider, then the user will be us.
+      var user_id = (provider!=='hull')?'me':this.options.id
 
-      this.api('hull/' + id).then(_.bind(function(user) {
+      this.api('hull/' + user_id).then(_.bind(function(user) {
+
+        // render null if we don't have any identity on this user.
         if (user.identities === null || user.identities === undefined) {
           return deferred.resolve([]);
         }
 
+        // map the user identities by name
         user.identities = _.reduce(user.identities, function(m, i) {
           m[i.provider] = i;
           return m;
         }, {});
 
-        if(provider=='current'){
+        // If we specified "current" as the provider, then use the first identity
+        if(provider==='current'){
           provider = _.keys(user.identities)[0]
         }
 
         if (provider === 'hull' || user.identities[provider]){
-          return this.request(provider, user, id).then(_.bind(function(res) {
+          return this.request(provider, user, this.options).then(_.bind(function(res) {
             var pictures = this.serializers[provider](res).slice(0, this.limit);
             deferred.resolve(pictures);
           }, this));
@@ -72,21 +78,21 @@ define(['underscore'], {
     }
   },
 
-  request: function(provider, user, id) {
+  request: function(provider, user, options) {
     var path, params;
 
     switch (provider) {
       case 'hull':
         path = 'hull/' + ((id==='me')?'me':user.id) + '/images';
-        params = { per_page: this.limit };
+        params = { per_page: this.options.limit };
         break;
       case 'facebook':
         path = 'facebook/' + ((id==='me')?user.identities.facebook.uid:id) + '/photos';
-        params = { limit: this.limit };
+        params = { limit: this.options.limit };
         break;
       case 'instagram':
         path = 'instagram/users/'+((id==='me')?'self':id)+'/media/recent';
-        params = { per_page: this.limit };
+        params = { per_page: this.options.limit };
         break;
     }
 
