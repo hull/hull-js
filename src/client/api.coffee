@@ -85,13 +85,10 @@ define ['lib/version'], (version) ->
         promise = core.data.deferred()
 
         onSuccess = (res)->
-          setCurrentUser(res.headers)
-          if _.has(res, 'headers') && _.has(res, 'response')
-            ret = res.response
-          else
-            ret = res
-          callback(ret)
-          promise.resolve(ret)
+          if res.provider == 'hull' && res.headers
+            setCurrentUser(res.headers)
+          callback(res.response)
+          promise.resolve(res.response)
 
         onError = (err)->
           errback(err)

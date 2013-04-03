@@ -19,7 +19,7 @@ define ->
         headers:
           'Hull-App-Id': app.config.appId
 
-      request.done(callback)
+      request.done((response)-> callback({ response: response, provider: 'twitter' }))
       request.fail(errback)
 
       return

@@ -12,7 +12,7 @@ define ->
   resp = (req, route, callback, errback) ->
     (res) ->
       if (res && !res.error)
-        callback(res)
+        callback({ response: res, provider: 'facebook' })
       else
         if (res)
           errorMsg = "[FB Error] " + res.error.type + " : " + res.error.message
