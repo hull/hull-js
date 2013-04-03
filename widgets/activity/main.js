@@ -36,7 +36,12 @@ define({
   datasources: {
     activities: function() {
       var id = this.id || 'app';
-      return this.api('hull/' + id + '/activity', this.query);
+      if (this.options.friendsOnly) {
+        this.path = "hull/" + id + "/friends_activity";
+      } else {
+        this.path = "hull/" + id + "/activity";
+      }
+      return this.api(this.path, this.query);
     }
   },
 
@@ -112,11 +117,13 @@ define({
     }
 
     this.query = query;
+
   },
 
   beforeRender: function(data) {
     data.isPaged = (this.options.navigation === 'paged');
     data.query = this.query;
+    data.path = "Activities Path: " + this.path;
     return data;
   }
 });

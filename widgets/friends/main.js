@@ -4,7 +4,7 @@
  *
  * ## Example
  *
- *     <div data-hull-widget="friends_list@hull"></div>
+ *     <div data-hull-widget="friends@hull"></div>
  *
  * ## Options
  *

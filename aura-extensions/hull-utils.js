@@ -10,5 +10,22 @@ define({
       string: { deps: ['underscore'] },
       cookie: { deps: ['jquery'] }
     }
+  },
+  initialize: function(app) {
+    app.core.util.base64 = {
+      decode: function(input, urlsafe) {
+        if (urlsafe) {
+          input = input.replace(/\+/g, '-').replace(/\//g, '_')
+        }
+        return window.atob(input);
+      },
+      encode: function(input, urlsafe) {
+        var ret = window.btoa(input);
+        if (urlsafe) {
+          ret = ret.replace(/\+/g, '-').replace(/\//g, '_')
+        }
+        return ret;
+      }
+    }
   }
 });

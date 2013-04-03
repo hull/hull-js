@@ -93,8 +93,8 @@ define ['lib/version'], (version) ->
         onSuccess = (res)->
           if res.provider == 'hull' && res.headers
             setCurrentUser(res.headers)
-          callback(res.response, res.headers)
-          promise.resolve(res.response, res.headers)
+          callback(res.response)
+          promise.resolve(res.response)
 
         onError = (err)->
           errback(err)
@@ -239,7 +239,7 @@ define ['lib/version'], (version) ->
         sync: sync
         url: ->
           if (@id || @_id)
-            url = normalizeAPIArguments([@_id || @id])[0]
+            url = normalizeAPIArguments([@id || @_id])[0]
           else
             url = @collection?.url
           url
@@ -316,7 +316,8 @@ define ['lib/version'], (version) ->
         app.sandbox.config.appId        = app.config.appId
         app.sandbox.config.orgUrl       = app.config.orgUrl
         app.sandbox.config.services     = remoteConfig.services
-        for m in ['me', 'app', 'org']
+        app.sandbox.config.entity       = data.entity
+        for m in ['me', 'app', 'org', 'entity']
           attrs = data[m]
           if attrs
             attrs._id = m
@@ -327,7 +328,8 @@ define ['lib/version'], (version) ->
       initialized.reject(new TypeError 'no organizationURL provided. Can\'t proceed') unless app.config.orgUrl
       initialized.reject(new TypeError 'no applicationID provided. Can\'t proceed') unless app.config.appId
       remoteUrl = "#{app.config.orgUrl}/api/v1/#{app.config.appId}/remote.html?v=#{version}"
-      remoteUrl += "&js=#{app.config.jsUrl}" if app.config.jsUrl
+      remoteUrl += "&js=#{app.config.jsUrl}"  if app.config.jsUrl
+      remoteUrl += "&uid=#{app.config.uid}"   if app.config.uid
 
       rpc = new easyXDM.Rpc({
         remote: remoteUrl

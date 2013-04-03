@@ -28,6 +28,10 @@ define ['lib/hullbase', 'handlebars'], (Hull, Handlebars) ->
           parsed = setupTemplate(Hull.templates["#{tplName}"],  tplName)
           ret[name] = parsed
           define path, parsed
+        else if window.Meteor? && window.Template?[tplName]
+          parsed = Template[tplName]
+          ret[name] = parsed
+          define path, parsed
         else if Hull.templates._default?["#{tplName}"]
           parsed = setupTemplate(Hull.templates._default["#{tplName}"],  tplName)
           ret[name] = parsed

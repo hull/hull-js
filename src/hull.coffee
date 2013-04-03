@@ -45,6 +45,7 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
         .use('aura-extensions/hull-utils')
         .use('lib/client/handlebars-helpers')
         .use('lib/client/helpers')
+        .use('lib/client/entity')
         .use('lib/client/api')
         .use('lib/client/datasource')
         .use('lib/client/auth')

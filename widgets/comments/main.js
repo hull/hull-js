@@ -26,28 +26,51 @@
 define({
   type: 'Hull',
 
-  templates:  ['comments'],
+  templates: ['comments'],
 
   refreshEvents: ['model.hull.me.change'],
 
   initialize: function () {
-    this.sandbox.on('collection.hull.' + this.id + '.comments.**', function() {
-      this.refresh();
-    }.bind(this));
+    this.setup();
   },
 
-  //@FIX Cache is broken for datasources declared as objects
+  setup: function() {
+    if (this.options.id) {
+      if (/^[0-9a-f]{24}|me|app|org|project$/.test(this.options.id)) {
+        this.id = this.options.id;
+      }
+    } else if (this.options.uid) {
+      this.id = this.sandbox.util.base64.encode(this.options.uid, true);
+    } else if (this.sandbox.config.entity) {
+      this.id = this.sandbox.config.entity.id
+    }
+    this.path = 'hull/' + this.id + '/comments';
+  },
+
   datasources: {
-    comments: ':id/comments'
+    comments: function() {
+      if (this.id) {
+        return this.api(this.path);
+      } else {
+        return false;
+      }
+    }
+  },
+
+  beforeRender: function(data) {
+    data.uid = this.uid;
+    return data;
   },
 
   actions: {
     comment: function (elt, evt, data) {
       var description = this.$el.find('textarea').val();
       if (description && description.length > 0) {
-        var comment = this.data.comments.create({
-          description: description
-        });
+        var attributes = { description: description };
+        if (this.uid) attributes.uid = this.uid;
+        this.api(this.path, 'post', attributes).then(function() {
+          this.render()
+        }.bind(this));
       }
     }
   }
