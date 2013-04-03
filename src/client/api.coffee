@@ -62,16 +62,22 @@ define ['lib/version'], (version) ->
         return unless app.config.appId
         cookieName = "hull_#{app.config.appId}"
         currentUserId = app.core.currentUser?.id
-        if headers && headers['Hull-User-Id']
+        if headers && headers['Hull-User-Id'] && headers['Hull-User-Sig']
           val = btoa(JSON.stringify(headers))
           $.cookie(cookieName, val, path: "/")
           if currentUserId != headers['Hull-User-Id']
-            app.core.currentUser = { id: headers['Hull-User-Id'], sig: headers['Hull-User-Sig'] }
+            app.core.currentUser = {
+              id: headers['Hull-User-Id'],
+              sig: headers['Hull-User-Sig']
+            }
             app.core.mediator.emit('hull.currentUser', app.core.currentUser)
         else
           $.removeCookie(cookieName, path: "/")
           app.core.currentUser = false
           app.core.mediator.emit('hull.currentUser', app.core.currentUser)
+
+        app.sandbox.config ?= {}
+        app.sandbox.config.curentUser = app.core.currentUser
 
       ###
       # Sends the message described by @params to easyXDM
@@ -87,8 +93,8 @@ define ['lib/version'], (version) ->
         onSuccess = (res)->
           if res.provider == 'hull' && res.headers
             setCurrentUser(res.headers)
-          callback(res.response)
-          promise.resolve(res.response)
+          callback(res.response, res.headers)
+          promise.resolve(res.response, res.headers)
 
         onError = (err)->
           errback(err)
@@ -301,7 +307,6 @@ define ['lib/version'], (version) ->
       onRemoteReady = (remoteConfig)->
         window.clearTimeout(timeout)
         data = remoteConfig.data
-        setCurrentUser(data.headers)
         app.config.assetsUrl            = remoteConfig.assetsUrl
         app.config.services             = remoteConfig.services
         app.config.widgets.sources.hull = remoteConfig.baseUrl + '/widgets'
@@ -332,3 +337,6 @@ define ['lib/version'], (version) ->
       })
 
       initialized
+
+    afterAppStart: (app)->
+      app.core.mediator.emit('hull.currentUser', app.core.currentUser)

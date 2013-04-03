@@ -2,7 +2,7 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
 
   hull = null
 
-  myApp = {
+  myApp = (cb)->
     name: 'Hull'
     initialize: (app)->
       app.core.mediator.setMaxListeners(100)
@@ -16,7 +16,15 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
       Hull.me     = sb.data.api.model('me');
       Hull.app    = sb.data.api.model('app');
       Hull.org    = sb.data.api.model('org');
-  }
+      if !app.config.debug
+        props = ['widget', 'templates', 'emit', 'on', 'version', 'track']
+        props.concat(config.expose || [])
+        _h = {}
+        _.map props, (k)->
+          _h[k] = window.Hull[k]
+        window.Hull = _h
+
+      cb(window.Hull) if cb
 
   if window.opener && window.opener.Hull
     try
@@ -31,6 +39,7 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
     config.namespace = "hull"
     hull.app = Aura(config)
     initProcess = hull.app
+        .use(myApp(cb))
         .use('aura-extensions/aura-handlebars')
         .use('aura-extensions/aura-backbone')
         .use('aura-extensions/hull-utils')
@@ -41,7 +50,6 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
         .use('lib/client/auth')
         .use('lib/client/templates')
         .use('lib/client/widget')
-        .use(myApp)
         .start({ widgets: 'body' })
 
     initProcess.fail (err)->
@@ -49,14 +57,5 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
       hull.app.stop()
       delete hull.app
       throw err if !errcb
-    initProcess.done (h)->
-      if !config.debug
-        props = ['widget', 'templates', 'emit', 'on', 'version', 'track']
-        props.concat(config.expose || [])
-        _h = {}
-        _.map props, (k)->
-          _h[k] = window.Hull[k]
-        window.Hull = _h
 
-      cb(window.Hull) if cb
     return hull
