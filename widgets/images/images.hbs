@@ -3,28 +3,29 @@
     <a class='btn' data-hull-action="login" data-hull-provider="{{authorized.provider_name}}">Login to {{classify authorized.provider_name}}</a>
 {{else}}
   {{#unless authorized.permissions}}
-    You need to give permissions to show these friends.
+    You need to give permissions to show these images.
     <a class='btn' data-hull-action="authorize">Authorize</a>
   {{else}}
-    <div class="hull-friends">
-      {{#if friends}}
+    <div class="hull-images">
+      {{#if images}}
         <ul class="media-list">
-          {{#each friends}}
+          {{#each images}}
             <li class="media">
-              <a class='pull-left' href="#">
-                <img src="{{avatar}}" alt="{{name}}" width="50" height="50">
+              <a class="pull-left" href="#">
+                <img src="{{picture}}" alt="{{name}}" width="200" height="200">
               </a>
               <div class="media-body">
-                <h4>{{name}}</h4>
+                <h4 class="media-heading">{{name}}</h4>
               </div>
             </li>
           {{/each}}
         </ul>
       {{else}}
         <div class="hull-empty">
-          <p>Oops… No friends for the moment</p>
+          <p>Oops… No images for the moment</p>
         </div>
       {{/if}}
     </div>
   {{/unless}}
 {{/unless}}
+
