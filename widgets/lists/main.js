@@ -13,7 +13,7 @@
  *
  * ## Datasources
  *
- * `lists`: Contains the contents of the list for which the widget has been instanciated
+ * `lists`: Contains the contents of the list for which the widget has been instantiated
  *
  * ## Events:
  *
