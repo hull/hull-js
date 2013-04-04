@@ -43,7 +43,7 @@ define(['underscore'], {
     id:'me',
     provider:'hull',
     limit: 10,
-    scope: 'user_photos'
+    scope: ''
   },
 
   refreshEvents: ['model.hull.me.change'],
@@ -77,36 +77,7 @@ define(['underscore'], {
 
   datasources: {
     authorized: function() {
-
-      var deferred = this.sandbox.data.deferred();
-      var self = this;
-      var authorization = {
-        provider_name: this.provider,
-        provider:false,
-        permissions:false
-      };
-
-      if(this.provider==="hull"){
-        authorization.provider=true
-        authorization.permissions=true
-        deferred.resolve(authorization)
-
-      } else if (this.loggedIn()[this.provider]){
-
-        if(this.provider==="facebook"){
-          authorization.provider=true;
-          this.check_facebook_permissions(self.options.scope, authorization)
-        } else{
-          authorization.provider=true
-          authorization.permissions=true
-          deferred.resolve(authorization)
-        }
-      } else {
-        authorization.provider=false
-        authorization.permissions=false
-        deferred.resolve(authorization)
-      }
-      return deferred.promise();
+      return this.isAuthorized(this.provider);
     },
 
     friends: function() {
@@ -136,24 +107,65 @@ define(['underscore'], {
     }
   },
 
-  check_facebook_permissions: function(scope, authorization){
-    return this.api("facebook/me/permissions").then(function(res) {
-      if(_.isArray(scope)){
-        //Scope is an array, and we have all the perms we need.
-        if (_.intersection(_.keys(res.data[0]), scope).length==scope.length){
+  isAuthorized: function(provider){
+    var deferred = this.sandbox.data.deferred();
+    var self = this;
+    var authorization = {
+      provider_name: provider,
+      provider:false,
+      permissions:false
+    };
+
+    if(provider==="hull"){
+      authorization.provider=true
+      authorization.permissions=true
+      deferred.resolve(authorization)
+
+    } else if (this.loggedIn()[provider]){
+
+      if(provider==="facebook"){
+        authorization.provider=true;
+        this.hasFacebookPermissions(self.options.scope, authorization, deferred)
+      } else{
+        authorization.provider=true
+        authorization.permissions=true
+        deferred.resolve(authorization)
+      }
+
+    } else {
+
+      authorization.provider=false
+      authorization.permissions=false
+      deferred.resolve(authorization)
+
+    }
+    return deferred.promise();
+  },
+
+  hasFacebookPermissions: function(scope, authorization, deferred){
+    var sandbox = this.sandbox
+    if(!scope){
+      authorization.permissions=true;
+      deferred.resolve(authorization)
+    } else {
+      this.api("facebook/me/permissions").then(function(res) {
+
+        //Convert scope to array if given as a string.
+        if(_.isString(scope)){
+          scope = scope.replace(' ','').split(',')
+        }
+
+        if(_.isArray(scope) && (_.intersection(_.keys(res.data[0]), scope).length==scope.length)){
+          //we have all the perms we need.
           authorization.permissions=true;
         }
 
-      } else {
-        //Scope is a String, and it's in our permissions list
-        if (_.include(_.keys(res.data[0]),scope)){
-          authorization.permissions=false;
-        }
-
-      }
-      return deferred.resolve(authorization);
-    }); 
+        deferred.resolve(authorization);
+      });
+    }
   },
+
+
 
   request: function(provider, identities, options) {
     var path, params;
