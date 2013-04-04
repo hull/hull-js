@@ -8,12 +8,7 @@ First, install grunt and bower
 
     sudo npm install -g grunt-cli bower
 
-Then, install compass
-
-    # Ensure to have a working version of Ruby and RubyGems first
-    sudo gem install compass
-
-Switch to hull-js dir
+Then switch to hull-js dir
 
     cd hull-js
     npm install; bower install
