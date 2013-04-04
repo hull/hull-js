@@ -1,6 +1,5 @@
 dependencies: 
   override:
-    - gem install compass
     - npm install -g grunt-cli bower
     - bower install
     - cd components/aura && npm install && bower install && grunt build

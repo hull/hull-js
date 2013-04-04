@@ -8,7 +8,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-compass');
   grunt.loadNpmTasks('grunt-hull-dox');
   grunt.loadNpmTasks('grunt-hull-widgets');
   grunt.loadNpmTasks('grunt-s3');
@@ -254,43 +253,11 @@ module.exports = function (grunt) {
       client: {
         files: clientSrc,
         tasks: ['build_client']
-      },
-      compass: {
-        files: [
-          'stylesheets/**/*.{scss,sass}'
-        ],
-        tasks: 'compass:dev'
       }
     },
     version: {
       template: "define(function () { return '<%= pkg.version %>';});",
       dest: 'lib/version.js'
-    },
-    compass: {
-      dev: {
-        options: {
-          sassDir: 'stylesheets',
-          cssDir: 'dist/' + pkg.version,
-          outputStyle: 'expanded',
-          noLineComments: false,
-          force: true,
-          debugInfo: true,
-          imagesDir: 'assets/images',
-          relativeAssets: true
-        },
-      },
-      prod: {
-        options: {
-          sassDir: 'stylesheets',
-          cssDir: 'dist/' + pkg.version,
-          outputStyle: 'compressed',
-          noLineComments: true,
-          force: true,
-          debugInfo: false,
-          imagesDir: 'assets/images',
-          relativeAssets: false
-        },
-      }
     },
     hull_widgets: {
       hull: {
@@ -343,7 +310,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build_remote', ['clean', 'coffee:remote', 'version', 'requirejs:remote']);
   grunt.registerTask('build_client', ['clean', 'coffee:client', 'version', 'requirejs:client']);
   grunt.registerTask('build_libs', ['build_client', 'build_remote']);
-  grunt.registerTask('build', ['build_libs', 'hull_widgets', 'compass:prod']);
+  grunt.registerTask('build', ['build_libs', 'hull_widgets']);
   grunt.registerTask('default', ['connect', 'build', 'mocha', 'watch']);
   grunt.registerTask('dist', ['build', 'dox']);
   grunt.registerTask('deploy', ['dist', 'describe', 's3']);
