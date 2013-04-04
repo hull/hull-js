@@ -29,6 +29,8 @@ define({
 
   templates:  ['comments'],
 
+  refreshEvents: ['model.hull.me.change'],
+
   initialize: function () {
     this.sandbox.on('collection.hull.' + this.id + '.comments.**', function() {
       this.refresh();
