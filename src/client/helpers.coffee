@@ -1,4 +1,4 @@
-define ['underscore'], ()->
+define ['underscore', 'jquery'], (_,$)->
 
   (app)->
     
@@ -6,6 +6,8 @@ define ['underscore'], ()->
     core = app.core
 
     initialize: ->
+        sandbox.trim = (string) -> $.trim(string)
+
         sandbox.imageUrl = (id, size="small", fallback="")->
           id = id() if _.isFunction(id)
           return fallback unless id
