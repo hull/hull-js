@@ -8,11 +8,11 @@
   {{else}}
     <div class="hull-images">
       {{#if images}}
-        <ul class="media-list">
+        <ul class="media-list hull-images">
           {{#each images}}
             <li class="media">
               <a class="pull-left" href="#">
-                <img src="{{picture}}" alt="{{name}}" width="200" height="200">
+                <img src="{{picture}}" alt="{{name}}" class='media-object'>
               </a>
               <div class="media-body">
                 <h4 class="media-heading">{{name}}</h4>
@@ -21,7 +21,7 @@
           {{/each}}
         </ul>
       {{else}}
-        <div class="hull-empty">
+        <div class="alert">
           <p>Oops… No images for the moment</p>
         </div>
       {{/if}}
