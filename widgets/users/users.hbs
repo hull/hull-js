@@ -1,0 +1,26 @@
+<table class="table">
+  <tr>
+    <th>Picture</th>
+    <th>Name</th>
+    <th>Signed up</th>
+    <th>Accounts</th>
+    <th>Sign in count</th>
+  </tr>
+  {{#each userProfiles}}
+  <tr>
+    <td><img src='{{user.picture}}' width='50' height='50' /></td>
+    <td>{{user.name}}</td>
+    <td>{{fromNow created_at}}</td>
+    <td>
+      {{#each user.identities}}{{type}}{{/each}}
+    </td>
+    <td>{{user.stats.sign_in_count}}</td>
+  </tr>
+  {{/each}}
+</table>
+
+<div>
+  <button data-hull-action='previousPage'><< Prev</button>
+  |
+  <button data-hull-action='nextPage'>Next >></button>
+</div>
