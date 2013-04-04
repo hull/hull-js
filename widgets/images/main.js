@@ -194,7 +194,7 @@ define(['underscore'], {
         return {
           provider: 'hull',
           name: f.name,
-          picture: sandbox.imageUrl(f.id, options.format)
+          picture: sandbox.helpers.imageUrl(f.id, options.format)
         };
       });
     },
