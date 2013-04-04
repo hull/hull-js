@@ -1,33 +1,35 @@
-{{#if loggedIn}}
-  <div class="hull-identity__signout media">
-    <div class="pull-left">
-      <img class="media-object img-rounded" src="{{me.picture}}" alt="{{me.name}}">
-    </div>
-    <div class="media-body">
-      <h4 class="media-heading">
-        {{me.name}}
-        <button data-hull-action="logout" class="btn btn-small btn-link">
-          Sign Out
-        </button>
-      </h4>
-      <p>{{me.description}}</p>
-    </div>
-  </div>
-{{else}}
+{{#if loggedOut}}
   <div class="hull-identity__signin">
-    {{#authServices}}
-      <button data-hull-action="login" data-hull-provider="{{.}}" class="btn">
-        Sign In with {{classify .}}
-      </button>
-    {{/authServices}}
-  </div>
-
-  {{^authServices}}
-  {{#if debug}}
-    <div class="alert">
-      <h4>Warning!</h4>
-      No Auth Services configured, please add at least one in the admin.
+      {{#loggedOut}}
+        <button data-hull-action="login" data-hull-provider="{{.}}" class="btn">
+          Sign In with {{classify .}}
+        </button>
+      {{/loggedOut}}
     </div>
+{{else}}
+  {{#if loggedIn}}
+    <div class="hull-identity__signout media">
+      <div class="pull-left">
+        <img class="media-object img-rounded" src="{{me.picture}}" alt="{{me.name}}">
+      </div>
+      <div class="media-body">
+        <h4 class="media-heading">
+          {{me.name}}
+          <button data-hull-action="logout" class="btn btn-small btn-link">
+            Sign Out
+          </button>
+        </h4>
+        <p>{{me.description}}</p>
+      </div>
+    </div>
+  {{else}}
+    {{^authServices}}
+      {{#if debug}}
+        <div class="alert">
+          <h4>Warning!</h4>
+          No Auth Services configured, please add at least one in the admin.
+        </div>
+      {{/if}}
+    {{/authServices}}
   {{/if}}
-  {{/authServices}}
 {{/if}}

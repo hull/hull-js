@@ -3,10 +3,18 @@
  *
  * Allow users to log in with auth services that you have hooked on your app.
  *
- * ## Example
+ * ## Examples
  *
  *     <div data-hull-widget="identity@hull"></div>
+ *     <div data-hull-widget="identity@hull" data-hull-provider="instagram"></div>
+ *     <div data-hull-widget="identity@hull" data-hull-provider="facebook"></div>
+ *     <div data-hull-widget="identity@hull" data-hull-provider="github"></div>
+ *     <div data-hull-widget="identity@hull" data-hull-provider="github,facebook"></div>
  *
+ * ## Options
+ *
+ * - `provider`: Optional, a provider name to force auth onto. If none specified, will default to show all configured providers for the app.
+ * 
  * ## Template
  *
  * - `identity`: Show loggin buttons if the user isn't logged, display his name
@@ -18,6 +26,10 @@ define({
   templates: [
     'identity'
   ],
+
+  options:{
+    provider:''
+  },
 
   refreshEvents: ['model.hull.me.change'],
 
@@ -32,7 +44,12 @@ define({
   },
 
   beforeRender: function(data) {
-    data.authServices = this.authServices || [];
+    if(this.options.provider){
+      data.providers = this.options.provider.replace(' ','').split(',');
+      data.loggedOut = (this.loggedIn()) ? _.difference(data.providers, _.keys(this.loggedIn())) : data.providers;
+    } else {
+      data.providers = this.authServices || [];
+    }
     return data;
   }
 });
