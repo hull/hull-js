@@ -1,24 +1,25 @@
 /**
- * # Friends
+ * # Images
  *
- * Displays friends for a given user and a given service.
+ * Displays images belonging to a given user on a given service
  *
  * ## Example
  *
- *     <div data-hull-widget="friends_list@hull"></div>
+ *     <div data-hull-widget="images@hull"></div>
  *
  * ## Options
  *
- * - `id`: Optional, the id of the user whose friends we want to list. By default, it will list the friends of the current user.
- * - `provider`: Optional, service from which we will fetch friends. Can be `hull`, `current`, `instagram`, `twitter`, `facebook` or `github`, by default it will list friends from `hull`.  
- *   `hull` will show the user's friends who also have interacted with the app.  
- *   `current` will show all friends from the provider which the user has used to login.
- * - `limit`: Optional, the number of friends to display. Be default it will display 10 friends.
+ * - `id`: Optional, the id of the user whose images we want to list. By default, it will list the images of the current user.
+ * - `format`: Optional, the format of the thumbnail you wish to get. Can be `thumb`, `square`, `small`, `medium`, `large`, `original`. Will map to the closest existing preset when used on external networks. Default:  `small`
+ * - `provider`: Optional, service from which we will fetch images. Can be `hull`, `current`, `instagram`, or `facebook`, by default it will list images from `hull`.  
+ *   `hull` will show the user's images who also have interacted with the app.  
+ *   `current` will show all images from the provider which the user has used to login.
+ * - `limit`: Optional, the number of images to display. Be default it will display 10 images.
  * - `scope` : Optional, a Facebook permission you need to ask the user before being able to show data. - If this permission is not given, a button will be shown to ask for it.
  *
  * ## Template
  *
- * - `friends`: Displays the list of the user's friends.
+ * - `images`: Displays the list of the user's images.
  *
  * ## Actions
  *
@@ -26,7 +27,7 @@
  *
  * ## Datasource
  *
- * - `friends`: The user's friends.
+ * - `images`: The user's images.
  * - `authorized` : A hash of permissions showing if the user can view the images.  
  * Contains `provider`, `permissions` : Booleans showing if the provider and permissions are right,  
  * and `provider_name` containing the name of the asked provider
@@ -36,13 +37,14 @@ define(['underscore'], {
   type: 'Hull',
 
   templates: [
-    'friends'
+    'images'
   ],
 
   options: {
     id:'me',
     provider:'hull',
     limit: 10,
+    format: 'small',
     scope: 'user_photos'
   },
 
@@ -70,10 +72,12 @@ define(['underscore'], {
         },this));
       } else {
         this.sandbox.login(this.provider,{}).then(_.bind(function(){
+          // this.render();
         },this));
       }
     }
   },
+
 
   datasources: {
     authorized: function() {
@@ -107,9 +111,10 @@ define(['underscore'], {
         deferred.resolve(authorization)
       }
       return deferred.promise();
+
     },
 
-    friends: function() {
+    images: function() {
 
       var deferred = this.sandbox.data.deferred();
       var self = this;
@@ -124,8 +129,8 @@ define(['underscore'], {
         this.request(this.provider, identities, this.options).then(_.bind(function(res) {
 
           var serialized = _.bind(this.serializers[self.provider],this,res,this.options)
-          var friends = serialized().slice(0, this.options.limit)
-          deferred.resolve(friends);
+          var images = serialized().slice(0, this.options.limit)
+          deferred.resolve(images);
 
         }, this));
       } else{
@@ -134,6 +139,7 @@ define(['underscore'], {
 
       return deferred.promise();
     }
+
   },
 
   check_facebook_permissions: function(scope, authorization){
@@ -160,23 +166,16 @@ define(['underscore'], {
 
     switch (provider) {
       case 'hull':
-        path = 'hull/' + options.id + '/friends';
+        path = 'hull/' + options.id + '/images';
         params = { per_page: this.options.limit };
         break;
       case 'facebook':
-        path = 'facebook/' + options.id + '/friends';
-        params = { limit: this.options.limit };
-        break;
-      case 'twitter':
-        path = 'twitter/friends/list';
-        params = { user_id: ((options.id==='me')?identities.twitter.uid:options.id) };
+        path = 'facebook/'+options.id+'/photos/uploaded';
+        // path = 'facebook/' + ((options.id==='me')?identities.facebook.uid:options.id) + '/photos';
+        params = { };
         break;
       case 'instagram':
-        path = 'instagram/users/'+((options.id==='me')?'self':options.id)+'/follows';
-        params = { per_page: this.options.limit };
-        break;
-      case 'github':
-        path = 'github/users/' + ((options.id==='me')?identities.github.login:options.id) + '/following';
+        path = 'instagram/users/'+((options.id==='me')?'self':options.id)+'/media/recent';
         params = { per_page: this.options.limit };
         break;
     }
@@ -185,58 +184,69 @@ define(['underscore'], {
   },
 
   serializers: {
-    hull: function(res) {
+    hull: function(res, options) {
+      var sandbox = this.sandbox
       return _.map(res, function(f) {
         return {
           provider: 'hull',
           name: f.name,
-          avatar: f.picture,
-          uid: f.id
+          picture: sandbox.imageUrl(f.id, options.format)
         };
       });
     },
 
-    facebook: function(res) {
+    facebook: function(res, options) {
+      var format='source'
+      switch (options.format){
+        case 'small' :
+        case 'thumb' :
+        case 'square' :
+          format = 'picture'
+          break;
+        case 'medium' :
+        case 'large' :
+        case 'original' :
+          format = 'source'
+          break;
+      }
+
       return _.map(res.data, function(f) {
         return {
           provider: 'facebook',
-          name: f.name,
-          avatar: 'http://graph.facebook.com/' + f.id + '/picture',
+          name: f.from.name,
+          picture: f[format],
           uid: f.id
         };
       });
     },
 
-    twitter: function(res) {
-      return _.map(res.users, function(f) {
-        return {
-          provider: 'twitter',
-          name: f.name,
-          avatar: f.profile_image_url,
-          uid: f.id
-        };
-      });
-    },
+    instagram: function(res, options){
+      var format = 'low_resolution'
+      switch (options.format){
+        case 'small' :
+        case 'thumb' :
+        case 'square' :
+          format = 'thumbnail'
+          break;
+        case 'medium' :
+          format = 'standard_resolution'
+          break;
+        case 'large' :
+        case 'original' :
+          format = 'standard_resolution'
+          break;
+      }
 
-    instagram: function(res){
+
       return _.map(res, function(f){
+        var t = ""
+        if(f && f.caption){t = f.caption.text}
         return {
           provider: 'instagram',
-          name: f.full_name,
-          avatar: f.profile_picture,
+          name: t,
+          picture: f.images[format].url,
           uid: f.id
         }
-      });
-    },
-
-    github: function(res) {
-      return _.map(res, function(f) {
-        return {
-          provider: 'github',
-          name: f.login,
-          avatar: f.avatar_url,
-          id: f.id
-        };
       });
     }
   }
