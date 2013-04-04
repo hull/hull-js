@@ -80,6 +80,8 @@ define ['backbone', 'underscore'], (Backbone, _)->
 
     beforeRender: (data)-> data
 
+    renderError: ->
+
     log: (msg)=>
       if @options.debug
         console.warn(@options.name, ":", @options.id, msg)
@@ -101,7 +103,9 @@ define ['backbone', 'underscore'], (Backbone, _)->
         widgetDeferred = @sandbox.data.when.apply(undefined, promises)
         templateDeferred = @sandbox.template.load(@templates, @ref)
         @data = {}
-        $.when(widgetDeferred, templateDeferred).done (data, tpls)=>
+        readyDfd = $.when(widgetDeferred, templateDeferred)
+        readyDfd.fail _.bind(@renderError, @)
+        readyDfd.done (data, tpls)=>
           args = data
           _.map keys, (k,i)=>
             @data[k] = args[i]
