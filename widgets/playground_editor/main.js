@@ -17,12 +17,13 @@ define({
 
   afterRender: function() {
     var code = this.options.code || '';
+    var theme = this.options.theme || 'default';
 
     this.editor = new CodeMirror(this.$('.hull-playground-editor')[0], {
       mode: 'htmlmixed',
       value: code,
       tabMode: 'indent',
-      theme: 'solarized dark',
+      theme: theme,
       lineNumbers: false
     });
 
