@@ -7,7 +7,7 @@
  * ## Examples
  *
  *     <div data-hull-widget="list_toggle@hull" data-hull-id="app" data-hull-list-name="favorites"></div>
- *     <div data-hull-widget="list_toggle@hull" data-hull-id="MY_CUSTOM_OBJECT" data-hull-list-name="favorites"></div>
+ *     <div data-hull-widget="list_toggle@hull" data-hull-id="HULL_ID" data-hull-list-name="favorites"></div>
  *
  * ## Options
  *
