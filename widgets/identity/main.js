@@ -45,18 +45,24 @@ define({
 
   beforeRender: function(data) {
 
+    // If providers are specified, then use only those. else use all configuredauthServices
     if(this.options.provider){
       data.providers = this.options.provider.replace(' ','').split(',');
     } else {
       data.providers = this.authServices || [];
     }
 
+    // If I'm logged in, then create an array of logged In providers
     if(this.loggedIn()){
-      data.loggedInNames = _.keys(this.loggedIn());
+      data.loggedInProviders = _.keys(this.loggedIn());
     } else {
-      data.loggedInNames = [];
+      data.loggedInProviders = [];
     }
-    data.loggedOut = _.difference(data.providers, data.loggedInNames);
+
+
+    // Create an array of logged out providers.
+    data.loggedOut = _.difference(data.providers, data.loggedInProviders);
+    data.matchingProviders = _.intersection(data.providers, data.loggedInProviders);
 
     return data;
   }

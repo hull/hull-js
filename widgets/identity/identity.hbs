@@ -1,4 +1,4 @@
-{{#if loggedIn}}
+{{#if matchingProviders}}
   <div class="hull-identity__signout media">
     <div class="pull-left">
       <img class="media-object img-rounded" src="{{me.picture}}" alt="{{me.name}}">
@@ -13,7 +13,7 @@
       <p>{{me.description}}</p>
       <p>
         Logged in with
-        {{join loggedInNames}}
+        {{join loggedInProviders}}
       </p>
     </div>
   </div>
