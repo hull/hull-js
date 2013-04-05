@@ -2,8 +2,25 @@ Documentation...
 
 # Hull.js
 
+hull.js is the only file you have to include to enable all the client-side features of Hull.
+It allows you to :
 
-## Hull.init
+* Init your Hull application
+* Declare widgets in your page
+* Use prepackaged widgets
+* Customize the prepackaged widgets
+* Create your own widgets
+* Perform API requests
+
+
+## Hull.init(opts)
+
+In order to get your app up and running, you must first call `Hull.init()`.
+The `opts` parameter is an Object Literal that accepts the following keys:
+
+* `appId`: The ID of your application. You can find it in the admin.
+* `orgUrl`: The associated Hull subdomain in which your application resides.
+It can also be found in the admin, in the description of your organization
 
 ---
 
