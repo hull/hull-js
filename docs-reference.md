@@ -26,61 +26,67 @@ It can also be found in the admin, in the description of your organization.
 
 ---
 
-## Widgets
+## Getting started with widgets
 
-### Using Widgets
+This section will cover the basics of using widgets in Hull.
+Although Hull provides you direct access to its API, best luck is that you will
+want to give our prepackaged widgets a try, or event build one yourself!
 
-#### Locate the widget in your page
-Start by placing a `<div>` tag wherever you want the widget to be located; consider this tag as a placeholder.
+As a starter, we'll show you how to make use of the prepackaged widgets.
+All the concepts outlined in this section will still be valid when you'll come
+to create your own widgets.
 
-#### Widget sources
-
-Hull can fetch widgets from many places, called sources. By default, Hull knows 2 sources:
-
-* `hull`, which is he location for our [packaged widgets](/docs/widgets/packaged_widgets)
-* `default`, which is the default location for your widgets, has for value `./widgets`. This means that if your baseURL is `/path/to/my/app`,
-then the default source intends to find its widgets into `/path/to/my/app/widgets`.
-
-By configuring Hull at startup, you can override these settings (except from the `hull` source) and add any source you want.
-
-Using sources can be very useful if you add 3rd-party widgets, or want to separate your widgets by concerns.
-
-Widgets from a source are namespaced, meaning that you can have 2 widgets with the same name, as long as they don't come from the same source.
-
-#### Specifying the widget type
-
-Use the data-attribute `data-hull-widget` to specify which widget has to be instantiated.
-
-    <div data-hull-widget="my_widget"></div>
-
-Note that this notation is the implicit notation for using the widget source "default".
-Below is the explicit version:
-
-    <div data-hull-widget="my_widget@default"></div>
-
-
-#### Passing parameters
-
-Many widgets can be configured to customize their behaviour. Configuration is passed through `data-hull` attributes.
-
-To pass two parameters `key` and `secret` to a widget `auth`, you must type as follows:
-
-    <div data-hull-widget="auth" data-hull-key="KEY_VALUE" data-hull-secret="SECRET_VALUE"></div>
-
-Now, you can get access to those parmeters in your auth widget:
-
-    this.options.key; // "KEY_VALUE"
-    this.options.secret; // "SECRET_VALUE"
-
-#### Using prepackaged widgets
+### Using prepackaged widgets
 
 Hull comes packaged with a [bunch of widgets](/docs/widgets/hull_widgets), all you need to do
 is add a couple of data-attributes to your HTML document.
 
-#### Creating your own widgets
+In this section, we will use the `identity` widget. It allows your users to log
+in using any of the social networks your app is bound to (see the admin for binding authentication services to your app).
 
+#### Locate the widget in your page
 
-##### File structure
+Start by placing a `<div>` tag wherever you want the widget to be located; consider this tag as a placeholder.
+
+    <div></div>
+
+This widget will be rendered __inside__ this element. You don't have to use a div,
+feel free to use the appropriate HTML tag.
+
+#### Specifying the widget type
+
+Use the data-attribute `data-hull-widget` to specify which widget has to be instantiated.
+In this case where we want to use the `identity` widget, we will write:
+
+    <div data-hull-widget="identity@hull"></div>
+
+Note the `@hull` notation. Hull provide means to use widgets from various locations,
+which we call 'widget sources', and all the prepackaged widgets come from the `hull` source.
+
+You can [learn more about widget sources below]().
+
+#### Passing parameters
+
+Most of the time, you will need to customize the behaviour of your widgets.
+In Hull, you can pass options to your widgets by using `data-hull-` attributes,
+just like you would pass arguments to a method.
+
+The `identity` widget accepts one `provider` parameter, so you can choose
+the authentication provider you want your users to connect with.
+
+Tell the widget you want to use only Twitter OAuth as a valid uthentication method by typing:
+
+    <div data-hull-widget="identity@hull" data-hull-provider="twitter"></div>
+
+Of course, if a widget requires more options, declare as many `data-hull-` options
+as necessary.
+
+We have many providers available, you can find them all from the admin, under the
+`authentication services` page.
+
+### Creating your own widgets
+
+#### File structure
 
 In Hull, as in [Aura](http://github.com/aurajs/aura), there's a golden rule stating that:
 
@@ -108,11 +114,23 @@ A basic widget could have this file structure:
 
 <a name="#widgets_sources"></a>
 
-##### (Optional) Declaring sources
+#### Widget sources
+
+Hull can fetch widgets from many places, called sources. By default, Hull knows 2 sources:
+
+* `hull`, which is he location for our [packaged widgets](/docs/widgets/packaged_widgets)
+* `default`, which is the default location for your widgets, has for value `./widgets`. This means that if your baseURL is `/path/to/my/app`,
+then the default source intends to find its widgets into `/path/to/my/app/widgets`.
+
+By configuring Hull at startup, you can override these settings (except from the `hull` source) and add any source you want.
+
+Using sources can be very useful if you add 3rd-party widgets, or want to separate your widgets by concerns.
+
+Widgets from a source are namespaced, meaning that you can have 2 widgets with the same name, as long as they don't come from the same source.
 
 Declaring a new source is made during the initialization process of `hull.js`, as part of its [configuration](/docs/Hull.js/configuration)
 
-##### Creating the widget
+#### Creating the widget
 
 Let's say you want to create a widget named `awesome`.
 
@@ -138,6 +156,15 @@ You could even have skipped all the contents of the Object literal and be good t
 ### Initialization & Options
 
 __Is that about the declaration in the DOM or the initialize function ?__
+
+If you have used `data-hull-` attributes when declaring your widgets, like this:
+
+    <div data-hull-eidget="myWidget" data-hull-foo="FOO" data-hull-bar="BAR">
+
+you can access their values as properties of your widget:
+
+    this.options.foo; // corresponds to `data-hull-foo` attribute
+    this.options.bar; // corresponds to `data-hull-bar` attribute
 
 ### Backbone Models & Collections ?
 
