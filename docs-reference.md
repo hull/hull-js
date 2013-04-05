@@ -73,9 +73,9 @@ To summarize things up:
 2. Add the markup necessary for your widgets
 3. Execute `Hull.init(opts)` with your credentials
 
-** That's enough to run the widgets, but you may still want to go a litle further:**
+**That's enough to run the widgets, but you may still want to go a litle further. Here's an excerpt of what you can do more:**
 
-#### Passing parameters
+#### Passing parameters to a widget
 
 Most of the time, you will need to customize the behaviour of your widgets.
 In Hull, you can pass options to your widgets by using `data-hull-` attributes,
