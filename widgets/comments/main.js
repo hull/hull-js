@@ -18,7 +18,7 @@
  *
  * ## Datasource:
  *
- * - `comments`: Collection of all the comments related to the object.
+ * - `comments`: Collection of all the comments made on the object.
  *
  * ## Action:
  *
