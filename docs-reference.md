@@ -163,7 +163,6 @@ A basic widget could have this file structure:
     |-----image.png
 
 <a name="#widgets_sources"></a>
-
 #### Widget sources
 
 Hull can fetch widgets from many places, called sources. By default, Hull knows 2 sources:
