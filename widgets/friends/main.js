@@ -10,9 +10,8 @@
  * ## Options
  *
  * - `id`: Optional, the id of the user whose friends we want to list. By default, it will list the friends of the current user.
- * - `provider`: Optional, service from which we will fetch friends. Can be `hull`, `current`, `instagram`, `twitter`, `facebook` or `github`, by default it will list friends from `hull`.  
- *   `hull` will show the user's friends who also have interacted with the app.  
- *   `current` will show all friends from the provider which the user has used to login.
+ * - `provider`: Optional, service from which we will fetch friends. Can be `hull`, `instagram`, `twitter`, `facebook` or `github`, by default it will list friends from `hull`.  
+ *   `hull` will show the user's friends who have used the app.  
  * - `limit`: Optional, the number of friends to display. Be default it will display 10 friends.
  * - `scope` : Optional, a Facebook permission you need to ask the user before being able to show data. - If this permission is not given, a button will be shown to ask for it.
  *
@@ -51,15 +50,13 @@ define(['underscore'], {
   initialize: function() {
     this.me = this.sandbox.data.api.model('me');
 
-    if (this.options.provider === 'current') {
-      this.provider = this.me.get('identities')[0].provider;
-    } else {
-      this.provider = this.options.provider;
-    }
+    this.provider = this.options.provider;
 
     if (this.provider !== "hull") {
       this.id = this.options.id || "me";  
     }
+
+
   },
 
   actions: {
@@ -91,7 +88,8 @@ define(['underscore'], {
         return m;
       }, {});
 
-      if(this.provider==="hull" || this.loggedIn()[this.provider]){
+      //Are we logged in to provider, or is provider hull. if Provider is hull, are we asking "me" without being loggedin ?
+      if( this.loggedIn()[this.provider] || (this.provider==="hull" && (this.loggedIn() || this.id!=="me"))){
         this.request(this.provider, identities, this.options).then(_.bind(function(res) {
 
           var serialized = _.bind(this.serializers[self.provider],this,res,this.options)
@@ -100,7 +98,7 @@ define(['underscore'], {
 
         }, this));
       } else{
-        return deferred.resolve([]);
+        deferred.resolve([]);
       } 
 
       return deferred.promise();
@@ -110,35 +108,38 @@ define(['underscore'], {
   isAuthorized: function(provider){
     var deferred = this.sandbox.data.deferred();
     var self = this;
-    var authorization = {
+    var auth = {
       provider_name: provider,
       provider:false,
       permissions:false
     };
 
     if(provider==="hull"){
-      authorization.provider=true
-      authorization.permissions=true
-      deferred.resolve(authorization)
+      auth.permissions = true;
 
-    } else if (this.loggedIn()[provider]){
+      var valid = (this.loggedIn() || this.id!=="me");
+      auth.provider = valid;
 
-      if(provider==="facebook"){
-        authorization.provider=true;
-        this.hasFacebookPermissions(self.options.scope, authorization, deferred)
-      } else{
-        authorization.provider=true
-        authorization.permissions=true
-        deferred.resolve(authorization)
-      }
+      auth.provider_name = this.sandbox.config.services.types.auth[0].replace(/_app$/,'');
 
+      deferred.resolve(auth)
     } else {
-
-      authorization.provider=false
-      authorization.permissions=false
-      deferred.resolve(authorization)
-
+      if (this.loggedIn()[provider]){
+        auth.provider=true;
+        if(provider==='facebook'){
+          this.hasFacebookPermissions(self.options.scope, auth, deferred)
+        } else {
+          auth.permissions=true
+          deferred.resolve(auth)
+        }
+      } else {
+        auth.provider=false;
+        deferred.resolve(auth)
+      }
+      
     }
+
+
     return deferred.promise();
   },
 
