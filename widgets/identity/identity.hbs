@@ -1,21 +1,19 @@
 {{#if matchingProviders}}
-  <div class="hull-identity__signout media">
-    <div class="pull-left">
-      <img class="media-object img-rounded" src="{{me.picture}}" alt="{{me.name}}">
-    </div>
-    <div class="media-body">
-      <h4 class="media-heading">
-        {{me.name}}
-      </h4>
-      <button data-hull-action="logout" class="btn btn-small btn-link">
-        Sign Out
-      </button>
+  <div class="hull-identity__signout align-center">
+    <img class="img-rounded" src="{{me.picture}}" alt="{{me.name}}">
+    <h1> {{me.name}} </h1>
+    {{#if me.description}}
       <p>{{me.description}}</p>
-      <p>
-        Logged in with
-        {{join loggedInProviders}}
-      </p>
-    </div>
+    {{/if}}
+    <hr>
+    <button data-hull-action="logout" class="btn btn-small btn-link">
+      Sign Out
+    </button>
+    <p>
+      <small>
+        Logged in with {{join loggedInProviders}}
+      </small>
+    </p>
   </div>
 {{else}}
   {{#if loggedOut}}
