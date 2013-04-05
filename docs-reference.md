@@ -24,8 +24,6 @@ It can also be found in the admin, in the description of your organization.
 * `debug`: a Boolean flag for your app to output a bunch of logs in the console.
 * `widgets`: Declares your widgets sources. See [the relevant section to use widgets sources]() for details.
 
----
-
 ## Getting started with widgets
 
 This section will cover the basics of using widgets in Hull.
@@ -65,6 +63,18 @@ which we call 'widget sources', and all the prepackaged widgets come from the `h
 
 You can [learn more about widget sources below]().
 
+#### Look 'Ma, it's working!
+
+That's all that is required to have a fully functional login widget... Really.
+
+To summarize things up:
+
+1. Insert `hull.js` in your page
+2. Add the markup necessary for your widgets
+3. Execute `Hull.init(opts)` with your credentials
+
+** That's enough to run the widgets, but you may still want to go a litle further:**
+
 #### Passing parameters
 
 Most of the time, you will need to customize the behaviour of your widgets.
@@ -81,8 +91,48 @@ Tell the widget you want to use only Twitter OAuth as a valid uthentication meth
 Of course, if a widget requires more options, declare as many `data-hull-` options
 as necessary.
 
-We have many providers available, you can find them all from the admin, under the
+Some remarks regarding the `identity` widget:
+
+* We have many providers available, you can find them all from the admin, under the
 `authentication services` page.
+* Having registered at least one provider is required in your Hull app if you want to use authentication.
+* If you don't provide a `data-hull-provider` to the widget, users will be able to authenticate to the provider they prefer in the list
+of the services attached to your app.
+
+#### Overriding templates
+
+Our prepackaged widgets come with some default markup, fit to work natively with [Twitter Bootstrap](http://twitter.github.com/bootstrap).
+However, it may not fit your design and if you ever want to customize the rendering of the template, [many options are available](#overriding_templates).
+
+We will see in this section the fastest yet not the most optimized way to do so.
+
+To override a template in Hull, it is enough to add a `<script>` tag to your page like the following:
+
+    <script type="text/x-template" data-hull-template="identity/identity">
+      {{if loggedIn}}
+
+        Hello {{name}}, how are you since the last time we met?
+
+      {{else}}
+
+        I don't know you, but I already like you!
+        <button data-hull-action="login">Login here</button>
+
+      {{/if}}
+    </script>
+
+`hull.js` uses Handlebars, if you're not familiar with the syntax, check out the [official documentation](http://handlebarsjs.com/).
+
+There are a few things to be noticed here:
+
+* `loggedIn` is a method bound to the context of the template. it returns false if no user is connected, a truthy value otherwise.
+* The user itself is bound to the context of the template, that's what makes {{name}} available.
+* Look at the `data-hull-action` attribute in the login button. `data-hull-action` represent special `click` handlers. Learn more [here]().
+
+#### More about prepackaged widgets
+
+Now you can already start adding social features in your app or even build a complete 100% social app with Hull!
+To know everything aout our prepackaged widgets, refer to the [widgets reference]().
 
 ### Creating your own widgets
 
@@ -298,6 +348,56 @@ If you return a promise at the end of `beforeRender`, Hull will wait for this pr
 
 * afterRender
 * renderError
+
+<a href="#" id="overriding_templates">
+### Overriding templates
+
+Hull's packaged widgets come with their own templates, that you can override.
+We chose [Handlebars](http://handlebarsjs.com/) because it is fast and powerful.
+We provide a bunch of ways to customize and override the templates.
+
+__The next sections applies for the packaged widgets, but also for your custom templates.__
+
+<a name="template_names"></a>
+#### Namimg templates
+
+First things first, if you want to write or override a template, you must know how they're named.
+
+Following the filesystem structure of a [widget](/docs/widgets/creating widgets), the full name of a template is
+
+    widget_name/widget_template
+
+As an example, in a widget named `foo`, if you have 2 templates named `bar` and `baz`, the names of the two templates will be:
+
+    foo/bar
+    foo/baz
+
+Now you know how to naming is done, let's see how to actually override templates.
+
+#### Simple version : In-page overrides
+
+You can override a template by creating a `<script>` tag in your page with its name in the data attribute `data-hull-template`:
+
+    <script type='text/x-template' data-hull-template='WIDGET_NAME/TEMPLATE_NAME'>
+      ... Your Template here
+    </script>
+
+where `WIDGET_NAME/TEMPLATE_NAME` is as described in the previous section.
+
+#### Overriding templates in Hull.templates
+
+Another (cleaner, to be honest) way is to store your templates in `Hull.templates`.
+It is a Javascript Object literal, in which the keys are the templates IDs, and the values are the templates themselves.
+
+As an example, to override the template `foo/bar` (Remember: it's the template `bar` of the widget `foo`), just do the following:
+
+<pre class='language-javascript'><code>Hull.templates["foo/bar"] = "You are awesome, {{name}}!";</code></pre>
+
+
+If you have already precompiled [Handlebars](http://handlebarsjs.com) templates, you can use them as the values for the entries of `Hull.templates`.
+
+**Please note**: This is the actual way that we use to include the templates for the packaged widgets.
+
 
 ### Actions
 
