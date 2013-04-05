@@ -104,7 +104,9 @@ define ['backbone', 'underscore'], (Backbone, _)->
         templateDeferred = @sandbox.template.load(@templates, @ref)
         @data = {}
         readyDfd = $.when(widgetDeferred, templateDeferred)
-        readyDfd.fail _.bind(@renderError, @)
+        readyDfd.fail (err)=>
+          console.error("Error in Building Render Context", err.message, err)
+          @renderError.call(@, err.message, err)
         readyDfd.done (data, tpls)=>
           args = data
           _.map keys, (k,i)=>
@@ -151,15 +153,26 @@ define ['backbone', 'underscore'], (Backbone, _)->
     # Start nested widgets...
     render: (tpl, data)=>
       ctx = @buildContext.call(@)
-      ctx.fail (err)-> console.error("Error building context: ", err.message, err)
+      ctx.fail (err)-> 
+        console.error("Error fetching Datasources ", err.message, err)
+
       ctx.then (ctx)=>
-        beforeCtx = @beforeRender.call(@, ctx)
-        $.when(beforeCtx).done (dataAfterBefore)=>
-          data = _.extend(dataAfterBefore || ctx, data)
-          @doRender(tpl, data)
-          _.defer(@afterRender.bind(@, data))
-          _.defer((-> @sandbox.start(@$el)).bind(@))
-          @isInitialized = true;
+        try
+          beforeCtx = @beforeRender.call(@, ctx)
+          beforeRendering = $.when(beforeCtx)
+          beforeRendering.done (dataAfterBefore)=>
+            data = _.extend(dataAfterBefore || ctx, data)
+            @doRender(tpl, data)
+            _.defer(@afterRender.bind(@, data))
+            _.defer((-> @sandbox.start(@$el)).bind(@))
+            @isInitialized = true;
+
+          beforeRendering.fail (err)=>
+            console.error("Error in beforeRender", err.message, err)
+            @renderError.call(@, err)
+        catch err
+          console.error("Error in beforeRender", err.message, err)
+          @renderError.call(@, err)
 
     trackingData: {}
 
