@@ -1,6 +1,6 @@
 {{#unless authorized.provider}}
     <small>You need to sign in.</small>
-    <a class='btn' data-hull-action="login" data-hull-provider="{{authorized.provider_name}}">Sign in with {{classify authorized.provider_name}}</a>
+    <div data-hull-widget="login_button@hull" data-hull-provider="{{authorized.provider_name}}"></div>
 {{else}}
   {{#unless authorized.permissions}}
     You need to give permissions to show these images.

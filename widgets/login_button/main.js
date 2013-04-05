@@ -1,16 +1,16 @@
 /**
- * # Identity
+ * # Login Button
  *
  * Allow users to log in with auth services that you have hooked on your app.
- * When logged in, show a micro-profile card.
+ * For a more complete widget, look at the Identity widget.
  *
  * ## Examples
  *
- *     <div data-hull-widget="identity@hull"></div>
- *     <div data-hull-widget="identity@hull" data-hull-provider="instagram"></div>
- *     <div data-hull-widget="identity@hull" data-hull-provider="facebook"></div>
- *     <div data-hull-widget="identity@hull" data-hull-provider="github"></div>
- *     <div data-hull-widget="identity@hull" data-hull-provider="github,facebook"></div>
+ *     <div data-hull-widget="login_button@hull"></div>
+ *     <div data-hull-widget="login_button@hull" data-hull-provider="instagram"></div>
+ *     <div data-hull-widget="login_button@hull" data-hull-provider="facebook"></div>
+ *     <div data-hull-widget="login_button@hull" data-hull-provider="github"></div>
+ *     <div data-hull-widget="login_button@hull" data-hull-provider="github,facebook"></div>
  *
  * ## Options
  *
@@ -19,14 +19,14 @@
  * 
  * ## Template
  *
- * - `identity`: Show login buttons if the user isn't logged, display a micro profile card if he is.
+ * - `login_button`: Show login buttons if the user isn't logged, logout button if he is.
  * 
  */
 define({
   type: 'Hull',
 
   templates: [
-    'identity'
+    'login_button'
   ],
 
   options:{
