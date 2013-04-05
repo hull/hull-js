@@ -44,13 +44,20 @@ define({
   },
 
   beforeRender: function(data) {
+
     if(this.options.provider){
       data.providers = this.options.provider.replace(' ','').split(',');
-      data.loggedOut = (this.loggedIn()) ? _.difference(data.providers, _.keys(this.loggedIn())) : data.providers;
     } else {
       data.providers = this.authServices || [];
     }
-    data.loggedInNames = _.keys(this.loggedIn());
+
+    if(this.loggedIn()){
+      data.loggedInNames = _.keys(this.loggedIn());
+    } else {
+      data.loggedInNames = [];
+    }
+    data.loggedOut = _.difference(data.providers, data.loggedInNames);
+
     return data;
   }
 });
