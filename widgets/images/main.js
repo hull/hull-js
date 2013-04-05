@@ -11,9 +11,7 @@
  *
  * - `id`: Optional, the id of the user whose images we want to list. By default, it will list the images of the current user.
  * - `format`: Optional, the format of the thumbnail you wish to get. Can be `thumb`, `square`, `small`, `medium`, `large`, `original`. Will map to the closest existing preset when used on external networks. Default:  `small`
- * - `provider`: Optional, service from which we will fetch images. Can be `hull`, `current`, `instagram`, or `facebook`, by default it will list images from `hull`.  
- *   `hull` will show the user's images who also have interacted with the app.  
- *   `current` will show all images from the provider which the user has used to login.
+ * - `provider`: Optional, service from which we will fetch images. Can be `hull`, `instagram`, or `facebook`, by default it will list images from `hull`.
  * - `limit`: Optional, the number of images to display. Be default it will display 10 images.
  * - `scope` : Optional, a Facebook permission you need to ask the user before being able to show data. - If this permission is not given, a button will be shown to ask for it.
  *
@@ -53,15 +51,13 @@ define(['underscore'], {
   initialize: function() {
     this.me = this.sandbox.data.api.model('me');
 
-    if (this.options.provider === 'current') {
-      this.provider = this.me.get('identities')[0].provider;
-    } else {
-      this.provider = this.options.provider;
-    }
+    this.provider = this.options.provider;
 
     if (this.provider !== "hull") {
       this.id = this.options.id || "me";  
     }
+
+
   },
 
   actions: {
@@ -95,7 +91,8 @@ define(['underscore'], {
         return m;
       }, {});
 
-      if(this.provider==="hull" || this.loggedIn()[this.provider]){
+      //Are we logged in to provider, or is provider hull. if Provider is hull, are we asking "me" without being loggedin ?
+      if( this.loggedIn()[this.provider] || (this.provider==="hull" && (this.loggedIn() || this.id!=="me"))){
         this.request(this.provider, identities, this.options).then(_.bind(function(res) {
 
           var serialized = _.bind(this.serializers[self.provider],this,res,this.options)
@@ -115,38 +112,40 @@ define(['underscore'], {
   isAuthorized: function(provider){
     var deferred = this.sandbox.data.deferred();
     var self = this;
-    var authorization = {
+    var auth = {
       provider_name: provider,
       provider:false,
       permissions:false
     };
 
     if(provider==="hull"){
-      authorization.provider=true
-      authorization.permissions=true
-      deferred.resolve(authorization)
+      auth.permissions = true;
 
-    } else if (this.loggedIn()[provider]){
+      var valid = (this.loggedIn() || this.id!=="me");
+      auth.provider = valid;
 
-      if(provider==="facebook"){
-        authorization.provider=true;
-        this.hasFacebookPermissions(self.options.scope, authorization, deferred)
-      } else{
-        authorization.provider=true
-        authorization.permissions=true
-        deferred.resolve(authorization)
-      }
+      auth.provider_name = this.sandbox.config.services.types.auth[0].replace(/_app$/,'');
 
+      deferred.resolve(auth)
     } else {
-
-      authorization.provider=false
-      authorization.permissions=false
-      deferred.resolve(authorization)
-
+      if (this.loggedIn()[provider]){
+        auth.provider=true;
+        if(provider==='facebook'){
+          this.hasFacebookPermissions(self.options.scope, auth, deferred)
+        } else {
+          auth.permissions=true
+          deferred.resolve(auth)
+        }
+      } else {
+        auth.provider=false;
+        deferred.resolve(auth)
+      }
+      
     }
+
+
     return deferred.promise();
   },
-
   hasFacebookPermissions: function(scope, authorization, deferred){
     var sandbox = this.sandbox
     this.api("facebook/me/permissions").then(function(res) {
