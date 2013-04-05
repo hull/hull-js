@@ -15,11 +15,15 @@
       <div class="media-body">
         <h4 class="media-heading">
           {{me.name}}
-          <button data-hull-action="logout" class="btn btn-small btn-link">
-            Sign Out
-          </button>
         </h4>
+        <button data-hull-action="logout" class="btn btn-small btn-link">
+          Sign Out
+        </button>
         <p>{{me.description}}</p>
+        <p>
+          Logged in with
+          {{join loggedInNames}}
+        </p>
       </div>
     </div>
   {{else}}

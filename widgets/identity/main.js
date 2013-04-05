@@ -13,7 +13,7 @@
  *
  * ## Options
  *
- * - `provider`: Optional, a provider name to force auth onto. If none specified, will default to show all configured providers for the app.
+ * - `provider`: Optional, One or more providers to allow auth onto. If none specified, will default to show all configured providers for the app.
  * 
  * ## Template
  *
@@ -50,6 +50,7 @@ define({
     } else {
       data.providers = this.authServices || [];
     }
+    data.loggedInNames = _.keys(this.loggedIn());
     return data;
   }
 });
