@@ -20,25 +20,9 @@ The `opts` parameter is an Object Literal that accepts the following keys:
 
 * `appId`: The ID of your application. You can find it in the admin.
 * `orgUrl`: The associated Hull subdomain in which your application resides.
-It can also be found in the admin, in the description of your organization
-
----
-
-## Structuring your app
-
-### Making apps with widgets ?
-
-* Widgets nesting
-
-### Building your app
-
-#### Working with grunt
-
-If you use Grunt as your build tool, we provide a `grunt-init` task to kickstart
-an application. You can get it [here](https://github.com/hull/grunt-init-hull).
-
-#### Working with PHP
-#### Working with Ruby
+It can also be found in the admin, in the description of your organization.
+* `debug`: a Boolean flag for your app to output a bunch of logs in the console.
+* `widgets`: Declares your widgets sources. See [the relevant section to use widgets sources]() for details.
 
 ---
 
@@ -429,6 +413,24 @@ ex.
 ### Events emitted by packaged widgets
 
 ### Emitting and consuming custom Events
+
+---
+
+## Structuring your app
+
+### Making apps with widgets ?
+
+* Widgets nesting
+
+### Building your app
+
+#### Working with grunt
+
+If you use Grunt as your build tool, we provide a `grunt-init` task to kickstart
+an application. You can get it [here](https://github.com/hull/grunt-init-hull).
+
+#### Working with PHP
+#### Working with Ruby
 
 ---
 
