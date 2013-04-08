@@ -85,6 +85,7 @@ To summarize things up:
 
 **That's enough to run the widgets, but you may still want to go a litle further. Here's an excerpt of what you can do more:**
 
+<a href="#" id="passing_parameters"></a>
 ### Passing parameters to a widget
 
 Most of the time, you will need to customize the behaviour of your widgets.
@@ -100,6 +101,17 @@ Tell the widget you want to use only Twitter OAuth as a valid uthentication meth
 
 Of course, if a widget requires more options, declare as many `data-hull-` options
 as necessary.
+
+All the options that you pass using `data-hull-` attributes are available in the instance of your widget under `this.options`.
+
+As an example, if you have used:
+
+    <div data-hull-eidget="myWidget" data-hull-foo="FOO" data-hull-bar="BAR">
+
+You can access the options in the widget's instance as:
+
+    this.options.foo; // corresponds to `data-hull-foo` attribute
+    this.options.bar; // corresponds to `data-hull-bar` attribute
 
 Some remarks regarding the `identity` widget:
 
@@ -214,25 +226,9 @@ You could even have skipped all the contents of the Object literal and be good t
 
 ### Add some features
 
-We're going to add some functionnality to this widget as an introduction to the fundamental features of Hull's widgets.
+To know what to do with each of these properties and what to expect from them, please refer to the [Widget API](#widget_api)
 
-#### Use some data with `datasources`
-
-
-## Initialization & Options
-
-__Is that about the declaration in the DOM or the initialize function ?__
-
-If you have used `data-hull-` attributes when declaring your widgets, like this:
-
-    <div data-hull-eidget="myWidget" data-hull-foo="FOO" data-hull-bar="BAR">
-
-you can access their values as properties of your widget:
-
-    this.options.foo; // corresponds to `data-hull-foo` attribute
-    this.options.bar; // corresponds to `data-hull-bar` attribute
-
-## Backbone Models & Collections ?
+# Hull.js technical reference
 
 ## Datasources
 
@@ -311,7 +307,7 @@ You can specify the provider by using the object notation (see example above) an
 
 Hull automatically provides each widgets with 3 default datasources:
 
-* `/me`: your Hull profile, and the associated profile in attached services, if any and if connected to them
+* `/me`: your Hull profile, and the associated profile in attached services, if any and if the user is logged in
 * `/app`: the App object in Hull. To this object, you can bind app-wide data, such as files, comments...
 * `/org`: featured just as `app`, but related to the organization. It allows you to read/write organization-wide data, which data will be shared among the apps of the same organizations!
 
@@ -320,31 +316,20 @@ Hull automatically provides each widgets with 3 default datasources:
 You can use parameters inside your datasources strings.
 They follow the standard convention `:param_name`.
 
-For example, you can do :
-
-      <div data-hull-widget="my_widget" data-hull-param="value"></div>
-
-and in your datasources :
-
-      "/:param/likes"
-
-Then, `:param` part will be replaced by `value` in the request.
-
-
-The name of a parameter can be either:
+The parameter of the datasource will be resolved by looking up properties in the folowing order:
 
 * a property of the widget instance (`this.param_name`)
-* an option passed to the widget through a `data-hull` attribute (`<div data-hull-widget="my_widget" data-hull-param-name="param_value"></div>`)
+* a key in the `options` hash of the widget (`this.options.param_name`)
 
-
-Default datasources (me, app, org)
+The latter means that you can pass options to your datasources directly from `data-hull-` attributes.
+This is very useful to widget nesting and dynamic widget instantiation.
+See [Passing parameters](passing_parameters) for details.
 
 ## Render flow / widget lifecycle
 
-* datasources hydratation
+### Widget initialization
 
-
-### Resolving data
+### Datasources resolution
 
 When a widget is instantiated, all the datasources declared in the configuration start being resolved.
 When all the datasources are resolved, the data that has been fetched is attached to the widget as properties to `this.datasources`.
@@ -355,14 +340,17 @@ In a widget, all the data is fetched asynchronously. Once done, all it is stored
 The value of `this.data` is an object literal where each key is a key in the `datasources` object, and the associated value is the data that has been
 resolved from the source of data.
 
-* beforeRender
+### Data manipulation
 
 When `this.beforeRender(data)` is called, `data` is an object containing (among other) all the properties of `this.data`.
 it is very useful if you have to manipulate the data furthe more before it is bound to the context of the template.
 
 If you return a promise at the end of `beforeRender`, Hull will wait for this promise to be resolved before rendering.
 
-* afterRender
+### Rendering
+
+### Post-rendering
+
 * renderError
 
 <a href="#" id="overriding_templates"></a>
@@ -443,7 +431,18 @@ Below is an example of how you could use it, Actions are accessible directly usi
 
     <a data-hull-action="submit" data-hull-force="true">Submit game</a>
 
-## Widget Methods Reference
+<a href="#" id="widget_api"></a>
+## Widget API Reference
+
+### Widget Properties
+
+options
+
+template
+
+datasources
+
+### Widgets Methods
 
 initialize
 
