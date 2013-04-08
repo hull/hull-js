@@ -189,7 +189,7 @@ Widgets from a source are namespaced, meaning that you can have 2 widgets with t
 
 Declaring a new source is made during the initialization process of `hull.js`, as part of its [configuration](/docs/Hull.js/configuration).
 
-### Creating the widget
+### Coding the empty widget
 
 Let's say you want to create a widget named `awesome`.
 
@@ -200,17 +200,24 @@ To create this widget, make sure:
 
 Then, create a file called `main.js` with the following contents:
 
-<pre class='language-javascript'><code>Hull.widget('awesome', {
-  datasources: {},
-  templates: [],
-  initialize: function () {},
-  beforeRender: function (data) {},
-  afterRender: function () {},
-  /* append your own widgets methods */
-});</code></pre>
+    Hull.widget('awesome', {
+      datasources: {},
+      templates: [],
+      initialize: function () {},
+      beforeRender: function (data) {},
+      afterRender: function () {},
+      /* append your own widgets methods */
+    });
 
-That's it, you've created a widget. All right, it's not exactly useful nor awsome as it is, but that's pretty much it.
+That's it, you've created a widget. Alright, it's not exactly useful nor awsome as it is (as it doeas does strictly _nothing_), but that's pretty much it.
 You could even have skipped all the contents of the Object literal and be good to go.
+
+### Add some features
+
+We're going to add some functionnality to this widget as an introduction to the fundamental features of Hull's widgets.
+
+#### Use some data with `datasources`
+
 
 ## Initialization & Options
 
