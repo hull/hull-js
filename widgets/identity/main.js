@@ -16,11 +16,11 @@
  *
  * - `provider`: Optional, One or more providers to log users in.
  *   If none specified, will show all configured providers for the app.
- * 
+ *
  * ## Template
  *
  * - `identity`: Show login buttons if the user isn't logged, display a micro profile card if he is.
- * 
+ *
  */
 define({
   type: 'Hull',
@@ -65,6 +65,7 @@ define({
     // Create an array of logged out providers.
     data.loggedOut = _.difference(data.providers, data.loggedInProviders);
     data.matchingProviders = _.intersection(data.providers, data.loggedInProviders);
+    data.authServices = this.authServices;
 
     return data;
   }
