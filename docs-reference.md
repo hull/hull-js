@@ -329,29 +329,63 @@ See [Passing parameters](passing_parameters) for details.
 
 ### Widget initialization
 
+Widgets are instantiated lazily, which means they will be created only when there is in the app an HTML tag
+with a `data-hull-widget` attribute which value can be resolved to a widget definition.
+
+After some internal work on the definition provided in `main.js` (extension of the Javascript base prototype of Widget, mainly),
+an instance of the widget is created, starting the following tasks:
+
+* The datasources are being resolved asynchronously
+* The templates are being resolved asynchronously
+* the `initialize` method is called.
+
+__This method is the first entry point for developers where they can customize the behaviour of the widget.__
+Due to the async nature of datasource and template resolutions, it is very hazardous to consider them as available during the execution
+of thr `initialize` method.
+
 ### Datasources resolution
 
 When a widget is instantiated, all the datasources declared in the configuration start being resolved.
-When all the datasources are resolved, the data that has been fetched is attached to the widget as properties to `this.datasources`.
+When all the datasources are resolved, the data that has been fetched is bound to the widget as properties to `this.data`.
 
-In a widget, all the data is fetched asynchronously. Once done, all it is stored in a member of the instance of the widget:
-`data`. You can access the data necessary to your widget from anywhere in your widget by reading (or writing dependeing on the needs) `this.data`.
+Every key in `this.datasources` (which dt)is the container of datasources definition) will eventually have a corresponding key in `this.data`.
+Whereas the former is the container of datasources definitions, the latter contains the _actual_ data that has been fetched.
 
-The value of `this.data` is an object literal where each key is a key in the `datasources` object, and the associated value is the data that has been
-resolved from the source of data.
+The values in `this.data` are Object Literal.
 
 ### Data manipulation
 
-When `this.beforeRender(data)` is called, `data` is an object containing (among other) all the properties of `this.data`.
-it is very useful if you have to manipulate the data furthe more before it is bound to the context of the template.
+When all the datasources have been resolved to actual data, the method `beforeRender` is called. The method takes one parameter
+that is an Object Literal containing (among other) all the properties of `this.data`.
+it is very useful if you have to manipulate the data further more before it is bound to the context of the template.
 
-If you return a promise at the end of `beforeRender`, Hull will wait for this promise to be resolved before rendering.
+Every property you may addi or modify to this object will be bound to the context of the template and usable in it.
+
+If you return a promise at the end of `beforeRender`, Hull will wait for this promise to be resolved before rendering and will bind
+the resolved value to the context of the template.
+
+In beforeRender, you can also optionnally define which template will be rendered by setting a value to `this.template`.
+The value __MUST__ be one of the elements in `this.templates`.
+
+If no template has been explicitely defined (by setting a value in `this.template`), then the first element of the array in `this.templates` will be rendered.
 
 ### Rendering
 
+At this point, the template has been selected, either by default or explicitely, and the data has been fetched and manipulated if needed.
+A few properties are added added to the context of the template before the actual rendering:
+
+* loggedIn: true if the current user is logged in with one of the authentication services if the application.
+* me: The identity of the loggedIn user. Contains all the informations useful to identify the user.
+
+These two entries can be used whenever you want to do personnalized output or when your template has to be rendered conditionnally depending
+on the connectedness of the user.
+
+If at any time a rendering error occurs, the method renderError will be called, allowing developers to act upon rendering errors.
+
 ### Post-rendering
 
-* renderError
+When the widget has been rendered, the method `afterRender` is executed, for the developer to be able to act upon the data as well as the markup.
+This may be used to add custom listeers to DOM events, or bind data to specific DOM nods.
 
 <a href="#" id="overriding_templates"></a>
 ## Overriding templates
@@ -395,7 +429,7 @@ It is a Javascript Object literal, in which the keys are the templates IDs, and 
 
 As an example, to override the template `foo/bar` (Remember: it's the template `bar` of the widget `foo`), just do the following:
 
-<pre class='language-javascript'><code>Hull.templates["foo/bar"] = "You are awesome, {{name}}!";</code></pre>
+    Hull.templates["foo/bar"] = "You are awesome, {{name}}!";
 
 
 If you have already precompiled [Handlebars](http://handlebarsjs.com) templates, you can use them as the values for the entries of `Hull.templates`.
