@@ -1,57 +1,67 @@
-Documentation...
+# Installing `hull.js`
 
-# Hull.js
+`hull.js` is the library that enables all the client-side features of Hull.
 
-hull.js is the only file you have to include to enable all the client-side features of Hull.
-It allows you to :
+How you can get `hull.js`:
 
-* Init your Hull application
-* Declare widgets in your page
-* Use prepackaged widgets
-* Customize the prepackaged widgets
-* Create your own widgets
-* Perform API requests
+* download it from [your admin page][admin]
+* Include it from our CDN. The URL is indicated in [your admin page][admin]
+* Build it from [the source](http://github.com/hull/hull-js) (instructions included)
 
+Once you've got it, install it as follows:
 
-## Hull.init(opts)
+1. Add `jQuery` (or `Zepto`) to your app (__Untested with jQuery 2.0 beta__) as well as `hull.js`
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script src="PATH/TO/hull.js"></script>
+
+# Initialize your application
 
 In order to get your app up and running, you must first call `Hull.init()`.
 The `opts` parameter is an Object Literal that accepts the following keys:
 
-* `appId`: The ID of your application. You can find it in the admin.
+* `appId`: The ID of your application. You can find it in [the admin][admin].
 * `orgUrl`: The associated Hull subdomain in which your application resides.
-It can also be found in the admin, in the description of your organization.
+It can also be found in [the admin][admin], in the description of your organization.
 * `debug`: a Boolean flag for your app to output a bunch of logs in the console.
 * `widgets`: Declares your widgets sources. See [the relevant section to use widgets sources]() for details.
 
-## Getting started with widgets
+As a minimal setup, you should type the following:
 
-This section will cover the basics of using widgets in Hull.
+    Hull.init({
+      appId: "YOUR_APP_ID",
+      orgUrl: "YOUR_ORGANIZATION_URL"
+    });
+
+Where `YOUR_APP_ID` and `YOUR_ORGANIZATION_URL` are as defined in [the administration][admin].
+
+The next section will cover the basics of using widgets in Hull.
 Although Hull provides you direct access to its API, best luck is that you will
-want to give our prepackaged widgets a try, or event build one yourself!
+want to give widgets a try, to eventually build some by yourself for more reusability!
+
+# Getting started with widgets
 
 As a starter, we'll show you how to make use of the prepackaged widgets.
-All the concepts outlined in this section will still be valid when you'll come
-to create your own widgets.
+All the concepts outlined in this section will still be valid when you'll come to create your own widgets.
 
-### Using prepackaged widgets
+## Using prepackaged widgets
 
-Hull comes packaged with a [bunch of widgets](/docs/widgets/hull_widgets), all you need to do
-is add a couple of data-attributes to your HTML document.
+Hull comes packaged with a [bunch of widgets](/docs/widgets/hull_widgets), all you need to do to start a widget
+is add a tag to your page alongside a couple of data-attributes.
 
-In this section, we will use the `identity` widget. It allows your users to log
-in using any of the social networks your app is bound to (see the admin for binding authentication services to your app).
+In this section, we will use the `identity` widget as an example. It allows your users to log
+in using any of the social networks your app is bound to (see [the admin][admin] for binding authentication services to your app).
 
-#### Locate the widget in your page
+### Locate the widget in your page
 
-Start by placing a `<div>` tag wherever you want the widget to be located; consider this tag as a placeholder.
+Start by placing a `<div>` tag wherever you want the widget to be located; consider this tag as a placeholder for the rendered widget.
 
     <div></div>
 
 This widget will be rendered __inside__ this element. You don't have to use a div,
 feel free to use the appropriate HTML tag.
 
-#### Specifying the widget type
+### Specifying the widget type
 
 Use the data-attribute `data-hull-widget` to specify which widget has to be instantiated.
 In this case where we want to use the `identity` widget, we will write:
@@ -59,29 +69,29 @@ In this case where we want to use the `identity` widget, we will write:
     <div data-hull-widget="identity@hull"></div>
 
 Note the `@hull` notation. Hull provide means to use widgets from various locations,
-which we call 'widget sources', and all the prepackaged widgets come from the `hull` source.
+which we call _widget sources_, and all the prepackaged widgets come from the `hull` source.
 
 You can [learn more about widget sources below]().
 
-#### Look 'Ma, it's working!
+### Look 'Ma, it's working!
 
-That's all that is required to have a fully functional login widget... Really.
+That's all that is required to have a fully functional login widget... Really. Refresh your page to see the results.
 
 To summarize things up:
 
 1. Insert `hull.js` in your page
-2. Add the markup necessary for your widgets
+2. Add the necessary markup for your widgets
 3. Execute `Hull.init(opts)` with your credentials
 
 **That's enough to run the widgets, but you may still want to go a litle further. Here's an excerpt of what you can do more:**
 
-#### Passing parameters to a widget
+### Passing parameters to a widget
 
 Most of the time, you will need to customize the behaviour of your widgets.
 In Hull, you can pass options to your widgets by using `data-hull-` attributes,
 just like you would pass arguments to a method.
 
-The `identity` widget accepts one `provider` parameter, so you can choose
+Following our example, the `identity` widget accepts one `provider` parameter, so you can choose
 the authentication provider you want your users to connect with.
 
 Tell the widget you want to use only Twitter OAuth as a valid uthentication method by typing:
@@ -99,12 +109,12 @@ Some remarks regarding the `identity` widget:
 * If you don't provide a `data-hull-provider` to the widget, users will be able to authenticate to the provider they prefer in the list
 of the services attached to your app.
 
-#### Overriding templates
+### Overriding templates
 
 Our prepackaged widgets come with some default markup, fit to work natively with [Twitter Bootstrap](http://twitter.github.com/bootstrap).
 However, it may not fit your design and if you ever want to customize the rendering of the template, [many options are available](#overriding_templates).
 
-We will see in this section the fastest yet not the most optimized way to do so.
+We will see in this section the fastest (yet not the most optimized) way to do so.
 
 To override a template in Hull, it is enough to add a `<script>` tag to your page like the following:
 
@@ -125,28 +135,28 @@ To override a template in Hull, it is enough to add a `<script>` tag to your pag
 
 There are a few things to be noticed here:
 
-* `loggedIn` is a method bound to the context of the template. it returns false if no user is connected, a truthy value otherwise.
+* `loggedIn` is a method bound to the context of the template. it returns false if no user is connected, a truthy value [see details](#) otherwise.
 * The user itself is bound to the context of the template, that's what makes {{name}} available.
 * Look at the `data-hull-action` attribute in the login button. `data-hull-action` represent special `click` handlers. Learn more [here]().
 
-#### More about prepackaged widgets
+### More about prepackaged widgets
 
 Now you can already start adding social features in your app or even build a complete 100% social app with Hull!
-To know everything aout our prepackaged widgets, refer to the [widgets reference]().
+To know everything about our prepackaged widgets, refer to the [widgets reference]().
 
-### Creating your own widgets
+## Creating your own widgets
 
-#### File structure
+### File structure
 
-In Hull, as in [Aura](http://github.com/aurajs/aura), there's a golden rule stating that:
+In Hull, there's a golden rule abut widgets coming from [Aura](#architecture) stating that:
 
 * At the filesystem level, each widget must be placed in its own folder.
 * The name of the folder is used as the name of the widget.
 
-By default, in Hull, widgets are looked after in a folder called `widgets`, but you can change this.
-See the [Configuration](/docs/Hull.js/configuration) page for details on how to change the default behaviour and add more entry points for your widgets.
+By default, in Hull, widgets are looked after in a folder called `widgets`, but you can obviously change this.
+See the [Configuration](/docs/Hull.js/configuration) page for details on how to change the default behaviour and add more _widget sources_ for your widgets.
 
-Every child subfolder of `widgets` is the description of a folder. The contents of a widget folder should be as follows:
+Every subfolder of `widgets` is the description of a widget. The contents of a widget folder should be as follows:
 
 * A `main.js` file that will bootstrap and describe the widgets, specifying its templates, dependencies and overall behaviour. This file is mandatory, no matter how small it can be.
 * One or many template files, in the form of \*.hbs files. These files will be referenced by `main.js`.
@@ -163,23 +173,23 @@ A basic widget could have this file structure:
     |-----image.png
 
 <a name="#widgets_sources"></a>
-#### Widget sources
+### Widget sources
 
-Hull can fetch widgets from many places, called sources. By default, Hull knows 2 sources:
+Hull can fetch widgets from many places, called _widget sources_. By default, Hull knows 2 sources:
 
 * `hull`, which is he location for our [packaged widgets](/docs/widgets/packaged_widgets)
-* `default`, which is the default location for your widgets, has for value `./widgets`. This means that if your baseURL is `/path/to/my/app`,
+* `default`, which is the default location for your widgets, has for default value `./widgets`. This means that if your baseURL is `/path/to/my/app`,
 then the default source intends to find its widgets into `/path/to/my/app/widgets`.
 
-By configuring Hull at startup, you can override these settings (except from the `hull` source) and add any source you want.
+By configuring Hull at startup, you can override these settings (except from the `hull` source) and add as many sources you want.
 
 Using sources can be very useful if you add 3rd-party widgets, or want to separate your widgets by concerns.
 
 Widgets from a source are namespaced, meaning that you can have 2 widgets with the same name, as long as they don't come from the same source.
 
-Declaring a new source is made during the initialization process of `hull.js`, as part of its [configuration](/docs/Hull.js/configuration)
+Declaring a new source is made during the initialization process of `hull.js`, as part of its [configuration](/docs/Hull.js/configuration).
 
-#### Creating the widget
+### Creating the widget
 
 Let's say you want to create a widget named `awesome`.
 
@@ -202,7 +212,7 @@ Then, create a file called `main.js` with the following contents:
 That's it, you've created a widget. All right, it's not exactly useful nor awsome as it is, but that's pretty much it.
 You could even have skipped all the contents of the Object literal and be good to go.
 
-### Initialization & Options
+## Initialization & Options
 
 __Is that about the declaration in the DOM or the initialize function ?__
 
@@ -215,16 +225,16 @@ you can access their values as properties of your widget:
     this.options.foo; // corresponds to `data-hull-foo` attribute
     this.options.bar; // corresponds to `data-hull-bar` attribute
 
-### Backbone Models & Collections ?
+## Backbone Models & Collections ?
 
-### Datasources
+## Datasources
 
 Having a good understanding of what they are and what you can do with them will help you leverage the performances and features of your widgets and applications.
 
 Basically, datasources are in charge of communicating with Hull's server APIs and the services attached to your application (Twitter, Facebook...).
 We made it easy to get datasources into your widgets, through the property `datasources`.
 
-#### Syntax Overview
+### Syntax Overview
 
 As a reminder, you create a widgets with the following syntax:
 
@@ -277,7 +287,7 @@ If it doesn't return a promise and the data is not there yet, the template may b
 Returning a promise solves this all.
 If your function returns data that is available immediately, then you can just return the data as is.
 
-#### Providers
+### Providers
 
 The data you'll manipulate in your Hull app can come from many services, which we call providers:
 
@@ -290,7 +300,7 @@ When declaring a datasource as a string, you use the default provider, which is 
 
 You can specify the provider by using the object notation (see example above) and adding a key-value pair with the key `provider`.
 
-#### Default datasources
+### Default datasources
 
 Hull automatically provides each widgets with 3 default datasources:
 
@@ -298,7 +308,7 @@ Hull automatically provides each widgets with 3 default datasources:
 * `/app`: the App object in Hull. To this object, you can bind app-wide data, such as files, comments...
 * `/org`: featured just as `app`, but related to the organization. It allows you to read/write organization-wide data, which data will be shared among the apps of the same organizations!
 
-#### Parameters
+### Parameters
 
 You can use parameters inside your datasources strings.
 They follow the standard convention `:param_name`.
@@ -322,12 +332,12 @@ The name of a parameter can be either:
 
 Default datasources (me, app, org)
 
-### Render flow / widget lifecycle
+## Render flow / widget lifecycle
 
 * datasources hydratation
 
 
-#### Resolving data
+### Resolving data
 
 When a widget is instantiated, all the datasources declared in the configuration start being resolved.
 When all the datasources are resolved, the data that has been fetched is attached to the widget as properties to `this.datasources`.
@@ -348,8 +358,8 @@ If you return a promise at the end of `beforeRender`, Hull will wait for this pr
 * afterRender
 * renderError
 
-<a href="#" id="overriding_templates">
-### Overriding templates
+<a href="#" id="overriding_templates"></a>
+## Overriding templates
 
 Hull's packaged widgets come with their own templates, that you can override.
 We chose [Handlebars](http://handlebarsjs.com/) because it is fast and powerful.
@@ -358,7 +368,7 @@ We provide a bunch of ways to customize and override the templates.
 __The next sections applies for the packaged widgets, but also for your custom templates.__
 
 <a name="template_names"></a>
-#### Namimg templates
+### Namimg templates
 
 First things first, if you want to write or override a template, you must know how they're named.
 
@@ -373,7 +383,7 @@ As an example, in a widget named `foo`, if you have 2 templates named `bar` and 
 
 Now you know how to naming is done, let's see how to actually override templates.
 
-#### Simple version : In-page overrides
+### Simple version : In-page overrides
 
 You can override a template by creating a `<script>` tag in your page with its name in the data attribute `data-hull-template`:
 
@@ -383,7 +393,7 @@ You can override a template by creating a `<script>` tag in your page with its n
 
 where `WIDGET_NAME/TEMPLATE_NAME` is as described in the previous section.
 
-#### Overriding templates in Hull.templates
+### Overriding templates in Hull.templates
 
 Another (cleaner, to be honest) way is to store your templates in `Hull.templates`.
 It is a Javascript Object literal, in which the keys are the templates IDs, and the values are the templates themselves.
@@ -398,15 +408,15 @@ If you have already precompiled [Handlebars](http://handlebarsjs.com) templates,
 **Please note**: This is the actual way that we use to include the templates for the packaged widgets.
 
 
-### Actions
+## Actions
 
-####Events
+###Events
 
 You can attach events to the markup of your widgets by using the Backbone DOM events syntax.
 
 Declare the events in your widgets within the 'events' property in your widget.
 
-#### Registering action handlers
+### Registering action handlers
 
 Axtions represent an easy way to perform on click actions
 The `actions` property of a widget is a hash which keys are the names of the actions you want to trigger and values are methods that you want to be executed on click.
@@ -422,11 +432,11 @@ Below is an example of how you could use it, Actions are accessible directly usi
   }
 }</code></pre>
 
-#### Using actions in your markup
+### Using actions in your markup
 
     <a data-hull-action="submit" data-hull-force="true">Submit game</a>
 
-### Widget Methods Reference
+## Widget Methods Reference
 
 initialize
 
@@ -490,7 +500,7 @@ el / $el
 
 is a cached jQuery element representing the root node of the widget
 
-### Sandbox Reference
+## Sandbox Reference
 
 config
 
@@ -511,24 +521,24 @@ stopListening
 track
 
 
-### Debugging
+## Debugging
 
 logging / debug mode
 
 renderError method
 
-### Events
+## Events
 
 refreshEvents
 
 
-### Templates & Available helpers
+## Templates & Available helpers
 
 ---
 
-## Events
+# Events
 
-### Native events emitted by hull.js
+## Native events emitted by hull.js
 
 ex.
 
@@ -536,31 +546,31 @@ ex.
 * model.hull.me.change
 * hull.authComplete
 
-### Events emitted by packaged widgets
+## Events emitted by packaged widgets
 
-### Emitting and consuming custom Events
+## Emitting and consuming custom Events
 
 ---
 
-## Structuring your app
+# Structuring your app
 
-### Making apps with widgets ?
+## Making apps with widgets ?
 
 * Widgets nesting
 
-### Building your app
+## Building your app
 
-#### Working with grunt
+### Working with grunt
 
 If you use Grunt as your build tool, we provide a `grunt-init` task to kickstart
 an application. You can get it [here](https://github.com/hull/grunt-init-hull).
 
-#### Working with PHP
-#### Working with Ruby
+### Working with PHP
+### Working with Ruby
 
 ---
 
-## Available vendored libs
+# Available vendored libs
 
 * aurajs
 * requirejs
@@ -575,26 +585,26 @@ an application. You can get it [here](https://github.com/hull/grunt-init-hull).
 
 ---
 
-## Hull's APIs
+# Hull's APIs
 
-### Hull API
+## Hull API
 
-### Services APIs
+## Services APIs
 
 ---
 
-## Authentication Guide
+# Authentication Guide
 
-### login / logout and cross-domain sso
+## login / logout and cross-domain sso
 
 * Hull.login / sandbox.login
 * Hull.logout / sandbox.logout
 
-### Provider permissions
+## Provider permissions
 
 ---
 
-## Tracking
+# Tracking
 
 The tracking middleware sends data to hull automatically.
 In the admin panel, you can configure the services to which send this data (Google Analytics, Mixpanel...).
@@ -604,16 +614,30 @@ We also store everything for further applications.
 
 **Widgets automatically do this behind the scenes.**
 
----
-
-## Packaged widgets
-
----
-
-
-
 # Hull APIs
 
 * Document formats
 * Explain concepts
 
+<a href="#" id="architecture"></a>
+# Hull architecture
+
+`hull.js` uses and exposes a solid application architecture, ready for use and built with standard and well-known projects.
+
+* [Backbone.js](http://backbonejs.org/)
+* [Aura](http://github.com/aurajs/aura)
+* [Handlebars](http://handlebarsjs.com/)
+* [Underscore](http://underscorejs.org)
+* [analytics.js](http://github.com/segmentio/analytics.js)
+* [moment.js](http://momentjs.com/)
+* [jQuery](http://jquery.com/)
+
+You don't have to know any of them to use and build your own widgets.
+We don't require in-depth (if any) knowledge of any of these libraries/frameworks to build your own social application.
+
+### We are dedicated to Open-Source.
+
+We contribute to Open Source projects whenever we feel like we may bring something useful to the table.
+We truly think this is the only way to build better software that everybody can take advantage of.
+
+[admin]: https://alpha.hullapp.io
