@@ -1,24 +1,52 @@
+/**
+ * # List Toggle
+ *
+ * Allow users to add and remove objects from lists.
+ * Lists are created on the fly, with the `list-name` you specify.
+ *
+ * ## Examples
+ *
+ *     <div data-hull-widget="list_toggle@hull" data-hull-id="app" data-hull-list-name="favorites"></div>
+ *     <div data-hull-widget="list_toggle@hull" data-hull-id="HULL_ID" data-hull-list-name="favorites"></div>
+ *
+ * ## Options
+ *
+ * - `list-id`: The name of the list you want to show. List will automatically be created if it does not exist yet.
+ * - `id` : The ID of the object you want to add / remove to the list. 
+ * 
+ * ## Template
+ *
+ * - `list_toggle`: Shows the button with the right state
+ * 
+ */
 define({
   type: "Hull",
 
   templates: ["list_toggle"],
 
   options: {
-    list_name: 'likes'
+    listName: 'likes'
   },
 
   initialize: function() {
-    this.list = this.api.model("me/lists/" + this.options.list_name);
-    this.datasources.list = this.list.deferred;
+    this.list = this.api.model("me/lists/"+this.options.listName);
+  },
+
+  datasources:{
+    // list: "me/lists/:listName"
+    list: function(){
+      return this.list.deferred;
+    },
+    obj: ":id" 
   },
 
   beforeRender: function(data) {
+    this.id = data.obj.id;
     if (data.list && data.list.items) {
       var itemIds   = _.pluck(data.list.items, "id");
       data.isListed = _.include(itemIds, this.id);
     }
-    this.itemPath = "hull/" + data.list.id + "/items/" + this.id;
-    console.warn()
+    this.itemPath = "hull/" + data.list.id + "/items/" + data.obj.id;
     return data;
   },
 

@@ -48,18 +48,18 @@
       var target=this.id;
       switch (target){
         case 'app' :
-          target = data.app.id;
+          this.id = data.app.id;
           break;
         case 'me' : 
-          target = data.me.id;
+          this.id = data.me.id;
           break;
         case 'org' : 
-          target = data.org.id;
+          this.id = data.org.id;
           break;
       }
-      this.isLiked = _.include(likedIds, target);
+      this.isLiked = _.include(likedIds, this.id);
     }
-    data.likesCount = data.likesCount || this.options.likesCount;
+    data.likesCount = this.likesCount || this.options.likesCount;
     data.isLiked = this.isLiked;
     return data;
   },
@@ -70,12 +70,14 @@
     }
     this.working = true;
     var method = verb === 'unlike' ? 'delete' : 'post';
+    this.isLiked    = !this.isLiked;
     this.api('hull/' + this.id + '/likes', method, function(count) {
       this.working    = false;
-      this.isLiked    = !this.isLiked;
       this.likesCount = count
       this.render('like_button', { isLiked: this.isLiked, likesCount: this.likesCount });
-    }.bind(this));
+    }.bind(this)).fail(function(){
+      this.isLiked = !this.isLiked;
+    });
   },
 
   actions: {
