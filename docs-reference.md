@@ -436,8 +436,47 @@ If you have already precompiled [Handlebars](http://handlebarsjs.com) templates,
 
 **Please note**: This is the actual way that we use to include the templates for the packaged widgets.
 
+## User interaction
 
-## Actions
+The purpose of a widget is present data to the user so he can interact with it.
+To fulfill this purpose, `hull.js` exposes an easy interface to catch user-generated events.
+
+### Actions
+
+In your widgets, you can use the `actions` property to simply define custom click handlers.
+Here's how you do it:
+
+    Hull..widget('naiveABTestingWidget', {
+      "templates": ['main' 'signupFormA', 'signupFormB'],
+      "actions": {
+        /**
+         * When the action is triggered, this action renders randomly
+         * one of the two templates of the widget
+         * @param {jQuery} elt The DOM element on which the action has been triggered
+         * @param {Object} evt The event that has been triggered
+         * @param {Object} data The data associated with the element (specified by data-hull-* attributes)
+         */
+        abTest: function (elt, evt, data) {
+          var rnd = Math.round(Math.random());
+          this.render(rnd ? 'signupFormA', 'signupFormB');
+        }
+      }
+    });
+
+The above snippet indicates what needs to be done, now we have to indicate our widgets _when_
+the action needs to be triggered. This happens in the template, using a simple `data-hull-action` attribute.
+
+    <a href="#" data-hull-action="abTest">Signup</a>
+
+Whenever the user clicks the Signup link, the `abTest` action is triggered.
+
+__Note on event bubbling__: Remember that events bubble! If you don't call `evt.stopPropagation()`, the action will
+ bubble up to the DOM root. If this widget is contained in another Hull widget,
+its parent will throw an error if it doesn't have an `abTest` action defined.
+
+__Note on default actions__: If you bind actions to elements that have default actions, like `<a>`,`<input>`
+or `<button>`, you __MUST__ call `evt.preventDefault()` if you require that the default action
+is not executed.
 
 ###Events
 
@@ -465,8 +504,16 @@ Below is an example of how you could use it, Actions are accessible directly usi
 
     <a data-hull-action="submit" data-hull-force="true">Submit game</a>
 
+## Event-driven communication
+
+* refreshEvents
+
+* hull.me.change
+* authComplete
+
+
 <a href="#" id="widget_api"></a>
-## Widget API Reference
+# Widget API Reference
 
 ### Widget Properties
 
@@ -567,16 +614,9 @@ logging / debug mode
 
 renderError method
 
-## Events
-
-refreshEvents
-
-
 ## Templates & Available helpers
 
----
 
-# Events
 
 ## Native events emitted by hull.js
 
