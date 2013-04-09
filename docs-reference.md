@@ -444,9 +444,12 @@ To fulfill this purpose, `hull.js` exposes an easy interface to catch user-gener
 ### Actions
 
 In your widgets, you can use the `actions` property to simply define custom click handlers.
-Here's how you do it:
+The `actions` property of a widget is a hash which keys are the names of the actions
+you want to trigger and values are methods that you want to be executed on click.
 
-    Hull..widget('naiveABTestingWidget', {
+Here's an example of how you do it:
+
+    Hull.widget('naiveABTestingWidget', {
       "templates": ['main' 'signupFormA', 'signupFormB'],
       "actions": {
         /**
@@ -478,39 +481,54 @@ __Note on default actions__: If you bind actions to elements that have default a
 or `<button>`, you __MUST__ call `evt.preventDefault()` if you require that the default action
 is not executed.
 
-###Events
-
-You can attach events to the markup of your widgets by using the Backbone DOM events syntax.
-
-Declare the events in your widgets within the 'events' property in your widget.
-
-### Registering action handlers
-
-Axtions represent an easy way to perform on click actions
-The `actions` property of a widget is a hash which keys are the names of the actions you want to trigger and values are methods that you want to be executed on click.
-Below is an example of how you could use it, Actions are accessible directly using the following syntax :
-
-<pre class='language-javascript'><code>actions:{
-  submit:  function(element, event, data){
-    //data = { force : true }
-  },
-  replay:  function(element, event, data){
-  },
-  send: function(element, event, data){
-  }
-}</code></pre>
-
-### Using actions in your markup
-
-    <a data-hull-action="submit" data-hull-force="true">Submit game</a>
-
 ## Event-driven communication
 
-* refreshEvents
+As all the widgets are meant to be independent and have as little dependencies as possible,
+the communication between widgets and between a widget and the core of `hull.js` happens through events,
+thanks to a global mediator.
 
-* hull.me.change
-* authComplete
+### Using events to refresh the widget
 
+Following [Backbone][backbone] conventions, we have provided `hull.js` with a mechanism to
+automatically refresh widgets (on demand) when a specific event occurs.
+These events can be setup in the `refreshEvents` property of a widget.
+
+    Hull.widget('customEventsExample', {
+      "refreshEvents": ['my.events.custom1'],
+    });
+
+In this example, the widget will subscribe to the event `my.events.custom1` and perform a refresh
+on the currently active template when the event is triggered.
+
+`hull.js` comes a set of predefined events:
+
+* `model.hull.me.change` is triggered when the current user has any of his properties updated.
+* `hull.authComplete` is triggered when the user has logged in.
+
+### Global event communication
+
+Every instance of widgets have a bunch of method for generating events:
+
+#### this.emit(eventName, data);
+
+This method initiates a message that is dispatched through the mediator to the subscribers.
+
+* `eventName` {String}: The name of the event to be dispatched
+* `data` {mixed} Data that will be passed to the subscribers
+
+#### this.on(eventName, cb)
+
+* `eventName` {String} The name of the event to register to
+* `cb` {Function} The function to be called when the event is triggered.
+
+    The callback will receive the data sent by `emit` (if any) as its first parameter.
+
+
+#### this.off(eventName)
+
+This method cancels the subscription to the event specified in parameter.
+
+* `eventName` {String}: The name of the event
 
 <a href="#" id="widget_api"></a>
 # Widget API Reference
@@ -704,7 +722,7 @@ We also store everything for further applications.
 
 `hull.js` uses and exposes a solid application architecture, ready for use and built with standard and well-known projects.
 
-* [Backbone.js](http://backbonejs.org/)
+* [Backbone.js][backbone]
 * [Aura](http://github.com/aurajs/aura)
 * [Handlebars](http://handlebarsjs.com/)
 * [Underscore](http://underscorejs.org)
@@ -721,3 +739,4 @@ We contribute to Open Source projects whenever we feel like we may bring somethi
 We truly think this is the only way to build better software that everybody can take advantage of.
 
 [admin]: https://alpha.hullapp.io
+[backbone]: http://backbonejs.org
