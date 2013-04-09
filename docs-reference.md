@@ -551,9 +551,15 @@ The definition of the datasources used by the widget. See [The relevant section]
 
 #### $el
 
-A cached jQuery element representing the root node of the widget
+A jQuery element representing the root node of the widget.
 
 #### sandbox
+
+The instance of the sandbox for the current widget. See [the sandbox reference](sandbox) for details.
+
+#### isInitialized
+
+A boolean value indicating if the widget has finished being initialized. Useful if you register to events and they trigger before the widget is done initializing.
 
 ### Widgets Methods
 
@@ -562,22 +568,51 @@ A cached jQuery element representing the root node of the widget
 The `initialize` method is used to bootstrap your widget. You should basically consider it as a constructor. Whatever needs to be setup straight after the widget has been created (_created_, not _rendered_; rendering happens later)
 happens here. Basically, this is where you will setup the events, private vars/objects, that kind of stuff.
 
-#### renderTemplate
+#### renderTemplate(tplName, data)
+
+* __tplName__ {String} The identifier of the template you want to compile
+* __data__ {Object} The data to be passed to the template engine. It will be used to define the context of the widget
+
+The method returns the __String__ of HTML corresponding to the compiled template.
 
 #### beforeRender(data)
 
-#### log [deprecated]
+* __data__ {Object} The prebuilt context
 
-#### buildContext [private]
+This method can be safely overridden. Its purpose is to allow the developpers to add data to the context that will be passed to the templating engine.
 
-#### loggedIn
+If the method returns an object, this object will be used as the context for the template. If the method returns a promise,
+the resolved value of the promise will be used as the context.
+
+#### log(msg) [deprecated]
+
+* __msg__ {mixed} the data to be logged
+
+Displays a mesage in the console of the browser. The message that is given is parameter will be prepended in the console with contextual information.
+
+#### buildContext() [private]
+
+This method builds the context before rendering the template. It sets up the vaious promises that are to be resolved (data, template loading),
+and returns a Deferred so that everything is wired up correctly.
+
+__Note__: This method, although public, is not supposed to be used by developers.
+
+#### loggedIn()
 
 `loggedIn` returns `false` if no user is connected to one of the providers you accept in your application.
-Otherwise, it returns a hash containing the identities in all the network your user is known to have in your app.
+Otherwise, it returns a hash containing the identities your user is known to have in your app for every network you have setup.
 
-#### getTemplate
+#### getTemplate()
 
-#### doRender
+Returns the current template (the one that will be rendered next time `render` is executed).
+By default, it returns the first element of `this.templates`.
+
+#### doRender(tpl, data)
+
+* __tpl__ {String} The name of the template to be used
+* __data__ {Object} The data to be used as the template's context
+
+Renders into the root element of the widget the specified template and binds some specific data as its context.
 
 #### afterRender(data)
 
@@ -590,29 +625,38 @@ This method takes no parameters and has no return value.
 
 You can call `this.render()` in any method in the widget to refresh the view. But you can specify 2 very useful parameters:
 
-* ``templateName`` {String} as the first argument will specify which of the template of the widget has to be rendered. Very useful for widgets with multiple views.
-* ``data`` {Object} as a second argument will add/override any data computed by the datasources and the `beforeRender` method.
+* __templateName__ {String} as the first argument will specify which of the template of the widget has to be rendered. Very useful for widgets with multiple views.
+* __data__ {Object} as a second argument will add/override any data computed by the datasources and the `beforeRender` method.
 
-#### html
+#### track(name, data)
 
-#### track
+* __name__ {String} The tracking event name that will be used in the tracking services
+* __data__ {Object} The data to be associated to the event in the tracking services
 
-allows you to track user activity and send data to the tracking services defined in the [admin](http://alpha.hullapp.io).
-    See [Tracking](/docs/Hull.js/tracking) for details
+Allows you to track user activity on custom events and send data to the tracking services defined in the [admin](http://alpha.hullapp.io).
 
-#### isInitialized
 
-#### renderError
+#### renderError(errMsg, err)
 
-#### api
+* __errMsg__ {String} The message explaining the error
+* __err__ {Error} The complete error
 
-allows to do API calls directly. The methods systematically returns a promise. See [Accessing Data](/docs/Hull.js/accessing_data)
-    to know how to perform these actions.
+This method is called when one of the operations required prior to the rendering (datasources, template loading) has failed.
+You can safely override this method for error management.
+
+#### api(uri, data)
+
+* __uri__ {String} URI to be reached by Hull's API.
+
+
+Allows to do API calls directly. The methods systematically returns a promise.
+See [Hull API](hull_api) to know how to perform these actions.
 
 #### refresh
 
-refresh is an alias for render
+Refresh is an alias for render
 
+<a href="#" id="sandbox"></a>
 ### Sandbox Reference
 
 #### config
@@ -662,6 +706,7 @@ an application. You can get it [here](https://github.com/hull/grunt-init-hull).
 ### Working with PHP
 ### Working with Ruby
 
+<a href="#" id="hull_api"></a>
 ## Hull API
 
 ## Services APIs
