@@ -679,6 +679,12 @@ Refresh is an alias for render
 
 ## The global variable `Hull`
 
+* Hull.login
+* Hull.logout
+* Hull.on
+* Hull.off
+* Hull.emit
+
 
 ## Debugging
 
@@ -689,6 +695,39 @@ renderError method
 ## Templates & Available helpers
 
 ## Events emitted by packaged widgets
+
+<a href="#" id="hull_api"></a>
+## Hull API
+
+### Hull native API
+
+Hull offers an unified API to let you query data from Hull or from a third party provider.
+All of the API is available from 2 endpoints in the JS library:
+
+* From anywhere in your app: `Hull.data.api()`
+* From within a widget: `this.api()`
+
+If you wish to access the data from Hull for the current user, just type:
+
+<pre class='language-javascript'><code>Hull.data.api("hull/me", function(account){
+    console.log('This is my Hull account data', account);
+});</code></pre>
+
+### Embedded thirdparty APIs
+
+If a User authenticates with a third party network (think Facebook Connect, Twitter, Github...), hull will expose this network's data and API.
+
+Actions requiring those network's will automatically ask the user to connect when needed.
+
+You can also use this api to request Facebook data, as an example:
+
+<pre class='language-javascript'><code>Hull.data.api("facebook/me", function(account){
+  console.log('This is my facebook account data', account);
+});</code></pre>
+
+See the API Reference and Services Reference for details.
+
+## Provider permissions
 
 ## Making apps with widgets ?
 
@@ -705,20 +744,6 @@ an application. You can get it [here](https://github.com/hull/grunt-init-hull).
 
 ### Working with PHP
 ### Working with Ruby
-
-<a href="#" id="hull_api"></a>
-## Hull API
-
-## Services APIs
-
-# Authentication Guide
-
-## login / logout and cross-domain sso
-
-* Hull.login / sandbox.login
-* Hull.logout / sandbox.logout
-
-## Provider permissions
 
 # Tracking
 
