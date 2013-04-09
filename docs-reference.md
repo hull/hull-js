@@ -531,99 +531,109 @@ This method cancels the subscription to the event specified in parameter.
 * `eventName` {String}: The name of the event
 
 <a href="#" id="widget_api"></a>
-# Widget API Reference
+## Widget API Reference
 
 ### Widget Properties
 
-options
+#### options
 
-template
+A hash of properties for the widget. These options will be overridden by `data-hull-` attributes
 
-datasources
+#### template
+
+The name of the template that will be rendered at the next call to `this.render()`.
+This will be overridden if `this.render` is called with a template name as its first argument.
+The value of `template` __must__ be one of the values of the `templates` array at the declaration of the widget.
+
+#### datasources
+
+The definition of the datasources used by the widget. See [The relevant section](#datasources) for details.
+
+#### $el
+
+A cached jQuery element representing the root node of the widget
+
+#### sandbox
 
 ### Widgets Methods
 
-initialize
+#### initialize()
 
 The `initialize` method is used to bootstrap your widget. You should basically consider it as a constructor. Whatever needs to be setup straight after the widget has been created (_created_, not _rendered_; rendering happens later)
 happens here. Basically, this is where you will setup the events, private vars/objects, that kind of stuff.
 
-renderTemplate
+#### renderTemplate
 
-beforeRender
+#### beforeRender(data)
 
-log (deprecated)
+#### log [deprecated]
 
-buildContext (private)
+#### buildContext [private]
 
-loggedIn
+#### loggedIn
 
 `loggedIn` returns `false` if no user is connected to one of the providers you accept in your application.
 Otherwise, it returns a hash containing the identities in all the network your user is known to have in your app.
 
-getTemplate
+#### getTemplate
 
+#### doRender
 
-
-doRender
-
-afterRender
+#### afterRender(data)
 
 Allows you to do operations after the template has been rendered.
 Useful if you want to attach events to newly added elements.
 
 This method takes no parameters and has no return value.
 
-render
+#### render(optTpl)
 
 You can call `this.render()` in any method in the widget to refresh the view. But you can specify 2 very useful parameters:
 
 * ``templateName`` {String} as the first argument will specify which of the template of the widget has to be rendered. Very useful for widgets with multiple views.
 * ``data`` {Object} as a second argument will add/override any data computed by the datasources and the `beforeRender` method.
 
-html
+#### html
 
-track
+#### track
 
 allows you to track user activity and send data to the tracking services defined in the [admin](http://alpha.hullapp.io).
     See [Tracking](/docs/Hull.js/tracking) for details
 
-isInitialized
+#### isInitialized
 
-renderError
+#### renderError
 
-api
+#### api
 
 allows to do API calls directly. The methods systematically returns a promise. See [Accessing Data](/docs/Hull.js/accessing_data)
     to know how to perform these actions.
 
-refresh
+#### refresh
 
 refresh is an alias for render
 
-el / $el
+### Sandbox Reference
 
-is a cached jQuery element representing the root node of the widget
+#### config
 
-## Sandbox Reference
+#### logger
 
-config
-
-logger
-
-helpers
+#### helpers
 	imageUrl
 
-authenticating
-login
-logout
+##### authenticating
+##### login
+##### logout
 
-emit
-off
-on
-stopListening
+##### emit
+##### off
+##### on
+##### stopListening
 
-track
+##### track
+
+## The global variable `Hull`
 
 
 ## Debugging
@@ -634,29 +644,15 @@ renderError method
 
 ## Templates & Available helpers
 
-
-
-## Native events emitted by hull.js
-
-ex.
-
-* hull.currentUser
-* model.hull.me.change
-* hull.authComplete
-
 ## Events emitted by packaged widgets
-
-## Emitting and consuming custom Events
-
----
-
-# Structuring your app
 
 ## Making apps with widgets ?
 
+### Structuring your app
+
 * Widgets nesting
 
-## Building your app
+### Building your app
 
 ### Working with grunt
 
@@ -666,30 +662,9 @@ an application. You can get it [here](https://github.com/hull/grunt-init-hull).
 ### Working with PHP
 ### Working with Ruby
 
----
-
-# Available vendored libs
-
-* aurajs
-* requirejs
-* underscore
-* underscore.string
-* handlebars
-* backbone
-* cookies
-* moment
-* base64
-
-
----
-
-# Hull's APIs
-
 ## Hull API
 
 ## Services APIs
-
----
 
 # Authentication Guide
 
@@ -700,8 +675,6 @@ an application. You can get it [here](https://github.com/hull/grunt-init-hull).
 
 ## Provider permissions
 
----
-
 # Tracking
 
 The tracking middleware sends data to hull automatically.
@@ -711,11 +684,6 @@ We also store everything for further applications.
 <pre class='language-javascript'><code>Hull.track('event name', { foo:'bar', arbitrary:'data' });</code></pre>
 
 **Widgets automatically do this behind the scenes.**
-
-# Hull APIs
-
-* Document formats
-* Explain concepts
 
 <a href="#" id="architecture"></a>
 # Hull architecture
