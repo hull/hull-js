@@ -1,5 +1,4 @@
 /**
- * # Identity
  *
  * Allow users to log in with auth services that you have hooked on your app.
  * When logged in, show a micro-profile card.

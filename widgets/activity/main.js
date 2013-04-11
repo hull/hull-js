@@ -1,5 +1,4 @@
 /**
- * # Activity
  *
  * Activity streams from the actions on your app.
  *

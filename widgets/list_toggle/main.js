@@ -1,5 +1,4 @@
 /**
- * # List Toggle
  *
  * Allow users to add and remove objects from lists.
  * Lists are created on the fly, with the `list-name` you specify.
@@ -12,12 +11,12 @@
  * ## Options
  *
  * - `list-id`: The name of the list you want to show. List will automatically be created if it does not exist yet.
- * - `id` : The ID of the object you want to add / remove to the list. 
- * 
+ * - `id` : The ID of the object you want to add / remove to the list.
+ *
  * ## Template
  *
  * - `list_toggle`: Shows the button with the right state
- * 
+ *
  */
 define({
   type: "Hull",
@@ -37,7 +36,7 @@ define({
     list: function(){
       return this.list.deferred;
     },
-    obj: ":id" 
+    obj: ":id"
   },
 
   beforeRender: function(data) {

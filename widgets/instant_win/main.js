@@ -1,5 +1,4 @@
 /**
- * # Instant Win
  *
  * An instant-win is a game where the player finds out immediately if he or she is a winner of one of the prizes the administrators put at stake.
  *

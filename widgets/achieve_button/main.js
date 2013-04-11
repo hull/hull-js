@@ -1,5 +1,4 @@
 /**
- *# Achieve Button:
  *
  * A button that lets a user achieve an something.
  *

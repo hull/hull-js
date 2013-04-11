@@ -1,5 +1,4 @@
 /**
- * # Login Button
  *
  * Allow users to log in with auth services that you have hooked on your app.
  * For a more complete widget, look at the Identity widget.

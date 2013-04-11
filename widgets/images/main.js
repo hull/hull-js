@@ -1,5 +1,4 @@
 /**
- * # Images
  *
  * Displays images belonging to a given user on a given service
  *

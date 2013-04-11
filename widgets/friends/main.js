@@ -1,5 +1,4 @@
 /**
- * # Friends
  *
  * Displays friends for a given user and a given service.
  *
