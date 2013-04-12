@@ -12,6 +12,6 @@ define ->
         loc.pathname,
         loc.search
       ].join('')
-    app.config.uid = util.base64.encode(uid, true)
+    app.config.uid = "~#{util.base64.encode(uid, true)}"
 
 
