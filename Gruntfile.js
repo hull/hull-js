@@ -248,14 +248,14 @@ module.exports = function (grunt) {
       },
       remote: {
         files: remoteSrc,
-        tasks: ['build_remote']
+        tasks: ['build_remote', 'mocha']
       },
       client: {
         files: clientSrc,
-        tasks: ['build_client']
+        tasks: ['build_client', 'mocha']
       },
       spec: {
-        files: clientSrc.concat('spec/**/*.js'),
+        files: ['spec/**/*.js'],
         tasks: ['mocha']
       }
     },
