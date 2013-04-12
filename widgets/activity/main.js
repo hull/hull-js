@@ -122,7 +122,6 @@ define({
   beforeRender: function(data) {
     data.isPaged = (this.options.navigation === 'paged');
     data.query = this.query;
-    data.path = "Activities Path: " + this.path;
     return data;
   }
 });
