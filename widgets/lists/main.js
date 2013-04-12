@@ -26,7 +26,16 @@ define({
   templates: ['lists'],
   events: { 'submit form' : 'createList' },
 
-  datasources: { lists: ":id/lists" },
+  datasources: {
+    lists: function() {
+      var id = this.getId();
+      if (id) {
+        this.path = "hull/" + id + "/lists";
+        return this.api(this.path);
+      }
+
+    }
+  },
 
   createList: function(e) {
     e.preventDefault();
@@ -36,7 +45,7 @@ define({
         inputs[input.getAttribute('name')] = input.value;
       }
     });
-    this.api('hull/' + this.id + "/lists", 'post', inputs).then(function() { self.render(); });
+    this.api(this.path, 'post', inputs).then(function() { self.render(); });
   }
 
 });

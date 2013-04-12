@@ -35,7 +35,7 @@ define({
 
   datasources: {
     activities: function() {
-      var id = this.id || 'app';
+      var id = this.getId() || 'app';
       if (this.options.friendsOnly) {
         this.path = "hull/" + id + "/friends_activity";
       } else {
@@ -46,7 +46,7 @@ define({
   },
 
   actions: {
-    nextPage: function(e) {
+    nextPage: function() {
       delete this.query.skip;
 
       this.query.limit = this.options.limit || this.options.perPage;
@@ -69,9 +69,8 @@ define({
       return false;
     },
 
-    fetchMore: function($el) {
-      $el.text('loading items...');
-
+    fetchMore: function(e, params) {
+      params.el.text('Loading...');
       var originalLimit = this.options.limit || this.options.perPage;
       this.query.limit += originalLimit;
       this.render();

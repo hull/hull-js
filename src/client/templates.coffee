@@ -1,7 +1,8 @@
 define ['lib/hullbase', 'handlebars'], (Hull, Handlebars) ->
+
   initialize: (app) ->
     setupTemplate = (tplSrc, tplName) ->
-      compiled = Handlebars.template app.core.template.hbs(tplSrc)
+      compiled = app.core.template.hbs(tplSrc)
       Handlebars.registerPartial(tplName, compiled)
       compiled
 

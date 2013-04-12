@@ -2,8 +2,17 @@
 
   <div class="well hull-comments__form">
     {{#if loggedIn}}
-      <textarea class="input-block-level" rows="3" placeholder="Write something..."></textarea>
-      <button data-hull-action="comment" class="btn btn-primary">Post</button>
+      <form>
+        <div class='media'>
+          <div class="pull-left">
+            <img class="media-object img-rounded" src="{{me.picture}}" alt="{{me.name}}">
+          </div>
+          <div class="media-body">
+            <textarea name='description' class="input-block-level" rows="3" placeholder="Write something..."></textarea>
+            <button data-hull-action="comment" class="btn btn-primary">Post</button> as {{me.name}}
+          </div>
+        </div>
+      </form>
     {{else}}
       <div data-hull-widget="login_button@hull"></div>
     {{/if}}

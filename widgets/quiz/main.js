@@ -150,11 +150,12 @@ define({
 
   actions: {
 
-    login: function(source, e, options) {
-      this.sandbox.login(options.provider, options).then(this.startQuiz.bind(this));
+    login: function(e, params) {
+      this.sandbox.login(params.data.provider, params.data).then(this.startQuiz.bind(this));
     },
 
-    answer: function(source, e, opts) {
+    answer: function(e, params) {
+      var opts = params.data;
       this.answers[opts.questionId] = opts.answerId;
       this.quiz.set('answers', this.answers);
 
@@ -166,7 +167,7 @@ define({
       });
     },
 
-    answerAndNext: function(source, e, opts) {
+    answerAndNext: function() {
       this.actions.answer.apply(this, arguments);
       this.actions.next.apply(this);
     },
@@ -182,7 +183,7 @@ define({
       return false;
     },
 
-    previous: function(source, e, data) {
+    previous: function() {
       if (this.currentQuestionIndex > 0) {
         this.currentQuestionIndex -= 1;
         this.render('quiz_question');
@@ -216,7 +217,8 @@ define({
       return false;
     },
 
-    share: function (source, e, data) {
+    share: function (e, params) {
+      var data = params.data;
       var currentUrl = document.URL, text = data.text;
 
       switch (data.provider){

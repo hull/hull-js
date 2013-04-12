@@ -15,8 +15,8 @@ define({
   },
 
   actions: {
-    showDetails: function(s,e,d) {
-      this.options.api = d.api;
+    showDetails: function(e, params) {
+      this.options.api = params.data.api;
       this.render();
     }
   }

@@ -9,6 +9,7 @@
  * ## Option:
  *
  * - `id`: Required, The object you want to manipulate comments upon.
+ * - `focus`: Optional, Auto-Focus on the input field. default: false.
  *
  * ## Template:
  *
@@ -30,48 +31,52 @@ define({
 
   refreshEvents: ['model.hull.me.change'],
 
-  initialize: function () {
-    this.setup();
+  events: {
+    'form submit' : 'submitForm'
   },
 
-  setup: function() {
-    if (this.options.id) {
-      if (/^[0-9a-f]{24}|me|app|org|project$/.test(this.options.id)) {
-        this.id = this.options.id;
-      }
-    } else if (this.options.uid) {
-      this.id = this.sandbox.util.base64.encode(this.options.uid, true);
-    } else if (this.sandbox.config.entity) {
-      this.id = this.sandbox.config.entity.id
+  actions: {
+    comment: 'submitForm'
+  },
+
+  options: {
+    focus: false
+  },
+
+  initialize: function() {
+    var id = this.getId();
+    if (id) {
+      this.path = 'hull/' + id + '/comments';
     }
-    this.path = 'hull/' + this.id + '/comments';
   },
 
   datasources: {
     comments: function() {
-      if (this.id) {
+      if (this.path) {
         return this.api(this.path);
-      } else {
-        return false;
       }
     }
   },
 
-  beforeRender: function(data) {
-    data.uid = this.uid;
-    return data;
+  afterRender: function() {
+    if (this.options.focus || this.focusAfterRender) {
+      this.$el.find('input,textarea').focus();
+      this.focusAfterRender = false;
+    }
   },
 
-  actions: {
-    comment: function (elt, evt, data) {
-      var description = this.$el.find('textarea').val();
-      if (description && description.length > 0) {
-        var attributes = { description: description };
-        if (this.uid) attributes.uid = this.uid;
-        this.api(this.path, 'post', attributes).then(function() {
-          this.render()
-        }.bind(this));
-      }
+  submitForm: function (e) {
+    e.preventDefault();
+    var form = this.$el.find('form');
+    var formData = this.sandbox.dom.getFormData(form);
+    description = formData.description;
+    if (description && description.length > 0) {
+      var attributes = { description: description };
+      if (this.uid) attributes.uid = this.uid;
+      this.api(this.path, 'post', attributes).then(function() {
+        this.focusAfterRender = true;
+        this.render();
+      }.bind(this));
     }
   }
 });

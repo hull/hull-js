@@ -76,14 +76,14 @@ define(['sandbox', 'underscore', 'jquery.default_fields', 'h5f'], function(sandb
     },
 
     actions: {
-      edit: function(source, e, opts) {
+      edit: function(e) {
         e.preventDefault();
         e.stopPropagation();
         this.render("registration_form");
         return false;
       },
 
-      submit: function(source, e, opts) {
+      submit: function(e, opts) {
         e && e.preventDefault()
 
         if (!this.validate()) {

@@ -52,7 +52,7 @@ define({
   },
 
   actions: {
-    create: function(source, e) {
+    create: function(e) {
       e.preventDefault();
 
       var description = this.$el.find('#hull-instant-description').val();

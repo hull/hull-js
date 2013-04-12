@@ -100,7 +100,7 @@ define(function () {
         errb.should.have.been.called;
       });
 
-      it("should execute the callback in case of success", function () {
+      xit("should execute the callback in case of success", function () {
         initPromise = $.Deferred();
         auraStub.start.returns(initPromise);
         var cb = sinon.spy();

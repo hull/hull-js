@@ -231,7 +231,6 @@ define ['lib/version'], (version) ->
         throw new Error('A model must have an identifier...') unless attrs?._id?
         models[attrs._id] || setupModel(attrs)
 
-
       api.model.clearAll =->
         models = _.pick(models, 'me', 'app', 'org')
 
@@ -316,7 +315,7 @@ define ['lib/version'], (version) ->
         app.sandbox.config.appId        = app.config.appId
         app.sandbox.config.orgUrl       = app.config.orgUrl
         app.sandbox.config.services     = remoteConfig.services
-        app.sandbox.config.entity       = data.entity
+        app.sandbox.config.entity_id    = data.entity?.id
         for m in ['me', 'app', 'org', 'entity']
           attrs = data[m]
           if attrs
