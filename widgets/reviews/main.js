@@ -10,17 +10,21 @@ define({
 
   datasources: {
     reviews: function() {
-      return this.api("hull/" + this.id + "/reviews");
+      var id = this.getId();
+      if (id) {
+        this.path = "hull/" + id + "/reviews";
+        return this.api("hull/" + id + "/reviews");
+      }
     }
   },
 
   actions: {
-    review: function(elt, evt) {
+    review: function(evt) {
       var description = this.$el.find("textarea").val(),
           rating = this.$el.find("select").val(),
           self = this;
       if (rating) {
-        this.api('hull/' + this.id + '/reviews', 'post', {
+        this.api(this.path, 'post', {
           rating: rating,
           description: description
         }).then(function() { self.render() });

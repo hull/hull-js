@@ -17,7 +17,7 @@ define ->
           dfd = authenticating
           me = sandbox.data.api.model('me')
           dfd.done -> me.trigger('change')
-          me.fetch(success: dfd.resolve, error: dfd.reject, silent: true)
+          me.fetch(silent: true).then(dfd.resolve, dfd.reject)
         catch err
           console.error "Error on auth promise resolution", err
         finally
@@ -51,11 +51,11 @@ define ->
 
 
       sandbox.logout = (callback=->)->
+        core.setCurrentUser(false)
         dfd = sandbox.data.api('hull/logout')
         dfd.done ->
           sandbox.data.api.model('me').clear()
           sandbox.data.api.model('me').trigger('change')
           sandbox.data.api.model.clearAll()
-          $.removeCookie("hull_#{app.config.appId}", path: "/")
           callback() if _.isFunction(callback)
         dfd

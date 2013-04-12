@@ -27,7 +27,7 @@ define(['aura/aura'], function (aura) {
     } else {
       cb = successCb;
     }
-    delay(cb, conf, {});
+    delay(cb, { response: conf, headers: {} }, {});
   };
 
   define('easyXDM', function () { return easyXDMMock; });

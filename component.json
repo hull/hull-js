@@ -8,7 +8,7 @@
     "backbone": "0.9.9",
     "easyXDM": "2.4.17",
     "route-recognizer": "latest",
-    "handlebars": "1.0.0-rc.2",
+    "require-handlebars-plugin": "0.4.0",
     "analytics": "hull/analytics#0.8.3",
     "base64": "0.1.1",
     "jquery-file-upload": "7.2.1",

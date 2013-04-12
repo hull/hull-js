@@ -24,7 +24,7 @@ define ->
         headers: headers
 
 
-      request.done((res)-> callback(res))
+      request.done((response)-> callback({ response: response, provider: 'github' }))
       request.fail(errback)
 
       return

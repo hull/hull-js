@@ -45,15 +45,15 @@ define({
 
   actions: {
 
-    edit: function(source, e, options) {
-      this.api('hull/'+options.id, {}, function(data){
+    edit: function(e, params) {
+      this.api('hull/' + params.data.id, {}, function(data){
         this.quiz = data;
         this.render();
       }.bind(this));
       return false;
     },
 
-    create: function(source, e, options) {
+    create: function(e) {
       e.preventDefault();
       var val = $('#hull-quiz-json').val().trim();
       try {
@@ -67,7 +67,7 @@ define({
       }
     },
 
-    delete: function(source, e, options) {
+    delete: function(e) {
       if(window.confirm("Are you sure you want to delete this quiz?")) {
         this.api('/hull/'+this.quiz.id, 'delete', {}, function(){
           this.quiz = null;
@@ -77,13 +77,13 @@ define({
       return false;
     },
 
-    cancel: function(source, e, options) {
+    cancel: function() {
       this.quiz = null;
       this.render();
       return false;
     },
 
-    submit: function(source,e,options) {
+    submit: function(e) {
       // TODO
       e.preventDefault();
       var val = $('#hull-quiz-json').val().trim();

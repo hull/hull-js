@@ -9,7 +9,7 @@ define({
     // cf. https://github.com/visionmedia/consolidate.js
     var Handlebars = require('handlebars');
     app.core.template.hbs = function(tpl) {
-      if (typeof tpl === "function") return tpl;
+      if (typeof tpl === "function") return Handlebars.template(tpl);
       return Handlebars.compile(tpl);
     };
   }

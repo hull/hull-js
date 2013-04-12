@@ -15,17 +15,18 @@ define ['backbone', 'underscore'], (Backbone, _)->
       source  = $(e.currentTarget)
       action  = source.data("hull-action")
       fn = @actions[action] || @["#{action}Action"]
+      fn = @[fn] if _.isString(fn)
       unless _.isFunction(fn)
         throw new Error("Can't find action #{action} on this Widget")
-      options = {}
+      data = {}
       for k,v of source.data()
         do ->
           key = k.replace(/^hull/, "")
           key = key.charAt(0).toLowerCase() + key.slice(1)
-          options[key] = v
-      fn.call(@, source, e, options)
-    catch e
-      console.error("oops... missed action?", e.message, e)
+          data[key] = v
+      fn.call(@, e, { el: source, data: data })
+    catch err
+      console.error("Error in action handler", action, err.message, err)
     finally
       e.stopPropagation()
       e.stopImmediatePropagation()
@@ -54,7 +55,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
         # Building actions hash
         @actions = if _.isFunction(@actions) then @actions() else @actions
         @actions ?= {}
-        @actions.login ?= (source, e, options)=> @sandbox.login(options.provider, options)
+        @actions.login ?= (e, params)=> @sandbox.login(params.data.provider, params.data)
         @actions.logout ?= => @sandbox.logout()
 
         unless @className?
@@ -145,6 +146,10 @@ define ['backbone', 'underscore'], (Backbone, _)->
 
     afterRender: (data)=> data
 
+    getId: ->
+      return @options.id if @options.id
+      return @sandbox.util.entity.encode(@options.uid) if @options.uid
+      @sandbox.config.entity_id
 
     # Build render context from datasources
     # Call beforeRender
@@ -153,7 +158,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
     # Start nested widgets...
     render: (tpl, data)=>
       ctx = @buildContext.call(@)
-      ctx.fail (err)-> 
+      ctx.fail (err)->
         console.error("Error fetching Datasources ", err.message, err)
 
       ctx.then (ctx)=>

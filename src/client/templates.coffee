@@ -1,4 +1,5 @@
 define ['lib/hullbase', 'handlebars'], (Hull, Handlebars) ->
+
   initialize: (app) ->
     setupTemplate = (tplSrc, tplName) ->
       compiled = app.core.template.hbs(tplSrc)
@@ -15,21 +16,22 @@ define ['lib/hullbase', 'handlebars'], (Hull, Handlebars) ->
       widgetName = ref.replace('__widget__$', '').split('@')[0]
       for name in names
         path = "#{ref}/#{name}"
-        # if require.defined(path)
-        #   ret[tpl] = require(path)
-        # else
         tplName = [widgetName, name.replace(/^_/, '')].join("/")
         localTpl = app.core.dom.find("script[data-hull-template='#{tplName}']")
         if localTpl.length
           parsed = setupTemplate(localTpl.text(), tplName)
           ret[name] = parsed
           define path, parsed
-        else if Hull.templates["#{tplName}"]
+        else if Hull.templates[tplName]
           parsed = setupTemplate(Hull.templates["#{tplName}"],  tplName)
           ret[name] = parsed
           define path, parsed
-        else if Hull.templates._default?["#{tplName}"]
-          parsed = setupTemplate(Hull.templates._default["#{tplName}"],  tplName)
+        else if window.Meteor? && window.Template?[tplName]?
+          parsed = Template[tplName]
+          ret[name] = parsed
+          define path, parsed
+        else if Hull.templates._default?[tplName]
+          parsed = setupTemplate(Hull.templates._default[tplName],  tplName)
           ret[name] = parsed
           define path, parsed
         else

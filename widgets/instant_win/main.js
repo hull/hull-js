@@ -67,12 +67,12 @@ define({
   },
 
   actions: {
-    play: function(source, event, data) {
+    play: function(event, params) {
       var userLoggedIn = !!this.loggedIn();
       if (userLoggedIn) {
         this.play();
       } else {
-        var provider = data.provider || this.options.provider;
+        var provider = params.data.provider || this.options.provider;
         this.sandbox.login(provider);
         this.autoPlay = true;
       }

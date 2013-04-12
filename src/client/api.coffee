@@ -58,14 +58,26 @@ define ['lib/version'], (version) ->
 
         ret
 
-      setCookies = (headers)->
-        return unless app.config.appId && headers
+      app.core.setCurrentUser = setCurrentUser = (headers={})->
+        return unless app.config.appId
         cookieName = "hull_#{app.config.appId}"
-        if headers && headers['Hull-User-Id']
+        currentUserId = app.core.currentUser?.id
+        if headers && headers['Hull-User-Id'] && headers['Hull-User-Sig']
           val = btoa(JSON.stringify(headers))
           $.cookie(cookieName, val, path: "/")
+          if currentUserId != headers['Hull-User-Id']
+            app.core.currentUser = {
+              id: headers['Hull-User-Id'],
+              sig: headers['Hull-User-Sig']
+            }
+            app.core.mediator.emit('hull.currentUser', app.core.currentUser)
         else
           $.removeCookie(cookieName, path: "/")
+          app.core.currentUser = false
+          app.core.mediator.emit('hull.currentUser', app.core.currentUser)
+
+        app.sandbox.config ?= {}
+        app.sandbox.config.curentUser = app.core.currentUser
 
       ###
       # Sends the message described by @params to easyXDM
@@ -78,10 +90,11 @@ define ['lib/version'], (version) ->
         console.error("Api not initialized yet") unless rpc
         promise = core.data.deferred()
 
-        onSuccess = (res, headers)->
-          setCookies(headers || {})
-          callback(res)
-          promise.resolve(res)
+        onSuccess = (res)->
+          if res.provider == 'hull' && res.headers
+            setCurrentUser(res.headers)
+          callback(res.response)
+          promise.resolve(res.response)
 
         onError = (err)->
           errback(err)
@@ -218,7 +231,6 @@ define ['lib/version'], (version) ->
         throw new Error('A model must have an identifier...') unless attrs?._id?
         models[attrs._id] || setupModel(attrs)
 
-
       api.model.clearAll =->
         models = _.pick(models, 'me', 'app', 'org')
 
@@ -226,7 +238,7 @@ define ['lib/version'], (version) ->
         sync: sync
         url: ->
           if (@id || @_id)
-            url = normalizeAPIArguments([@_id || @id])[0]
+            url = normalizeAPIArguments([@id || @_id])[0]
           else
             url = @collection?.url
           url
@@ -294,7 +306,6 @@ define ['lib/version'], (version) ->
       onRemoteReady = (remoteConfig)->
         window.clearTimeout(timeout)
         data = remoteConfig.data
-        setCookies(data.headers)
         app.config.assetsUrl            = remoteConfig.assetsUrl
         app.config.services             = remoteConfig.services
         app.config.widgets.sources.hull = remoteConfig.baseUrl + '/widgets'
@@ -304,7 +315,8 @@ define ['lib/version'], (version) ->
         app.sandbox.config.appId        = app.config.appId
         app.sandbox.config.orgUrl       = app.config.orgUrl
         app.sandbox.config.services     = remoteConfig.services
-        for m in ['me', 'app', 'org']
+        app.sandbox.config.entity_id    = data.entity?.id
+        for m in ['me', 'app', 'org', 'entity']
           attrs = data[m]
           if attrs
             attrs._id = m
@@ -315,7 +327,8 @@ define ['lib/version'], (version) ->
       initialized.reject(new TypeError 'no organizationURL provided. Can\'t proceed') unless app.config.orgUrl
       initialized.reject(new TypeError 'no applicationID provided. Can\'t proceed') unless app.config.appId
       remoteUrl = "#{app.config.orgUrl}/api/v1/#{app.config.appId}/remote.html?v=#{version}"
-      remoteUrl += "&js=#{app.config.jsUrl}" if app.config.jsUrl
+      remoteUrl += "&js=#{app.config.jsUrl}"  if app.config.jsUrl
+      remoteUrl += "&uid=#{app.config.uid}"   if app.config.uid
 
       rpc = new easyXDM.Rpc({
         remote: remoteUrl
@@ -325,3 +338,6 @@ define ['lib/version'], (version) ->
       })
 
       initialized
+
+    afterAppStart: (app)->
+      app.core.mediator.emit('hull.currentUser', app.core.currentUser)
