@@ -8,7 +8,7 @@ define ->
     )
     return objURL
 
-  initialize = (app)->
+  initialize: (app)->
     return if app.config.uid
     util = app.core.util
 
@@ -36,11 +36,3 @@ define ->
           qs
         ].join('')
       app.config.uid = util.entity.encode(uid)
-
-
-  initialize: (app)->
-    try
-      initialize(app)
-    catch e
-      console.error("Bah Alors ?", e.message, e)
-
