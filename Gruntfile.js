@@ -253,6 +253,10 @@ module.exports = function (grunt) {
       client: {
         files: clientSrc,
         tasks: ['build_client']
+      },
+      spec: {
+        files: clientSrc.concat('spec/**/*.js'),
+        tasks: ['mocha']
       }
     },
     version: {

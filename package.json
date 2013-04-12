@@ -1,6 +1,6 @@
 {
   "name": "hull-js",
-  "version": "develop",
+  "version": "0.4.0dev",
   "devDependencies": {
     "mocha": "1.8.1",
     "chai": "1.5.0",
@@ -9,8 +9,8 @@
     "grunt": "0.4.0",
     "grunt-s3": "0.1.0",
     "grunt-git-describe": "git://github.com/hull/grunt-git-describe.git",
-    "phantomjs" : "1.8.1-1",
-    "grunt-lib-phantomjs": "0.2.0",
+    "phantomjs" : "1.9.0-1",
+    "grunt-lib-phantomjs": "0.3.0",
     "grunt-contrib-clean": "0.4.0",
     "grunt-contrib-coffee": "0.4.0",
     "grunt-contrib-concat": "0.1.2",
