@@ -315,6 +315,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build_client', ['clean', 'coffee:client', 'version', 'requirejs:client']);
   grunt.registerTask('build_libs', ['build_client', 'build_remote']);
   grunt.registerTask('build', ['build_libs', 'hull_widgets']);
+  grunt.registerTask('test', ['connect', 'build', 'mocha']);
   grunt.registerTask('default', ['connect', 'build', 'mocha', 'watch']);
   grunt.registerTask('dist', ['build', 'dox']);
   grunt.registerTask('deploy', ['dist', 'describe', 's3']);

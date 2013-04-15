@@ -25,6 +25,7 @@
     "grunt-mocha": "0.3.0"
   },
   "scripts": {
-    "test": "grunt build"
+    "pretest": "bower install",
+    "test": "grunt test"
   }
 }

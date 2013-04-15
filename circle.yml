@@ -1,5 +1,5 @@
-dependencies: 
+dependencies:
   override:
     - npm install -g grunt-cli bower
+    - npm install
     - bower install
-    - cd components/aura && npm install && bower install && grunt build
