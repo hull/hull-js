@@ -26,6 +26,6 @@
   },
   "scripts": {
     "pretest": "bower install",
-    "test": "grunt build"
+    "test": "grunt test"
   }
 }
