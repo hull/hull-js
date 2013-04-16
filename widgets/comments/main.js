@@ -36,7 +36,8 @@ define({
   },
 
   actions: {
-    comment: 'submitForm'
+    comment: 'submitForm',
+    delete: 'deleteComment'
   },
 
   options: {
@@ -53,11 +54,19 @@ define({
   datasources: {
     comments: function() {
       if (this.path) {
-        return this.api(this.path);
+        return this.api(this.path)
       }
     }
   },
 
+  beforeRender: function(data){
+    var self = this;
+    _.each(data.comments,function(r){
+      r.isDeletable = (r.user.id === self.data.me.id);
+      return r;
+    });
+    return data;
+  },
   afterRender: function() {
     if (this.options.focus || this.focusAfterRender) {
       this.$el.find('input,textarea').focus();
@@ -65,6 +74,12 @@ define({
     }
   },
 
+  deleteComment: function(event, data) {
+    this.api.del(data.data.id).then(function(){
+      $(data.el).slideUp().parents('li.media').remove();
+    })
+    event.preventDefault();
+  },
   submitForm: function (e) {
     e.preventDefault();
     var form = this.$el.find('form');

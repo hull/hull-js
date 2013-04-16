@@ -1,5 +1,4 @@
 <div class="hull-comments">
-
   <div class="well hull-comments__form">
     {{#if loggedIn}}
       <form>
@@ -10,6 +9,9 @@
           <div class="media-body">
             <textarea name='description' class="input-block-level" rows="3" placeholder="Write something..."></textarea>
             <button data-hull-action="comment" class="btn btn-primary">Post</button> as {{me.name}}
+            <div class='pull-right'>
+              <a href="#" data-hull-action="logout" class="link">Logout</a>
+            </div>
           </div>
         </div>
       </form>
@@ -27,10 +29,19 @@
             <img class="media-object img-rounded" src="{{user.picture}}" alt="{{user.name}}">
           </div>
           <div class="media-body">
-            <small class="pull-right muted">{{fromNow updated_at}}</small>
+            <div class="pull-right">
+              <small class="muted">{{fromNow updated_at}}</small>
+            </div>
             <h4 class="media-heading">{{user.name}}</h4>
             <div class="hull-comments__description">
               {{description}}
+            </div>
+            <div class="hull-comments__actions">
+                {{#if isDeletable}}
+                  <small>
+                    <a href="#" class='link' data-hull-action="delete" data-hull-id="{{id}}">Delete</a>
+                  </small>
+                {{/if}}
             </div>
           </div>
         </li>
