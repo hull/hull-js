@@ -178,7 +178,7 @@ define ['lib/version'], (version) ->
         res.then(callback, errback)
         res
 
-      api = -> message.apply(api, extractApiArgs(slice.call(arguments)))
+      api = -> message.apply(api, extractApiArgs(normalizeAPIArguments(slice.call(arguments))))
 
       methodMap =
         'create': 'post'
