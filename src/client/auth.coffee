@@ -52,7 +52,7 @@ define ->
 
       sandbox.logout = (callback=->)->
         core.setCurrentUser(false)
-        dfd = sandbox.data.api('hull/logout')
+        dfd = sandbox.data.api('logout')
         dfd.done ->
           sandbox.data.api.model('me').clear()
           sandbox.data.api.model('me').trigger('change')
