@@ -284,7 +284,7 @@ define ['lib/version'], (version) ->
       api.get     = exec('get')
       api.post    = exec('post')
       api.put     = exec('put')
-      api.del     = exec('delete')
+      api.delete  = exec('delete')
       api.batch   = batch
 
       core.data.api = api
