@@ -238,7 +238,7 @@ define ['lib/version'], (version) ->
         sync: sync
         url: ->
           if (@id || @_id)
-            url = normalizeAPIArguments([@id || @_id])[0]
+            url = normalizeAPIArguments([@_id || @id])[0]
           else
             url = @collection?.url
           url
