@@ -10,9 +10,6 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
     afterAppStart: (app)->
       sb = app.createSandbox();
       Hull = _.extend(HullDef, sb);
-      Hull.me     = sb.data.api.model('me');
-      Hull.app    = sb.data.api.model('app');
-      Hull.org    = sb.data.api.model('org');
       if !app.config.debug
         props = ['widget', 'templates', 'emit', 'on', 'version', 'track']
         props.concat(config.expose || [])

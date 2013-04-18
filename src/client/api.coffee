@@ -1,8 +1,8 @@
-define ['lib/version'], (version) ->
+define ['lib/version', 'lib/hullbase'], (version, base) ->
 
   (app) ->
     rpc = false
-
+    rawFetch = null
     require:
       paths:
         easyXDM: 'components/easyXDM/easyXDM'
@@ -225,7 +225,7 @@ define ['lib/version'], (version) ->
       api.model = (attrs)->
         getFromCacheOrCreate(attrs, false)
 
-      getFromCacheOrCreate = (attrs, raw)->
+      rawFetch = getFromCacheOrCreate = (attrs, raw)->
         attrs = { _id: attrs } if _.isString(attrs)
         attrs._id = attrs.path unless attrs._id
         throw new Error('A model must have an identifier...') unless attrs?._id?
@@ -353,4 +353,7 @@ define ['lib/version'], (version) ->
       initialized
 
     afterAppStart: (app)->
+      base.me     = rawFetch('me', true);
+      base.app    = rawFetch('app', true);
+      base.org    = rawFetch('org', true);
       app.core.mediator.emit('hull.currentUser', app.core.currentUser)
