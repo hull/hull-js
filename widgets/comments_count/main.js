@@ -38,10 +38,14 @@ define({
     "use strict";
     var id = this.getId();
     if (id) {
-      this.path = id + '/comments';
+      this.path = id;
     } else {
       throw new Error('You must provide an ID to the Comment Widget');
     }
+  },
+
+  beforeRender: function(data){
+    data.count = data.comments.stats.comments || 0;
   }
 
 });
