@@ -8,3 +8,4 @@ app/app.js
 /dist
 .sass-cache
 grunt-aws.json
+/node_modules.bak/
