@@ -123,6 +123,7 @@ define(function () {
 
 
     it("should call the module lib/hull", function (done) {
+      debugger
       hullbase.init({}, function () {
         spy.should.have.been.called;
         done();
