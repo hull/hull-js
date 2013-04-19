@@ -18,12 +18,12 @@
 {{else}}
   {{#if loggedOut}}
     <div class="hull-identity__signin">
-        {{#loggedOut}}
-          <button data-hull-action="login" data-hull-provider="{{.}}" class="btn btn-{{.}}">
-            Sign In with {{classify .}}
-          </button>
-        {{/loggedOut}}
-      </div>
+      {{#loggedOut}}
+        <button data-hull-action="login" data-hull-provider="{{.}}" class="btn btn-{{.}}">
+          Sign In with {{classify .}}
+        </button>
+      {{/loggedOut}}
+    </div>
   {{/if}}
   {{^authServices}}
     {{#if debug}}
