@@ -18,10 +18,10 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
 
     afterAppStart: (app)->
       sb = app.createSandbox();
-      Hull = _.extend(HullDef, sb);
+      _.extend(HullDef, sb);
       if !app.config.debug
         props = ['widget', 'templates', 'emit', 'on', 'version', 'track']
-        props.concat(config.expose || [])
+        props.concat(app.config.expose || [])
         _h = {}
         _.map props, (k)->
           _h[k] = window.Hull[k]
