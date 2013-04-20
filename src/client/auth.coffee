@@ -1,6 +1,7 @@
 define ->
 
   # Holds the state of the authentication process
+  # @type {Promise|Boolean}
   authenticating = false
 
   (app) ->
@@ -18,8 +19,8 @@ define ->
       authenticating.providerName = providerName
       authenticating.done callback if _.isFunction(callback)
 
-      auth_url = module.auth_url(app.config, providerName, opts)
-      module.authHelper(auth_url)
+      authUrl = module.authUrl(app.config, providerName, opts)
+      module.authHelper(authUrl)
 
       authenticating
 
@@ -42,34 +43,24 @@ define ->
 
 
     # Generates the callback executed on successful authentication
-    authCompleteCallbackFactory = (providerName)->
-      ()->
-        isAuthenticating = module.isAuthenticating()
-        return unless isAuthenticating && isAuthenticating.state() == 'pending'
-        providerName = isAuthenticating.providerName
-        dfd = isAuthenticating
-        try
-          me = module.sandbox.data.api.model('me')
-          dfd.done -> me.trigger('change')
-          me.fetch(silent: true).then(dfd.resolve, dfd.reject)
-        catch err
-          console.error "Error on auth promise resolution", err
-        finally
-          authenticating = false
+    authCompleteCallback = ()->
+      isAuthenticating = module.isAuthenticating()
+      return unless isAuthenticating && isAuthenticating.state() == 'pending'
+      providerName = isAuthenticating.providerName
+      dfd = isAuthenticating
+      try
+        me = module.sandbox.data.api.model('me')
+        dfd.done -> me.trigger('change')
+        me.fetch(silent: true).then(dfd.resolve, dfd.reject)
+      catch err
+        console.error "Error on auth promise resolution", err
+      finally
+        authenticating = false
 
 
 
-    #
-    # Module Definition
-    #
-
-    sandbox: app.sandbox
-    core: app.core
-    isAuthenticating: -> authenticating
-    location: document.location
-    authHelper: (path)->
-      window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
-    auth_url: (config, provider, opts)->
+    # Generates the complete URL to be reached to validate login
+    generateAuthUrl = (config, provider, opts)->
       auth_params = opts || {}
       auth_params.app_id        = config.appId
       auth_params.callback_url  = config.callback_url || module.location.toString()
@@ -77,13 +68,28 @@ define ->
 
       "#{config.orgUrl}/auth/#{provider}?#{$.param(auth_params)}"
 
-    initialize: ->
-      # Are we authenticating the user ?
-      sandbox.authenticating = module.isAuthenticating
 
-      # Tell the world that the login process has ended
-      module.core.mediator.on "hull.authComplete", authCompleteCallbackFactory
+    #
+    # Module Definition
+    #
 
-      sandbox.login = login
+    module =
+      sandbox: app.sandbox
+      core: app.core
+      isAuthenticating: -> authenticating
+      location: document.location
+      authUrl: generateAuthUrl
+      authHelper: (path)-> window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
 
-      sandbox.logout = logout
+      initialize: ->
+        # Tell the world that the login process has ended
+        module.core.mediator.on "hull.authComplete", authCompleteCallback
+
+        # Are we authenticating the user ?
+        module.sandbox.authenticating = module.isAuthenticating
+
+        module.sandbox.login = login
+        module.sandbox.logout = logout
+
+
+    module
