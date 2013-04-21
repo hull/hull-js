@@ -2,6 +2,16 @@
 define(['spec/support/spec_helper'], function (helpers) {
   "use strict";
 
+  function getAppMock () {
+    return {
+      sandbox: {
+        data: {}
+      },
+      core: {
+        mediator: {}
+      }
+    };
+  }
   describe('The authentication module', function () {
     describe('initialization of the Auth module', function () {
       var auth,
@@ -9,12 +19,8 @@ define(['spec/support/spec_helper'], function (helpers) {
           evts;
       beforeEach(helpers.reset('lib/client/auth', function (module) {
         evts = {};
-        appMock = { sandbox: {} };
-        appMock.core = {
-          mediator: {
-            on: function (evt, fn) { evts[evt] = fn; }
-          }
-        };
+        appMock = getAppMock();
+        appMock.core.mediator.on = function (evt, fn) { evts[evt] = fn; };
         auth = module(appMock);
         auth.initialize();
       }));
@@ -60,6 +66,84 @@ define(['spec/support/spec_helper'], function (helpers) {
         var config = {appId: 'appId', orgUrl: 'orgUrl'};
         var opts = {a:'0', b: '1', c:'2'};
         authUrlFn(config, 'provider', opts).should.eql('orgUrl/auth/provider?a=0&b=1&c=2&app_id=appId&callback_url=app_location&auth_referer=app_location');
+      });
+    });
+
+    describe('Initiating the authentication process', function () {
+      var authModule,
+          loginFn,
+          app,
+          dfd;
+      var resetLogin = helpers.reset('lib/client/auth', function (module) {
+        app = getAppMock();
+        dfd = $.Deferred();
+        app.sandbox.data.deferred = function () { return dfd; };
+        authModule = module(app);
+        authModule.authUrl = function () { return 'auth_url'; }; //Mocks the method generating the ath URL
+        authModule.authHelper = function () {return { open: function () {}}; }; //Mocks the method proceeding the remote auth
+        loginFn = authModule.login;
+      });
+      beforeEach(resetLogin);
+
+      it('should return return the authentication value if truthy', function () {
+        var authenticationValue =  'Authenticating, Bro!';
+        authModule.isAuthenticating = function () { return authenticationValue; };
+        loginFn().should.equal(authenticationValue);
+      });
+
+      it('should throw if no provider is given', function () {
+        loginFn.bind(undefined).should.throw('The provider name must be a String');
+      });
+
+      xit('should throw if the provider is unknown to the app', function () {
+        loginFn.bind(undefined, 'unknown_provider').should.throw('Unknown provider unknown_provider');
+      });
+
+      it('should set an authenticated state to the module and return it', function () {
+        var state = loginFn('twitter');
+        state.should.equal(authModule.isAuthenticating());
+        state.should.equal(dfd);
+      });
+
+      it('should set the lower-cased provider as a property of the state', function () {
+        var provider = 'My_provider';
+        var state = loginFn(provider);
+        state.providerName.should.not.equal(provider);
+        state.providerName.should.equal(provider.toLowerCase());
+      });
+
+      it('should execute the callback when the authentication is done', function () {
+        var spy = sinon.spy();
+        loginFn('twitter', {}, spy);
+        dfd.resolve();
+        spy.should.have.beenCalled;
+      });
+    });
+
+    describe('The authentication callback', function () {
+      var authModule, appMock;
+      var resetLogin = helpers.reset('lib/client/auth', function (module) {
+        appMock = getAppMock();
+        authModule = module(appMock);
+        authModule.authUrl = function () { return 'auth_url'; }; //Mocks the method generating the ath URL
+        authModule.authHelper = function () {return { open: function () {}}; }; //Mocks the method proceeding the remote auth
+        appMock.sandbox.data.deferred = function () { return $.Deferred(); };
+        appMock.sandbox.data.api = {
+          model: sinon.spy()
+        };
+      });
+      beforeEach(resetLogin);
+
+      it("should return immediately if no authentication process is in progress", function () {
+        expect(authModule.onCompleteAuth()).to.be.undefined;
+      });
+
+      it("should fetch the model for the current user", function () {
+        var dfd = $.Deferred();
+        dfd.state = function () {return 'pending'; };
+        authModule.isAuthenticating = function () { return dfd; };
+        authModule.onCompleteAuth();
+        appMock.sandbox.data.api.model.should.have.been.called;
       });
     });
   });

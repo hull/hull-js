@@ -22,7 +22,7 @@ define ->
       authUrl = module.authUrl(app.config, providerName, opts)
       module.authHelper(authUrl)
 
-      authenticating
+      authenticating #TODO It would be better to return the promise
 
 
 
@@ -38,7 +38,7 @@ define ->
         api.model('me').trigger('change')
         api.model.clearAll()
         callback() if _.isFunction(callback)
-      dfd
+      dfd #TODO It would be better to return the promise
 
 
 
@@ -76,11 +76,11 @@ define ->
     module =
       login: login,
       logout: logout,
-      isAuthenticating: -> authenticating
+      isAuthenticating: -> authenticating #TODO It would be better to return Boolean (isXYZ method)
       location: document.location
       authUrl: generateAuthUrl
       authHelper: (path)-> window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
-
+      onCompleteAuth: onCompleteAuthentication
       initialize: ->
         # Tell the world that the login process has ended
         app.core.mediator.on "hull.authComplete", onCompleteAuthentication
