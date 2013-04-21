@@ -15,7 +15,7 @@ define ->
       throw 'The provider name must be a String' unless _.isString(providerName)
       providerName = providerName.toLowerCase()
 
-      authenticating = module.sandbox.data.deferred()
+      authenticating = app.sandbox.data.deferred()
       authenticating.providerName = providerName
       authenticating.done callback if _.isFunction(callback)
 
@@ -30,8 +30,8 @@ define ->
     # @returns {Promise}
     # @TODO Misses a `dfd.fail`
     logout = (callback=->)->
-      module.core.setCurrentUser(false)
-      api = module.sandbox.data.api;
+      app.core.setCurrentUser(false)
+      api = app.sandbox.data.api;
       dfd = api('logout')
       dfd.done ->
         api.model('me').clear()
@@ -42,14 +42,14 @@ define ->
 
 
 
-    # Generates the callback executed on successful authentication
-    authCompleteCallback = ()->
+    # Callback executed on successful authentication
+    onCompleteAuthentication = ()->
       isAuthenticating = module.isAuthenticating()
       return unless isAuthenticating && isAuthenticating.state() == 'pending'
       providerName = isAuthenticating.providerName
       dfd = isAuthenticating
       try
-        me = module.sandbox.data.api.model('me')
+        me = app.sandbox.data.api.model('me')
         dfd.done -> me.trigger('change')
         me.fetch(silent: true).then(dfd.resolve, dfd.reject)
       catch err
@@ -74,8 +74,8 @@ define ->
     #
 
     module =
-      sandbox: app.sandbox
-      core: app.core
+      login: login,
+      logout: logout,
       isAuthenticating: -> authenticating
       location: document.location
       authUrl: generateAuthUrl
@@ -83,13 +83,12 @@ define ->
 
       initialize: ->
         # Tell the world that the login process has ended
-        module.core.mediator.on "hull.authComplete", authCompleteCallback
+        app.core.mediator.on "hull.authComplete", onCompleteAuthentication
 
         # Are we authenticating the user ?
-        module.sandbox.authenticating = module.isAuthenticating
+        app.sandbox.authenticating = module.isAuthenticating
 
-        module.sandbox.login = login
-        module.sandbox.logout = logout
-
+        app.sandbox.login = login
+        app.sandbox.logout = logout
 
     module
