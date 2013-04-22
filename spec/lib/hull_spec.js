@@ -1,66 +1,35 @@
-/*global sinon:true, define:true, describe:true, it:true, before:true, after:true, jQuery:true */
-define(function () {
+/*global sinon:true, define:true, describe:true, it:true, after:true, beforeEach:true */
+define(['../support/mocks/app'], function (appMock) {
   "use strict";
 
-  var hullInitFn;
-  var auraStub;
-  var initPromise;
+  describe('hull main module', function () {
+    // Mocking dependencies of  lib/hull
+    beforeEach(appMock.createApp);
 
-  // Mocking dependencies of  lib/hull
-  before(function (done) {
-    initPromise = $.Deferred();
-    auraStub = sinon.stub({
-      use: function () { },
-      start: function () { },
-      stop: function () { }
-    });
-    auraStub.use.returns(auraStub);
-    auraStub.start.returns(initPromise);
-    var auraModule = sinon.spy(function () {
-      return auraStub;
+    after(function () {
+      appMock.resetApp();
+      require.undef('lib/hull');
+      require.undef('aura/aura');
+      require.undef('lib/hullbase');
     });
 
-
-    require.undef('aura/aura');
-    require.undef('lib/hull');
-    define('aura/aura', function () {
-      return auraModule;
-    });
-    define('lib/hullbase', function () {
-      return {};
-    });
-    require(['lib/hull', 'aura/aura', 'lib/hullbase'], function (hull) {
-      hullInitFn = hull;
-      done();
-    });
-  });
-
-  after(function () {
-    require.undef('lib/hull');
-    require.undef('aura/aura');
-    require.undef('lib/hullbase');
-    delete hullInitFn({}).app;
-  });
-
-  describe("Booting the application", function () {
-    describe("Evaluating the module", function () {
+    describe("Booting the application", function () {
       it("should return a function", function () {
-        hullInitFn.should.be.a('Function');
+        appMock.hullInit.should.be.a('Function');
       });
     });
 
     describe("Evaluating the module", function () {
-      beforeEach(function () {
-        delete hullInitFn({}).app; // Forces the reset
-      });
+      beforeEach(appMock.resetApp);
+
       it("should return an object with 'app' and 'config key'", function () {
         var conf = {};
-        hullInitFn(conf).should.contain.keys('config');
-        hullInitFn(conf).should.contain.keys('app');
+        appMock.hullInit(conf).should.contain.keys('config');
+        appMock.hullInit(conf).should.contain.keys('app');
       });
       it("should have an Aura application as the value of the 'app' config", function () {
         var conf = {};
-        hullInitFn(conf).app.should.eql(auraStub);
+        appMock.hullInit(conf).app.should.eql(appMock.app);
       });
       it("should return the config passed to the function into the 'config' property", function () {
         var conf = {
@@ -68,47 +37,45 @@ define(function () {
           bar: "BAR",
           baz: "BAZ"
         };
-        hullInitFn(conf).config.should.contain.keys(Object.keys(conf));
+        appMock.hullInit(conf).config.should.contain.keys(Object.keys(conf));
       });
       it("should add a 'namespace property in the onfig and set it to 'Hull'", function () {
         var conf = {};
-        hullInitFn(conf).config.should.contain.keys('namespace');
-        hullInitFn(conf).config.namespace.should.eql('hull');
+        appMock.hullInit(conf).config.should.contain.keys('namespace');
+        appMock.hullInit(conf).config.namespace.should.eql('hull');
       });
     });
 
     describe("should give feedback", function () {
-      beforeEach(function () {
-        delete hullInitFn({}).app;
-      });
+      beforeEach(appMock.resetApp);
+
       it("should throw an exception if the init fails and no errback is provided", function (done) {
-        initPromise.always(function () { done(); });
+        appMock.initDeferred.always(function () { done(); });
         try {
-          hullInitFn({});
+          appMock.hullInit({});
         } catch (e) {
           done();
         }
-        initPromise.reject();
+        appMock.initDeferred.reject();
       });
 
       it("should execute the errback in case of error", function () {
-        initPromise = $.Deferred();
-        auraStub.start.returns(initPromise);
+        appMock.app.start.returns(appMock.initDeferred);
         var errb = sinon.spy();
-        hullInitFn({}, null, errb);
-        initPromise.reject();
+        appMock.hullInit({}, null, errb);
+        appMock.initDeferred.reject();
         errb.should.have.been.called;
       });
 
-      xit("should execute the callback in case of success", function () {
-        initPromise = $.Deferred();
-        auraStub.start.returns(initPromise);
+      it("should execute the callback in case of success", function () {
+        appMock.app.start.returns(appMock.initDeferred);
         var cb = sinon.spy();
-        hullInitFn({}, cb);
-        initPromise.resolve();
+        appMock.hullInit({}, cb);
+        appMock.initDeferred.resolve();
         cb.should.have.been.called;
         cb.should.have.been.calledWith(window.Hull);
       });
     });
+
   });
 });

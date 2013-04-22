@@ -24,6 +24,8 @@
  *
  * - `comment`: Submits a new comment.
  */
+
+/*global define:true, _:true */
 define({
   type: 'Hull',
 
@@ -36,7 +38,8 @@ define({
   },
 
   actions: {
-    comment: 'submitForm'
+    comment: 'submitForm',
+    delete: 'deleteComment'
   },
 
   options: {
@@ -44,32 +47,54 @@ define({
   },
 
   initialize: function() {
+    "use strict";
     var id = this.getId();
     if (id) {
-      this.path = 'hull/' + id + '/comments';
+      this.path = id + '/comments';
+    } else {
+      throw new Error('You must provide an ID to the Comment Widget');
     }
   },
 
   datasources: {
     comments: function() {
+      "use strict";
       if (this.path) {
         return this.api(this.path);
       }
     }
   },
 
+  beforeRender: function(data){
+    "use strict";
+    var self = this;
+    _.each(data.comments,function(r){
+      r.isDeletable = (r.user.id === self.data.me.id);
+      return r;
+    });
+    return data;
+  },
   afterRender: function() {
-    if (this.options.focus || this.focusAfterRender) {
+    "use strict";
+    if(this.options.focus || this.focusAfterRender) {
       this.$el.find('input,textarea').focus();
       this.focusAfterRender = false;
     }
   },
 
+  deleteComment: function(event, data) {
+    "use strict";
+    this.api.delete(data.data.id).then(function(){
+      data.el.slideUp().parents('li.media').remove();
+    });
+    event.preventDefault();
+  },
   submitForm: function (e) {
+    "use strict";
     e.preventDefault();
     var form = this.$el.find('form');
     var formData = this.sandbox.dom.getFormData(form);
-    description = formData.description;
+    var description = formData.description;
     if (description && description.length > 0) {
       var attributes = { description: description };
       if (this.uid) attributes.uid = this.uid;

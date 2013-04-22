@@ -1,8 +1,8 @@
-define ['lib/version'], (version) ->
+define ['lib/version', 'lib/hullbase'], (version, base) ->
 
   (app) ->
     rpc = false
-
+    rawFetch = null
     require:
       paths:
         easyXDM: 'components/easyXDM/easyXDM'
@@ -178,7 +178,7 @@ define ['lib/version'], (version) ->
         res.then(callback, errback)
         res
 
-      api = -> message.apply(api, extractApiArgs(slice.call(arguments)))
+      api = -> message.apply(api, extractApiArgs(normalizeAPIArguments(slice.call(arguments))))
 
       methodMap =
         'create': 'post'
@@ -200,11 +200,8 @@ define ['lib/version'], (version) ->
         dfd
 
       models = {}
-      setupModel = (attrs)->
-        if attrs.id
-          model = new Model(attrs)
-        else
-          model = new Model()
+      setupModel = (attrs, raw)->
+        model = generateModel(attrs, raw)
         model.on 'change', ->
           args = slice.call(arguments)
           eventName = ("model.hull." + model._id + '.' + 'change')
@@ -226,16 +223,32 @@ define ['lib/version'], (version) ->
         model
 
       api.model = (attrs)->
+        getFromCacheOrCreate(attrs, false)
+
+      rawFetch = getFromCacheOrCreate = (attrs, raw)->
         attrs = { _id: attrs } if _.isString(attrs)
         attrs._id = attrs.path unless attrs._id
         throw new Error('A model must have an identifier...') unless attrs?._id?
-        models[attrs._id] || setupModel(attrs)
+        models[attrs._id] || setupModel(attrs, raw || false)
 
       api.model.clearAll =->
         models = _.pick(models, 'me', 'app', 'org')
 
-      Model = Backbone.Model.extend
+      generateModel = (attrs, raw) ->
+        _Model = if raw then RawModel else Model
+        if attrs.id
+          model = new _Model(attrs)
+        else
+          model = new _Model()
+
+      BaseHullModel = Backbone.Model.extend
         sync: sync
+
+      RawModel = BaseHullModel.extend
+        url: ->
+          @id || @_id
+
+      Model = BaseHullModel.extend
         url: ->
           if (@id || @_id)
             url = normalizeAPIArguments([@_id || @id])[0]
@@ -284,7 +297,7 @@ define ['lib/version'], (version) ->
       api.get     = exec('get')
       api.post    = exec('post')
       api.put     = exec('put')
-      api.del     = exec('delete')
+      api.delete  = exec('delete')
       api.batch   = batch
 
       core.data.api = api
@@ -320,7 +333,7 @@ define ['lib/version'], (version) ->
           attrs = data[m]
           if attrs
             attrs._id = m
-            api.model(attrs)
+            getFromCacheOrCreate(attrs, true)
 
         initialized.resolve(data)
 
@@ -340,4 +353,7 @@ define ['lib/version'], (version) ->
       initialized
 
     afterAppStart: (app)->
+      base.me     = rawFetch('me', true);
+      base.app    = rawFetch('app', true);
+      base.org    = rawFetch('org', true);
       app.core.mediator.emit('hull.currentUser', app.core.currentUser)
