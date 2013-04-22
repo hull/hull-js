@@ -24,7 +24,7 @@
   {{#if comments}}
     <ul class="media-list hull-comments__list">
       {{#comments}}
-        <li class="media">
+        <li class="media" data-hull-comment-id="{{id}}">
           <div class="pull-left">
             <img class="media-object img-rounded" src="{{user.picture}}" alt="{{user.name}}">
           </div>
