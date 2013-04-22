@@ -39,7 +39,9 @@ define(['aura/aura'], function(aura) {
 
     // Make sure the app is started before...
     before(function(done) {
-      initStatus.then(done.bind(null, null));
+      initStatus.then(function () {
+        done();
+      });
     });
 
     describe("Check the correct loading of the module", function() {
