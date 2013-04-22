@@ -135,6 +135,7 @@ define(['spec/support/spec_helper'], function (helpers) {
         authModule.authUrl = function () { return 'auth_url'; }; //Mocks the method generating the ath URL
         authModule.authHelper = function () {return { open: function () {}}; }; //Mocks the method proceeding the remote auth
         appMock.sandbox.data.deferred = function () { return $.Deferred(); };
+        //@TODO Stub the model
         appMock.sandbox.data.api = {
           model: sinon.spy()
         };
