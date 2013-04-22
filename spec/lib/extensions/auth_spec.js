@@ -1,11 +1,18 @@
-/* global describe:true, it:true, before:true, beforeEach:true, afterEach: true, define:true */
+/* global sinon:true, describe:true, it:true, before:true, beforeEach:true, define:true */
 define(['spec/support/spec_helper'], function (helpers) {
   "use strict";
 
   function getAppMock () {
     return {
       sandbox: {
-        data: {}
+        data: {},
+        config: {
+          services: {
+            types: {
+              auth: ['auth_provider0_app', 'auth_provider1_app']
+            }
+          }
+        }
       },
       core: {
         mediator: {}
@@ -95,18 +102,18 @@ define(['spec/support/spec_helper'], function (helpers) {
         loginFn.bind(undefined).should.throw('The provider name must be a String');
       });
 
-      xit('should throw if the provider is unknown to the app', function () {
-        loginFn.bind(undefined, 'unknown_provider').should.throw('Unknown provider unknown_provider');
+      it('should throw if the provider is unknown to the app', function () {
+        loginFn.bind(undefined, 'unknown_provider').should.throw('No authentication service unknown_provider configured for the app');
       });
 
       it('should set an authenticated state to the module and return it', function () {
-        var state = loginFn('twitter');
+        var state = loginFn('auth_provider0');
         state.should.equal(authModule.isAuthenticating());
         state.should.equal(dfd);
       });
 
       it('should set the lower-cased provider as a property of the state', function () {
-        var provider = 'My_provider';
+        var provider = 'Auth_Provider1';
         var state = loginFn(provider);
         state.providerName.should.not.equal(provider);
         state.providerName.should.equal(provider.toLowerCase());
@@ -114,7 +121,7 @@ define(['spec/support/spec_helper'], function (helpers) {
 
       it('should execute the callback when the authentication is done', function () {
         var spy = sinon.spy();
-        loginFn('twitter', {}, spy);
+        loginFn('auth_Provider1', {}, spy);
         dfd.resolve();
         spy.should.have.beenCalled;
       });

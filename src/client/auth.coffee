@@ -13,7 +13,9 @@ define ->
       return module.isAuthenticating() if module.isAuthenticating()
 
       throw 'The provider name must be a String' unless _.isString(providerName)
+      authServices = app.sandbox.config.services.types.auth || []
       providerName = providerName.toLowerCase()
+      throw "No authentication service #{providerName} configured for the app" unless ~(authServices.indexOf(providerName + '_app'))
 
       authenticating = app.sandbox.data.deferred()
       authenticating.providerName = providerName
