@@ -84,23 +84,37 @@ define({
 
   deleteComment: function(event, data) {
     "use strict";
-    this.api.delete(data.data.id).then(function(){
-      data.el.slideUp().parents('li.media').remove();
+    var id = data.data.id;
+    var $parent = data.el.parents('[data-hull-comment-id="'+ id +'"]');
+    $parent.addClass('is-removing');
+    this.api.delete(id).then(function() {
+      $parent.remove();
     });
     event.preventDefault();
   },
   submitForm: function (e) {
     "use strict";
     e.preventDefault();
-    var form = this.$el.find('form');
+    var formWrapper = this.$el.find('.hull-comments__form');
+    var form = formWrapper.find('form');
     var formData = this.sandbox.dom.getFormData(form);
     var description = formData.description;
+
+    formWrapper.addClass('is-loading').end()
+               .find('.btn').attr('disabled',true).end()
+               .find('textarea').attr('disabled',true);
+
     if (description && description.length > 0) {
       var attributes = { description: description };
       if (this.uid) attributes.uid = this.uid;
       this.api(this.path, 'post', attributes).then(function() {
+
+        formWrapper.removeClass('is-loading').end()
+                   .find('.btn').attr('disabled',false).end()
+                   .find('textarea').attr('disabled',false);
         this.focusAfterRender = true;
         this.render();
+
       }.bind(this));
     }
   }
