@@ -50,7 +50,7 @@ define({
     "use strict";
     var id = this.getId();
     if (id) {
-      this.path = 'hull/' + id + '/comments';
+      this.path = id + '/comments';
     } else {
       throw new Error('You must provide an ID to the Comment Widget');
     }

@@ -282,29 +282,31 @@ module.exports = function (grunt) {
     if (aws) {
       gruntConfig.aws = aws;
       gruntConfig.s3 = {
-        key: '<%= aws.key %>',
-        secret: '<%= aws.secret %>',
-        bucket: '<%= aws.bucket %>',
-        access: 'public-read',
-        // debug: true,
         options: {
+          key: '<%= aws.key %>',
+          secret: '<%= aws.secret %>',
+          bucket: '<%= aws.bucket %>',
+          access: 'public-read',
+          // debug: true,
           encodePaths: true,
           maxOperations: 20
         },
-        upload: [
-          {
-            gzip:  true,
-            src: 'dist/' + pkg.version + '/**',
-            dest: '/',
-            rel: 'dist/'
-          },
-          {
-            gzip:  false,
-            src: 'dist/' + pkg.version + '/**',
-            dest: '/',
-            rel: 'dist/'
-          }
-        ]
+        prod: {
+          upload: [
+            {
+              gzip:  true,
+              src: 'dist/' + pkg.version + '/**/*',
+              dest: '/',
+              rel: 'dist/'
+            },
+            {
+              gzip:  false,
+              src: 'dist/' + pkg.version + '/**/*',
+              dest: '/',
+              rel: 'dist/'
+            }
+          ]
+        }
       };
     }
   }
