@@ -6,7 +6,7 @@ define(function() {
       return function (done) {
         require.undef(mod);
         require([mod], function (module) {
-          cb(module);
+          (typeof cb == 'function') && cb(module);
           done();
         });
       };
