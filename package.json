@@ -22,10 +22,11 @@
     "grunt-contrib-watch": "0.2.0",
     "grunt-hull-dox": "git://github.com/hull/grunt-hull-dox.git",
     "grunt-hull-widgets": "~0.5.0",
-    "grunt-mocha": "0.3.1"
+    "grunt-mocha": "0.3.1",
+    "bower": "~0.8.6"
   },
   "scripts": {
-    "pretest": "bower install",
+    "pretest": "$(npm bin)/bower install",
     "test": "grunt test"
   }
 }
