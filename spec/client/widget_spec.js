@@ -37,6 +37,11 @@ define(['aura/aura'], function(aura) {
       app.start().done(function() {
         var sandbox = app.createSandbox();
         sandbox.config = { debug: false };
+        sandbox.template = {
+          load: function () {
+            return $.Deferred();
+          }
+        };
         Widget = app.core.Widgets.Hull.extend({ sandbox: sandbox });
         done();
       });
