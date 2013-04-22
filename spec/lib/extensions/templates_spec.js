@@ -1,4 +1,5 @@
-define(['spec/support/spec_helper', 'jquery'], function(helpers, jquery) {
+/*global define:true, beforeEach:true */
+define(['spec/support/spec_helper', 'jquery', 'lib/client/templates'], function(helpers, jquery, module) {
 
   'use strict';
   /*jshint browser: true */
@@ -21,11 +22,7 @@ define(['spec/support/spec_helper', 'jquery'], function(helpers, jquery) {
 
 
   describe("Template loader", function() {
-    var app,
-        module;
-    beforeEach(helpers.reset('lib/client/templates', function (mod) {
-      module = mod;
-    }));
+    var app;
     beforeEach(function () {
       app = {
         core: {
@@ -38,10 +35,10 @@ define(['spec/support/spec_helper', 'jquery'], function(helpers, jquery) {
           template: {}
         }
       };
+      module.initialize(app);
     });
     describe("Check the correct loading of the module", function() {
       it("should contain a load function", function () {
-        module.initialize(app);
         app.core.template.load.should.be.a("function");
       });
     });
@@ -67,7 +64,6 @@ define(['spec/support/spec_helper', 'jquery'], function(helpers, jquery) {
       before(insertTemplateHelper(hullTemplateName, templateContents));
 
       it("should contain the template as the return value of the promise", function (done) {
-        module.initialize(app);
         var ret = app.core.template.load(tplName, prefix);
         var spy = sinon.spy(function (ret) {
           ret.should.contain.keys('tpl1');
@@ -81,7 +77,6 @@ define(['spec/support/spec_helper', 'jquery'], function(helpers, jquery) {
 
     describe("Server loading", function () {
       it("should use require to fetch the necessary templates", function (done) {
-        module.initialize(app);
         var ret = app.core.template.load('test', 'fixtures');
         var spy = sinon.spy(done.bind(null, null));
         ret.done(spy);
@@ -99,7 +94,6 @@ define(['spec/support/spec_helper', 'jquery'], function(helpers, jquery) {
       before(insertTemplateHelper('fixtures/test1', tplContents));
 
       it("should prefer DOM over server-template", function () {
-        module.initialize(app);
         var ret = app.core.template.load('test1', 'fixtures');
         ret.done(function (tpls) {
           tpls.should.have.keys('test1');
@@ -114,7 +108,6 @@ define(['spec/support/spec_helper', 'jquery'], function(helpers, jquery) {
       before(insertTemplateHelper("multiple/tpl2", "Second template"));
 
       it("should load an array of templates", function () {
-        module.initialize(app);
         var ret = app.core.template.load(["tpl1", "tpl2"], "multiple");
         ret.done(function (tpls) {
           tpls.should.contain.keys("tpl1");
