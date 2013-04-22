@@ -282,29 +282,31 @@ module.exports = function (grunt) {
     if (aws) {
       gruntConfig.aws = aws;
       gruntConfig.s3 = {
-        key: '<%= aws.key %>',
-        secret: '<%= aws.secret %>',
-        bucket: '<%= aws.bucket %>',
-        access: 'public-read',
-        // debug: true,
         options: {
+          key: '<%= aws.key %>',
+          secret: '<%= aws.secret %>',
+          bucket: '<%= aws.bucket %>',
+          access: 'public-read',
+          // debug: true,
           encodePaths: true,
           maxOperations: 20
         },
-        upload: [
-          {
-            gzip:  true,
-            src: 'dist/' + pkg.version + '/**',
-            dest: '/',
-            rel: 'dist/'
-          },
-          {
-            gzip:  false,
-            src: 'dist/' + pkg.version + '/**',
-            dest: '/',
-            rel: 'dist/'
-          }
-        ]
+        prod: {
+          upload: [
+            {
+              gzip:  true,
+              src: 'dist/' + pkg.version + '/**/*',
+              dest: '/',
+              rel: 'dist/'
+            },
+            {
+              gzip:  false,
+              src: 'dist/' + pkg.version + '/**/*',
+              dest: '/',
+              rel: 'dist/'
+            }
+          ]
+        }
       };
     }
   }
@@ -315,6 +317,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build_client', ['clean', 'coffee:client', 'version', 'requirejs:client']);
   grunt.registerTask('build_libs', ['build_client', 'build_remote']);
   grunt.registerTask('build', ['build_libs', 'hull_widgets']);
+  grunt.registerTask('test', ['connect', 'build', 'mocha']);
   grunt.registerTask('default', ['connect', 'build', 'mocha', 'watch']);
   grunt.registerTask('dist', ['build', 'dox']);
   grunt.registerTask('deploy', ['dist', 'describe', 's3']);

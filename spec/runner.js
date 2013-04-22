@@ -1,5 +1,8 @@
+/*jshint browser:true, debug: true */
+/*global define:true, mocha:true, runMocha:true*/
 var should;
 define(['chai', 'sinonChai'], function(chai, sinonChai) {
+  "use strict";
 
   window.chai         = chai;
   window.expect       = chai.expect;
@@ -21,7 +24,8 @@ define(['chai', 'sinonChai'], function(chai, sinonChai) {
     'spec/lib/hullbase_spec',
     'spec/lib/hull_spec',
     'spec/client/datasource_spec',
-    'spec/client/widget_spec'
+    'spec/client/widget_spec',
+    'spec/lib/extensions/auth_spec'
   ];
   require(specs, runMocha);
 

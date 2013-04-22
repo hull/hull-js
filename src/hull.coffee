@@ -1,27 +1,31 @@
 define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
 
+  evtPool = {}
+  emittedEvts = []
+  HullDef.on = (evt, fn)->
+    evtPool[evt] ?= []
+    evtPool[evt].push fn
+
+  HullDef.emit = (evt, data)->
+    emittedEvts.push({evt: evt, data: data})
+
   hull = null
 
-  myApp = (cb)->
+  myApp = ()->
     name: 'Hull'
     initialize: (app)->
       app.core.mediator.setMaxListeners(100)
 
     afterAppStart: (app)->
       sb = app.createSandbox();
-      Hull = _.extend(HullDef, sb);
-      Hull.me     = sb.data.api.model('me');
-      Hull.app    = sb.data.api.model('app');
-      Hull.org    = sb.data.api.model('org');
+      _.extend(HullDef, sb);
       if !app.config.debug
         props = ['widget', 'templates', 'emit', 'on', 'version', 'track']
-        props.concat(config.expose || [])
+        props.concat(app.config.expose || [])
         _h = {}
         _.map props, (k)->
           _h[k] = window.Hull[k]
         window.Hull = _h
-
-      cb(window.Hull) if cb
 
   if window.opener && window.opener.Hull
     try
@@ -36,7 +40,7 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
     config.namespace = "hull"
     hull.app = Aura(config)
     initProcess = hull.app
-        .use(myApp(cb))
+        .use(myApp())
         .use('aura-extensions/aura-handlebars')
         .use('aura-extensions/aura-backbone')
         .use('aura-extensions/hull-utils')
@@ -55,5 +59,13 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
       hull.app.stop()
       delete hull.app
       throw err if !errcb
+
+    initProcess.done ()->
+      cb(window.Hull) if cb
+      for evt, cbArray in evtPool
+        for cb in cbArray
+          Hull.on(evt, cbArray)
+      for emitted in emittedEvts
+        Hull.emit(emitted.evt, emitted.data)
 
     return hull
