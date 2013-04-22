@@ -84,7 +84,7 @@ define({
 
   deleteComment: function(event, data) {
     "use strict";
-    this.api.delele(data.data.id).then(function(){
+    this.api.delete(data.data.id).then(function(){
       data.el.slideUp().parents('li.media').remove();
     });
     event.preventDefault();
