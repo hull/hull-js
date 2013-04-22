@@ -167,6 +167,19 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
       _.str.humanize string
 
     ###*
+     * 
+     *      {{pluralize collection.length 'quiz' 'quizzes'}}
+     *
+     * @param  {number} number
+     * @param  {string} single
+     * @param  {string} plural
+     * @return {string}       
+    ###
+    HandlebarsHelpers.pluralize = (number, single, plural) ->
+        (if (number <= 1) then single else plural)
+   
+
+    ###*
      * Renders all characters to lower case and then makes the first upper
      *
      *     {{capitalize "image gallery"}}
