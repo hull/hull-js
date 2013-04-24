@@ -172,23 +172,23 @@ define(['underscore'], {
 
     switch (provider) {
       case 'hull':
-        path = 'hull/' + options.id + '/friends';
+        path = options.id + '/friends';
         params = { per_page: this.options.limit };
         break;
       case 'facebook':
-        path = 'facebook/' + options.id + '/friends';
+        path = {provider: 'facebook', path: options.id + '/friends'};
         params = { limit: this.options.limit };
         break;
       case 'twitter':
-        path = 'twitter/friends/list';
+        path = {provider:'twitter', path: 'friends/list'};
         params = { user_id: ((options.id==='me')?identities.twitter.uid:options.id) };
         break;
       case 'instagram':
-        path = 'instagram/users/'+((options.id==='me')?'self':options.id)+'/follows';
+        path = {provider:'instagram', path:'users/'+((options.id==='me')?'self':options.id)+'/follows'};
         params = { per_page: this.options.limit };
         break;
       case 'github':
-        path = 'github/users/' + ((options.id==='me')?identities.github.login:options.id) + '/following';
+        path = {provider: 'github', path: 'users/' + ((options.id==='me')?identities.github.login:options.id) + '/following'};
         params = { per_page: this.options.limit };
         break;
     }
