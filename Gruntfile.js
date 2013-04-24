@@ -1,6 +1,8 @@
 module.exports = function (grunt) {
   'use strict';
 
+  var CONTEXT = process.env.CONTEXT || 'prod';
+
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-connect');
@@ -22,7 +24,7 @@ module.exports = function (grunt) {
   // ==========================================================================
 
   var clientSrc = ['src/hullbase.coffee', 'src/hull.coffee', 'src/client/**/*.coffee'];
-  var remoteSrc = ['src/hullbase.coffee', 'src/hull-remote.coffee', 'src/remote/**/*.coffee'];
+  var remoteSrc = ['src/hullbase.coffee', 'src/hull.coffee', 'src/hull-remote.coffee', 'src/remote/**/*.coffee'];
 
   //
   // Lookup of the available libs and injects them for the build
@@ -47,7 +49,7 @@ module.exports = function (grunt) {
     });
 
   var gruntConfig = {
-    pkg: pkg,
+    PKG_VERSION: pkg.version,
     clean: {
       client: {
         src: clientLibs
@@ -59,7 +61,7 @@ module.exports = function (grunt) {
     dox: {
       files: {
         src: 'widgets/**/main.js',
-        dest: 'dist/' + pkg.version + '/docs'
+        dest: 'dist/<%= PKG_VERSION %>/docs'
       }
     },
     coffee: {
@@ -94,7 +96,7 @@ module.exports = function (grunt) {
       client: {
         options: {
           baseUrl: '.',
-          // optimize: 'none',
+          optimize: CONTEXT==='dev' ? "none" : "uglify",
           preserveLicenseComments: true,
           paths: {
             aura:           'components/aura/lib',
@@ -133,13 +135,13 @@ module.exports = function (grunt) {
             'lib/hull'
           ].concat(auraExtensions)
            .concat(clientLibs),
-          out: 'dist/' + pkg.version + '/hull.js'
+          out: 'dist/<%= PKG_VERSION %>/hull.js'
         }
       },
       remote: {
         options: {
           baseUrl: '.',
-          // optimize: 'none',
+          optimize: CONTEXT==='dev' ? "none" : "uglify",
           preserveLicenseComments: true,
           paths: {
             aura:               'components/aura/lib',
@@ -179,7 +181,7 @@ module.exports = function (grunt) {
             'lib/remote/services/twitter',
             'lib/remote/services/instagram'
           ],
-          out: 'dist/' + pkg.version + '/hull-remote.js'
+          out: 'dist/<%= PKG_VERSION %>/hull-remote.js'
         }
       },
       upload: {
@@ -260,18 +262,19 @@ module.exports = function (grunt) {
       }
     },
     version: {
-      template: "define(function () { return '<%= pkg.version %>';});",
+      template: "define(function () { return '<%= PKG_VERSION %>';});",
       dest: 'lib/version.js'
     },
     hull_widgets: {
       hull: {
         src: 'widgets',
         // before: ['requirejs:upload', 'requirejs:registration'],
-        dest: 'dist/<%= pkg.version%>/widgets'
+        dest: 'dist/<%= PKG_VERSION%>/widgets',
+        optimize: CONTEXT==='prod'
       }
     },
     describe: {
-      out: 'dist/<%= pkg.version%>/REVISION'
+      out: 'dist/<%= PKG_VERSION%>/REVISION'
     }
   };
 
@@ -295,13 +298,13 @@ module.exports = function (grunt) {
           upload: [
             {
               gzip:  true,
-              src: 'dist/' + pkg.version + '/**/*',
+              src: 'dist/<%= PKG_VERSION %>/**/*',
               dest: '/',
               rel: 'dist/'
             },
             {
               gzip:  false,
-              src: 'dist/' + pkg.version + '/**/*',
+              src: 'dist/<%= PKG_VERSION %>/**/*',
               dest: '/',
               rel: 'dist/'
             }
