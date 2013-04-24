@@ -30,8 +30,7 @@ define({
     lists: function() {
       var id = this.getId();
       if (id) {
-        this.path = "hull/" + id + "/lists";
-        return this.api(this.path);
+        return this.api(id + "/lists");
       }
 
     }
