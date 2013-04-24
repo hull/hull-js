@@ -22,7 +22,7 @@ define({
 
   datasources: {
     quizzes: function() {
-      return this.api('hull/app/achievements', {
+      return this.api('app/achievements', {
         where: {
           _type: 'Quiz'
         }
@@ -46,7 +46,7 @@ define({
   actions: {
 
     edit: function(e, params) {
-      this.api('hull/' + params.data.id, {}, function(data){
+      this.api(params.data.id, {}, function(data){
         this.quiz = data;
         this.render();
       }.bind(this));
@@ -58,7 +58,7 @@ define({
       var val = $('#hull-quiz-json').val().trim();
       try {
         var json = jQuery.parseJSON(val);
-        this.api('/hull/app/achievements', 'post', json, function(data){
+        this.api('app/achievements', 'post', json, function(data){
           this.quiz = data;
           this.render();
         }.bind(this));
@@ -69,7 +69,7 @@ define({
 
     delete: function(e) {
       if(window.confirm("Are you sure you want to delete this quiz?")) {
-        this.api('/hull/'+this.quiz.id, 'delete', {}, function(){
+        this.api(this.quiz.id, 'delete', {}, function(){
           this.quiz = null;
           this.render();
         }.bind(this));
@@ -89,7 +89,7 @@ define({
       var val = $('#hull-quiz-json').val().trim();
       try {
         var json = jQuery.parseJSON(val);
-        this.api('/hull/'+json.id, 'put', json, function(data){
+        this.api(json.id, 'put', json, function(data){
           this.quiz = null;
         this.render();
         }.bind(this));

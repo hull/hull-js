@@ -5,11 +5,11 @@ define({
 
   datasources: {
     all: function() {
-      return this.api('hull/docs/all');
+      return this.api('docs/all');
     },
     doc: function() {
       if (this.options.api) {
-        return this.api('hull/docs/' + this.options.api);
+        return this.api('docs/' + this.options.api);
       }
     }
   },

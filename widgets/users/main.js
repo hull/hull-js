@@ -30,7 +30,7 @@ define({
 
   datasources: {
     userProfiles: function() {
-      return this.api('hull/' + this.appId + '/users', this.params);
+      return this.api(this.appId + '/users', this.params);
     }
   },
 

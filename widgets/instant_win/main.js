@@ -62,7 +62,7 @@ define({
   datasources: {
     achievement: ':id',
     badge: function() {
-      return this.loggedIn() ? this.api('hull/me/badges/' + this.options.id) : null;
+      return this.loggedIn() ? this.api('me/badges/' + this.options.id) : null;
     }
   },
 
@@ -190,8 +190,9 @@ define({
    * until we know if the user has won.
    */
   play: function() {
+    "use strict";
     this.render('working');
-    this.api('hull/' + this.id + '/achieve', 'post', _.bind(function(res) {
+    this.api(this.id + '/achieve', 'post', _.bind(function(res) {
       var template = 'played';
       if (this.userCanPlay()) { template = res.data.winner ? 'won' : 'lost'; }
       _.delay(_.bind(function() {

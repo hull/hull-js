@@ -198,7 +198,7 @@ define({
         timing  = (new Date() - this.startedAt) / 1000;
       }
 
-      var res  = this.api("hull/" + this.id + "/achieve", 'post', {
+      var res  = this.api(this.id + "/achieve", 'post', {
         answers: this.answers,
         timing: timing
       });

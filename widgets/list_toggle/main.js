@@ -45,7 +45,7 @@ define({
       var itemIds   = _.pluck(data.list.items, "id");
       data.isListed = _.include(itemIds, this.id);
     }
-    this.itemPath = "hull/" + data.list.id + "/items/" + data.obj.id;
+    this.itemPath = data.list.id + "/items/" + data.obj.id;
     return data;
   },
 

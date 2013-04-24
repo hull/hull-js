@@ -31,13 +31,13 @@ define({
 
   actions: {
     achieve: function() {
-      this.api('hull/' + this.id + '/achieve', 'post', { secret: this.options.secret }).then(this.refresh);
+      this.api(this.id + '/achieve', 'post', { secret: this.options.secret }).then(this.refresh);
     }
   },
 
   datasources: {
     achievement: function() {
-      return this.api('hull/' + this.id);
+      return this.api(this.id);
     }
   },
 

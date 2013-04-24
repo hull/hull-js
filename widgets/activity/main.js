@@ -37,9 +37,9 @@ define({
     activities: function() {
       var id = this.getId() || 'app';
       if (this.options.friendsOnly) {
-        this.path = "hull/" + id + "/friends_activity";
+        this.path = id + "/friends_activity";
       } else {
-        this.path = "hull/" + id + "/activity";
+        this.path = id + "/activity";
       }
       return this.api(this.path, this.query);
     }

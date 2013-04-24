@@ -38,7 +38,7 @@ define(['sandbox', 'underscore', 'jquery.default_fields', 'h5f'], function(sandb
       var self  = this;
           me    = this.sandbox.data.api.model('me');
       if (this.loggedIn()) {
-        this.api('hull/me/profile', 'put', profile, function(myAttrs) {
+        this.api('me/profile', 'put', profile, function(myAttrs) {
           me.set(myAttrs);
           self.trigger('register', this);
           self.render();

@@ -1,7 +1,7 @@
 /**
  * # Like Button
  *
- * Allow users to `like` an object. Likes are not connected to facebook or any other network  
+ * Allow users to `like` an object. Likes are not connected to facebook or any other network
  * You can use this as "favorite", "starred", "want"... or of course "like".
  *
  * ## Examples
@@ -14,11 +14,11 @@
  *
  * - `provider`: Optional, One or more providers to log users in.
  *   If none specified, will show all configured providers for the app.
- * 
+ *
  * ## Template
  *
  * - `login_button`: Show login buttons if the user isn't logged, logout button if he is.
- * 
+ *
  */
 
  define({
@@ -50,10 +50,10 @@
         case 'app' :
           this.id = data.app.id;
           break;
-        case 'me' : 
+        case 'me' :
           this.id = data.me.id;
           break;
-        case 'org' : 
+        case 'org' :
           this.id = data.org.id;
           break;
       }
@@ -71,7 +71,7 @@
     this.working = true;
     var method = verb === 'unlike' ? 'delete' : 'post';
     this.isLiked    = !this.isLiked;
-    this.api('hull/' + this.id + '/likes', method, function(count) {
+    this.api(this.id + '/likes', method, function(count) {
       this.working    = false;
       this.likesCount = count
       this.render('like_button', { isLiked: this.isLiked, likesCount: this.likesCount });

@@ -12,8 +12,8 @@ define({
     reviews: function() {
       var id = this.getId();
       if (id) {
-        this.path = "hull/" + id + "/reviews";
-        return this.api("hull/" + id + "/reviews");
+        this.path = id + "/reviews";
+        return this.api(id + "/reviews");
       }
     }
   },
