@@ -251,7 +251,7 @@ define ['lib/version', 'lib/hullbase'], (version, base) ->
       Model = BaseHullModel.extend
         url: ->
           if (@id || @_id)
-            url = normalizeAPIArguments([@_id || @id])[0]
+            url = @_id || @id
           else
             url = @collection?.url
           url
@@ -302,7 +302,7 @@ define ['lib/version', 'lib/hullbase'], (version, base) ->
 
       core.data.api = api
       core.track = (eventName, params)->
-        api("track/#{eventName}", 'post', params)
+        api({provider:"track", path: eventName}, 'post', params)
 
       sandbox.track = (eventName, params)->
         core.track(eventName, params)
