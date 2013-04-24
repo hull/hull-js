@@ -200,6 +200,8 @@ define ['lib/version', 'lib/hullbase'], (version, base) ->
         dfd
 
       models = {}
+      collections = {}
+
       setupModel = (attrs, raw)->
         model = generateModel(attrs, raw)
         model.on 'change', ->
@@ -231,8 +233,11 @@ define ['lib/version', 'lib/hullbase'], (version, base) ->
         throw new Error('A model must have an identifier...') unless attrs?._id?
         models[attrs._id] || setupModel(attrs, raw || false)
 
-      api.model.clearAll =->
-        models = _.pick(models, 'me', 'app', 'org')
+      # Clears the cache
+      app.core.mediator.on 'hull.currentUser', (hasUser)->
+        if (!hasUser)
+          models = _.pick(models, 'me', 'app', 'org')
+          collections = {}
 
       generateModel = (attrs, raw) ->
         _Model = if raw then RawModel else Model
@@ -260,8 +265,6 @@ define ['lib/version', 'lib/hullbase'], (version, base) ->
         model: Model
         sync: sync
 
-
-      collections = {}
 
       setupCollection = (path)->
         collection      = new Collection
