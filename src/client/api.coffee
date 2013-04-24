@@ -246,7 +246,7 @@ define ['lib/version', 'lib/hullbase'], (version, base) ->
 
       RawModel = BaseHullModel.extend
         url: ->
-          @id || @_id
+          @_id || @id
 
       Model = BaseHullModel.extend
         url: ->
