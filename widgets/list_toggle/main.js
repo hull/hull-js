@@ -21,6 +21,8 @@
 define({
   type: "Hull",
 
+  refreshEvents: ['model.hull.me.change'],
+
   templates: ["list_toggle"],
 
   options: {
@@ -28,13 +30,16 @@ define({
   },
 
   initialize: function() {
-    this.list = this.api.model("me/lists/"+this.options.listName);
+
   },
 
   datasources:{
     // list: "me/lists/:listName"
-    list: function(){
-      return this.list.deferred;
+    list: function() {
+      if (this.loggedIn()) {
+        this.list = this.api.model("me/lists/"+this.options.listName);
+        return this.list.deferred;
+      }
     },
     obj: ":id"
   },
@@ -44,8 +49,8 @@ define({
     if (data.list && data.list.items) {
       var itemIds   = _.pluck(data.list.items, "id");
       data.isListed = _.include(itemIds, this.id);
+      this.itemPath = data.list.id + "/items/" + data.obj.id;
     }
-    this.itemPath = data.list.id + "/items/" + data.obj.id;
     return data;
   },
 
