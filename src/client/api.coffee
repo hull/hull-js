@@ -288,11 +288,10 @@ define ['lib/version', 'lib/hullbase'], (version, base) ->
       api.collection = (path)->
         throw new Error('A model must have an path...') unless path?
         throw new Error('You must specify the provider...') if (path.path && !path.provider)
-        normalizedArguments = normalizeAPIArguments slice.call(arguments);
-        path = normalizedArguments[0]
-        collections[path] ?= setupCollection.apply(api, normalizedArguments)
+        col = setupCollection.apply(api, slice.call arguments)
+        path = normalizeAPIArguments(slice.call arguments)[0]
+        collections[path] ?= col
         collections[path]
-
 
       api.get     = exec('get')
       api.post    = exec('post')
