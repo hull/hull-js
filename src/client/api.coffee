@@ -302,7 +302,7 @@ define ['lib/version', 'lib/hullbase'], (version, base) ->
 
       core.data.api = api
       core.track = (eventName, params)->
-        api({provider:"track", path: eventName}, 'post', params)
+        core.data.api({provider:"track", path: eventName}, 'post', params)
 
       sandbox.track = (eventName, params)->
         core.track(eventName, params)
