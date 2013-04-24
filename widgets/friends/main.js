@@ -9,8 +9,8 @@
  * ## Options
  *
  * - `id`: Optional, the id of the user whose friends we want to list. By default, it will list the friends of the current user.
- * - `provider`: Optional, service from which we will fetch friends. Can be `hull`, `instagram`, `twitter`, `facebook` or `github`, by default it will list friends from `hull`.  
- *   `hull` will show the user's friends who have used the app.  
+ * - `provider`: Optional, service from which we will fetch friends. Can be `hull`, `instagram`, `twitter`, `facebook` or `github`, by default it will list friends from `hull`.
+ *   `hull` will show the user's friends who have used the app.
  * - `limit`: Optional, the number of friends to display. Be default it will display 10 friends.
  * - `scope` : Optional, a Facebook permission you need to ask the user before being able to show data. - If this permission is not given, a button will be shown to ask for it.
  *
@@ -25,10 +25,10 @@
  * ## Datasource
  *
  * - `friends`: The user's friends.
- * - `authorized` : A hash of permissions showing if the user can view the images.  
- * Contains `provider`, `permissions` : Booleans showing if the provider and permissions are right,  
+ * - `authorized` : A hash of permissions showing if the user can view the images.
+ * Contains `provider`, `permissions` : Booleans showing if the provider and permissions are right,
  * and `provider_name` containing the name of the asked provider
- * 
+ *
  */
 define(['underscore'], {
   type: 'Hull',
@@ -52,7 +52,7 @@ define(['underscore'], {
     this.provider = this.options.provider;
 
     if (this.provider !== "hull") {
-      this.id = this.options.id || "me";  
+      this.id = this.options.id || "me";
     }
 
 
@@ -98,7 +98,7 @@ define(['underscore'], {
         }, this));
       } else{
         deferred.resolve([]);
-      } 
+      }
 
       return deferred.promise();
     }
@@ -135,7 +135,7 @@ define(['underscore'], {
         auth.provider=false;
         deferred.resolve(auth)
       }
-      
+
     }
 
 
@@ -148,7 +148,7 @@ define(['underscore'], {
       authorization.permissions=true;
       deferred.resolve(authorization)
     } else {
-      this.api("facebook/me/permissions").then(function(res) {
+      this.api({provider: 'facebook', path:"me/permissions"}).then(function(res) {
 
         //Convert scope to array if given as a string.
         if(_.isString(scope)){
