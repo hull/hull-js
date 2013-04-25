@@ -1,6 +1,5 @@
-define ['backbone', 'underscore'], (Backbone, _)->
+define ['backbone', 'underscore', 'lib/client/datasource'], (Backbone, _, Datasource)->
 
-  Datasource = null
   debug = false
 
   slice = Array.prototype.slice
@@ -64,7 +63,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
 
         _.each @datasources, (ds, i)=>
           ds = _.bind ds, @ if _.isFunction ds
-          @datasources[i] = new Datasource ds unless ds instanceof Datasource
+          @datasources[i] = new Datasource(ds, @api) unless ds instanceof Datasource
 
         @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
       catch e
@@ -188,10 +187,9 @@ define ['backbone', 'underscore'], (Backbone, _)->
       @sandbox.track(name, data)
 
   (app)->
-    Datasource = app.core.datasource
     default_datasources =
-      me: new Datasource 'me'
-      app: new Datasource 'app'
-      org: new Datasource 'org'
+      me: new Datasource 'me', app.core.data.api
+      app: new Datasource 'app', app.core.data.api
+      org: new Datasource 'org', app.core.data.api
     debug = app.config.debug
     app.core.registerWidgetType("Hull", HullWidget.prototype)

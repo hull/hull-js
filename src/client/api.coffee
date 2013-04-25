@@ -23,6 +23,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         remoteUrl = "#{config.orgUrl}/api/v1/#{config.appId}/remote.html?v=#{version}"
         remoteUrl += "&js=#{config.jsUrl}"  if config.jsUrl
         remoteUrl += "&uid=#{config.uid}"   if config.uid
+        remoteUrl
 
       initialize: (app)->
         core    = app.core
@@ -85,7 +86,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         # Current user management
         #
         #
-        
+
 
         app.core.setCurrentUser = setCurrentUser = (headers={})->
           return unless app.config.appId
@@ -135,7 +136,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
           dfd.then(options.success)
           dfd.fail(options.error)
           dfd
-        
+
         BaseHullModel = Backbone.Model.extend
           sync: sync
 
@@ -267,7 +268,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
 
         #
         # Initialization
-        # 
+        #
 
         initialized = core.data.deferred()
 

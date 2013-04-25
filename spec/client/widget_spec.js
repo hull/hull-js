@@ -21,17 +21,13 @@ define(['aura/aura'], function(aura) {
       return w;
     }
 
-    var datasourceExtensionStub = function(app) {
-      app.core.datasource = function() {};
-      app.core.datasource.prototype = {
-        parse: function() {},
-        fetch: function() {}
-      };
+    var apiMock = function(app) {
+      app.core.api = function() {};
     };
 
     before(function (done) {
       app = aura({ appId: 'fake_app', orgUrl: 'fake_org' });
-      app.use(datasourceExtensionStub);
+      app.use(apiMock);
       app.use('aura-extensions/aura-backbone');
       app.use('lib/client/widget');
       app.start().done(function() {
