@@ -68,6 +68,12 @@ define ['backbone', 'underscore', 'lib/client/datasource'], (Backbone, _, Dataso
         @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
       catch e
         console.error("Error loading HullWidget", e.message)
+      sb = @sandbox
+      getId = ()->
+        return @id if @id
+        return sb.util.entity.encode(@uid) if @uid
+        sb.config.entity_id
+      options.id = getId.call(options)
       Backbone.View.prototype.constructor.apply(@, arguments)
       @render()
 
@@ -144,11 +150,6 @@ define ['backbone', 'underscore', 'lib/client/datasource'], (Backbone, _, Dataso
       return @
 
     afterRender: (data)=> data
-
-    getId: ->
-      return @options.id if @options.id
-      return @sandbox.util.entity.encode(@options.uid) if @options.uid
-      @sandbox.config.entity_id
 
     # Build render context from datasources
     # Call beforeRender
