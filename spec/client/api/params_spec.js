@@ -72,13 +72,5 @@ define(['lib/client/api/params'], function (apiParams) {
         apiParams.parse.bind(undefined, ['abc', cb, errb, nope]).should.throw;
       });
     });
-
-    xit("must have a string as the first parameter", function () {
-      var params = [123, null, undefined, Object.create(null), {}];
-      params.forEach(function (param) {
-        apiParams.bind(api, param).should.throw(TypeError);
-      });
-    });
-
   });
 });
