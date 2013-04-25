@@ -88,13 +88,6 @@ define(['aura/aura'], function (aura) {
         });
       });
 
-      it("must have a string as the first parameter", function () {
-        var params = [123, null, undefined, Object.create(null), {}];
-        params.forEach(function (param) {
-          api.bind(api, param).should.throw(TypeError);
-        });
-      });
-
       it("accepts a method as the second parameter", function (done) {
         var myMethod = "custom_method";
         var ret = api("success", myMethod);

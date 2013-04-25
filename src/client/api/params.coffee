@@ -12,16 +12,22 @@ define ['underscore'], (_)->
   ###
   defaultProvider = 'hull'
 
+  _stringDescription = (desc)->
+    [desc, defaultProvider, {}]
+
+  _objectDescription = (desc)->
+    path      = desc.path
+    provider  = desc.provider || defaultProvider
+    params    = desc.params || {}
+    [path, provider, params]
+
   parse: (argsArray)->
     description = argsArray.shift()
-    params = {}
-    if _.isString(description)
-      provider = defaultProvider
-      path = description
-    if _.isObject(description)
-      provider  = description.provider || defaultProvider
-      path      = description.path
-      params    = description.params
+
+    [path, provider, params] = _stringDescription(description) if _.isString(description)
+    [path, provider, params] = _objectDescription(description) if _.isObject(description)
+
+    throw 'No URI provided for the API call' unless path
 
     path        = path.substring(1) if path[0] == "/"
     path        = [provider, path].join("/")
@@ -52,4 +58,4 @@ define ['underscore'], (_)->
     errback  ?= (err, data)-> console.error('The request has failed: ', err, data)
 
     [{ path: path, method: method, params: params }, callback, errback]
-    
+
