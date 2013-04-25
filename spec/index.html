@@ -18,16 +18,11 @@
           fixtures:     'spec/fixtures',
           underscore:   'components/underscore/underscore-min',
           jquery:       'components/jquery/jquery.min',
-          handlebars:   'components/handlebars/handlebars'
-        },
-        shim: {
-          handlebars: {
-            exports: "Handlebars"
-          }
+          handlebars:   'components/require-handlebars-plugin/Handlebars'
         }
       };
       var runMocha = function() {
-        mocha.globals(['Backbone', 'easyXDM', 'Handlebars', 'handlebars', 'Hull', 'errorProps']); //@TODO What is this (lower-case) handlebars ?
+        mocha.globals(['Backbone', 'easyXDM', 'Hull', 'errorProps']); //@TODO What is this (lower-case) handlebars ?
         if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
         else { mocha.run(); }
       };
