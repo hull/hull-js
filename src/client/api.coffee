@@ -1,4 +1,4 @@
-define ['lib/version', 'lib/hullbase'], (version, base) ->
+define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base, apiParams) ->
 
   (app) ->
 
@@ -17,60 +17,8 @@ define ['lib/version', 'lib/hullbase'], (version, base) ->
           easyXDM: { exports: 'easyXDM' }
           backbone: { exports: 'Backbone', deps: ['underscore', 'jquery'] }
 
-      ###
-      # Normalizes the parameters defining a message. At this point, they can have two forms
-      # * [String, ...] where the String is an uri. The request will be made to the default provider
-      # * [Object, ...] where the Object describes more completely the request. It must provide a "path" key, can provide a "provider" key as well as some default parameters in the "params" key
-      # In the second form, the optional params can be overridden through parameters at data.api calls
-      #
-      # The normalized form is the first one.
-      #
-      # @param {Array} the parameters for the API calls
-      # @return {Array} The normalized form of parameters
-      ###
-      normalizeArguments: (argsArray)->
-        defaultProvider = 'hull'
-        description = argsArray.shift()
-        params = {}
-        if _.isString(description)
-          provider = defaultProvider
-          path = description
-        if _.isObject(description)
-          provider  = description.provider || defaultProvider
-          path      = description.path
-          params    = description.params
-
-        path        = path.substring(1) if path[0] == "/"
-        path        = [provider, path].join("/")
-
-        ret         = []
-        ret.push(params) if params?
-        ret = ret.concat(argsArray)
-
-        callback = errback = null
-        params = {}
-
-        while (next = ret.shift())
-          type = typeof next
-          if type == 'string' && !method
-            method = next.toLowerCase()
-          else if (type == 'function' && (!callback || !errback))
-            if !callback
-              callback = next
-            else if (!errback)
-              errback = next
-          else if (type == 'object')
-            params = _.extend(params, next)
-          else
-            throw new TypeError("Invalid argument passed to Hull.api(): " + next)
-
-        method ?= 'get'
-        callback ?= ->
-        errback  ?= (err, data)-> console.error('The request has failed: ', err, data)
-
-        [{ path: path, method: method, params: params }, callback, errback]
-        
       # Builds the URL used by easyXDM
+      # Based upon the (app) configuration
       buildRemoteUrl: (config)->
         remoteUrl = "#{config.orgUrl}/api/v1/#{config.appId}/remote.html?v=#{version}"
         remoteUrl += "&js=#{config.jsUrl}"  if config.jsUrl
@@ -85,6 +33,59 @@ define ['lib/version', 'lib/hullbase'], (version, base) ->
         easyXDM   = require('easyXDM')
 
         slice = Array.prototype.slice
+
+
+        #
+        #
+        # Strict API
+        #
+        #
+
+
+        ###
+        # Sends the message described by @params to easyXDM
+        # @param {Object} contains the provider, uri and parameters for the message
+        # @param {Function} optional a success callback
+        # @param {Function} optional an error callback
+        # @return {Promise}
+        ###
+        message = (params, callback, errback)->
+          console.error("Api not initialized yet") unless rpc
+          promise = core.data.deferred()
+
+          onSuccess = (res)->
+            if res.provider == 'hull' && res.headers
+              setCurrentUser(res.headers)
+            callback(res.response)
+            promise.resolve(res.response)
+          onError = (err)->
+            errback(err)
+            promise.reject(err)
+          rpc.message params, onSuccess, onError
+          promise
+
+        # Main method to request the API
+        api = -> message.apply(api, apiParams.parse(slice.call(arguments)))
+
+        # Method-specific function
+        _.each ['get', 'post', 'put', 'delete'], (method)->
+          api[method] = ()->
+            args = apiParams.parse (slice.call(arguments))
+            req         = args[0]
+            req.method  = method
+            message.apply(api, args)
+
+        core.data.api = api
+        core.track = sandbox.track = (eventName, params)->
+          core.data.api({provider:"track", path: eventName}, 'post', params)
+
+
+        #
+        #
+        # Current user management
+        #
+        #
+        
 
         app.core.setCurrentUser = setCurrentUser = (headers={})->
           return unless app.config.appId
@@ -107,40 +108,20 @@ define ['lib/version', 'lib/hullbase'], (version, base) ->
           app.sandbox.config ?= {}
           app.sandbox.config.curentUser = app.core.currentUser
 
-        ###
-        # Sends the message described by @params to easyXDM
-        # @param {Object} contains the provider, uri and parameters for the message
-        # @param {Function} optional a success callback
-        # @param {Function} optional an error callback
-        # @return {Promise}
-        ###
-        message = (params, callback, errback)->
-          console.error("Api not initialized yet") unless rpc
-          promise = core.data.deferred()
 
-          onSuccess = (res)->
-            if res.provider == 'hull' && res.headers
-              setCurrentUser(res.headers)
-            callback(res.response)
-            promise.resolve(res.response)
-
-          onError = (err)->
-            errback(err)
-            promise.reject(err)
-
-          rpc.message params, onSuccess, onError
-
-          promise
+        # Clears the cache
+        app.core.mediator.on 'hull.currentUser', (hasUser)->
+          if (!hasUser)
+            models = _.pick(models, 'me', 'app', 'org')
+            collections = {}
 
 
+        #
+        #
+        # Models/Collection related
+        #
+        #
 
-        api = -> message.apply(api, module.normalizeArguments(slice.call(arguments)))
-
-        methodMap =
-          'create': 'post'
-          'update': 'put'
-          'delete': 'delete'
-          'read':   'get'
 
         sync = (method, model, options={})->
           url   = if _.isFunction(model.url) then model.url() else model.url
@@ -154,6 +135,30 @@ define ['lib/version', 'lib/hullbase'], (version, base) ->
           dfd.then(options.success)
           dfd.fail(options.error)
           dfd
+        
+        BaseHullModel = Backbone.Model.extend
+          sync: sync
+
+        RawModel = BaseHullModel.extend
+          url: ->
+            @_id || @id
+
+        Model = BaseHullModel.extend
+          url: ->
+            if (@id || @_id)
+              url = @_id || @id
+            else
+              url = @collection?.url
+            url
+
+        Collection = Backbone.Collection.extend
+          model: Model
+          sync: sync
+        methodMap =
+          'create': 'post'
+          'update': 'put'
+          'delete': 'delete'
+          'read':   'get'
 
         setupModel = (attrs, raw)->
           model = generateModel(attrs, raw)
@@ -178,19 +183,13 @@ define ['lib/version', 'lib/hullbase'], (version, base) ->
           model
 
         api.model = (attrs)->
-          getFromCacheOrCreate(attrs, false)
+          rawFetch(attrs, false)
 
-        rawFetch = getFromCacheOrCreate = (attrs, raw)->
+        rawFetch = (attrs, raw)->
           attrs = { _id: attrs } if _.isString(attrs)
           attrs._id = attrs.path unless attrs._id
           throw new Error('A model must have an identifier...') unless attrs?._id?
           models[attrs._id] || setupModel(attrs, raw || false)
-
-        # Clears the cache
-        app.core.mediator.on 'hull.currentUser', (hasUser)->
-          if (!hasUser)
-            models = _.pick(models, 'me', 'app', 'org')
-            collections = {}
 
         generateModel = (attrs, raw) ->
           _Model = if raw then RawModel else Model
@@ -198,26 +197,6 @@ define ['lib/version', 'lib/hullbase'], (version, base) ->
             model = new _Model(attrs)
           else
             model = new _Model()
-
-        BaseHullModel = Backbone.Model.extend
-          sync: sync
-
-        RawModel = BaseHullModel.extend
-          url: ->
-            @_id || @id
-
-        Model = BaseHullModel.extend
-          url: ->
-            if (@id || @_id)
-              url = @_id || @id
-            else
-              url = @collection?.url
-            url
-
-        Collection = Backbone.Collection.extend
-          model: Model
-          sync: sync
-
 
         setupCollection = (path)->
           collection      = new Collection
@@ -245,7 +224,7 @@ define ['lib/version', 'lib/hullbase'], (version, base) ->
           throw new Error('A model must have an path...') unless path?
           throw new Error('You must specify the provider...') if (path.path && !path.provider)
           col = setupCollection.apply(api, slice.call arguments)
-          path = module.normalizeArguments([path])[0].path
+          path = apiParams.parse([path])[0].path
           collections[path] ?= col
           collections[path]
 
@@ -286,19 +265,9 @@ define ['lib/version', 'lib/hullbase'], (version, base) ->
           res
 
 
-        _.each ['get', 'post', 'put', 'delete'], (method)->
-          api[method] = ()->
-            args = module.normalizeArguments (slice.call(arguments))
-            req         = args[0]
-            req.method  = method
-            message.apply(api, args)
-
-        core.data.api = api
-        core.track = (eventName, params)->
-          core.data.api({provider:"track", path: eventName}, 'post', params)
-
-        sandbox.track = (eventName, params)->
-          core.track(eventName, params)
+        #
+        # Initialization
+        # 
 
         initialized = core.data.deferred()
 
@@ -326,7 +295,7 @@ define ['lib/version', 'lib/hullbase'], (version, base) ->
             attrs = data[m]
             if attrs
               attrs._id = m
-              getFromCacheOrCreate(attrs, true)
+              rawFetch(attrs, true)
 
           initialized.resolve(data)
 
