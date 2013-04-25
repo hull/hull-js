@@ -1,5 +1,5 @@
 /*global define:true */
-define(['aura/aura'], function (aura) {
+define(['spec/support/spec_helper', 'aura/aura'], function (helper, aura) {
 
   "use strict";
   /*jshint devel: true, browser: true */
@@ -84,82 +84,6 @@ define(['aura/aura'], function (aura) {
         ret.always(function () {
           spySuccess.should.have.been.calledTwice;
           spyFailure.should.not.have.been.called;
-          done();
-        });
-      });
-
-      it("accepts a method as the second parameter", function (done) {
-        var myMethod = "custom_method";
-        var ret = api("success", myMethod);
-        ret.done(function (params) {
-          params.method.should.equal(myMethod);
-          done();
-        });
-      });
-
-      it("default to GET method", function (done) {
-        var ret = api("success");
-        ret.done(function (params) {
-          params.method.should.equal('get');
-          done();
-        });
-      });
-
-      it("extends params one set after the other", function (done) {
-        var additionalParams = {limit: 10};
-        var ret = api("success", additionalParams, {limit: 5});
-        ret.done(function (params) {
-          params.params.should.be.eql({limit: 5});
-          done();
-        });
-        api.bind(api, "success", additionalParams, {limit: 5}).should.not.throw(TypeError);
-      });
-    });
-
-    describe("Method-based API", function () {
-      it("takes hull as the default provider", function (done) {
-        api.get("/path").done(function (params) {
-          params.path.should.equal("hull/path");
-          done();
-        });
-      });
-
-      it("accepts an object to describe the provider", function (done) {
-        api.get({path: "/path", provider: "facebook"}).done(function (params) {
-          params.path.should.equal("facebook/path");
-          done();
-        });
-      });
-
-      it("defaults the provider to hull even with an object", function (done) {
-        api.get({path: "/path"}).done(function (params) {
-          params.path.should.equal('hull/path');
-          done();
-        });
-      });
-
-      it("appends the method to the params automatically", function (done) {
-        var postPromise = api.post('/path');
-        postPromise.done(function (params) {
-          params.method.should.equal('post');
-          done();
-        });
-      });
-
-      it("can be passed default params for the requests", function (done) {
-        var additionalParams = {limit: 10};
-        api.get({path: '/path', provider: 'me', params: additionalParams}, function (params) {
-          params.should.contain.keys('params');
-          params.params.should.eql(additionalParams);
-          done();
-        });
-      });
-
-      it("can bypass additional parameters with an object", function (done) {
-        var additionalParams = {limit: 10, page: 3};
-        api.get({path: '/path', provider: 'me', params: additionalParams}, {limit: 5}).done(function (params) {
-          params.params.should.contain.keys(['limit', 'page']);
-          params.params.limit.should.equal(5);
           done();
         });
       });
