@@ -1,59 +1,53 @@
 /*global define:true */
-define(['aura/aura'], function (aura) {
+define(['lib/client/datasource'], function (Datasource) {
 
   "use strict";
   /*jshint devel: true, browser: true */
   /*global describe:true, it:true, before: true, sinon: true, define: true */
 
+  var api = function () {};
+
+
   describe("Datasources", function () {
-    var env, Datasource, app = aura({
-      appId: "fakeId",
-      orgUrl: "orgUrl"
-    });
-
-    var extension = {
-      initialize: function (appEnv) {
-        env = appEnv;
-      }
-    };
-
-    app
-      .use(extension)
-      .use('lib/client/datasource');
-
-    var initStatus = app.start();
-    before(function (done) {
-      initStatus.then(function () {
-        done();
-      });
-    });
-    
-    it('should be available in the environment', function () {
-      env.core.should.contain.key('datasource');
-      Datasource = env.core.datasource;
+    it('Datasource should be a prototype', function () {
       Datasource.should.be.a('function');
+      Datasource.prototype.should.be.a('object');
     });
 
     describe("Declaration", function () {
-      it('should be rejected with falsy values', function () {
-        var fn1 = function () { new Datasource(); };
-        var fn2 = function () { new Datasource(''); };
-        var fn3 = function () { new Datasource(null); };
-        var fn4 = function () { new Datasource(undefined); };
+      it('should be rejected with a lsy value for tdattce definition', function () {
+        var fn1 = function () { new Datasource(undefined, api); };
+        var fn2 = function () { new Datasource('', api); };
+        var fn3 = function () { new Datasource(null, api); };
+        var fn4 = function () { new Datasource(undefined, api); };
         fn1.should.throw(TypeError);
         fn2.should.throw(TypeError);
         fn3.should.throw(TypeError);
         fn4.should.throw(TypeError);
       });
-      
+
+      it('should throw an error when no transport is provided', function () {
+        var fn1 = function () { new Datasource('abc', api); };
+        fn1.should.throw;
+      });
+
+      it('should throw an error when the transport is not a function', function () {
+        var fn1 = function () { new Datasource('abc', ''); };
+        var fn2 = function () { new Datasource('abc', {}); };
+        var fn3 = function () { new Datasource('abc', function () {}); };
+        fn1.should.throw;
+        fn2.should.not.throw;
+      });
+
+
       describe("With a string", function () {
         it("should be allowed with a non-empty string", function () {
-          var ds = new Datasource('1234');
-          ds.def.should.have.keys(['path', 'provider', 'type']);
+          var ds = new Datasource('1234', api);
+          ds.def.should.have.keys(['path', 'provider']);
         });
 
         it("should use 'hull' as a provider", function () {
-          var ds = new Datasource('1234');
+          var ds = new Datasource('1234', api);
           ds.def.provider.should.eql('hull');
         });
       });
@@ -61,20 +55,20 @@ define(['aura/aura'], function (aura) {
       describe("With an object", function () {
         it("should contain a 'path' property", function () {
           var fn1 = function () {
-            var ds = new Datasource({type: 'myType'});
+            var ds = new Datasource({type: 'myType'}, api);
           };
           fn1.should.throw(TypeError);
 
           var fn2 = function () {
-            var ds = new Datasource({type: 'myType', path: 'myPath'});
+            var ds = new Datasource({type: 'myType', path: 'myPath'}, api);
           };
           fn2.should.not.throw();
         });
 
         it("should default to 'hull' as a provider", function () {
-          var ds1 = new Datasource({path: 'abcd'});
+          var ds1 = new Datasource({path: 'abcd'}, api);
           ds1.def.provider.should.eql('hull');
-          var ds2 = new Datasource({path: 'abcd', provider: 'myProvider'});
+          var ds2 = new Datasource({path: 'abcd', provider: 'myProvider'}, api);
           ds2.def.provider.should.eql('myProvider');
         });
       });
@@ -82,7 +76,7 @@ define(['aura/aura'], function (aura) {
       describe("With a function", function () {
         it("should use the function as the definition", function () {
           var noop = function () {};
-          var ds = new Datasource(noop);
+          var ds = new Datasource(noop, api);
           ds.def.should.eql(noop);
         });
       });
@@ -90,13 +84,13 @@ define(['aura/aura'], function (aura) {
 
     describe('Placeholders in URIs', function () {
       it('should be replaced when calling Datasource::parse', function () {
-        var ds = new Datasource(':abc:def');
+        var ds = new Datasource(':abc:def', api);
         ds.parse({abc: 'Hull', def: '.io'});
         ds.def.path.should.eql('Hull.io');
       });
 
       it('should raise an exception when a placeholder can\'t be replaced', function () {
-        var ds = new Datasource(':abc:def');
+        var ds = new Datasource(':abc:def', api);
         ds.parse.bind(ds, {abc: 'Hull', de: '.io'}).should.throw(Error);
         ds.parse.bind(ds, {abc: 'Hull', de: '.io'}).should.throw('Cannot resolve datasource binding :def');
       });

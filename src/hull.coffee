@@ -47,7 +47,6 @@
           .use('lib/client/helpers')
           .use('lib/client/entity')
           .use('lib/client/api')
-          .use('lib/client/datasource')
           .use('lib/client/auth')
           .use('lib/client/templates')
           .use('lib/client/widget')
