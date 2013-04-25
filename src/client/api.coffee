@@ -200,12 +200,12 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
             model = new _Model()
 
         setupCollection = (path)->
+          route           = (apiParams.parse [path])[0]
           collection      = new Collection
-          collectionURI   = path
           collection.url  = path
           collection.on 'all', ->
             args = slice.call(arguments)
-            eventName = ("collection." + collectionURI.replace(/\//g, ".") + '.' + args[0])
+            eventName = ("collection." + route.path.replace(/\//g, ".") + '.' + args[0])
             core.mediator.emit(eventName, { eventName: eventName, collection: collection, changes: args[1]?.changes })
           dfd   = collection.deferred = core.data.deferred()
           if collection.models.length > 0
@@ -224,7 +224,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         api.collection = (path)->
           throw new Error('A model must have an path...') unless path?
           throw new Error('You must specify the provider...') if (path.path && !path.provider)
-          col = setupCollection.apply(api, slice.call arguments)
+          col = setupCollection.call(api, path)
           path = apiParams.parse([path])[0].path
           collections[path] ?= col
           collections[path]
