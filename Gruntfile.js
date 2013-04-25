@@ -26,7 +26,6 @@ module.exports = function (grunt) {
   var clientSrc = ['src/hullbase.coffee', 'src/hull.coffee', 'src/client/**/*.coffee'];
   var remoteSrc = ['src/hullbase.coffee', 'src/hull.coffee', 'src/hull-remote.coffee', 'src/remote/**/*.coffee'];
 
-  //
   // Lookup of the available libs and injects them for the build
   // in the requirejs conf
   var clientLibs = grunt.file.glob
@@ -52,10 +51,10 @@ module.exports = function (grunt) {
     PKG_VERSION: pkg.version,
     clean: {
       client: {
-        src: clientLibs
+        src: 'lib/client/**/*'
       },
       remote: {
-        src: remoteLibs
+        src:'lib/remote/**/*'
       }
     },
     dox: {
@@ -316,8 +315,8 @@ module.exports = function (grunt) {
   grunt.initConfig(gruntConfig);
 
   // default build task
-  grunt.registerTask('build_remote', ['clean', 'coffee:remote', 'version', 'requirejs:remote']);
-  grunt.registerTask('build_client', ['clean', 'coffee:client', 'version', 'requirejs:client']);
+  grunt.registerTask('build_remote', ['clean:remote', 'coffee:remote', 'version', 'requirejs:remote']);
+  grunt.registerTask('build_client', ['clean:client', 'coffee:client', 'version', 'requirejs:client']);
   grunt.registerTask('build_libs', ['build_client', 'build_remote']);
   grunt.registerTask('build', ['build_libs', 'hull_widgets']);
   grunt.registerTask('test', ['connect', 'build', 'mocha']);
