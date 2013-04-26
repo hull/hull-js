@@ -57,7 +57,6 @@ define({
   },
 
   initialize: function() {
-    this.quiz = this.api.model(this.id);
     this.sandbox.on('hull.model.' + this.id + '.change', function() {
       this.render();
     }.bind(this));
@@ -157,7 +156,7 @@ define({
     answer: function(e, params) {
       var opts = params.data;
       this.answers[opts.questionId] = opts.answerId;
-      this.quiz.set('answers', this.answers);
+      this.data.quiz.set('answers', this.answers);
 
       this.track('progress', {
         questionId: opts.questionId,
@@ -207,7 +206,7 @@ define({
       res.done(function(badge) {
         if (badge) {
           self.submitted = true;
-          self.quiz.set('badge', badge);
+          self.data.quiz.set('badge', badge);
           self.render('quiz_result');
           self.track('finish', { score: badge.data.score, timing: badge.data.timing });
         } else {
