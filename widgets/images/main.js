@@ -52,11 +52,7 @@ define(['underscore'], {
 
     this.provider = this.options.provider;
 
-    if (this.provider !== "hull") {
-      this.id = this.options.id || "me";
-    }
-
-
+    this.id = this.options.id || "me";
   },
 
   actions: {
@@ -170,16 +166,16 @@ define(['underscore'], {
 
     switch (provider) {
       case 'hull':
-        path = options.id + '/images';
+        path = this.id + '/images';
         params = { per_page: this.options.limit };
         break;
       case 'facebook':
-        path = {provider: 'facebook', path: options.id+'/photos/uploaded'};
-        // path = 'facebook/' + ((options.id==='me')?identities.facebook.uid:options.id) + '/photos';
+        path = {provider: 'facebook', path: this.id+'/photos/uploaded'};
+        // path = 'facebook/' + ((this.id==='me')?identities.facebook.uid:this.id) + '/photos';
         params = { };
         break;
       case 'instagram':
-        path = {provider: 'instagram', path: 'users/'+((options.id==='me')?'self':options.id)+'/media/recent'};
+        path = {provider: 'instagram', path: 'users/'+((this.id==='me')?'self':this.id)+'/media/recent'};
         params = { per_page: this.options.limit };
         break;
     }
