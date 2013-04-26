@@ -26,22 +26,7 @@ define({
   templates: ['comments_count'],
 
   datasources: {
-    comments: function() {
-      "use strict";
-      if (this.path) {
-        return this.api(this.path);
-      }
-    }
-  },
-
-  initialize: function() {
-    "use strict";
-    var id = this.getId();
-    if (id) {
-      this.path = id;
-    } else {
-      throw new Error('You must provide an ID to the Comment Widget');
-    }
+    comments: ":id"
   },
 
   beforeRender: function(data){
