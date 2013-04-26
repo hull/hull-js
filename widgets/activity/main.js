@@ -35,13 +35,13 @@ define({
 
   datasources: {
     activities: function() {
-      var id = this.id || 'app';
+      var path, id = this.id || 'app';
       if (this.options.friendsOnly) {
-        this.path = id + "/friends_activity";
+        path = id + "/friends_activity";
       } else {
-        this.path = id + "/activity";
+        path = id + "/activity";
       }
-      return this.api(this.path, this.query);
+      return this.api(path, this.query);
     }
   },
 
