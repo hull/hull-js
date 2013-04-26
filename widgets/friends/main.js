@@ -47,15 +47,13 @@ define(['underscore'], {
   refreshEvents: ['model.hull.me.change'],
 
   initialize: function() {
-    this.me = this.sandbox.data.api.model('me');
+    this.me = this.api.model('me');
 
     this.provider = this.options.provider;
+  },
 
-    if (this.provider !== "hull") {
-      this.id = this.options.id || "me";
-    }
-
-
+  getUserId: function () {
+    return this.options.id || 'me';
   },
 
   actions: {
@@ -88,7 +86,7 @@ define(['underscore'], {
       }, {});
 
       //Are we logged in to provider, or is provider hull. if Provider is hull, are we asking "me" without being loggedin ?
-      if( this.loggedIn()[this.provider] || (this.provider==="hull" && (this.loggedIn() || this.id!=="me"))){
+      if( this.loggedIn()[this.provider] || (this.provider==="hull" && (this.loggedIn() || this.getUserId()!=="me"))){
         this.request(this.provider, identities, this.options).then(_.bind(function(res) {
 
           var serialized = _.bind(this.serializers[self.provider],this,res,this.options)
@@ -116,24 +114,24 @@ define(['underscore'], {
     if(provider==="hull"){
       auth.permissions = true;
 
-      var valid = (this.loggedIn() || this.id!=="me");
+      var valid = (this.loggedIn() || this.getUserId()!=="me");
       auth.provider = valid;
 
       auth.provider_name = this.sandbox.config.services.types.auth[0].replace(/_app$/,'');
 
-      deferred.resolve(auth)
+      deferred.resolve(auth);
     } else {
       if (this.loggedIn()[provider]){
         auth.provider=true;
         if(provider==='facebook'){
-          this.hasFacebookPermissions(self.options.scope, auth, deferred)
+          this.hasFacebookPermissions(self.options.scope, auth, deferred);
         } else {
-          auth.permissions=true
-          deferred.resolve(auth)
+          auth.permissions=true;
+          deferred.resolve(auth);
         }
       } else {
         auth.provider=false;
-        deferred.resolve(auth)
+        deferred.resolve(auth);
       }
 
     }
@@ -143,16 +141,16 @@ define(['underscore'], {
   },
 
   hasFacebookPermissions: function(scope, authorization, deferred){
-    var sandbox = this.sandbox
+    var sandbox = this.sandbox;
     if(!scope){
       authorization.permissions=true;
-      deferred.resolve(authorization)
+      deferred.resolve(authorization);
     } else {
       this.api({provider: 'facebook', path:"me/permissions"}).then(function(res) {
 
         //Convert scope to array if given as a string.
         if(_.isString(scope)){
-          scope = scope.replace(' ','').split(',')
+          scope = scope.replace(' ','').split(',');
         }
 
         if(_.isArray(scope) && (_.intersection(_.keys(res.data[0]), scope).length==scope.length)){
@@ -172,23 +170,23 @@ define(['underscore'], {
 
     switch (provider) {
       case 'hull':
-        path = options.id + '/friends';
+        path = this.getUserId() + '/friends';
         params = { per_page: this.options.limit };
         break;
       case 'facebook':
-        path = {provider: 'facebook', path: options.id + '/friends'};
+        path = {provider: 'facebook', path: this.getUserId() + '/friends'};
         params = { limit: this.options.limit };
         break;
       case 'twitter':
         path = {provider:'twitter', path: 'friends/list'};
-        params = { user_id: ((options.id==='me')?identities.twitter.uid:options.id) };
+        params = { user_id: ((this.getUserId()==='me')?identities.twitter.uid:this.getUserId()) };
         break;
       case 'instagram':
-        path = {provider:'instagram', path:'users/'+((options.id==='me')?'self':options.id)+'/follows'};
+        path = {provider:'instagram', path:'users/'+((this.getUserId()==='me')?'self':this.getUserId())+'/follows'};
         params = { per_page: this.options.limit };
         break;
       case 'github':
-        path = {provider: 'github', path: 'users/' + ((options.id==='me')?identities.github.login:options.id) + '/following'};
+        path = {provider: 'github', path: 'users/' + ((this.getUserId()==='me')?identities.github.login:this.getUserId()) + '/following'};
         params = { per_page: this.options.limit };
         break;
     }
