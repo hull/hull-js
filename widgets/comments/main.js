@@ -33,12 +33,8 @@ define({
 
   refreshEvents: ['model.hull.me.change'],
 
-  events: {
-    'form submit' : 'submitForm'
-  },
-
   actions: {
-    comment: 'submitForm',
+    comment: 'postComment',
     delete: 'deleteComment'
   },
 
@@ -46,32 +42,16 @@ define({
     focus: false
   },
 
-  initialize: function() {
-    "use strict";
-    var id = this.getId();
-    if (id) {
-      this.path = id + '/comments';
-    } else {
-      throw new Error('You must provide an ID to the Comment Widget');
-    }
-  },
-
   datasources: {
-    comments: function() {
-      "use strict";
-      if (this.path) {
-        return this.api(this.path);
-      }
-    }
+    comments: ':id/comments'
   },
 
   beforeRender: function(data){
     "use strict";
-    var self = this;
-    _.each(data.comments,function(r){
-      r.isDeletable = (r.user.id === self.data.me.id);
-      return r;
-    });
+    _.each(data.comments, function(c) {
+      c.isDeletable = (c.user.id === this.data.me.id);
+      return c;
+    }, this);
     return data;
   },
   afterRender: function() {
@@ -84,38 +64,40 @@ define({
 
   deleteComment: function(event, data) {
     "use strict";
-    var id = data.data.id;
-    var $parent = data.el.parents('[data-hull-comment-id="'+ id +'"]');
-    $parent.addClass('is-removing');
-    this.api.delete(id).then(function() {
-      $parent.remove();
-    });
     event.preventDefault();
+    var id = data.data.id;
+    var $parent = data.el
+      .addClass('is-removing')
+      .parents('[data-hull-comment-id="'+ id +'"]');
+    this.api.delete(id).then(function () {$parent.remove();});
   },
-  submitForm: function (e) {
+
+  toggleLoading: function ($el) {
+    "use strict";
+    var $form = $el.toggleClass('is-loading');
+    var $btn = $form.find('.btn');
+    $btn.attr('disabled', !$btn.attr('disabled'));
+    var $textarea = $form.find('textarea');
+    $textarea.attr('disabled', !$textarea.attr('disabled'));
+  },
+
+  postComment: function (e) {
     "use strict";
     e.preventDefault();
-    var formWrapper = this.$el.find('.hull-comments__form');
-    var form = formWrapper.find('form');
-    var formData = this.sandbox.dom.getFormData(form);
+    var $formWrapper = this.$el.find('.hull-comments__form');
+    var $form = $formWrapper.find('form');
+    var formData = this.sandbox.dom.getFormData($form);
     var description = formData.description;
 
-    formWrapper.addClass('is-loading').end()
-               .find('.btn').attr('disabled',true).end()
-               .find('textarea').attr('disabled',true);
+    this.toggleLoading($formWrapper);
 
     if (description && description.length > 0) {
       var attributes = { description: description };
-      if (this.uid) attributes.uid = this.uid;
-      this.api(this.path, 'post', attributes).then(function() {
-
-        formWrapper.removeClass('is-loading').end()
-                   .find('.btn').attr('disabled',false).end()
-                   .find('textarea').attr('disabled',false);
+      this.api(this.id + '/comments', 'post', attributes).then(_.bind(function() {
+        this.toggleLoading($formWrapper);
         this.focusAfterRender = true;
         this.render();
-
-      }.bind(this));
+      }, this));
     }
   }
 });

@@ -124,6 +124,12 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         #
 
 
+        methodMap =
+          'create': 'post'
+          'update': 'put'
+          'delete': 'delete'
+          'read':   'get'
+
         sync = (method, model, options={})->
           url   = if _.isFunction(model.url) then model.url() else model.url
           verb  = methodMap[method]
@@ -155,11 +161,6 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         Collection = Backbone.Collection.extend
           model: Model
           sync: sync
-        methodMap =
-          'create': 'post'
-          'update': 'put'
-          'delete': 'delete'
-          'read':   'get'
 
         setupModel = (attrs, raw)->
           model = generateModel(attrs, raw)
@@ -194,7 +195,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
 
         generateModel = (attrs, raw) ->
           _Model = if raw then RawModel else Model
-          if attrs.id
+          if attrs.id || attrs._id
             model = new _Model(attrs)
           else
             model = new _Model()
@@ -223,11 +224,9 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
 
         api.collection = (path)->
           throw new Error('A model must have an path...') unless path?
-          throw new Error('You must specify the provider...') if (path.path && !path.provider)
-          col = setupCollection.call(api, path)
-          path = apiParams.parse([path])[0].path
-          collections[path] ?= col
-          collections[path]
+          fullPath = apiParams.parse([path])[0].path
+          collections[fullPath] ?= setupCollection.call(api, path)
+          collections[fullPath]
 
         api.batch = ->
           args      = slice.call(arguments)
