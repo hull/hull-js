@@ -35,7 +35,7 @@ define({
 
   datasources: {
     activities: function() {
-      var id = this.getId() || 'app';
+      var id = this.id || 'app';
       if (this.options.friendsOnly) {
         this.path = id + "/friends_activity";
       } else {
