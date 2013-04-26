@@ -4,9 +4,7 @@ define({
   templates: ['docs'],
 
   datasources: {
-    all: function() {
-      return this.api('docs/all');
-    },
+    all: 'docs/all',
     doc: function() {
       if (this.options.api) {
         return this.api('docs/' + this.options.api);
