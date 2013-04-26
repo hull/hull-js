@@ -27,13 +27,7 @@ define({
   events: { 'submit form' : 'createList' },
 
   datasources: {
-    lists: function() {
-      var id = this.getId();
-      if (id) {
-        return this.api(id + "/lists");
-      }
-
-    }
+    lists: ":id/lists"
   },
 
   createList: function(e) {
@@ -44,7 +38,7 @@ define({
         inputs[input.getAttribute('name')] = input.value;
       }
     });
-    this.api(this.path, 'post', inputs).then(function() { self.render(); });
+    this.api(this.id + '/lists', 'post', inputs).then(function() { self.render(); });
   }
 
 });
