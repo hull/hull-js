@@ -3,7 +3,6 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
   (app) ->
 
     models = {}
-    collections = {}
 
     rpc = false
     rawFetch = null
@@ -114,7 +113,6 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         app.core.mediator.on 'hull.currentUser', (hasUser)->
           if (!hasUser)
             models = _.pick(models, 'me', 'app', 'org')
-            collections = {}
 
 
         #
@@ -225,8 +223,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         api.collection = (path)->
           throw new Error('A model must have an path...') unless path?
           fullPath = apiParams.parse([path])[0].path
-          collections[fullPath] ?= setupCollection.call(api, path)
-          collections[fullPath]
+          setupCollection.call(api, path)
 
         api.batch = ->
           args      = slice.call(arguments)
