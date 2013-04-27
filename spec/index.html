@@ -5,10 +5,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="/node_modules/mocha/mocha.css">
     <link rel="stylesheet" href="../components/JSCovReporter/reporter.css">
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <script src="../components/jquery/jquery.js"></script>
+    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
     <script src="../node_modules/mocha/mocha.js"></script>
     <script src="./support/sinon-1.5.2.js"></script>
     <script src="../components/underscore/underscore.js"></script>
-    <script src="../components/jquery/jquery.js"></script>
     <script src="../components/backbone/backbone.js"></script>
     <script src="../components/JSCovReporter/JSCovReporter.js"></script>
     <script src="../components/JSCovReporter/reporter.js"></script>
@@ -46,8 +48,24 @@
     <script type="text/javascript" data-main="spec/runner" src="../components/requirejs/require.js"></script>
   </head>
   <body>
-    <div id="mocha"></div>
-    <div id="coverage"></div>
-    <div id="menu"></div>
+    <div class="tabbable">
+      <ul class="nav nav-tabs">
+        <li class="active">
+          <a href="#tab1" data-toggle="tab">Specs</a>
+        </li>
+        <li>
+          <a href="#tab2" data-toggle="tab">Coverage</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div id="tab1" class="tab-pane active">
+          <div id="mocha"></div>
+        </div>
+        <div id="tab2" class="tab-pane">
+          <div id="coverage"></div>
+          <div id="menu"></div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
