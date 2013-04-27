@@ -25,7 +25,7 @@
     "grunt-mocha": "0.3.1",
     "bower": "~0.8.6",
     "coverjs": "0.0.14",
-    "grunt-coverjs": "~0.1.0"
+    "grunt-coverjs": "git://github.com/hull/grunt-coverjs.git"
   },
   "scripts": {
     "pretest": "$(npm bin)/bower install",

@@ -4,12 +4,19 @@
     <title>Hull specs</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="/node_modules/mocha/mocha.css">
+    <link rel="stylesheet" href="../components/JSCovReporter/reporter.css">
     <script src="../node_modules/mocha/mocha.js"></script>
     <script src="./support/sinon-1.5.2.js"></script>
+    <script src="../components/underscore/underscore.js"></script>
+    <script src="../components/jquery/jquery.js"></script>
+    <script src="../components/backbone/backbone.js"></script>
+    <script src="../components/JSCovReporter/JSCovReporter.js"></script>
+    <script src="../components/JSCovReporter/reporter.js"></script>
     <script>
       var require = {
         baseUrl: '../',
         paths: {
+          lib:          'build/instrumented',
           components:   'components',
           widgets:      'spec/widgets',
           aura:         'components/aura/lib',
@@ -22,14 +29,25 @@
         }
       };
       var runMocha = function() {
-        mocha.globals(['Backbone', 'easyXDM', 'Hull', 'errorProps']); //@TODO What is this (lower-case) handlebars ?
+        mocha.ignoreLeaks();
         if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
-        else { mocha.run(); }
+        else { mocha.run(function () {
+          if (typeof window.__$coverObject !== 'undefined') {
+            var reporter = new JSCovReporter({ coverObject: window.__$coverObject  });
+            reporter.report();
+
+            // Activate reporter.js scrolling stuff
+            onload();
+
+          }
+        });}
       };
     </script>
     <script type="text/javascript" data-main="spec/runner" src="../components/requirejs/require.js"></script>
   </head>
   <body>
     <div id="mocha"></div>
+    <div id="coverage"></div>
+    <div id="menu"></div>
   </body>
 </html>
