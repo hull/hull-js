@@ -15,5 +15,8 @@
     "moment": "1.7.2",
     "underscore.string": "2.3.1",
     "jquery.cookie": "latest"
+  },
+  "devDependencies": {
+    "JSCovReporter": "git://github.com/TwoApart/JSCovReporter.git"
   }
 }
