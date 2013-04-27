@@ -14,6 +14,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-hull-widgets');
   grunt.loadNpmTasks('grunt-s3');
   grunt.loadNpmTasks('grunt-git-describe');
+  grunt.loadNpmTasks('grunt-coverjs');
 
   var pkg = grunt.file.readJSON('component.json');
 
@@ -95,7 +96,7 @@ module.exports = function (grunt) {
       client: {
         options: {
           baseUrl: '.',
-          optimize: CONTEXT==='dev' ? "none" : "uglify",
+          optimize: CONTEXT!=='prod' ? "none" : "uglify",
           preserveLicenseComments: true,
           paths: {
             aura:           'components/aura/lib',
@@ -140,7 +141,7 @@ module.exports = function (grunt) {
       remote: {
         options: {
           baseUrl: '.',
-          optimize: CONTEXT==='dev' ? "none" : "uglify",
+          optimize: CONTEXT!=='prod' ? "none" : "uglify",
           preserveLicenseComments: true,
           paths: {
             aura:               'components/aura/lib',
@@ -274,6 +275,16 @@ module.exports = function (grunt) {
     },
     describe: {
       out: 'dist/<%= PKG_VERSION%>/REVISION'
+    },
+    cover: {
+      compile: {
+        files: {
+          'build/instrumented/*.js' : ['lib/**/*.js']
+        },
+        options: {
+          basePath: 'lib'
+        }
+      }
     }
   };
 
@@ -316,7 +327,7 @@ module.exports = function (grunt) {
 
   // default build task
   grunt.registerTask('build_remote', ['clean:remote', 'coffee:remote', 'version', 'requirejs:remote']);
-  grunt.registerTask('build_client', ['clean:client', 'coffee:client', 'version', 'requirejs:client']);
+  grunt.registerTask('build_client', ['clean:client', 'coffee:client', 'cover', 'version', 'requirejs:client']);
   grunt.registerTask('build_libs', ['build_client', 'build_remote']);
   grunt.registerTask('build', ['build_libs', 'hull_widgets']);
   grunt.registerTask('test', ['connect', 'build', 'mocha']);
