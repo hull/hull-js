@@ -15,6 +15,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-s3');
   grunt.loadNpmTasks('grunt-git-describe');
   grunt.loadNpmTasks('grunt-coverjs');
+  grunt.loadNpmTasks('grunt-plato');
 
   var pkg = grunt.file.readJSON('component.json');
 
@@ -285,6 +286,13 @@ module.exports = function (grunt) {
           basePath: 'lib'
         }
       }
+    },
+    plato: {
+      develop: {
+        files: {
+          'build/report': ['lib/**/*.js']
+        }
+      }
     }
   };
 
@@ -330,7 +338,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build_client', ['clean:client', 'coffee:client', 'version', 'requirejs:client']);
   grunt.registerTask('build_libs', ['build_client', 'build_remote']);
   grunt.registerTask('build', ['build_libs', 'hull_widgets']);
-  grunt.registerTask('test', ['build', 'cover', 'mocha']);
+  grunt.registerTask('test', ['build', 'cover', 'plato', 'mocha']);
   grunt.registerTask('default', ['connect', 'test', 'watch']);
   grunt.registerTask('dist', ['build', 'dox']);
   grunt.registerTask('deploy', ['dist', 'describe', 's3']);
