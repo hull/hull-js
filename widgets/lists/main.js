@@ -24,6 +24,7 @@
 define({
   type: "Hull",
   templates: ['lists'],
+  refreshEvents: ['model.hull.me.change'],
   events: { 'submit form' : 'createList' },
 
   datasources: {
