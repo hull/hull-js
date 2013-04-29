@@ -30,7 +30,7 @@
     "grunt-plato": "~0.2.0"
   },
   "scripts": {
-    "pretest": "$(npm bin)/bower install",
+    "postinstall": "$(npm bin)/bower install",
     "test": "grunt test"
   }
 }
