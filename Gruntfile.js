@@ -56,7 +56,10 @@ module.exports = function (grunt) {
         src: 'lib/client/**/*'
       },
       remote: {
-        src:'lib/remote/**/*'
+        src: 'lib/remote/**/*'
+      },
+      reset: {
+        src: ['build', 'lib', 'tmp', 'dist', 'components', 'node_modules']
       }
     },
     dox: {
@@ -342,6 +345,7 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['connect', 'test', 'watch']);
   grunt.registerTask('dist', ['build', 'dox']);
   grunt.registerTask('deploy', ['dist', 'describe', 's3']);
+  grunt.registerTask('reset', ['clean:reset']);
 
   grunt.registerTask("version", "generate a file from a template", function () {
     var conf = grunt.config("version");
