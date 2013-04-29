@@ -177,14 +177,8 @@ module.exports = function (grunt) {
             'aura/ext/mediator',
             'aura/ext/widgets',
             'lib/hull',
-            'lib/hull-remote',
-            'lib/remote/services',
-            'lib/remote/services/hull',
-            'lib/remote/services/facebook',
-            'lib/remote/services/github',
-            'lib/remote/services/twitter',
-            'lib/remote/services/instagram'
-          ],
+            'lib/hull-remote'
+          ].concat(remoteLibs),
           out: 'dist/<%= PKG_VERSION %>/hull-remote.js'
         }
       },
