@@ -7,11 +7,13 @@
  *
  *     <div data-hull-widget="list_toggle@hull" data-hull-id="app" data-hull-list-name="favorites"></div>
  *     <div data-hull-widget="list_toggle@hull" data-hull-id="HULL_ID" data-hull-list-name="favorites"></div>
+ *     <div data-hull-widget="list_toggle@hull" data-hull-uid="ANY_UNIQUE_ID" data-hull-list-name="favorites"></div>
  *
  * ## Options
  *
- * - `list-id`: The name of the list you want to show. List will automatically be created if it does not exist yet.
+ * - `list-name`: The name of the list you want to show. List will automatically be created if it does not exist yet.
  * - `id` : The ID of the object you want to add / remove to the list.
+ * - `uid` : Alternatively, any external UID you want to add to the list. Object will be created as an external Entity
  *
  * ## Template
  *
@@ -49,6 +51,8 @@ define({
     if (data.list && data.list.items) {
       var itemIds   = _.pluck(data.list.items, "id");
       data.isListed = _.include(itemIds, this.id);
+      data.objName = data.obj.name || data.obj.uid;
+      data.listName = data.list.name;
       this.itemPath = data.list.id + "/items/" + data.obj.id;
     }
     return data;
