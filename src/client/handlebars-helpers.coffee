@@ -97,18 +97,6 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
       (options.fn(key: key, value: value) for own key, value of hash).join('')
 
     ###*
-     * List helper.
-     *
-     * @param  {[type]} obj     [description]
-     * @param  {[type]} options [description]
-     * @return {[type]}         [description]
-    ###
-    HandlebarsHelpers.list = (obj, options)->
-      ret = _.map(obj, (v,k)->
-        options.fn(v)).join("")
-
-
-    ###*
      * Output a page-unique sequential number.
      * Mainly useful to assign a unique id to each entry in a list
      *
