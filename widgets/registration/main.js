@@ -1,21 +1,36 @@
-define(['sandbox', 'underscore', 'jquery.default_fields', 'h5f'], function(sandbox, _, default_fields) {
-
+define(['underscore', 'h5f'], function(_, H5F) {
   return {
-
-    type: "Hull",
-    namespace :'registration',
+    type: 'Hull',
     templates: ['registration_form', 'registration_complete'],
     complete: false,
-    default_fields: default_fields,
-    formId: (new Date()).getTime(),
 
-    events: {
-      'submit form' : 'submitForm'
-    },
+    defaultFields: [
+      {
+        name : 'name',
+        type : 'text',
+        label : 'Name',
+        value : '',
+        placeholder : 'bob',
+        error : 'Please enter your name',
+        required: true,
+        autocomplete: 'off'
+      },
+      {
+        name : 'email',
+        type : 'email',
+        label : 'Email',
+        value : '',
+        required: true,
+        placeholder : 'you@awesome.com',
+        error : 'Invalid Email'
+      }
+    ],
+
+    formId: (new Date()).getTime(),
 
     datasources: {
       fields: function() {
-        return this.default_fields || [];
+        return this.defaultFields;
       }
     },
 
@@ -39,6 +54,7 @@ define(['sandbox', 'underscore', 'jquery.default_fields', 'h5f'], function(sandb
           me    = this.sandbox.data.api.model('me');
       if (this.loggedIn()) {
         this.api('me/profile', 'put', profile, function(myAttrs) {
+          console.log('HELLO');
           me.set(myAttrs);
           self.trigger('register', this);
           self.render();
@@ -71,10 +87,6 @@ define(['sandbox', 'underscore', 'jquery.default_fields', 'h5f'], function(sandb
       });
     },
 
-    submitForm: function() {
-      this.actions.submit.apply(this, arguments)
-    },
-
     actions: {
       edit: function(e) {
         e.preventDefault();
@@ -84,12 +96,12 @@ define(['sandbox', 'underscore', 'jquery.default_fields', 'h5f'], function(sandb
       },
 
       submit: function(e, opts) {
-        e && e.preventDefault()
+        e && e.preventDefault();
 
         if (!this.validate()) {
           e && e.stopPropagation();
           e && e.stopImmediatePropagation();
-          return false
+          return false;
         }
 
         var fields = _.clone(this.fields),

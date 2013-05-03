@@ -4,6 +4,10 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
 
     models = {}
 
+    clearModelsCache =->
+      console.warn("clearModelsCache")
+      models = _.pick(models, 'me', 'app', 'org')
+
     rpc = false
     rawFetch = null
     module =
@@ -96,23 +100,19 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
             $.cookie(cookieName, val, path: "/")
             if currentUserId != headers['Hull-User-Id']
               app.core.currentUser = {
-                id: headers['Hull-User-Id'],
-                sig: headers['Hull-User-Sig']
+                id:   headers['Hull-User-Id'],
+                sig:  headers['Hull-User-Sig']
               }
               app.core.mediator.emit('hull.currentUser', app.core.currentUser)
           else
             $.removeCookie(cookieName, path: "/")
             app.core.currentUser = false
-            app.core.mediator.emit('hull.currentUser', app.core.currentUser)
+            app.core.mediator.emit('hull.currentUser', app.core.currentUser) if currentUserId
 
           app.sandbox.config ?= {}
           app.sandbox.config.curentUser = app.core.currentUser
 
 
-        # Clears the cache
-        app.core.mediator.on 'hull.currentUser', (hasUser)->
-          if (!hasUser)
-            models = _.pick(models, 'me', 'app', 'org')
 
 
         #
@@ -276,8 +276,15 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
           , 30000)
 
         onRemoteReady = (remoteConfig)->
-          window.clearTimeout(timeout)
           data = remoteConfig.data
+
+          if data.headers && data.headers['Hull-User-Id']
+            app.core.currentUser = {
+              id:   data.headers['Hull-User-Id'],
+              sig:  data.headers['Hull-User-Sig']
+            }
+
+          window.clearTimeout(timeout)
           app.config.assetsUrl            = remoteConfig.assetsUrl
           app.config.services             = remoteConfig.services
           app.config.widgets.sources.hull = remoteConfig.baseUrl + '/widgets'
@@ -309,8 +316,12 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         initialized
 
       afterAppStart: (app)->
+
         base.me     = rawFetch('me', true);
         base.app    = rawFetch('app', true);
         base.org    = rawFetch('org', true);
-        app.core.mediator.emit('hull.currentUser', app.core.currentUser)
+
+        app.core.mediator.emit  'hull.currentUser', app.core.currentUser
+        app.core.mediator.on    'hull.currentUser', clearModelsCache
+
     module
