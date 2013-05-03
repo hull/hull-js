@@ -92,7 +92,7 @@ module.exports = function (grunt) {
     connect: {
       server: {
         options: {
-          port: port,
+          port: port
         }
       }
     },
@@ -197,16 +197,10 @@ module.exports = function (grunt) {
       },
       registration: {
         options: {
-          paths: {
-            jquery: "empty:",
-            "jquery.default_fields" : "widgets/registration/default_fields",
-            "h5f": "widgets/registration/h5f"
-          },
-          include: [
-            'jquery.default_fields',
-            'h5f'
-          ],
-          out: 'tmp/widgets/registration/deps/jquery.deps.js'
+          paths: { h5f: 'widgets/registration/h5f' },
+          shim: { h5f: { exports: 'H5F' } },
+          include: ['h5f'],
+          out: 'tmp/widgets/registration/deps.js'
         }
       }
     },
@@ -266,9 +260,9 @@ module.exports = function (grunt) {
     hull_widgets: {
       hull: {
         src: 'widgets',
-        // before: ['requirejs:upload', 'requirejs:registration'],
+        before: ['requirejs:upload', 'requirejs:registration'],
         dest: 'dist/<%= PKG_VERSION%>/widgets',
-        optimize: CONTEXT==='prod'
+        optimize: CONTEXT === 'prod'
       }
     },
     describe: {
