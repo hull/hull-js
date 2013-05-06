@@ -1,32 +1,31 @@
 define(['underscore', 'h5f'], function(_, H5F) {
   return {
     type: 'Hull',
+
     templates: ['registration_form', 'registration_complete'],
+
     complete: false,
 
     defaultFields: [
       {
-        name : 'name',
         type : 'text',
+        name : 'name',
         label : 'Name',
         value : '',
-        placeholder : 'bob',
-        error : 'Please enter your name',
         required: true,
-        autocomplete: 'off'
+        error : 'Please enter your name',
+        placeholder : 'bob'
       },
       {
-        name : 'email',
         type : 'email',
+        name : 'email',
         label : 'Email',
         value : '',
         required: true,
-        placeholder : 'you@awesome.com',
-        error : 'Invalid Email'
+        error : 'Invalid Email',
+        placeholder : 'you@awesome.com'
       }
     ],
-
-    formId: (new Date()).getTime(),
 
     datasources: {
       fields: function() {
@@ -35,11 +34,13 @@ define(['underscore', 'h5f'], function(_, H5F) {
     },
 
     initialize : function(options, callback) {
+      this.formId = (new Date()).getTime();
       _.bindAll(this);
     },
 
     validate: function() {
-      var isValid = document.getElementById(this.formId).checkValidity();
+      this._ensureFormEl();
+      var isValid = this.formEl.checkValidity();
       if(isValid) return isValid;
       this.$el.find('[data-hull-input]').each(function(key,el){
         var $el = $(el),
@@ -54,7 +55,6 @@ define(['underscore', 'h5f'], function(_, H5F) {
           me    = this.sandbox.data.api.model('me');
       if (this.loggedIn()) {
         this.api('me/profile', 'put', profile, function(myAttrs) {
-          console.log('HELLO');
           me.set(myAttrs);
           self.trigger('register', this);
           self.render();
@@ -63,28 +63,35 @@ define(['underscore', 'h5f'], function(_, H5F) {
     },
 
     beforeRender: function(data) {
-      var extra = data.me && data.me.profile || {};
       data.formId = this.formId;
-      data.isComplete = _.all(_.map(data.fields, function(f) {
-        f.value = extra[f.name] || data.me[f.name];
-        return f.value;
-      }));
-      if (data.isComplete) {
-        this.template = "registration_complete";
-      } else {
-        this.template = "registration_form";
-      }
-      this.fields = data.fields;
-      return data;
+
+      var fields = _.map(data.fields, function(f) {
+        f.value = this._findFieldValue(f.name);
+        return f;
+      }, this);
+
+      // Check if user.profile contains all the fields with their respective
+      // value. If it's the case we consider the form as complete.
+      var isComplete = _.every(fields, function(f) {
+        var profileField = data.me.profile[f.name];
+        return profileField === f.value;
+      });
+
+      this.template = isComplete ? 'registration_complete' : 'registration_form';
+
+      this.fields = fields;
     },
 
     afterRender: function() {
-      H5F.setup(document.getElementById(this.formId),{
+      if (this.template === 'registration_form') {
+        this._ensureFormEl();
+        H5F.setup(this.formEl, {
           validClass: "hull-form__input--valid",
           invalidClass: "hull-form__input--invalid",
           requiredClass: "hull-form__input--required",
           placeholderClass: "hull-form__input--placeholder"
-      });
+        });
+      }
     },
 
     actions: {
@@ -108,15 +115,31 @@ define(['underscore', 'h5f'], function(_, H5F) {
             extra  = {},
             el = this.$el;
 
-        _.map(fields, function(field) {
+        _.each(fields, function(field) {
           if (field.type == 'checkbox') {
-            extra[field.name] = el.find(".h5-" + field.name).is(":checked");
+            extra[field.name] = el.find('#hull-form-' + field.name).is(':checked');
           } else {
-            extra[field.name] = el.find(".h5-" + field.name).val();
+            extra[field.name] = el.find('#hull-form-' + field.name).val();
           }
         });
 
         this.register(extra);
+      }
+    },
+
+    _findFieldValue: function(name) {
+      var me = this.data.me.toJSON();
+
+      var identities = _.reduce(me.identities, function(memo, i) {
+        return _.extend(memo, i);
+      }, {});
+
+      return me.profile[name] || me[name] || identities[name];
+    },
+
+    _ensureFormEl: function() {
+      if (this.formEl == null) {
+        this.formEl = document.getElementById(this.formId);
       }
     }
   };
