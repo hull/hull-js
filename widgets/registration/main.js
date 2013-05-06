@@ -1,7 +1,9 @@
 define(['underscore', 'h5f'], function(_, H5F) {
   return {
     type: 'Hull',
+
     templates: ['registration_form', 'registration_complete'],
+
     complete: false,
 
     defaultFields: [
@@ -32,6 +34,7 @@ define(['underscore', 'h5f'], function(_, H5F) {
     },
 
     initialize : function(options, callback) {
+      this.formId = (new Date()).getTime();
       _.bindAll(this);
     },
 
@@ -60,6 +63,8 @@ define(['underscore', 'h5f'], function(_, H5F) {
     },
 
     beforeRender: function(data) {
+      data.formId = this.formId;
+
       var fields = _.map(data.fields, function(f) {
         f.value = this._findFieldValue(f.name);
         return f;
@@ -134,7 +139,7 @@ define(['underscore', 'h5f'], function(_, H5F) {
 
     _ensureFormEl: function() {
       if (this.formEl == null) {
-        this.formEl = this.$('.hull-registration__form')[0];
+        this.formEl = document.getElementById(this.formId);
       }
     }
   };
