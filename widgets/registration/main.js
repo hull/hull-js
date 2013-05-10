@@ -75,7 +75,7 @@ define(['underscore', 'h5f'], function(_, H5F) {
       // value. If it's the case we consider the form as complete.
       var isComplete = _.every(fields, function(f) {
         var profileField = data.me.profile[f.name];
-        return profileField === f.value;
+        return !!profileField && profileField === f.value;
       });
 
       this.template = isComplete ? 'registration_complete' : 'registration_form';
