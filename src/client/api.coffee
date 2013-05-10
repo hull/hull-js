@@ -26,6 +26,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         remoteUrl = "#{config.orgUrl}/api/v1/#{config.appId}/remote.html?v=#{version}"
         remoteUrl += "&js=#{config.jsUrl}"  if config.jsUrl
         remoteUrl += "&uid=#{config.uid}"   if config.uid
+        remoteUrl += "&access_token=#{config.appSecret}" if config.appSecret
         remoteUrl
 
       initialize: (app)->
@@ -295,6 +296,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
           app.sandbox.config.orgUrl       = app.config.orgUrl
           app.sandbox.config.services     = remoteConfig.services
           app.sandbox.config.entity_id    = data.entity?.id
+          app.sandbox.isAdmin             = remoteConfig.access_token?
           for m in ['me', 'app', 'org', 'entity']
             attrs = data[m]
             if attrs

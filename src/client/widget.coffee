@@ -122,6 +122,7 @@ define ['backbone', 'underscore', 'lib/client/datasource'], (Backbone, _, Dataso
             else
               ret[k] = args[i]
           ret.loggedIn    = @loggedIn()
+          ret.isAdmin     = @sandbox.isAdmin
           ret.debug       = @sandbox.config.debug
           ret.renderCount = @_renderCount
           @_templates     = tpls

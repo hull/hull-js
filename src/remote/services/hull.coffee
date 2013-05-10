@@ -32,14 +32,18 @@ define ['jquery', 'underscore'], ($, _)->
       else
         req_data = req.params
 
+      request_headers = { 'Hull-App-Id': config.appId }
+      if config.access_token
+        request_headers['Hull-Access-Token'] = config.access_token
+
       request = $.ajax
         url: url
         type: req.method
         data: req_data
         contentType: 'application/json'
         dataType: 'json'
-        headers:
-          'Hull-App-Id': config.appId
+        headers: request_headers
+
 
       _headers = ['Hull-User-Id', 'Hull-User-Sig']
 
