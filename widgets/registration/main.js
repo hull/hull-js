@@ -29,7 +29,8 @@ define(['underscore', 'h5f'], function(_, H5F) {
 
     datasources: {
       fields: function() {
-        return this.defaultFields;
+        var extra = this.sandbox.data.api.model('app').get('extra');
+        return extra.profile_fields || this.defaultFields;
       }
     },
 
