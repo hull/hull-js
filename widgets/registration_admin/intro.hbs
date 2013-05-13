@@ -1,0 +1,16 @@
+<form class="form-inline">
+  <fieldset>
+    <legend>Registration Admin</legend>
+
+    {{#if isAdmin}}
+      <p></p>
+      <textarea id="hull-fields-json" class="input-xxlarge" rows="15"></textarea>
+      <div class="form-actions">
+        <button data-hull-action="updateFields" class="btn btn-primary">Submit</button>
+      </div>
+    {{else}}
+      <input id="hull-app-secret" type="text" placeholder="Your app secret">
+      <button data-hull-action="sign" class="btn">Submit</button>
+    {{/if}}
+  </fieldset>
+</form>

@@ -27,17 +27,23 @@ define ['jquery', 'underscore'], ($, _)->
       path = path.substring(1) if (path[0] == "/")
       url  = "/api/v1/" + path
 
-      if req.method.toLowerCase() == 'delete'
+      if req.method.toLowerCase() != 'get'
         req_data = JSON.stringify(req.params || {})
       else
         req_data = req.params
+
+      request_headers = { 'Hull-App-Id': config.appId }
+      if config.access_token
+        request_headers['Hull-Access-Token'] = config.access_token
 
       request = $.ajax
         url: url
         type: req.method
         data: req_data
-        headers:
-          'Hull-App-Id': config.appId
+        contentType: 'application/json'
+        dataType: 'json'
+        headers: request_headers
+
 
       _headers = ['Hull-User-Id', 'Hull-User-Sig']
 
