@@ -1,0 +1,30 @@
+{{#unless authorized.provider}}
+  <small>You need to sign in.</small>
+  <div data-hull-widget="login_button@hull" data-hull-provider="{{authorized.provider_name}}"></div>
+{{else}}
+  {{#unless authorized.permissions}}
+    You need to give permissions to show these friends.
+    <a class='btn' data-hull-action="authorize">Authorize</a>
+  {{else}}
+    <div class="hull-friends">
+      {{#if friends}}
+        <ul class="media-list hull-friends">
+          {{#each friends}}
+            <li class="media">
+              <div class="pull-left">
+                <img src="{{avatar}}" alt="{{name}}" class="media-object img-round">
+              </div>
+              <div class="media-body">
+                <h4 class="media-heading">{{name}}</h4>
+              </div>
+            </li>
+          {{/each}}
+        </ul>
+      {{else}}
+        <div class="alert">
+          <p>Oops… No friends for the moment</p>
+        </div>
+      {{/if}}
+    </div>
+  {{/unless}}
+{{/unless}}

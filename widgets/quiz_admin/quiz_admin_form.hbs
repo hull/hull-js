@@ -1,18 +1,28 @@
 <form id="hull-quiz_admin__form" class="hull-form hull-quiz_admin__form">
 
   <div class="hull-quiz_admin__header">
-   {{> quiz_admin/quiz_admin_form_header }}
+    <h1 class="hull-quiz_admin__title">
+      {{quiz.name}}
+    </h1>
+    <p class="hull-quiz_admin__description">
+      {{quiz.description}}
+    </p>
+    <div class="hull-quiz_admin__help">
+      <h3 class="hull-quiz_admin__title">Paste this in your page to instantiate your quiz.</h3>
+      <pre class="hull-quiz_admin__code">&lt;!-- Quiz:  {{quiz.name}} --&gt;
+    &lt;div data-hull-widget=&quot;quiz@hull&quot; data-hull-id=&quot;{{quiz.id}}&quot;&gt;&lt;/div&gt;</pre>
+    </div>
   </div>
 
-  <ol class="hull-form__fields">
 
-    {{#each quiz.questions}}
-      {{> quiz_admin/quiz_admin_form_question}}
-    {{/each}}
+  <ul class="hull-form__fields">
 
-    <li class="hull-form__fields__item--actions">
-      {{! add a new question }}
-      <button data-hull-action="addquestion" class="hull-btn">Add question</button>
+    <li class="hull-form__fields__item">
+      <label for="hull-quiz-json" class="hull-form__label">JSON data:</label>
+      <textarea id="hull-quiz-json" name="quiz-import" rows="20" class="hull-form__text-input--textarea" placeholder="Enter your JSON here">{{quiz.json}}</textarea>
+    </li>
+
+    <li class="hull-form__fields__item--submit">
 
       {{! submit form }}
       <button data-hull-action="submit" class="hull-btn">Save</button>
@@ -23,7 +33,7 @@
       {{! delete quiz }}
       <button data-hull-action="delete" class="hull-btn">Delete quiz</button>
     </li>
-  </ol>
+  </ul>
 
 </form>
 

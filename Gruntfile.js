@@ -1,6 +1,8 @@
 module.exports = function (grunt) {
   'use strict';
 
+  var CONTEXT = process.env.CONTEXT || 'prod';
+
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-connect');
@@ -8,10 +10,12 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-compass');
   grunt.loadNpmTasks('grunt-hull-dox');
   grunt.loadNpmTasks('grunt-hull-widgets');
   grunt.loadNpmTasks('grunt-s3');
+  grunt.loadNpmTasks('grunt-git-describe');
+  grunt.loadNpmTasks('grunt-coverjs');
+  grunt.loadNpmTasks('grunt-plato');
 
   var pkg = grunt.file.readJSON('component.json');
 
@@ -22,9 +26,8 @@ module.exports = function (grunt) {
   // ==========================================================================
 
   var clientSrc = ['src/hullbase.coffee', 'src/hull.coffee', 'src/client/**/*.coffee'];
-  var remoteSrc = ['src/hullbase.coffee', 'src/hull-remote.coffee', 'src/remote/**/*.coffee'];
+  var remoteSrc = ['src/hullbase.coffee', 'src/hull.coffee', 'src/hull-remote.coffee', 'src/remote/**/*.coffee'];
 
-  //
   // Lookup of the available libs and injects them for the build
   // in the requirejs conf
   var clientLibs = grunt.file.glob
@@ -47,19 +50,22 @@ module.exports = function (grunt) {
     });
 
   var gruntConfig = {
-    pkg: pkg,
+    PKG_VERSION: pkg.version,
     clean: {
       client: {
-        src: clientLibs
+        src: 'lib/client/**/*'
       },
       remote: {
-        src: remoteLibs
+        src: 'lib/remote/**/*'
+      },
+      reset: {
+        src: ['build', 'lib', 'tmp', 'dist', 'components', 'node_modules']
       }
     },
     dox: {
       files: {
         src: 'widgets/**/main.js',
-        dest: 'dist/' + pkg.version + '/docs'
+        dest: 'dist/<%= PKG_VERSION %>/docs'
       }
     },
     coffee: {
@@ -86,7 +92,7 @@ module.exports = function (grunt) {
     connect: {
       server: {
         options: {
-          port: port,
+          port: port
         }
       }
     },
@@ -94,50 +100,55 @@ module.exports = function (grunt) {
       client: {
         options: {
           baseUrl: '.',
-          // optimize: 'none',
+          optimize: CONTEXT!=='prod' ? "none" : "uglify",
           preserveLicenseComments: true,
           paths: {
-            aura:           'components/aura/dist',
+            aura:           'components/aura/lib',
             underscore:     'components/underscore/underscore',
             eventemitter:   'components/eventemitter2/lib/eventemitter2',
             backbone:       'components/backbone/backbone',
             easyXDM:        'components/easyXDM/easyXDM',
-            handlebars:     'components/handlebars/handlebars',
+            handlebars:     'components/require-handlebars-plugin/Handlebars',
             requireLib:     'components/requirejs/require',
             moment:         'components/moment/moment',
+            cookie:         'components/jquery.cookie/jquery.cookie',
             string:         'components/underscore.string/lib/underscore.string',
             jquery:         'empty:',
-            text:           'components/requirejs-text/text'
+            text:           'components/requirejs-text/text',
+            base64:         'components/base64/base64'
           },
           shim: {
             backbone:   { exports: 'Backbone', deps: ['underscore', 'jquery'] },
-            string:     { exports: '_', deps: ['underscore'] },
             underscore: { exports: '_' },
-            easyXDM:    { exports: 'easyXDM' },
-            handlebars:    { exports: 'Handlebars' }
+            easyXDM:    { exports: 'easyXDM' }
           },
           include: [
             'requireLib',
             'underscore',
             'moment',
             'string',
+            'cookie',
+            'base64',
             'backbone',
             'handlebars',
             'easyXDM',
             'text',
+            'aura/ext/debug',
+            'aura/ext/mediator',
+            'aura/ext/widgets',
             'lib/hull'
           ].concat(auraExtensions)
            .concat(clientLibs),
-          out: 'dist/' + pkg.version + '/hull.js'
+          out: 'dist/<%= PKG_VERSION %>/hull.js'
         }
       },
       remote: {
         options: {
           baseUrl: '.',
-          // optimize: 'none',
+          optimize: CONTEXT!=='prod' ? "none" : "uglify",
           preserveLicenseComments: true,
           paths: {
-            aura:               'components/aura/dist',
+            aura:               'components/aura/lib',
             underscore:         'components/underscore/underscore',
             eventemitter:       'components/eventemitter2/lib/eventemitter2',
             easyXDM:            'components/easyXDM/easyXDM',
@@ -162,13 +173,13 @@ module.exports = function (grunt) {
             'text',
             'base64',
             'analytics',
-            'lib/hull-remote',
-            'lib/remote/services',
-            'lib/remote/services/hull',
-            'lib/remote/services/facebook',
-            'lib/remote/services/github'
-          ],
-          out: 'dist/' + pkg.version + '/hull-remote.js'
+            'aura/ext/debug',
+            'aura/ext/mediator',
+            'aura/ext/widgets',
+            'lib/hull',
+            'lib/hull-remote'
+          ].concat(remoteLibs),
+          out: 'dist/<%= PKG_VERSION %>/hull-remote.js'
         }
       },
       upload: {
@@ -186,16 +197,10 @@ module.exports = function (grunt) {
       },
       registration: {
         options: {
-          paths: {
-            jquery: "empty:",
-            "jquery.default_fields" : "widgets/registration/default_fields",
-            "h5f": "widgets/registration/h5f"
-          },
-          include: [
-            'jquery.default_fields',
-            'h5f'
-          ],
-          out: 'tmp/widgets/registration/deps/jquery.deps.js'
+          paths: { h5f: 'widgets/registration/h5f' },
+          shim: { h5f: { exports: 'H5F' } },
+          include: ['h5f'],
+          out: 'tmp/widgets/registration/deps.js'
         }
       }
     },
@@ -237,54 +242,47 @@ module.exports = function (grunt) {
       },
       remote: {
         files: remoteSrc,
-        tasks: ['build_remote']
+        tasks: ['build_remote', 'mocha']
       },
       client: {
         files: clientSrc,
-        tasks: ['build_client']
+        tasks: ['build_client', 'mocha']
       },
-      compass: {
-        files: [
-          'stylesheets/**/*.{scss,sass}'
-        ],
-        tasks: 'compass:dev'
+      spec: {
+        files: ['spec/**/*.js'],
+        tasks: ['mocha']
       }
     },
     version: {
-      template: "define(function () { return '<%= pkg.version %>';});",
+      template: "define(function () { return '<%= PKG_VERSION %>';});",
       dest: 'lib/version.js'
-    },
-    compass: {
-      dev: {
-        options: {
-          sassDir: 'stylesheets',
-          cssDir: 'dist/' + pkg.version,
-          outputStyle: 'expanded',
-          noLineComments: false,
-          force: true,
-          debugInfo: true,
-          imagesDir: 'assets/images',
-          relativeAssets: true
-        },
-      },
-      prod: {
-        options: {
-          sassDir: 'stylesheets',
-          cssDir: 'dist/' + pkg.version,
-          outputStyle: 'compressed',
-          noLineComments: true,
-          force: true,
-          debugInfo: false,
-          imagesDir: 'assets/images',
-          relativeAssets: false
-        },
-      }
     },
     hull_widgets: {
       hull: {
         src: 'widgets',
-        // before: ['requirejs:upload', 'requirejs:registration'],
-        dest: 'dist/<%= pkg.version%>/widgets'
+        before: ['requirejs:upload', 'requirejs:registration'],
+        dest: 'dist/<%= PKG_VERSION%>/widgets',
+        optimize: CONTEXT === 'prod'
+      }
+    },
+    describe: {
+      out: 'dist/<%= PKG_VERSION%>/REVISION'
+    },
+    cover: {
+      compile: {
+        files: {
+          'build/instrumented/*.js' : ['lib/**/*.js']
+        },
+        options: {
+          basePath: 'lib'
+        }
+      }
+    },
+    plato: {
+      develop: {
+        files: {
+          'build/report': ['lib/**/*.js']
+        }
       }
     }
   };
@@ -296,42 +294,46 @@ module.exports = function (grunt) {
     if (aws) {
       gruntConfig.aws = aws;
       gruntConfig.s3 = {
-        key: '<%= aws.key %>',
-        secret: '<%= aws.secret %>',
-        bucket: '<%= aws.bucket %>',
-        access: 'public-read',
-        // debug: true,
         options: {
+          key: '<%= aws.key %>',
+          secret: '<%= aws.secret %>',
+          bucket: '<%= aws.bucket %>',
+          access: 'public-read',
+          // debug: true,
           encodePaths: true,
           maxOperations: 20
         },
-        upload: [
-          {
-            gzip:  true,
-            src: 'dist/' + pkg.version + '/**',
-            dest: '/',
-            rel: 'dist/'
-          },
-          {
-            gzip:  false,
-            src: 'dist/' + pkg.version + '/**',
-            dest: '/',
-            rel: 'dist/'
-          }
-        ]
+        prod: {
+          upload: [
+            {
+              gzip:  true,
+              src: 'dist/<%= PKG_VERSION %>/**/*',
+              dest: '/',
+              rel: 'dist/'
+            },
+            {
+              gzip:  false,
+              src: 'dist/<%= PKG_VERSION %>/**/*',
+              dest: '/',
+              rel: 'dist/'
+            }
+          ]
+        }
       };
     }
   }
   grunt.initConfig(gruntConfig);
 
   // default build task
-  grunt.registerTask('build_remote', ['clean', 'coffee:remote', 'version', 'requirejs:remote']);
-  grunt.registerTask('build_client', ['clean', 'coffee:client', 'version', 'requirejs:client']);
+  grunt.registerTask('build_remote', ['clean:remote', 'coffee:remote', 'version', 'requirejs:remote']);
+  grunt.registerTask('build_client', ['clean:client', 'coffee:client', 'version', 'requirejs:client']);
   grunt.registerTask('build_libs', ['build_client', 'build_remote']);
-  grunt.registerTask('build', ['build_libs', 'hull_widgets', 'compass:prod']);
-  grunt.registerTask('default', ['connect', 'build', /*'mocha'*/ 'watch']);
+  grunt.registerTask('build', ['build_libs', 'hull_widgets']);
+  grunt.registerTask('test', ['build', 'cover', 'plato', 'mocha']);
+  grunt.registerTask('default', ['connect', 'test', 'watch']);
   grunt.registerTask('dist', ['build', 'dox']);
-  grunt.registerTask('deploy', ['dist', 's3']);
+  grunt.registerTask('deploy', ['dist', 'describe', 's3']);
+  grunt.registerTask('reset', ['clean:reset']);
 
   grunt.registerTask("version", "generate a file from a template", function () {
     var conf = grunt.config("version");

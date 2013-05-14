@@ -97,18 +97,6 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
       (options.fn(key: key, value: value) for own key, value of hash).join('')
 
     ###*
-     * List helper.
-     *
-     * @param  {[type]} obj     [description]
-     * @param  {[type]} options [description]
-     * @return {[type]}         [description]
-    ###
-    HandlebarsHelpers.list = (obj, options)->
-      ret = _.map(obj, (v,k)->
-        options.fn(v)).join("")
-
-
-    ###*
      * Output a page-unique sequential number.
      * Mainly useful to assign a unique id to each entry in a list
      *
@@ -165,6 +153,19 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
     ###
     HandlebarsHelpers.humanize = (string)->
       _.str.humanize string
+
+    ###*
+     * 
+     *      {{pluralize collection.length 'quiz' 'quizzes'}}
+     *
+     * @param  {number} number
+     * @param  {string} single
+     * @param  {string} plural
+     * @return {string}       
+    ###
+    HandlebarsHelpers.pluralize = (number, single, plural) ->
+        (if (number <= 1) then single else plural)
+   
 
     ###*
      * Renders all characters to lower case and then makes the first upper
@@ -291,8 +292,22 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
       ret = items.join sep
       ret += options.hash['lastSep'] + last if last
       ret
+    ###*
+    * THE DEBUG HELPER
+    *
+    *      usage: {{debug}} or {{debug someValue}}
+    *
+    * @param  {Anything}  optional value to debug
+    ###
+    HandlebarsHelpers.debug = (optionalValue)->
+        console.log("Current Context")
+        console.log("====================")
+        console.log(@)
 
-
+        if (optionalValue)
+          console.log("Value")
+          console.log("====================")
+          console.log(optionalValue)
 
 
     handlebars.registerHelper(k, v) for k,v of HandlebarsHelpers

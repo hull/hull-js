@@ -1,33 +1,31 @@
 /**
- * Widget Upload
+ * # Upload
  *
- * Thes widgets allows the user of your applications to attach documents and files to the application
+ * Thes widgets allows the user of your applications to attach documents and files to the application.
  *
- * ### Dependencies
+ * ## Dependencies
  *
- * * ```jquery.fileupload```: This plugin uses [jQuery File upload plugin](https://github.com/blueimp/jQuery-File-Upload) to handle the file upload gracefully.
- *     Please note that the plugin is packaged within the widget so you don't have to struggle against the dependencies
- * * ``` storage```: This plugin requires that you have attahed an S3 storage to your Hull application in the admin.
+ * - `jquery.fileupload`: This plugin uses [jQuery File upload plugin](https://github.com/blueimp/jQuery-File-Upload) to handle the file upload gracefully. Please note that the plugin is packaged within the widget so you don't have to struggle against the dependencies.
+ * - ` storage`: This plugin requires that you have attahed an S3 storage to your Hull application in the admin.
  *
- * ### Templates
+ * ## Templates
  *
- * * ```upload.hbs```: The main template. Because the jQuery plugin has some requirements, the template makes sure everything is set up as needed.
- * * ```upload_file_multiple```: Partial used to upload multiple files at once. Override this partial to ustomize the file upload to your needs
- * * ```upload_file_single```: Partial used to upload a single file. Override this partial to ustomize the file upload to your needs
+ * - `upload`: The main template. Because the jQuery plugin has some requirements, the template makes sure everything is set up as needed.
+ * - `upload_file_multiple`: Partial used to upload multiple files at once. Override this partial to ustomize the file upload to your needs.
+ * - `upload_file_single`: Partial used to upload a single file. Override this partial to ustomize the file upload to your needs.
  *
- * ### Parameters
+ * ## Options
  *
- * * ```data-hull-storage```: Specifies the storage engine to be used. If a single engine is known to the app, it will be automatically used. If there are many storage engines
- *    If there are many engines available, it must correspond to a value in ```sandbox.config.services.types.storage```.
- * ### Events
+ * - `storage`: Specifies the storage engine to be used. If a single engine is known to the app, it will be automatically used. If there are many engines available, it must correspond to a value in `sandbox.config.services.types.storage`.
  *
- * * ```hull.upload.send```: Triggered when an upload has started.
- * * ```hull.upload.progress```: Triggered when an upload is in progress. The total amount of data as well as the current amount of data transfered are available as a listener parameter.
- * * ```hull.upload.done```: Triggered when an upload has finished. References to the uploadded files are available in an Array as the first parameter to the listeners.
+ * ## Events
+ *
+ * - `hull.upload.send`: Triggered when an upload has started.
+ * - `hull.upload.progress`: Triggered when an upload is in progress. The total amount of data as well as the current amount of data transfered are available as a listener parameter.
+ * - `hull.upload.done`: Triggered when an upload has finished. References to the uploadded files are available in an Array as the first parameter to the listeners.
  */
 define(['jquery.fileupload'], {
-
-  type: "Hull",
+  type: 'Hull',
 
   templates: [ 'upload', 'file_single' ],
 
@@ -45,29 +43,29 @@ define(['jquery.fileupload'], {
   },
 
   uploader_events: [
-    "fileuploadadd",
-    "fileuploadadded",
-    "fileuploadalways",
-    "fileuploadchange",
-    "fileuploadcompleted",
-    "fileuploaddestroy",
-    "fileuploaddestroyed",
-    "fileuploaddone",
-    "fileuploaddragover",
-    "fileuploaddrop",
-    "fileuploadfail",
-    "fileuploadfailed",
-    "fileuploadfinished",
-    "fileuploadpaste",
-    "fileuploadprogress",
-    "fileuploadprogressall",
-    "fileuploadsend",
-    "fileuploadsent",
-    "fileuploadstart",
-    "fileuploadstarted",
-    "fileuploadstop",
-    "fileuploadstopped",
-    "fileuploadsubmit"
+    'fileuploadadd',
+    'fileuploadadded',
+    'fileuploadalways',
+    'fileuploadchange',
+    'fileuploadcompleted',
+    'fileuploaddestroy',
+    'fileuploaddestroyed',
+    'fileuploaddone',
+    'fileuploaddragover',
+    'fileuploaddrop',
+    'fileuploadfail',
+    'fileuploadfailed',
+    'fileuploadfinished',
+    'fileuploadpaste',
+    'fileuploadprogress',
+    'fileuploadprogressall',
+    'fileuploadsend',
+    'fileuploadsent',
+    'fileuploadstart',
+    'fileuploadstarted',
+    'fileuploadstop',
+    'fileuploadstopped',
+    'fileuploadsubmit'
   ],
 
   uploader_options: {
@@ -94,15 +92,15 @@ define(['jquery.fileupload'], {
       selectedPolicy = storagePolicies[0];
     } else if (countPolicies > 1) {
       if (!optionValue) {
-        throw new TypeError("You must specify a storage policy.");
+        throw new TypeError('You must specify a storage policy.');
       }
       if (storagePolicies.hasOwnProperty(optionValue)) {
         selectedPolicy = storagePolicies[optionValue];
       } else {
-        throw new TypeError("Unknown storage policy: ", optionValue);
+        throw new TypeError('Unknown storage policy: ', optionValue);
       }
     } else {
-      console.warn("No storage policy declared for the app. Unable to save the pictures.");
+      console.warn('No storage policy declared for the app. Unable to save the pictures.');
     }
 
     return this.sandbox.config.services.settings[selectedPolicy];
@@ -150,6 +148,7 @@ define(['jquery.fileupload'], {
   },
 
   cancel: function () {},
+
   delete: function () {},
 
   onDrop: function () {
@@ -183,13 +182,13 @@ define(['jquery.fileupload'], {
   },
 
   toggleDescription: function () {
-    var descriptionElt = this.$el.find("[name=description]");
+    var descriptionElt = this.$el.find('[name=description]');
     if (descriptionElt.is(':disabled')) {
       descriptionElt.removeAttr('disabled');
       descriptionElt.val('');
     } else {
       this.description = descriptionElt.val() || undefined;
-      this.$el.find("[name=description]").attr('disabled', 'disabled');
+      this.$el.find('[name=description]').attr('disabled', 'disabled');
     }
   },
 
@@ -198,7 +197,7 @@ define(['jquery.fileupload'], {
   },
 
   onFail: function (e, data) {
-    this.$el.find('.error').text("Error :#{data.errorThrown}");
+    this.$el.find('.error').text('Error :#{data.errorThrown}');
   },
 
   onDone: function (e, data) {
@@ -225,7 +224,7 @@ define(['jquery.fileupload'], {
 
   fileUrl: function (filename) {
     var policy = this.selectStoragePolicy();
-    return encodeURI(policy.url + policy.params.key.replace('${filename}', "/" + filename));
+    return encodeURI(policy.url + policy.params.key.replace('${filename}', '/' + filename));
   },
 
   initialize: function () {

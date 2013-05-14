@@ -1,13 +1,16 @@
 /**
- * # Quiz
  *
  * A quiz is a game in which the player attempts to find the answer to questions from multiple possible answers.
- * 
+ *
  * To create a quiz, use the `quiz_admin` widget in an admin page, which will let you create a new Quiz (which is a particular type of achievement).
- * 
+ *
  * Then use this quiz's ID as a parameter for your widget.
  *
- * ## Parameters
+ * ## Example
+ *
+ *     <div data-hull-widget="quiz@hull"  data-hull-id="QUIZ_ID"></div>
+ *
+ * ## Options
  *
  * - `id`: The id of the quiz you want to display
  *
@@ -32,6 +35,13 @@
 define({
   type: "Hull",
 
+  trackingData: function() {
+    var data = { type: 'quiz' };
+    var quiz = this.data.quiz;
+    if (quiz && quiz.get) { data.name = quiz.get('name'); }
+    return data;
+  },
+
   templates: [
     'quiz_intro',
     'quiz_question',
@@ -40,8 +50,6 @@ define({
     'quiz_result'
   ],
 
-  initialized: false,
-
   answers: {},
 
   datasources: {
@@ -49,7 +57,6 @@ define({
   },
 
   initialize: function() {
-    this.quiz = this.api.model(this.id);
     this.sandbox.on('hull.model.' + this.id + '.change', function() {
       this.render();
     }.bind(this));
@@ -61,10 +68,7 @@ define({
   },
 
   beforeRender: function(data) {
-    if (!this.initialized) {
-      this.trackEvent("init");
-      this.initialized = true;
-    }
+    if (!this.isInitialized) { this.track('init'); }
 
     if (data.me.id != this.currentUserId) {
       this.template = "quiz_intro";
@@ -84,12 +88,6 @@ define({
 
   afterRender: function(data) {
     this.sandbox.emit('hull.quiz.' + this.id, data);
-  },
-
-  trackEvent: function(eventName, eventData) {
-    eventData = _.extend({ quizId: this.data.quiz.id, quizName: this.data.quiz.get('name') }, (eventData || {}));
-    eventName = "quiz." + eventName;
-    this.track(eventName, eventData);
   },
 
   startQuiz: function() {
@@ -151,46 +149,55 @@ define({
 
   actions: {
 
-    login: function(source, e, options) {
-      this.sandbox.login(options.provider, options).then(this.startQuiz.bind(this));
+    login: function(e, params) {
+      this.sandbox.login(params.data.provider, params.data).then(this.startQuiz.bind(this));
     },
 
-    answer: function(source, e, opts) {
-      this.trackEvent("answer");
+    answer: function(e, params) {
+      var opts = params.data;
       this.answers[opts.questionId] = opts.answerId;
-      this.quiz.set('answers', this.answers);
+      this.data.quiz.set('answers', this.answers);
+
+      this.track('progress', {
+        questionId: opts.questionId,
+        answerId: opts.answerId,
+        questionIndex: this.currentQuestionIndex,
+        questionsCount: this.data.quiz.get('questions').length
+      });
     },
 
-    answerAndNext: function(source, e, opts) {
+    answerAndNext: function() {
       this.actions.answer.apply(this, arguments);
       this.actions.next.apply(this);
     },
 
     start: function() {
-      this.trackEvent("start");
+      this.track("start");
       this.startQuiz();
     },
 
     next: function() {
       this.currentQuestionIndex += 1;
       this.render();
+      return false;
     },
 
-    previous: function(source, e, data) {
+    previous: function() {
       if (this.currentQuestionIndex > 0) {
         this.currentQuestionIndex -= 1;
         this.render('quiz_question');
       }
+      return false;
     },
 
     submit: function() {
-      this.trackEvent("submit");
+      this.track("submit");
       var timing = 0;
       if (this.startedAt) {
         timing  = (new Date() - this.startedAt) / 1000;
       }
 
-      var res  = this.api("hull/" + this.id + "/achieve", 'post', {
+      var res  = this.api(this.id + "/achieve", 'post', {
         answers: this.answers,
         timing: timing
       });
@@ -199,16 +206,18 @@ define({
       res.done(function(badge) {
         if (badge) {
           self.submitted = true;
-          self.quiz.set('badge', badge);
+          self.data.quiz.set('badge', badge);
           self.render('quiz_result');
-          self.trackEvent('result', { score: badge.data.score, timing: badge.data.timing });
+          self.track('finish', { score: badge.data.score, timing: badge.data.timing });
         } else {
           console.warn("Bah alors ? mon badge ?", badge);
         }
       });
+      return false;
     },
 
-    share: function (source, e, data) {
+    share: function (e, params) {
+      var data = params.data;
       var currentUrl = document.URL, text = data.text;
 
       switch (data.provider){

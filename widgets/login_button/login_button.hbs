@@ -1,0 +1,21 @@
+{{#if matchingProviders}}
+  <button data-hull-action="logout" class="btn btn-small btn-link"> 
+    Sign Out
+  </button>
+{{else}}
+  {{#if loggedOut}}
+    {{#loggedOut}}
+      <button data-hull-action="login" data-hull-provider="{{.}}" class="btn btn-{{.}}">
+        Sign In with {{classify .}}
+      </button>
+    {{/loggedOut}}
+  {{/if}}
+  {{^authServices}}
+    {{#if debug}}
+      <div class="alert">
+        <h4>Warning!</h4>
+        No Auth Services configured, please add at least one in the admin.
+      </div>
+    {{/if}}
+  {{/authServices}}
+{{/if}}

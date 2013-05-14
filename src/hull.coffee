@@ -1,66 +1,65 @@
-define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
+(->
+  evtPool = {}
+  Hull.on = (evt, fn)->
+    evtPool[evt] ?= []
+    evtPool[evt].push fn
 
-  hull = null
+  define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
+    hull = null
 
-  myApp = {
-    name: 'Hull'
-    initialize: (app)->
-      app.core.mediator.setMaxListeners(100)
-      if app.config.debug
-        app.core.mediator.onAny ->
-          console.log('[Hull Event]', arguments)
+    myApp = ()->
+      name: 'Hull'
+      initialize: (app)->
+        app.core.mediator.setMaxListeners(100)
 
-    afterAppStart: (app)->
-      sb = app.createSandbox();
-      Hull = _.extend(HullDef, sb);
-      Hull.me     = sb.data.api.model('me');
-      Hull.app    = sb.data.api.model('app');
-      Hull.org    = sb.data.api.model('org');
-  }
+      afterAppStart: (app)->
+        sb = app.createSandbox();
+        _.extend(HullDef, sb);
+        for evt, cbArray of evtPool
+          _.each cbArray, (cb)->
+            app.core.mediator.on evt, cb
+        if !app.config.debug
+          props = ['widget', 'templates', 'emit', 'on', 'version', 'track']
+          props.concat(app.config.expose || [])
+          _h = {}
+          _.map props, (k)->
+            _h[k] = window.Hull[k]
+          window.Hull = _h
 
-  if window.opener && window.opener.Hull
-    try
-      window.opener.Hull.emit("hull.authComplete")
-      return window.close()
-    catch e
-      console.warn("Error: " + e)
+    if window.opener && window.opener.Hull
+      try
+        window.opener.Hull.emit("hull.authComplete")
+        return window.close()
+      catch e
+        console.warn("Error: " + e)
 
-  (config, cb, errcb) ->
-    return hull if hull && hull.app
-    hull = { config }
-    config.namespace = "hull"
-    hull.app = Aura(config)
-    initProcess = hull.app
-        .use('aura-extensions/aura-handlebars')
-        .use('aura-extensions/aura-backbone')
-        .use('aura-extensions/hull-utils')
-        .use('lib/client/handlebars-helpers')
-        .use('lib/client/api')
-        .use('lib/client/datasource')
-        .use('lib/client/auth')
-        .use('lib/client/templates')
-        .use('lib/client/widget')
-        .use(myApp)
-        .start({ widgets: 'body' })
+    (config, cb, errcb) ->
+      return hull if hull && hull.app
+      hull = { config }
+      config.namespace = "hull"
+      hull.app = Aura(config)
+      initProcess = hull.app
+          .use(myApp())
+          .use('aura-extensions/aura-handlebars') #TODO Can probably be removed. See the file for details.
+          .use('aura-extensions/aura-backbone')
+          .use('aura-extensions/hull-utils')
+          .use('lib/client/handlebars-helpers')
+          .use('lib/client/helpers')
+          .use('lib/client/entity')
+          .use('lib/client/api')
+          .use('lib/client/auth')
+          .use('lib/client/templates')
+          .use('lib/client/widget')
+          .start({ widgets: 'body' })
 
-    initProcess.fail (err)->
-      errcb(err) if errcb
-      hull.app.stop()
-      delete hull.app
-      throw err if !errcb
-    initProcess.done (h)->
-      if !config.debug
-        _h = {
-          widget: window.Hull.widget,
-          templates: window.Hull.templates,
-          emit: window.Hull.emit,
-          on: window.Hull.on,
-          version: window.Hull.version
-        }
-        if _.isArray(config.expose)
-          _.map config.expose, (i) ->
-            _h[i] = window.Hull[i];
-        window.Hull = _h
+      initProcess.fail (err)->
+        errcb(err) if errcb
+        hull.app.stop()
+        delete hull.app
+        throw err if !errcb
 
-      cb(window.Hull) if cb
-    return hull
+      initProcess.done ()->
+        cb(window.Hull) if cb
+
+      return hull
+)()

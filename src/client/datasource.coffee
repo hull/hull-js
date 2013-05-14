@@ -1,6 +1,4 @@
 define ['underscore'], (_)->
-  api = null
-
   #@TODO Refactor, code has been C/P'ed from widget.coffee
   decamelize = (camelCase)->
     camelCase.replace(/([A-Z])/g, '_' + '$1').toLowerCase()
@@ -25,18 +23,21 @@ define ['underscore'], (_)->
     #
     # @param {String|Object|Function} A potentially partial definition of the datasource
     #
-    constructor: (ds) ->
-      _err = new TypeError('Missing parameter for Datasource. Cannot continue.')
-      throw _err unless ds
+    constructor: (ds, transport) ->
+      @transport = transport
+      _errDefinition  = new TypeError('Datasource is missing its definition. Cannot continue.')
+      _errTransport   = new TypeError('Datasource is missing a transport. Cannot continue.')
+      throw _errDefinition unless ds
+      throw _errTransport unless @transport
       if _.isString(ds)
         ds =
           path: ds
           provider: 'hull'
-          type: if (ds.lastIndexOf('/') in [-1, 0]) then 'model' else 'collection'
+        @type = if (ds.path.lastIndexOf('/') in [-1, 0]) then 'model' else 'collection'
       else if _.isObject(ds) && !_.isFunction(ds)
-        throw _err unless ds.path
+        throw _errDefinition unless ds.path
         ds.provider = ds.provider || 'hull'
-        ds.type = ds.type || 'collection'
+        @type = ds.type || 'collection'
       @def = ds
 
     #
@@ -57,13 +58,11 @@ define ['underscore'], (_)->
       if _.isFunction(@def)
         @def()
       else
-        if @def.type == 'model'
-          api.model(@def).deferred
-        else if @def.type == 'collection'
-          api.collection(@def).deferred
+        if @type == 'model'
+          @transport.model(@def).deferred
+        else if @type == 'collection'
+          @transport.collection(@def).deferred
         else
-          throw new TypeError('Unknown type of datasource: ' + @def.type);
-  (app) ->
-    api = app.createSandbox().data.api;
-    app.core.datasource = Datasource
-    return
+          throw new TypeError('Unknown type of datasource: ' + @type);
+  Datasource
+

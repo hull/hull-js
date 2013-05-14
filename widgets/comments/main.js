@@ -1,48 +1,103 @@
 /**
- * ## Widget ```comment```
  *
- * This widget is identified as ```comments@hull```. It is used to view and add comments to an object of the crrent application.
+ * Allow to list and add comments on an object of the current application.
  *
- * ### Parameters:
+ * ## Example
  *
- * * ```id```: The object you want to manipulate comments upon.
+ *     <div data-hull-widget="comments@hull" data-hull-id="OBJECT_ID"></div>
  *
- * ### Templates:
+ * ## Option:
  *
- * * ```comments/comments```: Display the collection of comments and allows to post a new comment if logged in.
+ * - `id`: Required, The object you want to manipulate comments upon.
+ * - `focus`: Optional, Auto-Focus on the input field. default: false.
  *
+ * ## Template:
  *
- * ### Datasources:
+ * - `comments`: Display a list of comments and a form that allows logged users
+ *   to post new comments.
  *
- * * ```comments```: The collection of all the comments related to the object.
+ * ## Datasource:
  *
- * ### Actions:
+ * - `comments`: Collection of all the comments made on the object.
  *
- * * ```comment```: Triggered when an user submits a new comment.
+ * ## Action:
+ *
+ * - `comment`: Submits a new comment.
  */
+
+/*global define:true, _:true */
 define({
   type: 'Hull',
-  templates:  ['comments'],
 
-  initialize: function () {
-    this.sandbox.on("collection.hull." + this.id + ".comments.**", function() {
-      this.refresh();
-    }.bind(this));
-  },
+  templates: ['comments'],
 
-  //@FIX Cache is broken for datasources declared as objects
-  datasources: {
-    comments: ":id/comments"
-  },
+  refreshEvents: ['model.hull.me.change'],
 
   actions: {
-    comment: function (elt, evt, data) {
-      var description = this.$el.find("textarea").val();
-      if (description && description.length > 0) {
-        var comment = this.data.comments.create({
-          description: description
-        });
-      }
+    comment: 'postComment',
+    delete: 'deleteComment'
+  },
+
+  options: {
+    focus: false
+  },
+
+  datasources: {
+    comments: ':id/comments'
+  },
+
+  beforeRender: function(data){
+    "use strict";
+    _.each(data.comments, function(c) {
+      c.isDeletable = (c.user.id === this.data.me.id);
+      return c;
+    }, this);
+    return data;
+  },
+  afterRender: function() {
+    "use strict";
+    if(this.options.focus || this.focusAfterRender) {
+      this.$el.find('input,textarea').focus();
+      this.focusAfterRender = false;
+    }
+  },
+
+  deleteComment: function(event, data) {
+    "use strict";
+    event.preventDefault();
+    var id = data.data.id;
+    var $parent = data.el
+      .addClass('is-removing')
+      .parents('[data-hull-comment-id="'+ id +'"]');
+    this.api.delete(id).then(function () {$parent.remove();});
+  },
+
+  toggleLoading: function ($el) {
+    "use strict";
+    var $form = $el.toggleClass('is-loading');
+    var $btn = $form.find('.btn');
+    $btn.attr('disabled', !$btn.attr('disabled'));
+    var $textarea = $form.find('textarea');
+    $textarea.attr('disabled', !$textarea.attr('disabled'));
+  },
+
+  postComment: function (e) {
+    "use strict";
+    e.preventDefault();
+    var $formWrapper = this.$el.find('.hull-comments__form');
+    var $form = $formWrapper.find('form');
+    var formData = this.sandbox.dom.getFormData($form);
+    var description = formData.description;
+
+    this.toggleLoading($formWrapper);
+
+    if (description && description.length > 0) {
+      var attributes = { description: description };
+      this.api(this.id + '/comments', 'post', attributes).then(_.bind(function() {
+        this.toggleLoading($formWrapper);
+        this.focusAfterRender = true;
+        this.render();
+      }, this));
     }
   }
 });

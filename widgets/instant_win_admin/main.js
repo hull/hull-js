@@ -5,7 +5,7 @@ define({
 
   datasources: {
     achievements: function() {
-      return this.api('hull/app/achievements', this.signRequest({
+      return this.api('app/achievements', this.signRequest({
         where: { _type: 'InstantWin' }
       }));
     }
@@ -34,7 +34,7 @@ define({
       this.$achievementDescription.val(achievement.description);
       this.$achievementSecret.val(achievement.secret);
 
-      this.api('hull/' + id + '/prizes', this.signRequest()).then(_.bind(function(res) {
+      this.api(id + '/prizes', this.signRequest()).then(_.bind(function(res) {
         var code = {
           prizes: _.map(res || [], function(p) {
             return _.pick(p, 'id', 'name', 'description', 'available_at', 'extra');
@@ -52,7 +52,7 @@ define({
   },
 
   actions: {
-    create: function(source, e) {
+    create: function(e) {
       e.preventDefault();
 
       var description = this.$el.find('#hull-instant-description').val();
@@ -64,7 +64,7 @@ define({
       if (description.length) { data.description = description; }
       if (secret.length) { data.secret = secret; }
 
-      this.api('hull/app/achievements', 'post', this.signRequest(data)).done(_.bind(function(res) {
+      this.api('app/achievements', 'post', this.signRequest(data)).done(_.bind(function(res) {
         alert('Instant Win Created');
         this.refresh();
       }, this)).fail(function() {
@@ -82,7 +82,7 @@ define({
       if (description.length) { data.description = description; }
       if (secret.length) { data.secret = secret; }
 
-      this.api('hull/' + id, 'put', this.signRequest(data)).done(function() {
+      this.api(id, 'put', this.signRequest(data)).done(function() {
         alert('Achievement Updated');
       }).fail(function() {
         alert('Ooops... Check the form...');
@@ -98,7 +98,7 @@ define({
       }
 
       var id = this.$achievementsSelector.val();
-      this.api('hull/' + id + '/prizes', 'put', this.signRequest(prizes)).done(function() {
+      this.api(id + '/prizes', 'put', this.signRequest(prizes)).done(function() {
         alert('Prizes updated!');
       }).fail(function() {
         alert('Ooops... check your JSON...');

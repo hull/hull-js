@@ -1,17 +1,18 @@
 {
   "name": "hull-js",
-  "version": "0.3.1",
+  "version": "0.4.3",
   "devDependencies": {
     "mocha": "1.8.1",
     "chai": "1.5.0",
     "sinon": "1.6.0",
     "sinon-chai": "2.3.1",
-    "grunt": "0.4.0",
-    "grunt-s3": "0.1.0",
-    "grunt-lib-phantomjs": "0.1.0",
+    "grunt": "~0.4.1",
+    "grunt-s3": "0.2.0-alpha",
+    "grunt-git-describe": "git://github.com/hull/grunt-git-describe.git",
+    "phantomjs": "1.9.0-1",
+    "grunt-lib-phantomjs": "0.3.0",
     "grunt-contrib-clean": "0.4.0",
     "grunt-contrib-coffee": "0.4.0",
-    "grunt-contrib-compass": "0.1.2",
     "grunt-contrib-concat": "0.1.2",
     "grunt-contrib-connect": "0.1.2",
     "grunt-contrib-handlebars": "0.5.4",
@@ -20,10 +21,16 @@
     "grunt-contrib-uglify": "0.1.1",
     "grunt-contrib-watch": "0.2.0",
     "grunt-hull-dox": "git://github.com/hull/grunt-hull-dox.git",
-    "grunt-hull-widgets": "0.4.2",
-    "grunt-mocha": "0.2.1"
+    "grunt-hull-widgets": "~0.5.0",
+    "grunt-mocha": "0.3.1",
+    "bower": "~0.8.6",
+    "coverjs": "0.0.14",
+    "grunt-coverjs": "git://github.com/hull/grunt-coverjs.git",
+    "plato": "~0.5.0",
+    "grunt-plato": "~0.2.0"
   },
   "scripts": {
-    "test": "grunt build"
+    "postinstall": "$(npm bin)/bower install",
+    "test": "grunt test"
   }
 }

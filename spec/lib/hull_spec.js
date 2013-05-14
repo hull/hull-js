@@ -1,67 +1,81 @@
-/*global define:true, describe:true, it:true */
-define(function () {
+/*global sinon:true, define:true, describe:true, it:true, after:true, beforeEach:true */
+define(['../support/mocks/app'], function (appMock) {
   "use strict";
 
-  // Mocking dependencies of  lib/hull
-  before(function () {
-    define('lib/hull', function () {
-      return sinon.spy();
+  describe('hull main module', function () {
+    // Mocking dependencies of  lib/hull
+    beforeEach(appMock.createApp);
+
+    after(function () {
+      appMock.resetApp();
+      require.undef('lib/hull');
+      require.undef('aura/aura');
+      require.undef('lib/hullbase');
     });
-    define('lib/version', function () {
-      return 'Mock_Version';
+
+    describe("Booting the application", function () {
+      it("should return a function", function () {
+        appMock.hullInit.should.be.a('Function');
+      });
     });
-  });
 
-  after(function () {
-    require.undef('lib/hull');
-    require.undef('lib/version');
-  });
+    describe("Evaluating the module", function () {
+      beforeEach(appMock.resetApp);
 
-  require(['lib/hull'], function (hull) {
-
-    describe("Initializing the application", function () {
-      it("should call the module lib/hull", function () {
-        var arg1 = {};
-        var arg2 = {};
-        var arg3 = {};
-        hullbase.init(arg1, arg2, arg3);
-        spy.should.have.been.calledWith(arg1, arg2, arg3);
-
+      it("should return an object with 'app' and 'config key'", function () {
+        var conf = {};
+        appMock.hullInit(conf).should.contain.keys('config');
+        appMock.hullInit(conf).should.contain.keys('app');
       });
-      it("should fail if the organizationUrl is missing", function (done) {
-        hullbase.init({appId: "..."}, null, function () { done(); });
+      it("should have an Aura application as the value of the 'app' config", function () {
+        var conf = {};
+        appMock.hullInit(conf).app.should.eql(appMock.app);
       });
-
-      it("must fail if the applicationId (param: orgUrl) is missing", function (done) {
-        Hull.init({orgUrl: "..."}, null, function () { done(); });
+      it("should return the config passed to the function into the 'config' property", function () {
+        var conf = {
+          foo: "FOO",
+          bar: "BAR",
+          baz: "BAZ"
+        };
+        appMock.hullInit(conf).config.should.contain.keys(Object.keys(conf));
       });
+      it("should add a 'namespace property in the onfig and set it to 'Hull'", function () {
+        var conf = {};
+        appMock.hullInit(conf).config.should.contain.keys('namespace');
+        appMock.hullInit(conf).config.namespace.should.eql('hull');
+      });
+    });
 
-      it("should run only the errback if failed", function (done) {
-        var spy = sinon.spy();
-        Hull.init({orgUrl: "..."}, spy, function () {
-          spy.should.not.have.beenCalled;
+    describe("should give feedback", function () {
+      beforeEach(appMock.resetApp);
+
+      it("should throw an exception if the init fails and no errback is provided", function (done) {
+        appMock.initDeferred.always(function () { done(); });
+        try {
+          appMock.hullInit({});
+        } catch (e) {
           done();
-        });
+        }
+        appMock.initDeferred.reject();
       });
 
-      it("should run only the callback if succeeded", function (done) {
-        var spy = sinon.spy();
-        Hull.init({orgUrl: "...", appId: ".."}, function () {
-          spy.should.not.have.beenCalled;
-          done();
-        }, spy);
+      it("should execute the errback in case of error", function () {
+        appMock.app.start.returns(appMock.initDeferred);
+        var errb = sinon.spy();
+        appMock.hullInit({}, null, errb);
+        appMock.initDeferred.reject();
+        errb.should.have.been.called;
       });
 
-      //@TODO Does not work because Hull is a singleton, once it is started
-      //      it can not be stopped
-      //
-      //it("should expose only some properties", function (done) {
-      //  done(new Error("untested"));
-      //});
-
-      //it("should allow to specify which properties to expose additionnally", function (done) {
-      //  done(new Error("untested"));
-      //});
+      it("should execute the callback in case of success", function () {
+        appMock.app.start.returns(appMock.initDeferred);
+        var cb = sinon.spy();
+        appMock.hullInit({}, cb);
+        appMock.initDeferred.resolve();
+        cb.should.have.been.called;
+        cb.should.have.been.calledWith(window.Hull);
+      });
     });
+
   });
 });

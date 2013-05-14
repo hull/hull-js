@@ -1,86 +1,45 @@
-<div class="hull-pager">
-  <hr class="hull-rule" />
-    <div class="hull-pager__content">
-      <button data-hull-action="previousPage" class="hull-btn">&larr; Previous</button>
-      <button data-hull-action="nextPage" class="hull-btn">Next &rarr;</button>
-    </div>
-  <hr class="hull-rule" />
-  <div class="hull-pager__query">
-      <span>{{query.page}}</span>
-      <span>VERB ?: {{query.where.verb}}</span>
-      <span>ObjectType ?: {{query.where.obj_type}}</span>
-      <pre>{{json query}}</pre>
-  </div>
-</div>
-
-<ul class="hull-activity">
-  {{#activities}}
-    <li class="hull-media hull-activity__item hull-activity__item--{{verb}}">
+<ul class="hull-activity media-list">
+  {{#each activities}}
+    <li class="media hull-activity__{{verb}}">
       {{#if actor.picture}}
-        <div class="hull-media__img">
-            <img src="{{actor.picture}}"/>
+        <div class="pull-left">
+          <img class="media-object img-rounded" src="{{actor.picture}}"/>
         </div>
       {{/if}}
-      <div class="hull-media__body">
-
-        <h3 class="hull-activity__summary">
-          <span class="hull-activity__summary__actor">{{actor.name}}</span>
-          <span class="hull-activity__summary__verb">{{verb}}</span>
-          <span class="hull-activity__summary__object">{{object.type}} - {{object.name}}</span>
-          <span class="hull-activity__summary__target">{{target.name}}</span>
-        </h3>
-
-        <div class="hull-activity__content hull-activity__content--{{object.type}}">
-
-          <div class="hull-media">
-            <div class="hull-media__img">
-                {{#target}}
-                  <div class="hull-activity__meta__target hull-activity__meta__target--{{type}}">
-                     <img src="{{imageUrl id "thumb"}}"/>
-                  </div>
-                {{/target}}
-            </div>
-            <div class="hull-media__body">
-               {{#object}}
-                  <div class="hull-activity__content__object">
-                    <img src="{{imageUrl id "original"}}"/>
-                    <h4 class="hull-activity__content__object__name">{{name}}</h4>
-                  </div>
-                {{/object}}
-
-                {{#if content}}
-                  <div class="hull-activity__content__content">
-                    {{content}}
-                  </div>
-                {{/if}}
-
-            </div>
-          </div>
-
-        </div>
-
-        <div class="hull-activity__meta">
-          {{#if target.picture}}
-            <img class="hull-activity__meta__target--icon" src="{{target.picture id "thumb"}}">
-          {{/if}}
-          <span class="hull-activity__meta__date">{{fromNow published}}</span>
-        </div>
-
+      
+      <div class="media-body">
+        <h4 class="media-heading">
+          {{actor.name}} {{verb}} {{object.type}} - {{object.name}} {{target.name}}
+        </h4>
+        {{#if object.description}}
+          <p>{{object.description}}</p>
+        {{/if}}
+        {{#ifEqual object.type "image"}}
+          <img src="{{imageUrl object.id "original"}}"/>
+        {{/ifEqual}}
+        <p class="muted">{{fromNow published}}</p>
       </div>
-
+      </div>
     </li>
-  {{/activities}}
-  {{#if activities}}
-    <li class="hull-media hull-activity__item">
-      <button data-hull-action="fetchMore" class="hull-btn hull-btn--lrg hull-btn--full">
-        Fetch more...
-      </button>
+  {{/each}}
+  {{#unless activities}}
+    <li>
+      <div class="alert">No activity</div>
     </li>
-  {{/if}}
+  {{/unless}}
 </ul>
 
-{{^activities}}
-<div class="hull-empty">
-  No activity
-</div>
-{{/activities}}
+
+{{#if isPaged}}
+  <ul class="pager">
+    <li class="previous">
+      <a href="#" data-hull-action="previousPage">&larr; Previous</a>
+    </li>
+    <li class="next">
+      <a href="#" d data-hull-action="nextPage">Next &rarr;</a>
+    </li>
+  </ul>
+{{else}}
+  <button data-hull-action="fetchMore" class="btn btn-block">Fetch more...</button>
+{{/if}}
+

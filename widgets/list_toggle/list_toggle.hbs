@@ -1,7 +1,10 @@
-<div class="hull-list_toggle">
+{{#if loggedIn}}
   {{#if isListed}}
-    <button class="hull-btn" data-hull-action="removeFromList">Remove {{obj.name}} from {{list.name}}</button>
+    <button class="btn" data-hull-action="removeFromList">Remove {{objName}} from {{listName}}</button>
   {{else}}
-    <button class="hull-btn" data-hull-action="addToList">Add {{obj.name}} to {{list.name}}</button>
+    <button class="btn" data-hull-action="addToList">Add {{objName}} to {{listName}}</button>
   {{/if}}
-</div>
+{{else}}
+  <div data-hull-widget="login_button@hull"></div>
+{{/if}}
+

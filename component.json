@@ -1,6 +1,6 @@
 {
   "name": "hull-js",
-  "version": "0.3.1",
+  "version": "0.4.3",
   "main": "./lib/hull.js",
   "dependencies": {
     "jquery": "1.9.1",
@@ -8,11 +8,15 @@
     "backbone": "0.9.9",
     "easyXDM": "2.4.17",
     "route-recognizer": "latest",
-    "handlebars": "1.0.0-rc.2",
-    "analytics": "0.1.0",
+    "require-handlebars-plugin": "0.4.0",
+    "analytics": "hull/analytics#0.8.3",
     "base64": "0.1.1",
     "jquery-file-upload": "7.2.1",
     "moment": "1.7.2",
-    "underscore.string": "2.3.1"
+    "underscore.string": "2.3.1",
+    "jquery.cookie": "latest"
+  },
+  "devDependencies": {
+    "JSCovReporter": "git://github.com/TwoApart/JSCovReporter.git"
   }
 }

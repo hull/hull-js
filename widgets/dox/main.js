@@ -1,36 +1,54 @@
 define(['./prism'], function(){
   return {
-    type: "Hull",
-    templates: ["dox", "widget","template"],
+    type: 'Hull',
+
+    templates: [
+      'dox',
+      'widget',
+      'template'
+    ],
+
     datasources: {
       dox: function() {
-        var widgets=this.options.inspect.split(',');
-        var source = this.options.source || 'http://hull-js.s3.amazonaws.com/' + Hull.version + '/docs/'
-        var promises = _.map(widgets,function(w){
-          var s = w.replace(/^\s+|\s+$/g, ''); //IE-compatible .trim()
-          var dfd = $.getJSON(source+s+'/main.json');
-          return dfd;
-        });
-        return $.when.apply(this, promises);
+        return $.getJSON(this.getWidgetSource(this.options.inspect));
       }
     },
+
     beforeRender: function(data) {
-      data.dox = data.dox[0];
-      data.inspect = this.options.inspect;
-      _.each(data.dox.widget,function(widget){
-        var name = _.find(widget.tags, function(tag){
-          if (tag.type=='name'){
-            return true;
-          } else {
-            return false;
-          }
+      var dox = data.dox = data.dox[0];
+
+      dox.templates = _.map(dox.templates, function(content, name) {
+        return {
+          name: name,
+          content: content,
+          path: [this.options.inspect, '/', name].join('')
+        };
+      }, this);
+
+      _.each(dox.widget, function(widget){
+        widget.name = _.find(widget.tags, function(tag){
+          return (tag.type === 'name') ? true : false;
         });
-        widget.name = name;
       });
+
       return data;
     },
+
     afterRender: function(){
-      Prism.highlightAll()
+      this.$('pre').not('[class*="language"]').addClass('language-markup');
+      Prism.highlightAll();
+    },
+
+    getWidgetSource: function(widget) {
+      var source = [];
+
+      source.push(this.options.source || 'http://hull-js.s3.amazonaws.com/');
+      source.push(Hull.version);
+      source.push('/docs/');
+      source.push(widget.replace(/^\s+|\s+$/g, ''));
+      source.push('/main.json');
+
+      return source.join('');
     }
-  }
+  };
 });

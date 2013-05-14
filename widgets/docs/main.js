@@ -4,19 +4,17 @@ define({
   templates: ['docs'],
 
   datasources: {
-    all: function() {
-      return this.api('hull/docs/all');
-    },
+    all: 'docs/all',
     doc: function() {
       if (this.options.api) {
-        return this.api('hull/docs/' + this.options.api);
+        return this.api('docs/' + this.options.api);
       }
     }
   },
 
   actions: {
-    showDetails: function(s,e,d) {
-      this.options.api = d.api;
+    showDetails: function(e, params) {
+      this.options.api = params.data.api;
       this.render();
     }
   }

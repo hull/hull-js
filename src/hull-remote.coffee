@@ -5,7 +5,7 @@ define ['aura/aura', 'lib/version'], (Aura, version)->
   Hull = (config)->
     return hull if hull && hull.app
     hull = { config }
-    config.debug = true
+    config.debug ?= false
     hull.app = Aura(config)
     hull.app.use('lib/remote/services')
     hull.app.use('lib/remote/services/hull')
@@ -15,6 +15,12 @@ define ['aura/aura', 'lib/version'], (Aura, version)->
 
     if config.services.settings.github_app
       hull.app.use('lib/remote/services/github')
+
+    if config.services.settings.twitter_app
+      hull.app.use('lib/remote/services/twitter')
+
+    if config.services.settings.instagram_app
+      hull.app.use('lib/remote/services/instagram')
 
     hull.app.start()
 

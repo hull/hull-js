@@ -12,7 +12,19 @@
       {{#items}}
         <li>
           <p>
-            <span class="hull-loz">{{type}}</span> <strong>{{name}}</strong> {{description}}
+            <span class="hull-loz">{{type}}</span>
+            <strong>
+              {{#if name}}
+                {{name}}
+              {{else}}
+                {{#if uid}}
+                  {{uid}}
+                {{else}}
+                  {{id}}
+                {{/if}}
+              {{/if}}
+            </strong>
+            {{description}}
           </p>
         </li>
       {{/items}}

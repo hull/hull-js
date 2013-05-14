@@ -1,36 +1,51 @@
-<h1>Widget : {{capitalize inspect}} </h1>
 {{#dox}}
-  <div class='dox'>
+  <div class="dox">
     {{#widget}}
-      <div class="block">
-        {{#name}}
-          <h3>{{string}}</h3>
-        {{/name}}
-        {{#description}}
-          {{{full}}}
-        {{/description}}
-        {{#if tags}}
+      {{#unless ignore}}
+        <div class="block">
+          {{#name}}
+            <h3>{{string}}</h3>
+          {{/name}}
+          {{#description}}
+            {{{full}}}
+          {{/description}}
+          {{#if tags}}
           <table>
             <thead>
-              <tr> <th>Parameters</th> </tr>
+              <tr>
+                <th>Parameters</th>
+              </tr>
             </thead>
             <thead>
-              <tr> <th>name</th> <th>type</th> <th>description</th> </tr>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
             </thead>
             <tbody>
               {{#tags}}
-                <tr> <td><code>{{name}}</code></td> <td>{{#types}}<code>{{this}}</code>{{/types}}</td> <td>{{description}}</td> </tr>
+                <tr>
+                  <td><code>{{name}}</code></td>
+                  <td>{{#types}}<code>{{this}}</code>{{/types}}</td>
+                  <td>{{description}}</td>
+                </tr>
               {{/tags}}
             </tbody>
           </table>
-        {{/if}}
-      </div>
+          {{/if}}
+        </div>
+      {{/unless}}
     {{/widget}}
-    {{#key_value templates}}
+
+    {{#each templates}}
       <div class="template">
-        <h4>Template : {{key}}</h4>
-        <pre class='language-markup'><code>{{value}}</code></pre>
+        <dl>
+          <dt>Template path:</dt>
+          <dd><code>{{path}}</code></dd>
+        </dl>
+        <pre class="language-markup"><code>{{content}}</code></pre>
       </div>
-    {{/key_value}}
+    {{/each}}
   </div>
 {{/dox}}

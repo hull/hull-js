@@ -1,30 +1,47 @@
 <div class="hull-comments">
-
-  <div class="hull-comments__form">
+  <div class="well hull-comments__form">
     {{#if loggedIn}}
-      <textarea class="hull-comments__text" placeholder="Write something..."></textarea>
-      <button data-hull-action="comment" class="hull-btn">Send</button>
+      <form>
+        <div class='media'>
+          <div class="pull-left">
+            <img class="media-object img-rounded" src="{{me.picture}}" alt="{{me.name}}">
+          </div>
+          <div class="media-body">
+            <textarea name='description' class="input-block-level" rows="3" placeholder="Write something..."></textarea>
+            <button data-hull-action="comment" class="btn btn-primary">Post</button> as {{me.name}}
+            <div class='pull-right'>
+              <a href="#" data-hull-action="logout" class="link">Logout</a>
+            </div>
+          </div>
+        </div>
+      </form>
     {{else}}
-      <div data-hull-widget="identity@hull"></div>
+      <div data-hull-widget="login_button@hull"></div>
     {{/if}}
   </div>
 
-  <hr class="hull-rule">
 
   {{#if comments}}
-    <ul class="hull-comments__list">
+    <ul class="media-list hull-comments__list">
       {{#comments}}
-        <li class="hull-comments__list__item">
-          <div class="hull-media">
-            <div class="hull-media__img">
-              <img src="{{user.picture}}" alt="{{user.name}}">
+        <li class="media" data-hull-comment-id="{{id}}">
+          <div class="pull-left">
+            <img class="media-object img-rounded" src="{{user.picture}}" alt="{{user.name}}">
+          </div>
+          <div class="media-body">
+            <div class="pull-right">
+              <small class="muted">{{fromNow updated_at}}</small>
             </div>
-            <div class="hull-media__body">
-              <div class="hull-comments__timestamp">{{fromNow updated_at}}</div>
-              <h4 class="hull-comments__name">{{user.name}}</h4>
-              <div class="hull-comments__description">
-                {{description}}
-              </div>
+            <h4 class="media-heading">{{user.name}}</h4>
+            <div class="hull-comments__description">
+              {{description}}
+            </div>
+            <div class="hull-comments__actions">
+                {{#if isDeletable}}
+                  <small>
+                    <a href="#" class='link' data-hull-action="delete" data-hull-id="{{id}}">Delete</a>
+                  </small>
+                {{/if}}
             </div>
           </div>
         </li>
@@ -33,7 +50,7 @@
   {{/if}}
 
   {{^comments}}
-    <div class="hull-empty">
+    <div class="alert alert-info">
       oops... no comments for the moment
     </div>
   {{/comments}}

@@ -1,6 +1,5 @@
-define ['backbone', 'underscore'], (Backbone, _)->
+define ['backbone', 'underscore', 'lib/client/datasource'], (Backbone, _, Datasource)->
 
-  Datasource = null
   debug = false
 
   slice = Array.prototype.slice
@@ -15,34 +14,37 @@ define ['backbone', 'underscore'], (Backbone, _)->
       source  = $(e.currentTarget)
       action  = source.data("hull-action")
       fn = @actions[action] || @["#{action}Action"]
+      fn = @[fn] if _.isString(fn)
       unless _.isFunction(fn)
         throw new Error("Can't find action #{action} on this Widget")
-      options = {}
+      data = {}
       for k,v of source.data()
         do ->
           key = k.replace(/^hull/, "")
           key = key.charAt(0).toLowerCase() + key.slice(1)
-          options[key] = v
-      fn.call(@, source, e, options)
-    catch e
-      console.error("oops... missed action?", e.message, e)
+          data[key] = v
+      fn.call(@, e, { el: source, data: data })
+    catch err
+      console.error("Error in action handler", action, err.message, err)
     finally
       e.stopPropagation()
       e.stopImmediatePropagation()
 
 
   class HullWidget extends Backbone.View
-
     actions: {}
+
     templates: []
 
     initialize: ->
 
+    isInitialized: false
+
     constructor: (options)->
       @ref          = options.ref
       @api          = @sandbox.data.api
-      @track        = @sandbox.track
       @datasources  = _.extend {}, default_datasources, @datasources, options.datasources
+      @refresh     ?= _.throttle(@render, 200)
 
       try
         @events = if _.isFunction(@events) then @events() else @events
@@ -52,7 +54,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
         # Building actions hash
         @actions = if _.isFunction(@actions) then @actions() else @actions
         @actions ?= {}
-        @actions.login ?= (source, e, options)=> @sandbox.login(options.provider, options)
+        @actions.login ?= (e, params)=> @sandbox.login(params.data.provider, params.data)
         @actions.logout ?= => @sandbox.logout()
 
         unless @className?
@@ -61,11 +63,17 @@ define ['backbone', 'underscore'], (Backbone, _)->
 
         _.each @datasources, (ds, i)=>
           ds = _.bind ds, @ if _.isFunction ds
-          @datasources[i] = new Datasource ds unless ds instanceof Datasource
+          @datasources[i] = new Datasource(ds, @api) unless ds instanceof Datasource
 
         @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
       catch e
         console.error("Error loading HullWidget", e.message)
+      sb = @sandbox
+      getId = ()->
+        return @id if @id
+        return sb.util.entity.encode(@uid) if @uid
+        sb.config.entity_id
+      options.id = getId.call(options)
       Backbone.View.prototype.constructor.apply(@, arguments)
       @render()
 
@@ -77,6 +85,8 @@ define ['backbone', 'underscore'], (Backbone, _)->
         "Cannot find template '#{tpl}'"
 
     beforeRender: (data)-> data
+
+    renderError: ->
 
     log: (msg)=>
       if @options.debug
@@ -99,7 +109,11 @@ define ['backbone', 'underscore'], (Backbone, _)->
         widgetDeferred = @sandbox.data.when.apply(undefined, promises)
         templateDeferred = @sandbox.template.load(@templates, @ref)
         @data = {}
-        $.when(widgetDeferred, templateDeferred).done (data, tpls)=>
+        readyDfd = $.when(widgetDeferred, templateDeferred)
+        readyDfd.fail (err)=>
+          console.error("Error in Building Render Context", err.message, err)
+          @renderError.call(@, err.message, err)
+        readyDfd.done (data, tpls)=>
           args = data
           _.map keys, (k,i)=>
             @data[k] = args[i]
@@ -108,6 +122,7 @@ define ['backbone', 'underscore'], (Backbone, _)->
             else
               ret[k] = args[i]
           ret.loggedIn    = @loggedIn()
+          ret.isAdmin     = @sandbox.isAdmin
           ret.debug       = @sandbox.config.debug
           ret.renderCount = @_renderCount
           @_templates     = tpls
@@ -137,29 +152,46 @@ define ['backbone', 'underscore'], (Backbone, _)->
 
     afterRender: (data)=> data
 
-
     # Build render context from datasources
     # Call beforeRender
     # doRender
     # afterRender
     # Start nested widgets...
     render: (tpl, data)=>
-      @refresh ?= _.throttle(@render, 200)
       ctx = @buildContext.call(@)
-      ctx.fail (err)-> console.error("Error building context: ", err.message, err)
+      ctx.fail (err)->
+        console.error("Error fetching Datasources ", err.message, err)
+
       ctx.then (ctx)=>
-        beforeCtx = @beforeRender.call(@, ctx)
-        $.when(beforeCtx).done (dataAfterBefore)=>
-          data = _.extend(dataAfterBefore || ctx, data)
-          @doRender(tpl, data)
-          _.defer(@afterRender.bind(@, data))
-          _.defer((-> @sandbox.start(@$el)).bind(@))
+        try
+          beforeCtx = @beforeRender.call(@, ctx)
+          beforeRendering = $.when(beforeCtx)
+          beforeRendering.done (dataAfterBefore)=>
+            data = _.extend(dataAfterBefore || ctx, data)
+            @doRender(tpl, data)
+            _.defer(@afterRender.bind(@, data))
+            _.defer((-> @sandbox.start(@$el)).bind(@))
+            @isInitialized = true;
+
+          beforeRendering.fail (err)=>
+            console.error("Error in beforeRender", err.message, err)
+            @renderError.call(@, err)
+        catch err
+          console.error("Error in beforeRender", err.message, err)
+          @renderError.call(@, err)
+
+    trackingData: {}
+
+    track: (name, data = {}) ->
+      defaultData = _.result(this, 'trackingData')
+      defaultData = if _.isObject(defaultData) then defaultData else {}
+      data = _.extend { id: @id, widget: @options.name }, defaultData, data
+      @sandbox.track(name, data)
 
   (app)->
-    Datasource = app.core.datasource
     default_datasources =
-      me: new Datasource 'me'
-      app: new Datasource 'app'
-      org: new Datasource 'org'
+      me: new Datasource 'me', app.core.data.api
+      app: new Datasource 'app', app.core.data.api
+      org: new Datasource 'org', app.core.data.api
     debug = app.config.debug
     app.core.registerWidgetType("Hull", HullWidget.prototype)
