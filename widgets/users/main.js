@@ -1,7 +1,5 @@
 /**
  * Widget Users - Admin access only
- *
- * Not ready yet
  */
 
 define({
@@ -34,10 +32,6 @@ define({
     }
   },
 
-  beforeRender: function() {
-    console.warn("Before Render !");
-  },
-
   actions: {
     nextPage: function() {
       this.params.page += 1;
@@ -49,6 +43,4 @@ define({
       this.render();
     }
   }
-
-
 });
