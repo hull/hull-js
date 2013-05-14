@@ -4,6 +4,7 @@
     <th>Name</th>
     <th>Signed up</th>
     <th>Accounts</th>
+    <th>Profile</th>
     <th>Sign in count</th>
   </tr>
   {{#each userProfiles}}
@@ -14,13 +15,22 @@
     <td>
       {{#each user.identities}}{{type}}{{/each}}
     </td>
+    <td>
+      {{#if user.profile}}
+        <dl>
+          {{#key_value user.profile}}
+            <dt>{{key}}</dt>
+            <dd>{{value}}</dd>
+          {{/key_value}}
+        </dl>
+      {{/if}}
+    </td>
     <td>{{user.stats.sign_in_count}}</td>
   </tr>
   {{/each}}
 </table>
 
 <div>
-  <button data-hull-action='previousPage'><< Prev</button>
-  |
-  <button data-hull-action='nextPage'>Next >></button>
+  <button data-hull-action='previousPage' class="btn">← Prev</button>
+  <button data-hull-action='nextPage' class="btn">Next →</button>
 </div>

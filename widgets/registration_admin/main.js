@@ -12,10 +12,6 @@ define({
     }
   },
 
-  beforeRender: function(data) {
-    data.isAdmin = !!this.appSecret;
-  },
-
   afterRender: function(data) {
     this.$appSecret = this.$('#hull-app-secret');
     this.$fieldsJSON = this.$('#hull-fields-json');
@@ -24,19 +20,12 @@ define({
   },
 
   actions: {
-    sign:  function(e) {
-      e.preventDefault();
-
-      this.appSecret = this.$appSecret.val();
-      this.refresh();
-    },
-
     updateFields: function(e) {
       e.preventDefault();
 
-      var data = this.signRequest({
+      var data = {
         extra: { profile_fields: this.parseJSON(this.$fieldsJSON.val()) }
-      });
+      };
 
       this.updateFields(data);
     }
@@ -56,11 +45,5 @@ define({
     } catch (err) {
       alert('JSON is not valid');
     }
-  },
-
-  signRequest: function(data) {
-    return _.extend(data || {}, {
-      access_token: this.appSecret
-    });
   }
 });
