@@ -89,7 +89,7 @@
                 type="{{type}}"
                 id="hull-form-{{name}}"
                 name="{{name}}"
-                {{#ifEqual value "true"}}checked{{/ifEqual}}
+                {{#if value}}checked{{/if}}
                 placeholder="{{placeholder}}"
                 {{#if autocomplete}}autocomplete="{{autocomplete}}"{{/if}}
                 {{#if pattern}}pattern="{{pattern}}"{{/if}}
