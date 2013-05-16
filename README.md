@@ -1,6 +1,6 @@
 # Building the library
 
-Checkout
+Checkout 
 
     git@github.com:hull/hull-js.git
 
