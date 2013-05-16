@@ -23,6 +23,7 @@
             <input
               type="{{type}}"
               id="hull-form-{{name}}"
+              data-hull-input="{{name}}"
               name="{{name}}"
               value="{{value}}"
               placeholder="{{placeholder}}"
@@ -38,6 +39,7 @@
             <input
               type="{{type}}"
               id="hull-form-{{name}}"
+              data-hull-input="{{name}}"
               name="{{name}}"
               value="{{value}}"
               placeholder="{{placeholder}}"
@@ -53,6 +55,7 @@
             <input
               type="{{type}}"
               id="hull-form-{{name}}"
+              data-hull-input="{{name}}"
               name="{{name}}"
               value="{{value}}"
               placeholder="{{placeholder}}"
@@ -68,6 +71,7 @@
             <select
             type="{{type}}"
             id="hull-form-{{name}}"
+            data-hull-input="{{name}}"
             name="{{name}}"
             {{#if autocomplete}}autocomplete="{{autocomplete}}"{{/if}}
             {{#if pattern}}pattern="{{pattern}}"{{/if}}
@@ -88,6 +92,7 @@
               <input
                 type="{{type}}"
                 id="hull-form-{{name}}"
+                data-hull-input="{{name}}"
                 name="{{name}}"
                 {{#if value}}checked{{/if}}
                 placeholder="{{placeholder}}"
@@ -100,6 +105,8 @@
             </label>
           {{/ifEqual}}
         </div>
+
+        <p id="hull-form-{{name}}-error"></p>
       {{/each}}
 
       <input type="submit" data-hull-action="submit" class="btn btn-primary" value="Register" />

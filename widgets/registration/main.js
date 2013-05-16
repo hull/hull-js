@@ -43,10 +43,10 @@ define(['underscore', 'h5f'], function(_, H5F) {
       this._ensureFormEl();
       var isValid = this.formEl.checkValidity();
       if(isValid) return isValid;
-      this.$el.find('[data-hull-input]').each(function(key,el){
+      this.$el.find('[data-hull-input]').each(function(key, el){
         var $el = $(el),
             id = $el.attr('id');
-        $('#'+id+'-error').text( (el.checkValidity()) ? '' : $el.attr('data-error-message'));
+        $('#'+id+'-error').text((el.checkValidity()) ? '' : $el.data('errorMessage'));
       });
       return false;
     },
