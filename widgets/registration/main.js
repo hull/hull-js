@@ -55,9 +55,8 @@ define(['underscore', 'h5f'], function(_, H5F) {
       var self  = this;
           me    = this.sandbox.data.api.model('me');
       if (this.loggedIn()) {
-        this.api('me/profile', 'put', profile, function(myAttrs) {
-          me.set(myAttrs);
-          self.trigger('register', this);
+        this.api('me/profile', 'put', profile, function(newProfile) {
+          me.set('profile', newProfile);
           self.render();
         });
       }
@@ -75,7 +74,11 @@ define(['underscore', 'h5f'], function(_, H5F) {
       // value. If it's the case we consider the form as complete.
       var isComplete = _.every(fields, function(f) {
         var profileField = data.me.profile[f.name];
-        return !!profileField && profileField === f.value;
+        if (f.type === 'checkbox') {
+          return profileField == f.value;
+        } else {
+          return !!profileField && profileField === f.value;
+        }
       });
 
       this.template = isComplete ? 'registration_complete' : 'registration_form';
