@@ -59,6 +59,7 @@
         throw err if !errcb
 
       initProcess.done ()->
+        hull.app.sandbox.emit('hull.started')
         cb(window.Hull) if cb
 
       return hull
