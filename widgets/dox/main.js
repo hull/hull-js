@@ -15,7 +15,8 @@ define(['./prism'], function(){
     },
 
     beforeRender: function(data) {
-      var dox = data.dox = data.dox[0];
+      console.warn("Data Dox", data);
+      var dox = data.dox;
 
       dox.templates = _.map(dox.templates, function(content, name) {
         return {

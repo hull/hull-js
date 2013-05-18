@@ -119,6 +119,8 @@ define ['backbone', 'underscore', 'lib/client/datasource'], (Backbone, _, Dataso
             @data[k] = args[i]
             if _.isFunction args[i]?.toJSON
               ret[k] = args[i].toJSON()
+            else if _.isArray(args[i]) && args[i][1] == 'success' && args[i][2].status == 200
+              ret[k] = args[i][0]
             else
               ret[k] = args[i]
           ret.loggedIn    = @loggedIn()
