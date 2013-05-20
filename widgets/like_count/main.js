@@ -30,7 +30,7 @@ define({
   },
 
   beforeRender: function(data){
-    data.count = data.comments.stats.likes || 0;
+    data.count = (data.likes.stats) ? data.likes.stats.likes || 0 : 0;
   }
 
 });
