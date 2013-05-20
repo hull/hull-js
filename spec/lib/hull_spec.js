@@ -78,13 +78,13 @@ define(['../support/mocks/app'], function (appMock) {
 
       it("should trigger an event when the app is started", function () {
         appMock.app.start.returns(appMock.initDeferred);
-        appMock.sandbox.emit = sinon.spy();
-        appMock.hullInit({});
+        var spy = sinon.spy();
+        var _h = appMock.hullInit({});
+        _h.app.sandbox.emit = spy;
         appMock.initDeferred.resolve();
-        cb.should.have.been.called;
-        cb.should.have.been.calledWith('hull.started');
+        spy.should.have.been.called;
+        spy.should.have.been.calledWith('hull.started');
       });
     });
-
   });
 });
