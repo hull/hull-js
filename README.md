@@ -50,4 +50,13 @@ Create a `grunt-aws.json` file at the root, with the following content :
     }
 
 
+# Developing locally (force @hull to fetch from js.hull.dev)
 
+    <script src="//hull-js.s3.amazonaws.com/develop/hull.js"></script>
+    <script>
+      Hull.init({
+        appId: 'YOUR_APP_ID',
+        orgUrl: 'YOUR_APP_ID',
+        jsUrl: 'http://js.hull.dev/dist'
+      });
+    </script>

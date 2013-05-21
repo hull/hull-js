@@ -123,6 +123,7 @@ define ['backbone', 'underscore', 'lib/client/datasource'], (Backbone, _, Dataso
               ret[k] = args[i][0]
             else
               ret[k] = args[i]
+          ret.options     = @options
           ret.loggedIn    = @loggedIn()
           ret.isAdmin     = @sandbox.isAdmin
           ret.debug       = @sandbox.config.debug
@@ -163,7 +164,6 @@ define ['backbone', 'underscore', 'lib/client/datasource'], (Backbone, _, Dataso
       ctx = @buildContext.call(@)
       ctx.fail (err)->
         console.error("Error fetching Datasources ", err.message, err)
-
       ctx.then (ctx)=>
         try
           beforeCtx = @beforeRender.call(@, ctx)
