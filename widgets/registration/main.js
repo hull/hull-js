@@ -52,7 +52,8 @@ define(['underscore', 'h5f'], function(_, H5F) {
       this.$el.find('[data-hull-input]').each(function(key, el){
         var $el = $(el),
             id = $el.attr('id');
-        $('#'+id+'-error').text((el.checkValidity()) ? '' : $el.data('errorMessage'));
+        var errorMsg = $el.siblings('[data-hull-error]')
+        errorMsg.text((el.checkValidity()) ? '' : $el.data('errorMessage'));
       });
       return false;
     },
@@ -70,7 +71,6 @@ define(['underscore', 'h5f'], function(_, H5F) {
 
     beforeRender: function(data) {
       data.formId = this.formId;
-
       var fields = _.map(data.fields, function(f) {
         f.value = this._findFieldValue(f.name);
         return f;
