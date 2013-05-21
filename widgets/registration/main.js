@@ -4,6 +4,8 @@ define(['underscore', 'h5f'], function(_, H5F) {
 
     templates: ['registration_form', 'registration_complete'],
 
+    refreshEvents: ['model.hull.me.change'],
+
     complete: false,
 
     options:{
