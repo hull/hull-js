@@ -308,13 +308,13 @@ module.exports = function (grunt) {
             {
               gzip:  true,
               src: 'dist/<%= PKG_VERSION %>/**/*',
-              dest: '/',
+              dest: '',
               rel: 'dist/'
             },
             {
               gzip:  false,
               src: 'dist/<%= PKG_VERSION %>/**/*',
-              dest: '/',
+              dest: '',
               rel: 'dist/'
             }
           ]
