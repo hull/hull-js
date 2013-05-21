@@ -41,7 +41,7 @@ define(['underscore', 'h5f'], function(_, H5F) {
     },
 
     initialize : function(options, callback) {
-      this.formId = (new Date()).getTime();
+      this.formId = "form_"+(new Date()).getTime();
       _.bindAll(this);
     },
 
