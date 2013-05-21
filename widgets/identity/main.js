@@ -60,10 +60,9 @@ define({
       data.loggedInProviders = [];
     }
 
-
     // Create an array of logged out providers.
     data.loggedOut = _.difference(data.providers, data.loggedInProviders);
-    data.matchingProviders = _.intersection(data.providers, data.loggedInProviders);
+    data.matchingProviders = _.intersection(data.providers.concat('email'), data.loggedInProviders);
     data.authServices = this.authServices;
 
     return data;
