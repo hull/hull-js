@@ -6,6 +6,10 @@ define(['underscore', 'h5f'], function(_, H5F) {
 
     complete: false,
 
+    options:{
+      editable:false
+    },
+
     defaultFields: [
       {
         type : 'text',
