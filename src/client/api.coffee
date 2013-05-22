@@ -28,7 +28,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         remoteUrl += "&js=#{config.jsUrl}"  if config.jsUrl
         remoteUrl += "&uid=#{config.uid}"   if config.uid
         remoteUrl += "&access_token=#{config.appSecret}" if config.appSecret
-        remoteUrl += "&user_hash=#{config.user_hash}" if config.user_hash
+        remoteUrl += "&user_hash=#{config.userHash}" if config.userHash != undefined
         remoteUrl
 
       initialize: (app)->
