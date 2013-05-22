@@ -242,11 +242,11 @@ module.exports = function (grunt) {
       },
       remote: {
         files: remoteSrc,
-        tasks: ['build_remote', 'mocha']
+        tasks: ['build_remote', 'cover', 'plato', 'mocha']
       },
       client: {
         files: clientSrc,
-        tasks: ['build_client', 'mocha']
+        tasks: ['build_client', 'cover', 'plato', 'mocha']
       },
       spec: {
         files: ['spec/**/*.js'],
