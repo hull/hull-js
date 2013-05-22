@@ -229,38 +229,35 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
           setupCollection.call(api, path)
 
         api.batch = ->
+          err = new Error 'Incorrect arguments passed to Hull.data.api.batch(). Only Arrays, callback and errback are accepted.'
           args      = slice.call(arguments)
-          # next      = args.shift()
           promises  = []
           requests  = []
           responses = []
           callback  = errback = null
+          arg       = null
 
           # # Parsing the arguments...
-          while (next)
-            type = typeof next
+          while (arg = args.shift())
+            type = typeof arg
             if (type == 'function')
               if !callback
-                callback = next
+                callback = arg
               else if !errback
-                errback = next
+                errback = arg
               else
-                throw new Error('Incorrect arguments passed to Hull.batch(). Only callback & errback can be defined.')
+                throw err
             else
-              requests.push(next)
+              throw err unless _.isArray(arg)
+              requests.push(arg)
 
-            next = args.shift()
+          throw new Error('No request given. Aborting') unless requests.length
+          promises = _.map requests, (request)->
+            api.apply(api, request).promise()
 
-          _.map(requests, (request)->
-            if _.isString(request)
-              req = [{ path: request, method: 'get' }]
-            else
-              req = [request]
-            promises.push(message.apply(api, req))
-          )
 
           # Actual request
-          res = core.data.when.apply($, promises)
+          res = core.data.when.apply(undefined, promises)
           res.then(callback, errback)
           res
 
