@@ -33,7 +33,7 @@ define(['spec/support/spec_helper', 'aura/aura'], function (helper, aura) {
   define('easyXDM', function () { return easyXDMMock; });
 
   describe("API specs", function () {
-    var env, api, app = aura({
+    var env, api, batch, app = aura({
       appId: "fakeId",
       orgUrl: "orgUrl"
     });
@@ -52,6 +52,7 @@ define(['spec/support/spec_helper', 'aura/aura'], function (helper, aura) {
     before(function (done) {
       initStatus.then(function () {
         api = env.createSandbox().data.api;
+        batch = env.createSandbox().data.api.batch;
         done();
       });
     });
@@ -85,6 +86,80 @@ define(['spec/support/spec_helper', 'aura/aura'], function (helper, aura) {
           spySuccess.should.have.been.calledTwice;
           spyFailure.should.not.have.been.called;
           done();
+        });
+      });
+    });
+
+    describe('batching requests', function () {
+      var spySuccess, spyFailure;
+      beforeEach(function () {
+        spySuccess = sinon.spy();
+        spyFailure = sinon.spy();
+      });
+
+      it('should throw if more than 2 functions are defined', function () {
+        batch.bind(undefined, function () {}, function () {}, function () {}).should.throw(Error);
+      });
+      it('should only accept Arrays apart from callback/errback', function () {
+        batch.bind(undefined, 'url').should.throw(Error);
+        batch.bind(undefined, {}).should.throw(Error);
+        batch.bind(undefined, 123).should.throw(Error);
+        batch.bind(undefined, null).should.throw(Error);
+        batch.bind(undefined, true).should.throw(Error);
+        batch.bind(undefined, []).should.not.throw(Error);
+      });
+      it('should execute callback when successful', function (done) {
+        var ret = batch(['success'], spySuccess, spyFailure);
+        ret.always(function () {
+          spySuccess.should.have.been.called;
+          spyFailure.should.not.have.been.called;
+          done();
+        });
+      });
+      it('should execute errback when failed', function (done) {
+        var ret = batch(['error'], spySuccess, spyFailure);
+        ret.always(function () {
+          spySuccess.should.not.have.been.called;
+          spyFailure.should.have.been.called;
+          done();
+        });
+      });
+      it('should execute callback when all requests succeed', function (done) {
+        var ret = batch(['success'], ['success'], spySuccess, spyFailure);
+        ret.always(function () {
+          spySuccess.should.have.been.called;
+          spyFailure.should.not.have.been.called;
+          done();
+        });
+      });
+      it('should execute errback when one request failed', function (done) {
+        var ret = batch(['error'], ['success'], spySuccess, spyFailure);
+        ret.always(function () {
+          spySuccess.should.not.have.been.called;
+          spyFailure.should.have.been.called;
+          done();
+        });
+      });
+      describe('individuals callbacks', function () {
+        it('should call individual callbacks on success', function (done) {
+          var spySuccess2 = sinon.spy(),
+              spyFailure2 = sinon.spy(),
+              ret = batch(['success', spySuccess, spyFailure], ['success', spySuccess2, spyFailure2]);
+          ret.always(function () {
+            spySuccess.should.have.been.called;
+            spyFailure.should.not.have.been.called;
+            spySuccess2.should.have.been.called;
+            spyFailure2.should.not.have.been.called;
+            done();
+          });
+        });
+        it('should call individual errbacks on failure', function (done) {
+          var ret = batch(['error', spySuccess, spyFailure]);
+          ret.always(function () {
+            spySuccess.should.not.have.been.called;
+            spyFailure.should.have.been.called;
+            done();
+          });
         });
       });
     });
