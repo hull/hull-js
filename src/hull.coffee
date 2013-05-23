@@ -19,7 +19,7 @@
           _.each cbArray, (cb)->
             app.core.mediator.on evt, cb
         if !app.config.debug
-          props = ['widget', 'templates', 'emit', 'on', 'version', 'track', 'login', 'logout']
+          props = ['widget', 'templates', 'emit', 'on', 'version', 'track', 'login', 'logout', 'data']
           props.concat(app.config.expose || [])
           _h = {}
           _.map props, (k)->
