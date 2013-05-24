@@ -48,8 +48,9 @@ define({
 
   findProp: function (obj, prop) {
     "use strict";
-    prop.split('.').forEach(function (_p) {
-      obj = !obj ? undefined : obj[_p];
+    var parts = prop.split('.');
+    _.each(parts, function(p) {
+      obj = !obj ? undefined : obj[p];
     });
     return obj;
   }
