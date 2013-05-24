@@ -39,7 +39,7 @@ define({
 
   beforeRender: function(data) {
     "use strict";
-    var defaultText = this.options.defaultText || 'aa';
+    var defaultText = this.options.defaultText || 'No value';
     var value = this.findProp(data.object, this.options.property);
     return {
       property: value !== undefined ? value : defaultText
