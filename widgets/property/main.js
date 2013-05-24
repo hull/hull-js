@@ -16,7 +16,7 @@
  * - `id`: Required. The id of the object for which we want to display a property.
  * - `property`: Required. The name of the property to be displayed. Can be a path
  *   if the property is nested (_eg_ `stats.likes`)
- *
+ * - `default-text`: The text to be displayed if the value does not exist
  * ## Template
  *
  * - `property`: Displays the property with no markup. Markup must be in the parents widget
