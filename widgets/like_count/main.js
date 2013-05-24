@@ -15,7 +15,7 @@
  *
  * ## Datasource:
  *
- * - `like`: Collection of all the comments made on the object.
+ * - `like`: Collection of all the likes made on the object.
  *
  */
 
