@@ -5,7 +5,6 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
     models = {}
 
     clearModelsCache =->
-      console.warn("clearModelsCache")
       models = _.pick(models, 'me', 'app', 'org')
 
     rpc = false
