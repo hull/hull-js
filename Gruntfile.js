@@ -261,7 +261,7 @@ module.exports = function (grunt) {
       hull: {
         src: 'widgets',
         before: ['requirejs:upload', 'requirejs:registration'],
-        dest: 'dist/<%= PKG_VERSION%>/widgets',
+        dest: 'dist/<%= PKG_VERSION%>',
         optimize: CONTEXT === 'prod'
       }
     },
