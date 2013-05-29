@@ -27,7 +27,7 @@ define({
   },
 
   datasources: {
-    userProfiles: function() {
+    users: function() {
       return this.api(this.appId + '/users', this.params);
     }
   },
@@ -44,8 +44,7 @@ define({
     },
 
     selectUser: function(event, action) {
-      console.warn("Emit", arguments);
-      this.sandbox.emit('hull-admin.user.select', action.data.userId);
+      this.sandbox.emit('hull-admin.user.select', action.data.id);
     }
 
   }
