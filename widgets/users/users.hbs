@@ -9,7 +9,11 @@
   </tr>
   {{#each userProfiles}}
   <tr>
-    <td><img src='{{user.picture}}' width='50' height='50' /></td>
+    <td>
+      <a data-hull-action="selectUser" data-hull-user-id="{{user.id}}">
+        <img src='{{user.picture}}' width='50' height='50' />
+      </a>
+    </td>
     <td>{{user.name}}</td>
     <td>{{fromNow created_at}}</td>
     <td>

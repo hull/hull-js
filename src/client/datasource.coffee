@@ -56,8 +56,10 @@ define ['underscore'], (_)->
     #
     fetch: ()->
       if _.isFunction(@def)
-        @def()
+        ret = @def()
+        ret && (ret.deferred || ret)
       else
+        return false if /undefined/.test(@def.path)
         if @type == 'model'
           @transport.model(@def).deferred
         else if @type == 'collection'

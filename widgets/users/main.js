@@ -41,6 +41,12 @@ define({
     previousPage: function() {
       this.params.page -= 1;
       this.render();
+    },
+
+    selectUser: function(event, action) {
+      console.warn("Emit", arguments);
+      this.sandbox.emit('hull-admin.user.select', action.data.userId);
     }
+
   }
 });
