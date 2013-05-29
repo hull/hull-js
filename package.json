@@ -23,7 +23,7 @@
     "grunt-hull-dox": "git://github.com/hull/grunt-hull-dox.git",
     "grunt-hull-widgets": "~0.5.0",
     "grunt-mocha": "0.3.1",
-    "bower": "~0.8.6",
+    "bower": "~0.9",
     "coverjs": "0.0.14",
     "grunt-coverjs": "git://github.com/hull/grunt-coverjs.git",
     "plato": "~0.5.0",
