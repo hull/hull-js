@@ -17,7 +17,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-coverjs');
   grunt.loadNpmTasks('grunt-plato');
 
-  var pkg = grunt.file.readJSON('component.json');
+  var pkg = grunt.file.readJSON('bower.json');
 
   var port = 3001;
 
