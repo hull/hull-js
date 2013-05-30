@@ -1,5 +1,4 @@
 (function() {
-  var historyStarted = false;
   define({
     name: "The Back of the Bone",
     require: {
@@ -11,8 +10,7 @@
       var core = app.core, sandbox = app.sandbox;
       var Backbone = require('backbone');
 
-      core.mvc = Backbone;
-      core.Widgets.Backbone = Backbone.View;
+      core.mvc = Backbone.noConflict();
 
       sandbox.mvc = {};
       sandbox.mvc.View = function(view) {
@@ -27,10 +25,11 @@
     },
 
     afterAppStart: function(app) {
-      if (!historyStarted) {
-        _.delay(function() { app.core.mvc.history.start(); }, 500);
-        historyStarted = true;
-      }
+      _.delay(function() {
+        if (!app.core.mvc.History.started) {
+          app.core.mvc.history.start();
+        };
+      }, 500);
     }
   });
 })();
