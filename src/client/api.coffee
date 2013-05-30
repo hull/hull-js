@@ -13,11 +13,9 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
       require:
         paths:
           easyXDM: 'components/easyXDM/easyXDM'
-          backbone: 'components/backbone/backbone'
           cookie: 'components/jquery.cookie/jquery.cookie'
         shim:
           easyXDM: { exports: 'easyXDM' }
-          backbone: { exports: 'Backbone', deps: ['underscore', 'jquery'] }
 
 
       # Builds the URL used by easyXDM
@@ -35,7 +33,6 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         sandbox = app.sandbox
 
         _         = require('underscore')
-        Backbone  = app.core.mvc
         easyXDM   = require('easyXDM')
 
         slice = Array.prototype.slice
@@ -143,7 +140,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
           dfd.fail(options.error)
           dfd
 
-        BaseHullModel = Backbone.Model.extend
+        BaseHullModel = app.core.mvc.Model.extend
           sync: sync
 
         RawModel = BaseHullModel.extend
@@ -158,7 +155,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
               url = @collection?.url
             url
 
-        Collection = Backbone.Collection.extend
+        Collection = app.core.mvc.Collection.extend
           model: Model
           sync: sync
 
