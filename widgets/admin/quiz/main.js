@@ -1,13 +1,13 @@
 /**
  * # Quiz Admin
  *
- * This widget allow you to edit and add quizzes in your application.
+ * This widget allows you to edit and add quizzes in your application.
  *
  * ## Templates
  *
- * - `quiz_admin`: The main template. It shows the list of your quizzes or the form to edit a quiz.
- * - `quiz_admin_list'`: Show the list of your quizzes and a form to add new quizzes.
- * - `quiz_admin_form'`: Show the form to edit a quiz.
+ * - `admin`: The main template. It shows the list of your quizzes or the form to edit a quiz.
+ * - `list'`: Show the list of your quizzes and a form to add new quizzes.
+ * - `form'`: Show the form to edit a quiz.
  *
  * ## Datasources
  *
@@ -31,9 +31,9 @@ define({
   },
 
   templates: [
-    'quiz_admin',
-    'quiz_admin_list',
-    'quiz_admin_form'
+    'admin',
+    'list',
+    'form'
   ],
 
   beforeRender: function(data) {
@@ -55,7 +55,7 @@ define({
 
     create: function(e) {
       e.preventDefault();
-      var val = $('#hull-quiz-json').val().trim();
+      var val = $('[data-hull-item="quiz-json"]').val().trim();
       try {
         var json = jQuery.parseJSON(val);
         this.api('app/achievements', 'post', json, function(data){
@@ -86,7 +86,7 @@ define({
     submit: function(e) {
       // TODO
       e.preventDefault();
-      var val = $('#hull-quiz-json').val().trim();
+      var val = $('[data-hull-item="quiz-json"]').val().trim();
       try {
         var json = jQuery.parseJSON(val);
         this.api(json.id, 'put', json, function(data){
