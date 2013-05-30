@@ -1,0 +1,65 @@
+<h3>Achievements</h3>
+<div>
+  <h4>Create an achievement</h4>
+  <form class="form-horizontal" action="#">
+    <div class="control-group">
+      <label class="control-label" for="name">Name</label>
+      <div class="controls">
+        <input id="name" type="text" name="name" />
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="description">Description</label>
+      <div class="controls">
+        <input id="description" type="text" name="description" />
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="type">Type</label>
+      <div class="controls">
+        <input id="type" type="text" name="type" />
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="secret">Secret</label>
+      <div class="controls">
+        <input id="type" type="text" name="secret" />
+      </div>
+    </div>
+  </form>
+</div>
+<div>
+  <h4>Achievements for the app {{app.name}}</h4>
+  <table class="table">
+    <thead>
+      <tr>
+        <td>id</td>
+        <td>name</td>
+        <td>description</td>
+        <td>type</td>
+        <td>secret</td>
+      </tr>
+    </thead>
+    <tbody>
+      {{#achievements}}
+      <tr>
+        <td>{{id}}</td>
+        <td>{{name}}</td>
+        <td>{{description}}</td>
+        <td>{{type}}</td>
+        <td>{{secret}}</td>
+      </tr>
+      {{/achievements}}
+      {{^achievements}}
+      <tr>
+        <td colspan=5>
+          <div class="text-center">
+            None
+          </div>
+        </td>
+      </tr>
+      {{/achievements}}
+    </tbody>
+  </table>
+</div>
+

@@ -41,6 +41,8 @@ define(['spec/support/spec_helper', 'aura/aura'], function (helper, aura) {
     var extension = {
       initialize: function (appEnv) {
         env = appEnv;
+        app.core = app.core || {};
+        app.core.mvc = window.Backbone;
       }
     };
 
