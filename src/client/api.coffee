@@ -35,7 +35,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         sandbox = app.sandbox
 
         _         = require('underscore')
-        Backbone  = require('backbone')
+        Backbone  = app.core.mvc
         easyXDM   = require('easyXDM')
 
         slice = Array.prototype.slice
