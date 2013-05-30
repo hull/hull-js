@@ -9,9 +9,7 @@
                   <img src="{{picture}}" width="50" height="50"/>
                 </div>
               {{/if}}
-            {{/user}}
-            <div class="media-body">
-              {{#user}}
+              <div class="media-body">
                 <h5 class="media-heading">
                   <span class="name">{{name}}</span>
                   {{#if email}} <small class="email">{{email}}</small> {{/if}}
@@ -30,11 +28,20 @@
                   {{/if}}
                   <li class="sign-in-count"><strong>Sign in count: </strong>{{stats.sign_in_count}}</li>
                 </ul>
-              {{/user}}
 
-            </div>
+              </div>
+            {{/user}}
           </div>
           <i class="icon-chevron-right"></i>
+        </a>
     </li>
   {{/users}}
 </ul>
+<div class='row'>
+  <div class="span12">
+    <p>
+      <button data-hull-action='previousPage' class="btn">← Prev</button>
+      <button data-hull-action='nextPage' class="btn">Next →</button>
+    </p>
+  </div>
+</div>

@@ -54,6 +54,7 @@ define({
 
     selectUser: function(event, action) {
       this.sandbox.emit('hull-admin.user.select', action.data.id);
+      event.preventDefault();
     }
 
   }
