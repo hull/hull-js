@@ -1,5 +1,8 @@
 {{#user}}
-  <div class="page-header">
+  <div class="page-header media">
+    <div class="pull-left">
+      <img src="{{picture}}" width="50" height="50"/>
+    </div>
     <h4>{{name}}</h4>
   </div>
   <div class="admin-infos">
@@ -14,9 +17,7 @@
     <h4>Identities</h4>
     <ul class="unstyled">
       {{#identities}}
-      <li> <i class="icon-{{type}}"></i>
-        {{name}}
-        <small>{{fromNow created_at}}</small>
+      <li> <i class="icon-{{type}}"></i> {{name}} <small>{{fromNow created_at}}</small>
       </li>
       {{/identities}}
     </ul>

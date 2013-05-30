@@ -17,6 +17,16 @@ define({
       this.id = id;
       this.render();
     }, this);
+  },
+
+  beforeRender: function(data){
+    if(!data.user){
+      return data;
+    }
+    _.each(data.user.identities,function(identity){
+      identity.type=identity.type.replace(/_(app|account)$/,'');
+    });
+    return data;
   }
 
 });

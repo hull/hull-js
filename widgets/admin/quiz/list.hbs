@@ -1,0 +1,27 @@
+<div class='quizzes_list'>
+  <div class="page-header">
+    <h3>Quizzes for app {{app.name}}</h3>
+  </div>
+
+  <ul>
+    {{#quizzes}}
+      <li>
+        <a href="#" data-hull-id="{{id}}" data-hull-action="edit">
+          <strong>{{name}}</strong>
+          <small>{{description}}</small>
+        </a>
+      </li>
+    {{/quizzes}}
+  </ul>
+</div>
+
+<form>
+  <fieldset>
+    <legend>Create a new quiz</legend>
+
+    <label>Quiz JSON data:</label>
+    <textarea data-hull-item="quiz-json" rows="5" placeholder="Enter your JSON here"></textarea>
+
+    <button data-hull-action="create" class="btn hull-btn">Import</button>
+  </fieldset>
+</form>

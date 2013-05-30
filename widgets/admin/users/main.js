@@ -32,6 +32,15 @@ define({
     }
   },
 
+  beforeRender: function(data){
+    _.each(data.users, function(profile){
+      _.each(profile.user.identities,function(identity){
+        identity.type=identity.type.replace(/_(app|account)$/,'');
+      });
+    });
+    return data;
+  },
+
   actions: {
     nextPage: function() {
       this.params.page += 1;
@@ -45,6 +54,7 @@ define({
 
     selectUser: function(event, action) {
       this.sandbox.emit('hull-admin.user.select', action.data.id);
+      event.preventDefault();
     }
 
   }
