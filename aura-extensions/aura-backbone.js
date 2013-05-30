@@ -10,8 +10,8 @@
       var core = app.core, sandbox = app.sandbox;
       var Backbone = require('backbone');
 
-      core.mvc = Backbone;
-      core.Widgets.Backbone = Backbone.View;
+      core.mvc = Backbone.noConflict();
+      core.Widgets.Backbone = core.mvc.View;
 
       sandbox.mvc = {};
       sandbox.mvc.View = function(view) {
