@@ -11,7 +11,6 @@
       var Backbone = require('backbone');
 
       core.mvc = Backbone.noConflict();
-      core.Widgets.Backbone = core.mvc.View;
 
       sandbox.mvc = {};
       sandbox.mvc.View = function(view) {
