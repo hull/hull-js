@@ -10,7 +10,7 @@
  *
  * - `navigation`: Optional, Choose between `infinite` or `paged` navigation. `infinite` by default.
  * - `per-page`: Optional, number of item to display per page. 10 by default.
- * - `start-page`: Optional, the first page that will be displayed. By default the first page will be retrieve. If you use `infinite` navigation and set `startPage` to another page, your user will not be able to see all items.
+ * - `start-page`: Optional, the first page that will be displayed. By default the first page will be retrieved. If you use `infinite` navigation and set `startPage` to another page, your user will not be able to see all items.
  * - `where`: Optional, a mongodb-formatted query. See the docs for more details
  *
  * ## Template
