@@ -1,6 +1,11 @@
 <h3>Achievements</h3>
 <div>
   <h4>Create an achievement</h4>
+  {{#if error}}
+  <div class="alert">
+    An error occured.
+  </div>
+  {{/if}}
   <form class="form-horizontal" action="#">
     <div class="control-group">
       <label class="control-label" for="name">Name</label>
@@ -15,15 +20,14 @@
       </div>
     </div>
     <div class="control-group">
-      <label class="control-label" for="type">Type</label>
-      <div class="controls">
-        <input id="type" type="text" name="type" />
-      </div>
-    </div>
-    <div class="control-group">
       <label class="control-label" for="secret">Secret</label>
       <div class="controls">
         <input id="type" type="text" name="secret" />
+      </div>
+    </div>
+    <div class="control-group">
+      <div class="controls">
+        <button class="btn" type="submit">Create</button>
       </div>
     </div>
   </form>
@@ -36,7 +40,6 @@
         <td>id</td>
         <td>name</td>
         <td>description</td>
-        <td>type</td>
         <td>secret</td>
       </tr>
     </thead>
@@ -46,8 +49,8 @@
         <td>{{id}}</td>
         <td>{{name}}</td>
         <td>{{description}}</td>
-        <td>{{type}}</td>
         <td>{{secret}}</td>
+        <td><i data-hull-action="remove" data-hull-achievement-id="{{id}}" class="pull-right icon icon-remove"></i></td>
       </tr>
       {{/achievements}}
       {{^achievements}}
