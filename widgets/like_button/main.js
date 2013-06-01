@@ -37,6 +37,8 @@
 
   beforeRender:function(data){
     data.likes = data.target.stats.likes||0
+    self.likes = data.likes;
+    self.liked = data.liked;
     return data;
   },
 
@@ -47,14 +49,16 @@
     this.working = true;
     var self=this;
     var method = verb === 'unlike' ? 'delete' : 'post';
-    self.likes++;
     self.liked=!self.liked;
+    self.liked? self.likes++:self.likes--;
 
     self.render(self.getTemplate(),{working:true, likes:self.likes, liked:self.liked});
 
+    //Events should be emitted automatically here so the likes@hull widget
+    //can subscribe and refresh itself.
     this.api(this.id + '/likes', method)
     .done(function(likes) {
-      self.likes=likes;
+      self.likes=likes||0;
 
     }).fail(function(){
       self.likes--;
