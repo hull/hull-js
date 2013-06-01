@@ -24,9 +24,5 @@
   datasources: {
     target: ':id',
     likes: ':id/likes'
-  },
-
-  beforeRender:function(data){
-    return data;
   }
 });
