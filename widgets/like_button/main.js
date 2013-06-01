@@ -52,7 +52,8 @@
 
     self.render(self.getTemplate(),{working:true, likes:self.likes, liked:self.liked});
 
-    this.api(this.id + '/likes', method).success(function(likes) {
+    this.api(this.id + '/likes', method)
+    .done(function(likes) {
       self.likes=likes;
 
     }).fail(function(){
