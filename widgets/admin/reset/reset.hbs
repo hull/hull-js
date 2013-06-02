@@ -8,7 +8,7 @@
             <button class="btn btn-mini" data-hull-action="delete" data-hull-id="{{id}}"><i class='icon-trash'></i> Entity</button>
             {{#relations}}
               {{#if count}}
-              <button class="btn btn-mini" data-hull-action="delete" data-hull-id="{{../id}}" data-hull-target="{{name}}"><i class='icon-trash'></i> {{humanize name}}({{count}})</button>
+              <button class="btn btn-mini" data-hull-action="delete" data-hull-id="{{../id}}" data-hull-target="{{name}}"><i class='icon-trash'></i> {{count}} {{humanize name}}</button>
               {{/if}}
             {{/relations}}
           </div>
