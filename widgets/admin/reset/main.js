@@ -1,6 +1,7 @@
 /**
  * # Reset widget
- *
+ * 
+ * This widget lets you delete entities, their associated comments, likes, reviews, and activity feed entries.
  *
  */
 define({
