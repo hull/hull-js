@@ -30,7 +30,6 @@
  * - `comment`: Submits a new comment.
  */
 
-/*global define:true, _:true */
 define({
   type: 'Hull',
 
