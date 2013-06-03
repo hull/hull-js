@@ -203,6 +203,13 @@ module.exports = function (grunt) {
           include: ['h5f'],
           out: 'tmp/widgets/registration/deps.js'
         }
+      },
+      dox: {
+        options: {
+          paths: { prism: 'widgets/dox/dox/prism' },
+          include: ['prism'],
+          out: 'tmp/widgets/dox/dox/deps.js'
+        }
       }
     },
     jshint: {
@@ -261,7 +268,7 @@ module.exports = function (grunt) {
     hull_widgets: {
       hull: {
         src: 'widgets',
-        before: ['requirejs:upload', 'requirejs:registration'],
+        before: ['requirejs:upload', 'requirejs:registration', 'requirejs:dox'],
         dest: 'dist/<%= PKG_VERSION%>',
         optimize: CONTEXT === 'prod'
       }
