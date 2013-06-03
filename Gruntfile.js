@@ -64,6 +64,7 @@ module.exports = function (grunt) {
     },
     dox: {
       files: {
+        baseDir: 'widgets',
         src: 'widgets/**/main.js',
         dest: 'dist/<%= PKG_VERSION %>/docs'
       }
