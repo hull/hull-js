@@ -1,4 +1,4 @@
-define(['./prism'], function(){
+define(['prism'], function(){
   return {
     type: 'Hull',
 

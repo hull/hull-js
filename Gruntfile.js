@@ -207,6 +207,7 @@ module.exports = function (grunt) {
       dox: {
         options: {
           paths: { prism: 'widgets/dox/dox/prism' },
+          shim: { prism: { exports: 'Prism' } },
           include: ['prism'],
           out: 'tmp/widgets/dox/dox/deps.js'
         }
