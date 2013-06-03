@@ -6,8 +6,7 @@
  *
  *     <div data-hull-widget="comments@hull" data-hull-id="HULL_OBJECT_ID"></div>
  *
- *
- * or if you want to reference any other Entity (for example the url the current page)
+ * or if you want to reference any other Entity (for example the url of the current page)
  *
  *     <div data-hull-widget="comments@hull" data-hull-uid="http://path.to/my/url"></div>
  *
