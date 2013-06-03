@@ -1,5 +1,5 @@
 {{#if loggedIn}}
-{{#review}}
+{{#with review}}
   <form>
     <fieldset>
       <legend>Review {{object.name}}</legend>
@@ -15,8 +15,8 @@
       <textarea data-hull-description id="reviewsText">{{description}}</textarea>
       <div class=''><button data-hull-action="review" type='submit' class="btn">Review</button></div>
     </fieldset>
-  </form>   
-{{/review}}
+  </form>
+{{/with}}
 {{else}}
   <div data-hull-widget="login_button@hull"></div>
 {{/if}}

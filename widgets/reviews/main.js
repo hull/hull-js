@@ -9,8 +9,8 @@ define({
   refreshEvents: ['model.hull.me.change'],
   templates: ['reviews'],
   datasources: {
-    review: "me/reviews/:id",
-    reviews:  ":id/reviews",
+    review: function() { return this.api(this.options.id + "/reviews/me"); },
+    reviews: function() { return this.api(this.options.id + "/reviews"); }
   },
 
   actions: {
