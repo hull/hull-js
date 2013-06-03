@@ -1,5 +1,5 @@
 /*global define:true */
-define(['aura/aura'], function (aura) {
+define(['spec/support/spec_helper', 'aura/aura'], function (helper, aura) {
 
   "use strict";
   /*jshint devel: true, browser: true */
@@ -33,7 +33,7 @@ define(['aura/aura'], function (aura) {
   define('easyXDM', function () { return easyXDMMock; });
 
   describe("API specs", function () {
-    var env, api, app = aura({
+    var env, api, batch, app = aura({
       appId: "fakeId",
       orgUrl: "orgUrl"
     });
@@ -41,6 +41,8 @@ define(['aura/aura'], function (aura) {
     var extension = {
       initialize: function (appEnv) {
         env = appEnv;
+        app.core = app.core || {};
+        app.core.mvc = window.Backbone;
       }
     };
 
@@ -52,6 +54,7 @@ define(['aura/aura'], function (aura) {
     before(function (done) {
       initStatus.then(function () {
         api = env.createSandbox().data.api;
+        batch = env.createSandbox().data.api.batch;
         done();
       });
     });
@@ -87,87 +90,78 @@ define(['aura/aura'], function (aura) {
           done();
         });
       });
-
-      it("must have a string as the first parameter", function () {
-        var params = [123, null, undefined, Object.create(null), {}];
-        params.forEach(function (param) {
-          api.bind(api, param).should.throw(TypeError);
-        });
-      });
-
-      it("accepts a method as the second parameter", function (done) {
-        var myMethod = "custom_method";
-        var ret = api("success", myMethod);
-        ret.done(function (params) {
-          params.method.should.equal(myMethod);
-          done();
-        });
-      });
-
-      it("default to GET method", function (done) {
-        var ret = api("success");
-        ret.done(function (params) {
-          params.method.should.equal('get');
-          done();
-        });
-      });
-
-      it("extends params one set after the other", function (done) {
-        var additionalParams = {limit: 10};
-        var ret = api("success", additionalParams, {limit: 5});
-        ret.done(function (params) {
-          params.params.should.be.eql({limit: 5});
-          done();
-        });
-        api.bind(api, "success", additionalParams, {limit: 5}).should.not.throw(TypeError);
-      });
     });
 
-    describe("Method-based API", function () {
-      it("takes hull as the default provider", function (done) {
-        api.get("/path").done(function (params) {
-          params.path.should.equal("hull/path");
+    describe('batching requests', function () {
+      var spySuccess, spyFailure;
+      beforeEach(function () {
+        spySuccess = sinon.spy();
+        spyFailure = sinon.spy();
+      });
+
+      it('should throw if more than 2 functions are defined', function () {
+        batch.bind(undefined, function () {}, function () {}, function () {}).should.throw(Error);
+      });
+      it('should only accept Arrays apart from callback/errback', function () {
+        batch.bind(undefined, 'url').should.throw(Error);
+        batch.bind(undefined, {}).should.throw(Error);
+        batch.bind(undefined, 123).should.throw(Error);
+        batch.bind(undefined, null).should.throw(Error);
+        batch.bind(undefined, true).should.throw(Error);
+        batch.bind(undefined, []).should.not.throw(Error);
+      });
+      it('should execute callback when successful', function (done) {
+        var ret = batch(['success'], spySuccess, spyFailure);
+        ret.always(function () {
+          spySuccess.should.have.been.called;
+          spyFailure.should.not.have.been.called;
           done();
         });
       });
-
-      it("accepts an object to describe the provider", function (done) {
-        api.get({path: "/path", provider: "facebook"}).done(function (params) {
-          params.path.should.equal("facebook/path");
+      it('should execute errback when failed', function (done) {
+        var ret = batch(['error'], spySuccess, spyFailure);
+        ret.always(function () {
+          spySuccess.should.not.have.been.called;
+          spyFailure.should.have.been.called;
           done();
         });
       });
-
-      it("defaults the provider to hull even with an object", function (done) {
-        api.get({path: "/path"}).done(function (params) {
-          params.path.should.equal('hull/path');
+      it('should execute callback when all requests succeed', function (done) {
+        var ret = batch(['success'], ['success'], spySuccess, spyFailure);
+        ret.always(function () {
+          spySuccess.should.have.been.called;
+          spyFailure.should.not.have.been.called;
           done();
         });
       });
-
-      it("appends the method to the params automatically", function (done) {
-        var postPromise = api.post('/path');
-        postPromise.done(function (params) {
-          params.method.should.equal('post');
+      it('should execute errback when one request failed', function (done) {
+        var ret = batch(['error'], ['success'], spySuccess, spyFailure);
+        ret.always(function () {
+          spySuccess.should.not.have.been.called;
+          spyFailure.should.have.been.called;
           done();
         });
       });
-
-      it("can be passed default params for the requests", function (done) {
-        var additionalParams = {limit: 10};
-        api.get({path: '/path', provider: 'me', params: additionalParams}, function (params) {
-          params.should.contain.keys('params');
-          params.params.should.eql(additionalParams);
-          done();
+      describe('individuals callbacks', function () {
+        it('should call individual callbacks on success', function (done) {
+          var spySuccess2 = sinon.spy(),
+              spyFailure2 = sinon.spy(),
+              ret = batch(['success', spySuccess, spyFailure], ['success', spySuccess2, spyFailure2]);
+          ret.always(function () {
+            spySuccess.should.have.been.called;
+            spyFailure.should.not.have.been.called;
+            spySuccess2.should.have.been.called;
+            spyFailure2.should.not.have.been.called;
+            done();
+          });
         });
-      });
-
-      it("can bypass additional parameters with an object", function (done) {
-        var additionalParams = {limit: 10, page: 3};
-        api.get({path: '/path', provider: 'me', params: additionalParams}, {limit: 5}).done(function (params) {
-          params.params.should.contain.keys(['limit', 'page']);
-          params.params.limit.should.equal(5);
-          done();
+        it('should call individual errbacks on failure', function (done) {
+          var ret = batch(['error', spySuccess, spyFailure]);
+          ret.always(function () {
+            spySuccess.should.not.have.been.called;
+            spyFailure.should.have.been.called;
+            done();
+          });
         });
       });
     });
@@ -190,6 +184,20 @@ define(['aura/aura'], function (aura) {
           fetchedModel.should.be.equal(model);
           done();
         });
+      });
+    });
+
+    describe('Tracking API', function () {
+      it('proxies to the `track` provider', function () {
+        var orig = env.core.data.api;
+        var spy = env.core.data.api = sinon.spy();
+        env.core.track('test');
+        spy.should.have.been.called;
+        spy.args[0][0].should.have.keys(['provider', 'path']);
+        spy.args[0][0].provider.should.equal('track');
+        spy.args[0][0].path.should.equal('test');
+        spy.args[0][1].should.equal('post');
+        env.core.data.api = orig;
       });
     });
   });

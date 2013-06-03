@@ -1,0 +1,67 @@
+<div class="hull-lists">
+
+{{#if loggedIn}}
+  <div class="hull-lists__header">
+    <h1>My lists</h1>
+  </div>
+
+  {{#lists}}
+    <h3 class="hull-lists__title">{{name}}</h3>
+
+    <ul class="hull-lists__items">
+      {{#items}}
+        <li>
+          <p>
+            <span class="hull-loz">{{type}}</span>
+            <strong>
+              {{#if name}}
+                {{name}}
+              {{else}}
+                {{#if uid}}
+                  {{uid}}
+                {{else}}
+                  {{id}}
+                {{/if}}
+              {{/if}}
+            </strong>
+            {{description}}
+          </p>
+        </li>
+      {{/items}}
+      {{^items}}
+        <li>
+          <div class="hull-empty">
+            Empty Collection
+          </div>
+        </li>
+      {{/items}}
+    </ul>
+  {{/lists}}
+  {{^lists}}
+    <div class="hull-empty">
+      oops... no lists for the moment
+    </div>
+  {{/lists}}
+
+
+  <h1 class="hull-lists__form__title">Create a new List</h1>
+  <form class="hull-form hull-lists__form">
+    <ul class="hull-form__fields">
+      <li>
+        <label class="hull-form__label" for="name">Name:</label>
+        <input class="hull-form__text-input" type="text" name="name">
+      </li>
+      <li>
+        <label class="hull-form__label" for="description">Description:</label>
+        <input class="hull-form__text-input" type="text" name="description">
+      </li>
+      <li class="hull-lists__form__submit">
+        <input type="submit" class="hull-btn">
+      </li>
+    </ul>
+  </form>
+
+{{else}}
+  <div data-hull-widget="identity@hull"></div>
+{{/if}}
+</div>

@@ -32,13 +32,12 @@ define ->
     # @returns {Promise}
     # @TODO Misses a `dfd.fail`
     logout = (callback=->)->
-      app.core.setCurrentUser(false)
       api = app.sandbox.data.api;
       dfd = api('logout')
       dfd.done ->
+        app.core.setCurrentUser(false)
         api.model('me').clear()
         api.model('me').trigger('change')
-        api.model.clearAll()
         callback() if _.isFunction(callback)
       dfd #TODO It would be better to return the promise
 

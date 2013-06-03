@@ -1,11 +1,13 @@
 {{#if matchingProviders}}
   <div class="hull-identity__signout align-center">
-    <img class="img-rounded" src="{{me.picture}}" alt="{{me.name}}">
-    <h1> {{me.name}} </h1>
-    {{#if me.description}}
-      <p>{{me.description}}</p>
+    {{#me}}
+    {{#if picture}}<img class="img-rounded" src="{{picture}}" alt="{{me.name}}">{{/if}}
+    <h1> {{name}} </h1>
+    {{#if description}}
+      <p>{{description}}</p>
     {{/if}}
     <hr>
+    {{/me}}
     <button data-hull-action="logout" class="btn btn-small btn-link">
       Sign Out
     </button>

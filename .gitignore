@@ -9,3 +9,4 @@ app/app.js
 .sass-cache
 grunt-aws.json
 /node_modules.bak/
+/build

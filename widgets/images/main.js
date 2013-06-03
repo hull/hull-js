@@ -25,10 +25,10 @@
  * ## Datasource
  *
  * - `images`: The user's images.
- * - `authorized` : A hash of permissions showing if the user can view the images.  
- * Contains `provider`, `permissions` : Booleans showing if the provider and permissions are right,  
+ * - `authorized` : A hash of permissions showing if the user can view the images.
+ * Contains `provider`, `permissions` : Booleans showing if the provider and permissions are right,
  * and `provider_name` containing the name of the asked provider
- * 
+ *
  */
 define(['underscore'], {
   type: 'Hull',
@@ -52,11 +52,7 @@ define(['underscore'], {
 
     this.provider = this.options.provider;
 
-    if (this.provider !== "hull") {
-      this.id = this.options.id || "me";  
-    }
-
-
+    this.id = this.options.id || "me";
   },
 
   actions: {
@@ -101,7 +97,7 @@ define(['underscore'], {
         }, this));
       } else{
         deferred.resolve([]);
-      } 
+      }
 
       return deferred.promise();
     }
@@ -125,33 +121,34 @@ define(['underscore'], {
 
       auth.provider_name = this.sandbox.config.services.types.auth[0].replace(/_app$/,'');
 
-      deferred.resolve(auth)
+      deferred.resolve(auth);
     } else {
       if (this.loggedIn()[provider]){
         auth.provider=true;
         if(provider==='facebook'){
-          this.hasFacebookPermissions(self.options.scope, auth, deferred)
+          this.hasFacebookPermissions(self.options.scope, auth, deferred);
         } else {
-          auth.permissions=true
-          deferred.resolve(auth)
+          auth.permissions=true;
+          deferred.resolve(auth);
         }
       } else {
         auth.provider=false;
-        deferred.resolve(auth)
+        deferred.resolve(auth);
       }
-      
+
     }
 
 
     return deferred.promise();
   },
   hasFacebookPermissions: function(scope, authorization, deferred){
-    var sandbox = this.sandbox
-    this.api("facebook/me/permissions").then(function(res) {
+    "use strict";
+    var sandbox = this.sandbox;
+    this.api({provider: "facebook", path: "me/permissions"}).then(function(res) {
 
       //Convert scope to array if given as a string.
       if(_.isString(scope)){
-        scope = scope.replace(' ','').split(',')
+        scope = scope.replace(' ','').split(',');
       }
 
       if(_.isArray(scope) && (_.intersection(_.keys(res.data[0]), scope).length==scope.length)){
@@ -164,20 +161,21 @@ define(['underscore'], {
   },
 
   request: function(provider, identities, options) {
+    "use strict";
     var path, params;
 
     switch (provider) {
       case 'hull':
-        path = 'hull/' + options.id + '/images';
+        path = this.id + '/images';
         params = { per_page: this.options.limit };
         break;
       case 'facebook':
-        path = 'facebook/'+options.id+'/photos/uploaded';
-        // path = 'facebook/' + ((options.id==='me')?identities.facebook.uid:options.id) + '/photos';
+        path = {provider: 'facebook', path: this.id+'/photos/uploaded'};
+        // path = 'facebook/' + ((this.id==='me')?identities.facebook.uid:this.id) + '/photos';
         params = { };
         break;
       case 'instagram':
-        path = 'instagram/users/'+((options.id==='me')?'self':options.id)+'/media/recent';
+        path = {provider: 'instagram', path: 'users/'+((this.id==='me')?'self':this.id)+'/media/recent'};
         params = { per_page: this.options.limit };
         break;
     }
@@ -187,6 +185,7 @@ define(['underscore'], {
 
   serializers: {
     hull: function(res, options) {
+      "use strict";
       var sandbox = this.sandbox
       return _.map(res, function(f) {
         return {
@@ -198,17 +197,18 @@ define(['underscore'], {
     },
 
     facebook: function(res, options) {
-      var format='source'
+      "use strict";
+      var format='source';
       switch (options.format){
         case 'small' :
         case 'thumb' :
         case 'square' :
-          format = 'picture'
+          format = 'picture';
           break;
         case 'medium' :
         case 'large' :
         case 'original' :
-          format = 'source'
+          format = 'source';
           break;
       }
 
@@ -223,32 +223,32 @@ define(['underscore'], {
     },
 
     instagram: function(res, options){
-      var format = 'low_resolution'
+      var format = 'low_resolution';
       switch (options.format){
         case 'small' :
         case 'thumb' :
         case 'square' :
-          format = 'thumbnail'
+          format = 'thumbnail';
           break;
         case 'medium' :
-          format = 'standard_resolution'
+          format = 'standard_resolution';
           break;
         case 'large' :
         case 'original' :
-          format = 'standard_resolution'
+          format = 'standard_resolution';
           break;
       }
 
 
       return _.map(res, function(f){
-        var t = ""
-        if(f && f.caption){t = f.caption.text}
+        var t = "";
+        if(f && f.caption){t = f.caption.text;}
         return {
           provider: 'instagram',
           name: t,
           picture: f.images[format].url,
           uid: f.id
-        }
+        };
       });
     }
   }

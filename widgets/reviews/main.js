@@ -9,13 +9,7 @@ define({
   templates: ['reviews'],
 
   datasources: {
-    reviews: function() {
-      var id = this.getId();
-      if (id) {
-        this.path = "hull/" + id + "/reviews";
-        return this.api("hull/" + id + "/reviews");
-      }
-    }
+    reviews:  ":id/reviews"
   },
 
   actions: {
@@ -24,7 +18,7 @@ define({
           rating = this.$el.find("select").val(),
           self = this;
       if (rating) {
-        this.api(this.path, 'post', {
+        this.api(this.id + '/reviews', 'post', {
           rating: rating,
           description: description
         }).then(function() { self.render() });

@@ -46,6 +46,7 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
      * @return {String}      A pretty date
     ###
     HandlebarsHelpers.fromNow = (date)->
+      return unless date?
       moment(date).fromNow()
 
     ###*
@@ -95,18 +96,6 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
     ###
     HandlebarsHelpers.key_value = (hash, options)->
       (options.fn(key: key, value: value) for own key, value of hash).join('')
-
-    ###*
-     * List helper.
-     *
-     * @param  {[type]} obj     [description]
-     * @param  {[type]} options [description]
-     * @return {[type]}         [description]
-    ###
-    HandlebarsHelpers.list = (obj, options)->
-      ret = _.map(obj, (v,k)->
-        options.fn(v)).join("")
-
 
     ###*
      * Output a page-unique sequential number.
@@ -167,17 +156,17 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
       _.str.humanize string
 
     ###*
-     * 
+     *
      *      {{pluralize collection.length 'quiz' 'quizzes'}}
      *
      * @param  {number} number
      * @param  {string} single
      * @param  {string} plural
-     * @return {string}       
+     * @return {string}
     ###
     HandlebarsHelpers.pluralize = (number, single, plural) ->
         (if (number <= 1) then single else plural)
-   
+
 
     ###*
      * Renders all characters to lower case and then makes the first upper
