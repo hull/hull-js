@@ -6,24 +6,28 @@
 define({
   type: "Hull",
 
+  refreshEvents: ['model.hull.me.change'],
   templates: ['reviews'],
-
   datasources: {
-    reviews:  ":id/reviews"
+    review: "me/reviews/:id",
+    reviews:  ":id/reviews",
   },
 
   actions: {
-    review: function(evt) {
-      var description = this.$el.find("textarea").val(),
-          rating = this.$el.find("select").val(),
-          self = this;
-      if (rating) {
+    review: function(event, data) {
+      var description = this.$el.find("[data-hull-description]").val(),
+          rating      = this.$el.find('[data-hull-rating]').val(),
+          self        = this;
+      if (rating!==undefined) {
         this.api(this.id + '/reviews', 'post', {
           rating: rating,
           description: description
-        }).then(function() { self.render() });
+        }).then(function() {
+          self.render();
+        });
       }
-      evt.stopPropagation();
+      event.preventDefault();
+      event.stopPropagation();
     }
   }
 });
