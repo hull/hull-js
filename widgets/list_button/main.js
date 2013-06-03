@@ -5,9 +5,9 @@
  *
  * ## Examples
  *
- *     <div data-hull-widget="list_toggle@hull" data-hull-id="app" data-hull-list-name="favorites"></div>
- *     <div data-hull-widget="list_toggle@hull" data-hull-id="HULL_ID" data-hull-list-name="favorites"></div>
- *     <div data-hull-widget="list_toggle@hull" data-hull-uid="ANY_UNIQUE_ID" data-hull-list-name="favorites"></div>
+ *     <div data-hull-widget="list_button@hull" data-hull-id="app" data-hull-list-name="favorites"></div>
+ *     <div data-hull-widget="list_button@hull" data-hull-id="HULL_ID" data-hull-list-name="favorites"></div>
+ *     <div data-hull-widget="list_button@hull" data-hull-uid="ANY_UNIQUE_ID" data-hull-list-name="favorites"></div>
  *
  * ## Options
  *
@@ -17,7 +17,7 @@
  *
  * ## Template
  *
- * - `list_toggle`: Shows the button with the right state
+ * - `list_button`: Shows the button with the right state
  *
  */
 define({
@@ -25,35 +25,25 @@ define({
 
   refreshEvents: ['model.hull.me.change'],
 
-  templates: ["list_toggle"],
+  templates: ["list_button"],
 
   options: {
     listName: 'likes'
   },
 
-  initialize: function() {
-
-  },
-
   datasources:{
-    // list: "me/lists/:listName"
-    list: function() {
-      if (this.loggedIn()) {
-        this.list = this.api.model("me/lists/"+this.options.listName);
-        return this.list.deferred;
-      }
-    },
-    obj: ":id"
+    lists: "me/lists/:listName",
+    target: ":id"
   },
 
   beforeRender: function(data) {
-    this.id = data.obj.id;
+    this.id = data.target.id;
     if (data.list && data.list.items) {
       var itemIds   = _.pluck(data.list.items, "id");
       data.isListed = _.include(itemIds, this.id);
-      data.objName = data.obj.name || data.obj.uid;
+      data.objName = data.target.name || data.target.uid;
       data.listName = data.list.name;
-      this.itemPath = data.list.id + "/items/" + data.obj.id;
+      this.itemPath = data.list.id + "/items/" + data.target.id;
     }
     return data;
   },
