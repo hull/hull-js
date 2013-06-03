@@ -26,7 +26,7 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
             data[key] = v
         fn.call(@, e, { el: source, data: data })
       catch err
-        console.error("Error in action handler", action, err.message, err)
+        console.error("Error in action handler: ", action, err.message, err)
       finally
         e.stopPropagation()
         e.stopImmediatePropagation()

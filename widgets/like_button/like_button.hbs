@@ -1,11 +1,16 @@
-{{#if isLiked}}
-  <button data-hull-action="unlike" class="btn hull-liked">
-    <i class="icon-heart"></i>
-    Unlike
+{{#if working}}
+  <button class="btn hull-working">
+    Loading... 
   </button>
+  
 {{else}}
-  <button data-hull-action="like" class="btn hull-like">
-    <i class="icon-heart"></i>
-    Like
-  </button>
+  {{#if liked}}
+    <button data-hull-action="unlike" class="btn btn-danger">
+      <i class="icon-heart"></i>({{likes}})
+    </button>
+  {{else}}
+    <button data-hull-action="like" class="btn hull-like">
+      <i class="icon-heart"></i>({{likes}})
+    </button>
+  {{/if}}
 {{/if}}

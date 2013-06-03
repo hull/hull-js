@@ -87,7 +87,7 @@ define ['jquery', 'underscore'], ($, _)->
         identified = true
         identify(app.config.data.me)
 
-      analytics.track("init", { appId: config.appId })
+      analytics.track("init", { appId: app.config.appId })
       app.core.services.add([ { path: 'hull/*path',  handler: handler } ])
       app.core.services.add([ { path: 'track/*path', handler: trackHandler } ])
 
