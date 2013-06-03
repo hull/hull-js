@@ -31,8 +31,8 @@ define({
     listName: 'likes'
   },
 
-  datasources:{
-    lists: "me/lists/:listName",
+  datasources: {
+    list: function() { return this.api.model("me/lists/" + this.options.listName); },
     target: ":id"
   },
 
@@ -41,15 +41,13 @@ define({
     if (data.list && data.list.items) {
       var itemIds   = _.pluck(data.list.items, "id");
       data.isListed = _.include(itemIds, this.id);
-      data.objName = data.target.name || data.target.uid;
-      data.listName = data.list.name;
       this.itemPath = data.list.id + "/items/" + data.target.id;
     }
     return data;
   },
 
   toggle: function(verb) {
-    var list = this.list;
+    var list = this.data.list;
     var method = verb === 'remove' ? 'delete' : 'post';
     this.api(this.itemPath, method).then(function() {
       list.fetch().then(function() {
