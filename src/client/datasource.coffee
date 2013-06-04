@@ -1,8 +1,4 @@
 define ['underscore'], (_)->
-  #@TODO Refactor, code has been C/P'ed from widget.coffee
-  decamelize = (camelCase)->
-    camelCase.replace(/([A-Z])/g, '_' + '$1').toLowerCase()
-
   #
   # Parses the URI to replace placeholders with actual values
   #
@@ -10,8 +6,9 @@ define ['underscore'], (_)->
     placeHolders = uri.match(/(\:[a-zA-Z0-9-_]+)/g)
     return uri unless placeHolders
     for p in placeHolders
-      _key = decamelize(p).slice(1)
-      throw new Error "Cannot resolve datasource binding #{p}" unless _.has(bindings, _key)
+      _key = p.slice(1)
+      unless _.has(bindings, _key)
+        throw new Error "Cannot resolve datasource binding #{p}"
       uri = uri.replace(p, bindings[_key]);
     uri
 

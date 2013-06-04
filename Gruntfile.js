@@ -109,7 +109,7 @@ module.exports = function (grunt) {
             eventemitter:   'components/eventemitter2/lib/eventemitter2',
             backbone:       'components/backbone/backbone',
             easyXDM:        'components/easyXDM/easyXDM',
-            handlebars:     'node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars.runtime.min',
+            handlebars:     'node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars.min',
             requireLib:     'components/requirejs/require',
             moment:         'components/moment/moment',
             cookie:         'components/jquery.cookie/jquery.cookie',

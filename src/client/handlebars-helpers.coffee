@@ -293,6 +293,7 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
       ret = items.join sep
       ret += options.hash['lastSep'] + last if last
       ret
+
     ###*
     * THE DEBUG HELPER
     *
@@ -310,5 +311,19 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
           console.log("====================")
           console.log(optionalValue)
 
+    ###*
+     * write text if value equals another value
+     *
+     *      foo='bar'
+     * 
+     *      1. {{outputIf foo 'bar'}}
+     *      2. {{outputIf foo 'baz' 'checked'}}
+     * 
+     *      => 
+     *      1. 
+     *      2. 'checked'
+    ###
+    HandlebarsHelpers.outputIf = (obj, compare, output)->
+      if obj == compare then output else '';
 
     handlebars.registerHelper(k, v) for k,v of HandlebarsHelpers
