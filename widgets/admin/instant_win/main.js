@@ -1,3 +1,8 @@
+/**
+ *
+ * # Sweepstake admin panel
+ *
+ */
 define({
   type: 'Hull',
 

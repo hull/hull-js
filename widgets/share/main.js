@@ -1,5 +1,5 @@
 /**
- * Share widget
+ * # Share
  */
 define({
   type: 'Hull',

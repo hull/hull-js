@@ -1,4 +1,5 @@
 /**
+ * # Comments list
  *
  * Allow to list and add comments on an object of the current application.
  *
