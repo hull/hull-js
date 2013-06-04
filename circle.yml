@@ -3,3 +3,6 @@ dependencies:
     - npm install -g grunt-cli bower
     - npm install
     - bower install
+machine:
+  node:
+    version: 0.10.8
