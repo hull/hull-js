@@ -32,5 +32,8 @@
   "scripts": {
     "postinstall": "$(npm bin)/bower install",
     "test": "grunt test"
+  },
+  "engines": {
+    "node": "~0.10"
   }
 }
