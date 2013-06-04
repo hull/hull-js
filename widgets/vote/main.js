@@ -24,14 +24,10 @@ define({
 
   refreshEvents: ['model.hull.me.change'],
 
-  templates: ['vote_buttons'],
+  templates: ['vote'],
 
   datasources: {
-    vote:  function() { 
-      if(this.loggedIn()){
-        return this.api("me/reviews/" + this.options.id);
-      }
-    },
+    vote: 'me/reviews/:id',
     votes: ':id/reviews'
   },
 

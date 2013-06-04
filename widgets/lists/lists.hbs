@@ -1,4 +1,5 @@
 <div class="hull-lists">
+{{json lists}}
 
 {{#if loggedIn}}
   <div class="hull-lists__header">
@@ -45,18 +46,18 @@
 
 
   <h1 class="hull-lists__form__title">Create a new List</h1>
-  <form class="hull-form hull-lists__form">
-    <ul class="hull-form__fields">
+  <form>
+    <ul class='unstyled'>
       <li>
-        <label class="hull-form__label" for="name">Name:</label>
-        <input class="hull-form__text-input" type="text" name="name">
+        <label for="name">Name:</label>
+        <input type="text" name="name">
       </li>
       <li>
-        <label class="hull-form__label" for="description">Description:</label>
-        <input class="hull-form__text-input" type="text" name="description">
+        <label class="" for="description">Description:</label>
+        <input type="text" name="description">
       </li>
-      <li class="hull-lists__form__submit">
-        <input type="submit" class="hull-btn">
+      <li>
+        <input type="submit" class="btn">
       </li>
     </ul>
   </form>

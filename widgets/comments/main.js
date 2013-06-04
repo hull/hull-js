@@ -4,11 +4,15 @@
  *
  * ## Example
  *
- *     <div data-hull-widget="comments@hull" data-hull-id="OBJECT_ID"></div>
+ *     <div data-hull-widget="comments@hull" data-hull-id="HULL_OBJECT_ID"></div>
+ *
+ * or if you want to reference any other Entity (for example the url of the current page)
+ *
+ *     <div data-hull-widget="comments@hull" data-hull-uid="http://path.to/my/url"></div>
  *
  * ## Option:
  *
- * - `id`: Required, The object you want to manipulate comments upon.
+ * - `id` or `uid`: Required, The object you want to comment on.
  * - `focus`: Optional, Auto-Focus on the input field. default: false.
  *
  * ## Template:
@@ -25,7 +29,6 @@
  * - `comment`: Submits a new comment.
  */
 
-/*global define:true, _:true */
 define({
   type: 'Hull',
 
@@ -35,7 +38,7 @@ define({
 
   actions: {
     comment: 'postComment',
-    delete: 'deleteComment'
+    delete:  'deleteComment'
   },
 
   options: {
