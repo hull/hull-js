@@ -1,4 +1,5 @@
 /**
+ * # Achievement button
  *
  * A button that lets your users win a badge for an achievement you've previously defined.
  *

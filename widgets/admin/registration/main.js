@@ -1,3 +1,8 @@
+/**
+ *
+ * # Registration form admin panel
+ *
+ */
 define({
   type: 'Hull',
 
