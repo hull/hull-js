@@ -2,19 +2,19 @@
  *
  * # Sweepstake
  *
- * An instant-win is a game where the player finds out immediately if he or she is a winner of one of the prizes the administrators put at stake.
+ * An sweepstake is a game where the player finds out immediately if he or she is a winner of one of the prizes the administrators put at stake.
  *
  * A player can play once a day provided he or she loses at each attempt. A player that wins the prize will not be allowed to play the game anymore.
  *
- * To create an instant win, use the `instant_win_admin@hull` widget which will let you create an instant win and add prizes to it.
+ * To create a sweepstake, use the `admin/sweepstake@hull` widget which will let you create a sweepstake and add prizes to it.
  *
  * ## Example
  *
- *     <div data-hull-widget="instant_win@hull"  data-hull-id="INSTANT_WIN_ID"></div>
+ *     <div data-hull-widget="sweepstake@hull"  data-hull-id="SWEEPSTAKE_ID"></div>
  *
  * ## Options
  *
- * - `id`: Required, the InstantWin achievement id.
+ * - `id`: Required, the sweepstake achievement id.
  * - `provider`: Optional, the identity provider to log with before playing. By default it will list all your identity providers.
  * - `delay`: Optional, time in milliseconds to wait before displaying the game's results. By default the results are displayed imediatly after that the server tell us if the user has win or lost.
  *
@@ -31,8 +31,8 @@
  *
  * ## Datasources
  *
- * - `achievement`: The InstantWin achievement.
- * - `badge`: The user's badge for the InstantWin.
+ * - `achievement`: The sweepstake achievement.
+ * - `badge`: The user's badge for the sweepstake.
  *
  * ## Action
  *
@@ -109,7 +109,7 @@ define({
       this.track('finish', { result: this.template });
     }
 
-    this.sandbox.emit('hull.instant_win.' + this.options.id + '.template.render', this.template);
+    this.sandbox.emit('hull.sweepstake.' + this.options.id + '.template.render', this.template);
   },
 
   /*!

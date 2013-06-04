@@ -70,10 +70,10 @@ define({
       if (secret.length) { data.secret = secret; }
 
       this.api('app/achievements', 'post', this.signRequest(data)).done(_.bind(function(res) {
-        alert('Instant Win Created');
+        alert('Sweepstake Created');
         this.refresh();
       }, this)).fail(function() {
-        alert('Cannot create Instant Win');
+        alert('Cannot create Sweepstake');
       });
     },
 
