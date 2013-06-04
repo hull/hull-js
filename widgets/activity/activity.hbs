@@ -8,9 +8,9 @@
       {{/if}}
       
       <div class="media-body">
-        <h4 class="media-heading">
-          {{actor.name}} {{verb}} {{object.type}} - {{object.name}} {{target.name}}
-        </h4>
+        <strong class="media-heading">
+          {{actor.name}} {{activity ../map this}} {{object.name}} {{named target}}
+        </strong>
         {{#if object.description}}
           <p>{{object.description}}</p>
         {{/if}}
