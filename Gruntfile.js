@@ -1,8 +1,8 @@
 module.exports = function (grunt) {
   'use strict';
 
+  var helpers = require('./.grunt/helpers')(grunt);
   var CONTEXT = process.env.CONTEXT || 'prod';
-
   var clone = grunt.util._.clone;
 
   grunt.loadNpmTasks('grunt-contrib-clean');
@@ -30,17 +30,8 @@ module.exports = function (grunt) {
 
   // Lookup of the available libs and injects them for the build
   // in the requirejs conf
-  var clientLibs = grunt.file.glob
-    .sync('src/client/**/*.coffee')
-    .map(function (clientLib) {
-      return clientLib.replace('.coffee', '').replace('src/', 'lib/');
-    });
-
-  var remoteLibs = grunt.file.glob
-    .sync('src/remote/**/*.coffee')
-    .map(function (clientLib) {
-      return clientLib.replace('.coffee', '').replace('src/', 'lib/');
-    });
+  var clientLibs = helpers.getBuiltFilenames('src/client/**/*.coffee');
+  var remoteLibs = helpers.getBuiltFilenames('src/remote/**/*.coffee');
 
   // Lookup of the Aura Extensions and injects them in the requirejs build
   var auraExtensions = grunt.file.glob
@@ -49,6 +40,7 @@ module.exports = function (grunt) {
       return extension.replace('.js', '');
     });
 
+  //Augment the require.js configuation with some computed elements
   var clientRJSConfig = (function () {
     var _c = clientConfig.requireJS;
     _c.include = _c.include.concat(auraExtensions).concat(clientLibs);
@@ -229,41 +221,8 @@ module.exports = function (grunt) {
     }
   };
 
+  helpers.appendAWSConfig(gruntConfig);
 
-  var aws = false;
-  if (grunt.file.exists('.grunt/grunt-aws.json')) {
-    aws = grunt.file.readJSON('.grunt/grunt-aws.json');
-    if (aws) {
-      gruntConfig.aws = aws;
-      gruntConfig.s3 = {
-        options: {
-          key: '<%= aws.key %>',
-          secret: '<%= aws.secret %>',
-          bucket: '<%= aws.bucket %>',
-          access: 'public-read',
-          // debug: true,
-          encodePaths: true,
-          maxOperations: 20
-        },
-        prod: {
-          upload: [
-            {
-              gzip:  true,
-              src: 'dist/<%= PKG_VERSION %>/**/*',
-              dest: '',
-              rel: 'dist/'
-            },
-            {
-              gzip:  false,
-              src: 'dist/<%= PKG_VERSION %>/**/*',
-              dest: '',
-              rel: 'dist/'
-            }
-          ]
-        }
-      };
-    }
-  }
   grunt.initConfig(gruntConfig);
 
   // default build task
