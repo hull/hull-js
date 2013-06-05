@@ -18,15 +18,14 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-plato');
 
   var pkg = grunt.file.readJSON('bower.json');
+  var clientConfig = grunt.file.readJSON('config/client.json');
+  var remoteConfig = grunt.file.readJSON('config/remote.json');
 
   var port = 3001;
 
   // ==========================================================================
   // Project configuration
   // ==========================================================================
-
-  var clientSrc = ['src/hullbase.coffee', 'src/hull.coffee', 'src/client/**/*.coffee'];
-  var remoteSrc = ['src/hullbase.coffee', 'src/hull.coffee', 'src/hull-remote.coffee', 'src/remote/**/*.coffee'];
 
   // Lookup of the available libs and injects them for the build
   // in the requirejs conf
@@ -48,6 +47,21 @@ module.exports = function (grunt) {
     .map(function (extension) {
       return extension.replace('.js', '');
     });
+
+  var clientRJSConfig = (function () {
+    var _c = clientConfig.requireJS;
+    _c.include = _c.include.concat(auraExtensions).concat(clientLibs);
+    _c.optimize = CONTEXT !== "prod" ? "none" : "uglify";
+    return _c;
+  })();
+
+  var remoteRJSConfig = (function () {
+    var _c = remoteConfig.requireJS;
+    _c.include = _c.include.concat(remoteLibs);
+    _c.optimize = CONTEXT !== "prod" ? "none" : "uglify";
+    return _c;
+  })();
+
 
   var gruntConfig = {
     PKG_VERSION: pkg.version,
@@ -76,14 +90,14 @@ module.exports = function (grunt) {
         }
       },
       remote: {
-        files: grunt.file.expandMapping(remoteSrc, 'lib/', {
+        files: grunt.file.expandMapping(remoteConfig.srcFiles, 'lib/', {
           rename: function (destBase, destPath) {
             return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
           }
         })
       },
       client: {
-        files: grunt.file.expandMapping(clientSrc, 'lib/', {
+        files: grunt.file.expandMapping(clientConfig.srcFiles, 'lib/', {
           rename: function (destBase, destPath) {
             return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
           }
@@ -99,90 +113,10 @@ module.exports = function (grunt) {
     },
     requirejs: {
       client: {
-        options: {
-          baseUrl: '.',
-          optimize: CONTEXT!=='prod' ? "none" : "uglify",
-          preserveLicenseComments: true,
-          paths: {
-            aura:           'components/aura/lib',
-            underscore:     'components/underscore/underscore',
-            eventemitter:   'components/eventemitter2/lib/eventemitter2',
-            backbone:       'components/backbone/backbone',
-            easyXDM:        'components/easyXDM/easyXDM',
-            handlebars:     'node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars.min',
-            requireLib:     'components/requirejs/require',
-            moment:         'components/moment/moment',
-            cookie:         'components/jquery.cookie/jquery.cookie',
-            string:         'components/underscore.string/lib/underscore.string',
-            jquery:         'empty:',
-            text:           'components/requirejs-text/text',
-            base64:         'components/base64/base64'
-          },
-          shim: {
-            backbone:   { exports: 'Backbone', deps: ['underscore', 'jquery'] },
-            underscore: { exports: '_' },
-            easyXDM:    { exports: 'easyXDM' },
-            handlebars: {exports: 'Handlebars'}
-          },
-          include: [
-            'requireLib',
-            'underscore',
-            'moment',
-            'string',
-            'cookie',
-            'base64',
-            'backbone',
-            'handlebars',
-            'easyXDM',
-            'text',
-            'aura/ext/debug',
-            'aura/ext/mediator',
-            'aura/ext/widgets',
-            'lib/hull'
-          ].concat(auraExtensions)
-           .concat(clientLibs),
-          out: 'dist/<%= PKG_VERSION %>/hull.js'
-        }
+        options: clientRJSConfig
       },
       remote: {
-        options: {
-          baseUrl: '.',
-          optimize: CONTEXT!=='prod' ? "none" : "uglify",
-          preserveLicenseComments: true,
-          paths: {
-            aura:               'components/aura/lib',
-            underscore:         'components/underscore/underscore',
-            eventemitter:       'components/eventemitter2/lib/eventemitter2',
-            easyXDM:            'components/easyXDM/easyXDM',
-            requireLib:         'components/requirejs/require',
-            jquery:             'components/jquery/jquery',
-            text:               'components/requirejs-text/text',
-            'route-recognizer': 'components/route-recognizer/dist/route-recognizer.amd',
-            analytics:          'components/analytics/analytics',
-            base64:             'components/base64/base64'
-          },
-          shim: {
-            underscore: { exports: '_' },
-            analytics: { exports: 'analytics' },
-            easyXDM:    { exports: 'easyXDM' }
-          },
-          include: [
-            'requireLib',
-            'jquery',
-            'underscore',
-            'eventemitter',
-            'easyXDM',
-            'text',
-            'base64',
-            'analytics',
-            'aura/ext/debug',
-            'aura/ext/mediator',
-            'aura/ext/widgets',
-            'lib/hull',
-            'lib/hull-remote'
-          ].concat(remoteLibs),
-          out: 'dist/<%= PKG_VERSION %>/hull-remote.js'
-        }
+        options: remoteRJSConfig
       },
       upload: {
         options: {
@@ -251,11 +185,11 @@ module.exports = function (grunt) {
         tasks: ['hull_widgets']
       },
       remote: {
-        files: remoteSrc,
+        files: remoteConfig.srcFiles,
         tasks: ['build_remote', 'cover', 'plato', 'mocha']
       },
       client: {
-        files: clientSrc,
+        files: clientConfig.srcFiles,
         tasks: ['build_client', 'cover', 'plato', 'mocha']
       },
       spec: {
@@ -294,6 +228,11 @@ module.exports = function (grunt) {
           'build/report': ['lib/**/*.js']
         }
       }
+    },
+    dist: {
+      "full": ['build'],
+      "no-underscore": ['build:no-underscore'],
+      "docs": ['dox']
     }
   };
 
@@ -341,9 +280,12 @@ module.exports = function (grunt) {
   grunt.registerTask('build', ['build_libs', 'hull_widgets']);
   grunt.registerTask('test', ['build', 'cover', 'plato', 'mocha']);
   grunt.registerTask('default', ['connect', 'test', 'watch']);
-  grunt.registerTask('dist', ['build', 'dox']);
   grunt.registerTask('deploy', ['dist', 'describe', 's3']);
   grunt.registerTask('reset', ['clean:reset']);
+
+  grunt.registerMultiTask('dist', 'Builds the various flavours of hull.js', function () {
+    grunt.task.run(this.data);
+  });
 
   grunt.registerTask("version", "generate a file from a template", function () {
     var conf = grunt.config("version");
