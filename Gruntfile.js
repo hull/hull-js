@@ -3,6 +3,8 @@ module.exports = function (grunt) {
 
   var CONTEXT = process.env.CONTEXT || 'prod';
 
+  var clone = grunt.util._.clone;
+
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-connect');
@@ -111,11 +113,26 @@ module.exports = function (grunt) {
       }
     },
     requirejs: {
+      "client-no-backbone": {
+        options: (function (c) {
+          c.paths.underscore = 'empty:';
+          c.paths.backbone = 'empty:';
+          c.out = c.out.replace('hull.js', 'hull.no-backbone.js');
+          return c;
+        })(clone(clientRJSConfig, true))
+      },
+      "client-no-underscore": {
+        options: (function (c) {
+          c.paths.underscore = 'empty:';
+          c.out = c.out.replace('hull.js', 'hull.no-underscore.js');
+          return c;
+        })(clone(clientRJSConfig, true))
+      },
       client: {
-        options: clientRJSConfig
+        options: clone(clientRJSConfig, true)
       },
       remote: {
-        options: remoteRJSConfig
+        options: clone(remoteRJSConfig, true)
       },
       upload: {
         options: {
@@ -205,6 +222,8 @@ module.exports = function (grunt) {
     dist: {
       "remote": ['clean:remote', 'coffee:remote', 'version', 'requirejs:remote'],
       "client": ['clean:client', 'coffee:client', 'version', 'requirejs:client'],
+      "client-no-underscore": ['clean:client', 'coffee:client', 'version', 'requirejs:client-no-underscore'],
+      "client-no-backbone": ['clean:client', 'coffee:client', 'version', 'requirejs:client-no-backbone'],
       "widgets": ["hull_widgets"],
       "docs": ['dox']
     }
