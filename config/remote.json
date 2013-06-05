@@ -22,19 +22,19 @@
     },
     "include": [
       "requireLib",
-    "jquery",
-    "underscore",
-    "eventemitter",
-    "easyXDM",
-    "text",
-    "base64",
-    "analytics",
-    "aura/ext/debug",
-    "aura/ext/mediator",
-    "aura/ext/widgets",
-    "lib/hull",
-    "lib/hull-remote"
-      ],
+      "jquery",
+      "underscore",
+      "eventemitter",
+      "easyXDM",
+      "text",
+      "base64",
+      "analytics",
+      "aura/ext/debug",
+      "aura/ext/mediator",
+      "aura/ext/widgets",
+      "lib/hull",
+      "lib/hull-remote"
+    ],
     "out": "dist/<%= PKG_VERSION %>/hull-remote.js"
   }
 }
