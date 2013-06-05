@@ -7,7 +7,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-hull-dox');
@@ -145,32 +144,6 @@ module.exports = function (grunt) {
           shim: { prism: { exports: 'Prism' } },
           include: ['prism'],
           out: 'tmp/widgets/dox/dox/deps.js'
-        }
-      }
-    },
-    jshint: {
-      files: {
-        src: ['lib/**/*.js', 'spec/lib/**/*.js']
-      },
-      options: {
-        curly: true,
-        eqeqeq: true,
-        immed: true,
-        latedef: true,
-        newcap: true,
-        noarg: true,
-        sub: true,
-        undef: true,
-        eqnull: true,
-        browser: true,
-        nomen: false,
-        expr: true,
-        globals: {
-          console: true,
-          require: true,
-          define: true,
-          _: true,
-          $: true
         }
       }
     },
