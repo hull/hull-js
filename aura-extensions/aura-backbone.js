@@ -1,11 +1,16 @@
 (function() {
-  define({
-    name: "The Back of the Bone",
-    require: {
+  if (window.Backbone) {
+    define('backbone', [], function () {
+      return window.Backbone;
+    });
+  } else {
+    require.config({
       paths:  { backbone: 'components/backbone/backbone' },
       shim:   { backbone: { exports: 'Backbone', deps: ['underscore', 'jquery'] } }
-    },
-
+    });
+  }
+  define(['backbone'], {
+    name: "The Back of the Bone",
     initialize: function(app) {
       var core = app.core, sandbox = app.sandbox;
       var Backbone = require('backbone');
