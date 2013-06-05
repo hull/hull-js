@@ -203,8 +203,8 @@ module.exports = function (grunt) {
       }
     },
     dist: {
-      "client": ['clean:remote', 'coffee:remote', 'version', 'requirejs:remote'],
-      "remote": ['clean:client', 'coffee:client', 'version', 'requirejs:client'],
+      "remote": ['clean:remote', 'coffee:remote', 'version', 'requirejs:remote'],
+      "client": ['clean:client', 'coffee:client', 'version', 'requirejs:client'],
       "widgets": ["hull_widgets"],
       "docs": ['dox']
     }
