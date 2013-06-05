@@ -17,8 +17,8 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-plato');
 
   var pkg = grunt.file.readJSON('bower.json');
-  var clientConfig = grunt.file.readJSON('config/client.json');
-  var remoteConfig = grunt.file.readJSON('config/remote.json');
+  var clientConfig = grunt.file.readJSON('.grunt/client.json');
+  var remoteConfig = grunt.file.readJSON('.grunt/remote.json');
 
   var port = 3001;
 
@@ -159,11 +159,11 @@ module.exports = function (grunt) {
       },
       remote: {
         files: remoteConfig.srcFiles,
-        tasks: ['build_remote', 'cover', 'plato', 'mocha']
+        tasks: ['dist:remote', 'do_test']
       },
       client: {
         files: clientConfig.srcFiles,
-        tasks: ['build_client', 'cover', 'plato', 'mocha']
+        tasks: ['dist:client', 'do_test']
       },
       spec: {
         files: ['spec/**/*.js'],
@@ -203,16 +203,17 @@ module.exports = function (grunt) {
       }
     },
     dist: {
-      "full": ['build'],
-      "no-underscore": ['build:no-underscore'],
+      "client": ['clean:remote', 'coffee:remote', 'version', 'requirejs:remote'],
+      "remote": ['clean:client', 'coffee:client', 'version', 'requirejs:client'],
+      "widgets": ["hull_widgets"],
       "docs": ['dox']
     }
   };
 
 
   var aws = false;
-  if (grunt.file.exists('grunt-aws.json')) {
-    aws = grunt.file.readJSON('grunt-aws.json');
+  if (grunt.file.exists('.grunt/grunt-aws.json')) {
+    aws = grunt.file.readJSON('.grunt/grunt-aws.json');
     if (aws) {
       gruntConfig.aws = aws;
       gruntConfig.s3 = {
@@ -247,12 +248,9 @@ module.exports = function (grunt) {
   grunt.initConfig(gruntConfig);
 
   // default build task
-  grunt.registerTask('build_remote', ['clean:remote', 'coffee:remote', 'version', 'requirejs:remote']);
-  grunt.registerTask('build_client', ['clean:client', 'coffee:client', 'version', 'requirejs:client']);
-  grunt.registerTask('build_libs', ['build_client', 'build_remote']);
-  grunt.registerTask('build', ['build_libs', 'hull_widgets']);
-  grunt.registerTask('test', ['build', 'cover', 'plato', 'mocha']);
-  grunt.registerTask('default', ['connect', 'test', 'watch']);
+  grunt.registerTask('do_test', ['cover', 'plato', 'mocha']);
+  grunt.registerTask('test', ['dist:client', 'dist:remote', 'do_test']);
+  grunt.registerTask('default', ['connect', 'test', 'dist:widgets', 'watch']);
   grunt.registerTask('deploy', ['dist', 'describe', 's3']);
   grunt.registerTask('reset', ['clean:reset']);
 
