@@ -10,3 +10,5 @@ app/app.js
 .grunt/grunt-aws.json
 /node_modules.bak/
 /build
+
+/grunt-aws.json
