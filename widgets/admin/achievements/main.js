@@ -1,4 +1,5 @@
 /**
+ * # Achievements admin panel
  *
  * Displays the list of all the achievements in your app, and allows you to add/remove achievements.
  *

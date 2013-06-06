@@ -1,4 +1,5 @@
 /**
+ * # Quiz
  *
  * A quiz is a game in which the player attempts to find the answer to questions from multiple possible answers.
  *

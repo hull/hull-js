@@ -1,5 +1,7 @@
 /**
  *
+ * # User list
+ *
  * Displays the list of the users of your app.
  * The access to this widget is limited to the administrators, you will need the Spplication Secret
  * to have access to the data.

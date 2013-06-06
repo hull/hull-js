@@ -1,5 +1,5 @@
 /**
- * Widget Reviews
+ * # Reviews
  *
  * Not ready yet
  */
