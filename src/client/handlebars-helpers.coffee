@@ -343,12 +343,14 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
         return '' unless type? and verb?
 
         sentence = map[verb]?[type]
-        return sentence if sentence
+        return sentence if sentence?
 
         fallback = map.fallback
         return '' unless fallback?
 
-        fallback.verb[verb] + ' ' + fallback.object[type]
+        type = (entry.object?.uid if type is 'entity') || fallback.object[type] || entry.object.description
+
+        (fallback.verb[verb]||verb) + ' ' + type
 
 
     ###*
@@ -366,7 +368,9 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
      *      'Pothole on the street'
      *      
     ###
-    HandlebarsHelpers.named = (object)->
-        object.name||object.uid||object.description
+    HandlebarsHelpers.to_s = (object)->
+        return '' unless object?
+        console.log "To_S", object
+        object.name||object.title||object.uid||object.description||object
 
     handlebars.registerHelper(k, v) for k,v of HandlebarsHelpers

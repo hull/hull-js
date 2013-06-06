@@ -9,7 +9,7 @@
       
       <div class="media-body">
         <strong class="media-heading">
-          {{actor.name}} {{activity ../map this}} {{object.name}} {{named target}}
+          {{to_s actor}} | {{activity ../map this}} | {{to_s this}} | {{to_s target}}
         </strong>
         {{#if object.description}}
           <p>{{object.description}}</p>
