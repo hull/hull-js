@@ -3,6 +3,14 @@
  *
  * Activity streams from the actions on your app.
  *
+ * This widget contains the translation map from the Activty Streams format to your own choice of wording.
+ * Everything is stored in the "map" hash in the widget.
+ *
+ * Every activity is made of an `actor`, a `verb`, an `object`, and a `target`
+ *
+ * For now, you have to copy the code for this widget and change it to fit it to your application.
+ * We will make this easier in the future.
+ *
  * ## Example
  *
  *     <div data-hull-widget="activity@hull" data-hull-per-page="10"></div>
@@ -16,7 +24,7 @@
  * - `friends-only`: Optional, only show the activities for the user's friends
  * - `skip`: Optional, skip the n first results
  * - `limit`: Optional, only return n results
- * - `before`: Optional, 
+ * - `before`: Optional
  * - `object-type`: Optional, limit to a specific object type
  * - `where`: Optional, pipe in a mongo query
  * - `verb`: Optional, limit activities to a specific verb
@@ -74,10 +82,7 @@ define({
     },
     create:{
       review:'reviewed',
-      comment:'commented on'
-    },
-    liked:{
-      entity: 'liked'
+      comment:'posted a comment on'
     }
   },
 
