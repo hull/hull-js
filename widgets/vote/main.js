@@ -40,10 +40,17 @@ define({
   },
 
   beforeRender: function(data){
-    data.split = {};
-    data.split.blank = data.target.stats.reviews.distribution['0'];
-    data.split.yes = data.target.stats.reviews.distribution['1'];
-    data.split.no = data.target.stats.reviews.distribution['-1'];
+    data.split = {
+      blank:0,
+      yes:0,
+      no:0
+    };
+    if(!data.target.stats || !data.target.stats.reviews){
+      return data;
+    }
+    data.split.blank = data.target.stats.reviews.distribution['0']||0;
+    data.split.yes = data.target.stats.reviews.distribution['1']||0;
+    data.split.no = data.target.stats.reviews.distribution['-1']||0;
     return data;
   },
 
