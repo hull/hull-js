@@ -1,20 +1,20 @@
 /**
  *
- * # User list
+ * ## User list
  *
  * Displays the list of the users of your app.
  * The access to this widget is limited to the administrators, you will need the Spplication Secret
  * to have access to the data.
  *
- * ## Example
+ * ### Example
  *
  *     <div data-hull-widget="admin/users@hull" app-id="app"></div>
  *
- * ## Options
+ * ### Options
  *
  * - `app-id`: The id of the app you want to see the users. Defaults to `app`, which is the current app
  *
- * ## Template
+ * ### Template
  *
  * - `users`: Displays the list of the users.
  * - `forbidden`: A message to be displayed when the credentials don't allow access to the data

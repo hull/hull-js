@@ -1,5 +1,5 @@
 /**
- * # Share
+ * ## Share
  */
 define({
   type: 'Hull',

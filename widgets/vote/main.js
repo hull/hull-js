@@ -1,20 +1,20 @@
 /**
- * # Vote Buttons
+ * ## Vote Buttons
  *
  * Allow users to vote for or against an object.
  * It also shows the number of votes the object has.
  *
- * ## Examples
+ * ### Examples
  *
  *     <div data-hull-widget="vote_buttons@hull" data-hull-id="HULL_ID"></div>
  *     <div data-hull-widget="vote_buttons@hull" data-hull-id="YOUR_UNIQUE_ID"></div>
  *     <div data-hull-widget="vote_buttons@hull" data-hull-id="ANY_URL"></div>
  *
- * ## Options
+ * ### Options
  *
  * - `id`: Target object to show vote buttons for
  *
- * ## Template
+ * ### Template
  *
  * - `vote_buttons`: Main template. Has 3 states: Upvote, Downvote, Blank
  *

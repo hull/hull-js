@@ -1,5 +1,5 @@
 /**
- * # Activity feed
+ * ## Activity feed
  *
  * Activity streams from the actions on your app.
  *
@@ -11,11 +11,11 @@
  * For now, you have to copy the code for this widget and change it to fit it to your application.
  * We will make this easier in the future.
  *
- * ## Example
+ * ### Example
  *
  *     <div data-hull-widget="activity@hull" data-hull-per-page="10"></div>
  *
- * ## Options
+ * ### Options
  *
  * - `navigation`: Optional, Choose between `infinite` or `paged` navigation. `infinite` by default.
  * - `per-page`: Optional, number of item to display per page. 10 by default.
@@ -29,11 +29,11 @@
  * - `where`: Optional, pipe in a mongo query
  * - `verb`: Optional, limit activities to a specific verb
  *
- * ## Template
+ * ### Template
  *
  * - `activity`: Display items or a message that say that there is no activity.
  *
- * ## Datasource
+ * ### Datasource
  *
  * - `activities`: The activity stream that will be displayed.
  */
@@ -59,7 +59,7 @@ define({
         like: 'liked',
         unlike: 'unliked',
         review: 'reviewed',
-        create: 'created'      
+        create: 'created'
       },
       object:{
         entity: 'an entity',

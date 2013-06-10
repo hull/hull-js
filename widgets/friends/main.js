@@ -1,12 +1,14 @@
 /**
  *
+ * ## friends list
+ *
  * Displays friends for a given user and a given service.
  *
- * ## Example
+ * ### Example
  *
  *     <div data-hull-widget="friends@hull"></div>
  *
- * ## Options
+ * ### Options
  *
  * - `id`: Optional, the id of the user whose friends we want to list. By default, it will list the friends of the current user.
  * - `provider`: Optional, service from which we will fetch friends. Can be `hull`, `instagram`, `twitter`, `facebook` or `github`, by default it will list friends from `hull`.
@@ -14,15 +16,15 @@
  * - `limit`: Optional, the number of friends to display. Be default it will display 10 friends.
  * - `scope` : Optional, a Facebook permission you need to ask the user before being able to show data. - If this permission is not given, a button will be shown to ask for it.
  *
- * ## Template
+ * ### Template
  *
  * - `friends`: Displays the list of the user's friends.
  *
- * ## Actions
+ * ### Actions
  *
  * - `authorize`: Pops up a permissions dialog or a login dialog.
  *
- * ## Datasource
+ * ### Datasource
  *
  * - `friends`: The user's friends.
  * - `authorized` : A hash of permissions showing if the user can view the images.

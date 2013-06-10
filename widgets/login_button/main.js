@@ -1,10 +1,10 @@
 /**
- * # Login button
+ * ## Login button
  *
  * Allow users to log in with auth services that you have hooked on your app.
  * For a more complete widget, look at the Identity widget.
  *
- * ## Examples
+ * ### Examples
  *
  *     <div data-hull-widget="login_button@hull"></div>
  *     <div data-hull-widget="login_button@hull" data-hull-provider="instagram"></div>
@@ -12,12 +12,12 @@
  *     <div data-hull-widget="login_button@hull" data-hull-provider="github"></div>
  *     <div data-hull-widget="login_button@hull" data-hull-provider="github,facebook"></div>
  *
- * ## Options
+ * ### Options
  *
  * - `provider`: Optional, One or more providers to log users in.
  *   If none specified, will show all configured providers for the app.
  *
- * ## Template
+ * ### Template
  *
  * - `login_button`: Show login buttons if the user isn't logged, logout button if he is.
  *
