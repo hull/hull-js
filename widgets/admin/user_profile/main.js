@@ -1,5 +1,7 @@
 /**
  *
+ * # User profile
+ *
  * Displays the profile of an user of your app.
  *
  * ## Example

@@ -1,4 +1,5 @@
 /**
+ * # Like button
  *
  * Allow users to add and remove objects from lists.
  * Lists are created on the fly, with the `list-name` you specify.

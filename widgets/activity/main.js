@@ -1,6 +1,15 @@
 /**
+ * # Activity feed
  *
  * Activity streams from the actions on your app.
+ *
+ * This widget contains the translation map from the Activty Streams format to your own choice of wording.
+ * Everything is stored in the "map" hash in the widget.
+ *
+ * Every activity is made of an `actor`, a `verb`, an `object`, and a `target`
+ *
+ * For now, you have to copy the code for this widget and change it to fit it to your application.
+ * We will make this easier in the future.
  *
  * ## Example
  *
@@ -12,6 +21,13 @@
  * - `per-page`: Optional, number of item to display per page. 10 by default.
  * - `start-page`: Optional, the first page that will be displayed. By default the first page will be retrieved. If you use `infinite` navigation and set `startPage` to another page, your user will not be able to see all items.
  * - `where`: Optional, a mongodb-formatted query. See the docs for more details
+ * - `friends-only`: Optional, only show the activities for the user's friends
+ * - `skip`: Optional, skip the n first results
+ * - `limit`: Optional, only return n results
+ * - `before`: Optional
+ * - `object-type`: Optional, limit to a specific object type
+ * - `where`: Optional, pipe in a mongo query
+ * - `verb`: Optional, limit activities to a specific verb
  *
  * ## Template
  *
@@ -31,6 +47,43 @@ define({
   options: {
     perPage: 10,
     page: 1
+  },
+
+  map : {
+    fallback: {
+      verb:{
+        receive: 'received',
+        share: 'shared',
+        add: 'added',
+        post: 'posted',
+        like: 'liked',
+        unlike: 'unliked',
+        review: 'reviewed',
+        create: 'created'      
+      },
+      object:{
+        entity: 'an entity',
+        image: 'an image',
+        status: 'a status',
+        photo: 'a picture',
+        question: 'a question',
+        item: 'an object',
+        badge: 'a badge',
+        link: 'a link',
+        video: 'a video',
+        note: 'a note',
+        comment: 'a comment',
+        review: 'a review'
+      },
+      target:{
+        facebook_app: 'Facebook',
+        twitter_app: 'Twitter'
+      }
+    },
+    create:{
+      review:'reviewed',
+      comment:'posted a comment on'
+    }
   },
 
   datasources: {
@@ -120,6 +173,7 @@ define({
   },
 
   beforeRender: function(data) {
+    data.map = this.map;
     data.isPaged = (this.options.navigation === 'paged');
     data.query = this.query;
     return data;

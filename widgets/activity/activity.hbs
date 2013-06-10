@@ -8,11 +8,11 @@
       {{/if}}
       
       <div class="media-body">
-        <h4 class="media-heading">
-          {{actor.name}} {{verb}} {{object.type}} - {{object.name}} {{target.name}}
-        </h4>
-        {{#if object.description}}
-          <p>{{object.description}}</p>
+        <strong class="media-heading">
+          {{to_s actor}} {{activity ../map this}} {{to_s target}}
+        </strong>
+        {{#if object}}
+          <p>{{to_s object}}</p>
         {{/if}}
         {{#ifEqual object.type "image"}}
           <img src="{{imageUrl object.id "original"}}"/>

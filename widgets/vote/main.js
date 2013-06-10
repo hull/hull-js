@@ -27,22 +27,30 @@ define({
   templates: ['vote'],
 
   datasources: {
-    vote: 'me/reviews/:id',
-    votes: ':id/reviews'
+    vote: function(){
+      if(this.loggedIn()){
+        return this.api(this.id+'/reviews/me');
+      } else {
+        return false;
+      }
+    },
+    target: function(){
+      return this.api(this.id);
+    }
   },
 
   beforeRender: function(data){
-    data.split = {yes:0, no:0, blank:0 };
-
-    _.map(data.votes,function(vote){
-      if(vote.rating>0){
-        data.split.yes++;
-      } else if (vote.rating<0){
-        data.split.no++
-      } else {
-        data.split.blank++;
-      }
-    });
+    data.split = {
+      blank:0,
+      yes:0,
+      no:0
+    };
+    if(!data.target.stats || !data.target.stats.reviews){
+      return data;
+    }
+    data.split.blank = data.target.stats.reviews.distribution['0']||0;
+    data.split.yes = data.target.stats.reviews.distribution['1']||0;
+    data.split.no = data.target.stats.reviews.distribution['-1']||0;
     return data;
   },
 
@@ -55,7 +63,7 @@ define({
         description: description
       };
       this.api(this.id + '/reviews', 'post', d).then(function() {
-        self.render(self.getTemplate(), {vote:d});
+        self.render();
       });
     }
     evt.stopPropagation();

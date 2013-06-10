@@ -323,7 +323,54 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
      *      1. 
      *      2. 'checked'
     ###
-    HandlebarsHelpers.outputIf = (obj, compare, output)->
-      if obj == compare then output else '';
+    HandlebarsHelpers.outputIf = (obj, compare, output='', fallback='')->
+        if obj == compare then output else fallback;
+
+
+    ###*
+     * Maps an activity stream to english actions, with fallbacks from a hash
+     *
+     *      {{activity map activity_entry}}
+     * 
+     *      => 
+     *      'reviewed'
+    ###
+    HandlebarsHelpers.activity = (map, entry)->
+        return '' unless entry? and map?
+
+        verb = entry.verb
+        type = entry.object?.type
+        return '' unless type? and verb?
+
+        sentence = map[verb]?[type]
+        return sentence if sentence?
+
+        fallback = map.fallback
+        return '' unless fallback?
+
+        type = (entry.object?.uid if type is 'entity') || fallback.object[type] || entry.object.description
+
+        (fallback.verb[verb]||verb) + ' ' + type
+
+
+    ###*
+     * Finds a string to show in an object, with fallbacks
+     *
+     *      obj = {
+     *          name:''
+     *          uid:'Pothole on the street'
+     *          description:''
+     *      }
+     * 
+     *      {{named obj}}
+     * 
+     *      => 
+     *      'Pothole on the street'
+     *      
+    ###
+    HandlebarsHelpers.to_s = (object)->
+        return '' unless object?
+        console.log "To_S", object
+        object.name||object.title||object.uid||object.description||object
 
     handlebars.registerHelper(k, v) for k,v of HandlebarsHelpers

@@ -1,10 +1,11 @@
-{{#if loggedIn}}
-  <div class='btn-group'>
-    <button class='btn btn-tiny {{#ifEqual vote.rating 1}}  btn-success {{/ifEqual}}dropup' data-hull-action='{{#ifEqual vote.rating 1}}unvote{{else}}upvote{{/ifEqual}}'><span class='caret'></span></button>
-    <button class='btn btn-tiny {{#ifEqual vote.rating -1}} btn-success {{/ifEqual}}dropdown' data-hull-action='{{#ifEqual vote.rating -1}}unvote{{else}}downvote{{/ifEqual}}'><span class='caret'></span></button>
-  </div>
+  <h4>{{target.uid}}</h4>
+  {{#if loggedIn}}
+    <div class='btn-group'>
+      <button class='btn btn-tiny {{outputIf vote.rating 1 'btn-success'}} dropup' data-hull-action='{{outputIf vote.rating 1 'unvote' 'upvote'}}'><span class='caret'></span></button>
+      <button class='btn btn-tiny {{outputIf vote.rating -1 'btn-success'}} dropdown' data-hull-action='{{outputIf vote.rating -1 'unvote' 'downvote'}}'><span class='caret'></span></button>
+    </div>
+  {{else}}
+    <div data-hull-widget="login_button@hull"></div>
+  {{/if}}
   <small class='result'>▲{{split.yes}}</small>
   <small class='result'>▼{{split.no}}</small>
-{{else}}
-  <div data-hull-widget="login_button@hull"></div>
-{{/if}}
