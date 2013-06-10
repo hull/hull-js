@@ -1,21 +1,21 @@
 /**
- * #Lists
+ * ##Lists
  *
  * In Hull, a list can contain any number of objects of any type. Lists can be heterogeneous, that is to say a list can contain achievements, people or comments altogether.
  *
- * ## Options
+ * ### Options
  *
  * `id`: The id of the list you want to display
  *
- * ## Templates
+ * ### Templates
  *
  * * `lists`: How the contents of the list should be displayed
  *
- * ## Datasources
+ * ### Datasources
  *
  * `lists`: Contains the contents of the list for which the widget has been instantiated
  *
- * ## Events:
+ * ### Events:
  *
  * `form submit`: When the user submits the form included in the template, a list is created with the properties defined in the forms
  *

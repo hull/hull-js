@@ -1,21 +1,21 @@
 /**
- * # Like Button
+ * ## Like Button
  *
  * Allow users to `like` an object. Likes are not connected to facebook or any other network
  * You can use this as "favorite", "starred", "want"... or of course "like".
  * It also shows the number of likes the object has.
  *
- * ## Examples
+ * ### Examples
  *
  *     <div data-hull-widget="like_button@hull" data-hull-id="HULL_ID"></div>
  *     <div data-hull-widget="like_button@hull" data-hull-id="YOUR_UNIQUE_ID"></div>
  *     <div data-hull-widget="like_button@hull" data-hull-id="ANY_URL"></div>
  *
- * ## Options
+ * ### Options
  *
  * - `id`: Target object to show like button for
  *
- * ## Template
+ * ### Template
  *
  * - `like_button`: Main template. Has 3 states: Unliked, Liked and Working
  *

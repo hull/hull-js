@@ -1,13 +1,13 @@
 /**
- * # Image list
+ * ## Image list
  *
  * Displays images belonging to a given user on a given service
  *
- * ## Example
+ * ### Example
  *
  *     <div data-hull-widget="images@hull"></div>
  *
- * ## Options
+ * ### Options
  *
  * - `id`: Optional, the id of the user whose images we want to list. By default, it will list the images of the current user.
  * - `format`: Optional, the format of the thumbnail you wish to get. Can be `thumb`, `square`, `small`, `medium`, `large`, `original`. Will map to the closest existing preset when used on external networks. Default:  `small`
@@ -15,15 +15,15 @@
  * - `limit`: Optional, the number of images to display. Be default it will display 10 images.
  * - `scope` : Optional, a Facebook permission you need to ask the user before being able to show data. - If this permission is not given, a button will be shown to ask for it.
  *
- * ## Template
+ * ### Template
  *
  * - `images`: Displays the list of the user's images.
  *
- * ## Actions
+ * ### Actions
  *
  * - `authorize`: Pops up a permissions dialog or a login dialog.
  *
- * ## Datasource
+ * ### Datasource
  *
  * - `images`: The user's images.
  * - `authorized` : A hash of permissions showing if the user can view the images.

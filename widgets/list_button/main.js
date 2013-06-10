@@ -1,22 +1,22 @@
 /**
- * # Like button
+ * ## Like button
  *
  * Allow users to add and remove objects from lists.
  * Lists are created on the fly, with the `list-name` you specify.
  *
- * ## Examples
+ * ### Examples
  *
  *     <div data-hull-widget="list_button@hull" data-hull-id="app" data-hull-list-name="favorites"></div>
  *     <div data-hull-widget="list_button@hull" data-hull-id="HULL_ID" data-hull-list-name="favorites"></div>
  *     <div data-hull-widget="list_button@hull" data-hull-uid="ANY_UNIQUE_ID" data-hull-list-name="favorites"></div>
  *
- * ## Options
+ * ### Options
  *
  * - `list-name`: The name of the list you want to show. List will automatically be created if it does not exist yet.
  * - `id` : The ID of the object you want to add / remove to the list.
  * - `uid` : Alternatively, any external UID you want to add to the list. Object will be created as an external Entity
  *
- * ## Template
+ * ### Template
  *
  * - `list_button`: Shows the button with the right state
  *

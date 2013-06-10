@@ -1,5 +1,5 @@
 /**
- * # Quiz
+ * ## Quiz
  *
  * A quiz is a game in which the player attempts to find the answer to questions from multiple possible answers.
  *
@@ -7,15 +7,15 @@
  *
  * Then use this quiz's ID as a parameter for your widget.
  *
- * ## Example
+ * ### Example
  *
  *     <div data-hull-widget="quiz@hull"  data-hull-id="QUIZ_ID"></div>
  *
- * ## Options
+ * ### Options
  *
  * - `id`: The id of the quiz you want to display
  *
- * ## Templates
+ * ### Templates
  *
  * - `quiz_intro`: Show the title and the description of the quiz. And secondarily the identity widget if the user is not connected..
  * - `quiz_question`: Show a question and its answers.
@@ -23,11 +23,11 @@
  * - `quiz_finished`: Say to the user that the quiz is finish.
  * - `quiz_result`: Show to the user his score.
  *
- * ## Datasources
+ * ### Datasources
  *
  * - `quiz`: A collection of all the questions and their possible answers.
  *
- * ## Actions
+ * ### Actions
  *
  * - `login`: Triggered when the user logs in and call the `startQuiz` method.
  * - `submit`: Triggered when the user click on the submit button and push his score to the api.

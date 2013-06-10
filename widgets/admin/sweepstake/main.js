@@ -1,6 +1,6 @@
 /**
  *
- * # Sweepstake admin panel
+ * ## Sweepstake admin panel
  *
  */
 define({

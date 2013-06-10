@@ -1,6 +1,6 @@
 /**
  *
- * # Sweepstake
+ * ## Sweepstake
  *
  * An sweepstake is a game where the player finds out immediately if he or she is a winner of one of the prizes the administrators put at stake.
  *
@@ -8,17 +8,17 @@
  *
  * To create a sweepstake, use the `admin/sweepstake@hull` widget which will let you create a sweepstake and add prizes to it.
  *
- * ## Example
+ * ### Example
  *
  *     <div data-hull-widget="sweepstake@hull"  data-hull-id="SWEEPSTAKE_ID"></div>
  *
- * ## Options
+ * ### Options
  *
  * - `id`: Required, the sweepstake achievement id.
  * - `provider`: Optional, the identity provider to log with before playing. By default it will list all your identity providers.
  * - `delay`: Optional, time in milliseconds to wait before displaying the game's results. By default the results are displayed imediatly after that the server tell us if the user has win or lost.
  *
- * ## Templates
+ * ### Templates
 
  * - `intro`: Show the button to play to the game.
  * - `buttons`: The play buttons partial.
@@ -29,12 +29,12 @@
  * - `unstarted`: Say to the user that the game hasn`t started yet.
  * - `ended`: Say to the user that the game has ended.
  *
- * ## Datasources
+ * ### Datasources
  *
  * - `achievement`: The sweepstake achievement.
  * - `badge`: The user's badge for the sweepstake.
  *
- * ## Action
+ * ### Action
  *
  * - `play`: Ensure that the user is logged and play.
  */

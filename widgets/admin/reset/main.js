@@ -1,5 +1,5 @@
 /**
- * # Reset widget
+ * ## Reset widget
  *
  * This widget lets you delete entities, their associated comments, likes, reviews, and activity feed entries.
  *
@@ -19,7 +19,8 @@ define({
 
  templates: ['reset'],
 
-  beforeRender: function(data){data.relations = this.options.relations.split(',')
+  beforeRender: function(data){
+    data.relations = this.options.relations.split(',');
     _.map(data.entities,function(entity){
       entity.relations=_.map(data.relations,function(relation){
         var rel = entity.stats[relation] || 0;
@@ -27,7 +28,7 @@ define({
         return {
           name:relation,
           count: rel
-        }
+        };
       });
     });
     data.isAdmin = this.sandbox.isAdmin
@@ -43,7 +44,9 @@ define({
       if(id){
         var route = id;
         var $parent = args.el.addClass('is-removing').parents('[data-hull-id="'+ id +'"]');
-        if(target){route = route+'/'+target}
+        if(target){
+          route = route+'/'+target;
+        }
         this.api.delete(route).then(function (res) {
           if(target){
             args.el.remove();

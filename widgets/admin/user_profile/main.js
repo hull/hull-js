@@ -1,18 +1,18 @@
 /**
  *
- * # User profile
+ * ## User profile
  *
  * Displays the profile of an user of your app.
  *
- * ## Example
+ * ### Example
  *
  *     <div data-hull-widget="admin/user_profile@hull"></div>
  *
- * ## Options
+ * ### Options
  *
  * - `id`: The is of the user you want to display
  *
- * ## Template
+ * ### Template
  *
  * - `user_profile`: Displays detailed informations about the selected user.
  *

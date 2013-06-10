@@ -1,9 +1,9 @@
 /**
- * # Hull Footer
+ * ## Hull Footer
  *
  * Shows a footer at the bottom of your page.
  *
- * ## Templates
+ * ### Templates
  *
  * - `footer`: The main template.
  *
