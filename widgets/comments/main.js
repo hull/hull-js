@@ -1,9 +1,9 @@
 /**
- * # Comments list
+ * ## Comments list
  *
  * Allow to list and add comments on an object of the current application.
  *
- * ## Example
+ * ### Example
  *
  *     <div data-hull-widget="comments@hull" data-hull-id="HULL_OBJECT_ID"></div>
  *
@@ -11,21 +11,21 @@
  *
  *     <div data-hull-widget="comments@hull" data-hull-uid="http://path.to/my/url"></div>
  *
- * ## Option:
+ * ### Option:
  *
  * - `id` or `uid`: Required, The object you want to comment on.
  * - `focus`: Optional, Auto-Focus on the input field. default: false.
  *
- * ## Template:
+ * ### Template:
  *
  * - `comments`: Display a list of comments and a form that allows logged users
  *   to post new comments.
  *
- * ## Datasource:
+ * ### Datasource:
  *
  * - `comments`: Collection of all the comments made on the object.
  *
- * ## Action:
+ * ### Action:
  *
  * - `comment`: Submits a new comment.
  */

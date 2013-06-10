@@ -1,15 +1,15 @@
 /**
- * # Quiz Admin
+ * ## Quiz Admin
  *
  * This widget allows you to edit and add quizzes in your application.
  *
- * ## Templates
+ * ### Templates
  *
  * - `admin`: The main template. It shows the list of your quizzes or the form to edit a quiz.
  * - `list'`: Show the list of your quizzes and a form to add new quizzes.
  * - `form'`: Show the form to edit a quiz.
  *
- * ## Datasources
+ * ### Datasources
  *
  * - `quiz`: The collection of all the quizzes available in the application.
  *

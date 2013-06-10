@@ -1,6 +1,6 @@
 /**
  *
- * # Registration form admin panel
+ * ## Registration form admin panel
  *
  */
 define({
