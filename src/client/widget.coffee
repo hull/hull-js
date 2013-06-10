@@ -60,6 +60,8 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
           @actions ?= {}
           @actions.login ?= (e, params)=> @sandbox.login(params.data.provider, params.data)
           @actions.logout ?= => @sandbox.logout()
+          for name, action of @actions
+            @actions[name] = action.bind(@) if _.isFunction(action)
 
           unless @className?
             @className = "hull-widget"
