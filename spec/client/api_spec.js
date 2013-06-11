@@ -22,7 +22,7 @@ define(['spec/support/spec_helper', 'aura/aura'], function (helper, aura) {
 
   easyXDMMock.Rpc.prototype.message = function (conf, successCb, errorCb) {
     var cb;
-    if (conf.path.split('/')[1].indexOf('error') === 0) {
+    if (conf.path.indexOf('error') === 0) {
       cb = errorCb;
     } else {
       cb = successCb;
