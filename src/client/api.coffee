@@ -81,6 +81,8 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         core.data.api = api
         core.track = sandbox.track = (eventName, params)->
           core.data.api({provider:"track", path: eventName}, 'post', params)
+        core.flag = sandbox.flag = (id)->
+          core.data.api({provider:"hull", path:[id, 'flag'].join('/')}, 'post')
 
 
         #
