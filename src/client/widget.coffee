@@ -47,6 +47,9 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
         @datasources  = _.extend {}, default_datasources, @datasources, options.datasources
         @refresh     ?= _.throttle(@render, 200)
 
+        for k, v of @options
+          options[k] ||= v
+
         try
           @events = if _.isFunction(@events) then @events() else @events
           @events ?= {}
@@ -57,6 +60,8 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
           @actions ?= {}
           @actions.login ?= (e, params)=> @sandbox.login(params.data.provider, params.data)
           @actions.logout ?= => @sandbox.logout()
+          for name, action of @actions
+            @actions[name] = action.bind(@) if _.isFunction(action)
 
           unless @className?
             @className = "hull-widget"

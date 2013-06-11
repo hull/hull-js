@@ -24,5 +24,8 @@
   datasources: {
     target: ':id',
     likes: ':id/likes'
+  },
+  options: {
+    id: 'me'
   }
 });
