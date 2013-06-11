@@ -2,7 +2,7 @@ define ->
   (app)->
     slice = Array.prototype.slice
 
-    handler = (req, route, callback, errback)=>
+    handler = (req, callback, errback)=>
       path = req.path.replace(/^\/?twitter\//, '')
       path = path.substring(1) if (path[0] == "/")
       url  = "/api/v1/services/twitter/1.1/" + path
@@ -25,4 +25,4 @@ define ->
       return
 
     initialize: (app)->
-      app.core.services.add([ { path: "/twitter/*path",  handler: handler } ])
+      app.core.routeHandlers.twitter = handler

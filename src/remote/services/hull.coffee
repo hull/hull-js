@@ -22,7 +22,7 @@ define ['jquery', 'underscore'], ($, _)->
 
       analytics.identify(me.id, ident)
 
-    handler = (req, route, callback, errback)=>
+    handler = (req, callback, errback)=>
       path = req.path.replace(/^\/?hull\//, '')
       path = path.substring(1) if (path[0] == "/")
       url  = "/api/v1/" + path
@@ -57,7 +57,7 @@ define ['jquery', 'underscore'], ($, _)->
 
       return
 
-    trackHandler = (req, route, callback, errback)->
+    trackHandler = (req, callback, errback)->
       analytics = require('analytics')
       eventName = req.path.replace(/^track\//, '')
 
@@ -66,7 +66,7 @@ define ['jquery', 'underscore'], ($, _)->
       req.path = "t"
       req.params.event ?= eventName
       req.params = { t: btoa(JSON.stringify(req.params)) }
-      handler(req, route, callback, errback)
+      handler(req, callback, errback)
 
     require:
       paths:
@@ -88,6 +88,6 @@ define ['jquery', 'underscore'], ($, _)->
         identify(app.config.data.me)
 
       analytics.track("init", { appId: app.config.appId })
-      app.core.services.add([ { path: 'hull/*path',  handler: handler } ])
-      app.core.services.add([ { path: 'track/*path', handler: trackHandler } ])
+      app.core.routeHandlers.hull = handler
+      app.core.routeHandlers.track = trackHandler
 

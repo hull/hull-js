@@ -2,7 +2,7 @@ define ->
   (app)->
     slice = Array.prototype.slice
 
-    api = (req, route, callback, errback) ->
+    api = (req, callback, errback) ->
       path = req.path.replace(/^\/?github\//, '')
       path = path.substring(1) if (path[0] == "/")
       url  = "https://api.github.com/" + path
@@ -29,7 +29,5 @@ define ->
 
       return
 
-
-
     initialize: (app)->
-      app.core.services.add([ { path: "/github/*path",  handler: api } ])
+      app.core.routeHandlers.github = api
