@@ -11,7 +11,6 @@
       "requireLib":         "components/requirejs/require",
       "jquery":             "components/jquery/jquery",
       "text":               "components/requirejs-text/text",
-      "route-recognizer": "components/route-recognizer/dist/route-recognizer.amd",
       "analytics":          "components/analytics/analytics",
       "base64":             "components/base64/base64"
     },
