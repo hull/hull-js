@@ -1,0 +1,80 @@
+<div class="hull-conversation">
+  <div class="hull-conversation__header">
+    <h1>Conversation: {{name}}</h1>
+  </div>
+  
+  {{#if participants}}
+    <div class="hull-participants__header">
+      <h2>Participants</h1>
+    </div>
+    
+    <ul class="media-list hull-participants__list">
+      {{#participants}}
+        <li class="media">
+          <div class="pull-left">
+            <img class="media-object img-rounded" src="{{picture}}" alt="{{name}}">
+          </div>
+          <div class="media-body">
+            <h4 class="media-heading">{{name}}</h4>
+          </div>
+        </li>
+      {{/participants}}
+    </ul>
+  {{/if}}
+
+  {{#if messages}}
+    <ul class="media-list hull-conversations__list">
+      {{#messages}}
+        <li class="media" data-hull-message-id="{{id}}">
+          <div class="pull-left">
+            <img class="media-object img-rounded" src="{{sender.picture}}" alt="{{sender.name}}">
+          </div>
+          <div class="media-body">
+            <div class="pull-right">
+              <small class="muted">{{fromNow updated_at}}</small>
+            </div>
+            <h4 class="media-heading">{{sender.name}}</h4>
+            <div class="hull-messages__description">
+              {{description}}
+            </div>
+            <div class="hull-messages__actions">
+                {{#if isDeletable}}
+                  <small>
+                    <a href="#" class='link' data-hull-action="delete" data-hull-id="{{id}}">Delete</a>
+                  </small>
+                {{/if}}
+            </div>
+          </div>
+        </li>
+      {{/messages}}
+    </ul>
+  {{/if}}
+
+  {{^messages}}
+    <div class="alert alert-info">
+      No messages started yet
+    </div>
+  {{/messages}}
+
+
+  <div class="well hull-conversation__form">
+    {{#if loggedIn}}
+      <form>
+        <div class='media' data-hull-conversation-id="{{conversation.id}}">
+          <div class="pull-left">
+            <img class="media-object img-rounded" src="{{me.picture}}" alt="{{me.name}}">
+          </div>
+          <div class="media-body">
+            <textarea name='description' class="input-block-level" rows="3" placeholder="Send a message... "></textarea>
+            <button data-hull-action="message" class="btn btn-primary">Send</button>
+            <div class='pull-right'>
+              <a href="#" data-hull-action="logout" class="link">Logout</a>
+            </div>
+          </div>
+        </div>
+      </form>
+    {{else}}
+      <div data-hull-widget="login_button@hull"></div>
+    {{/if}}
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="hull-conversations">
+  <div class="hull-conversations__header">
+    <h1>My Conversations</h1>
+  </div>
+  
+  {{#if conversations}}
+    <h3 class="hull-conversations__title">{{name}}</h3>
+    <ul class="media-list hull-conversations__list">
+      {{#conversations}}
+        <li class="conversation">
+          <div>{{name}} ({{messages_count}})</div>
+
+          <ul class="media-list hull-participants__list">
+          {{#participants}}
+          <li class="media">
+            <div class="pull-left">
+              <img class="media-object img-rounded" src="{{picture}}" alt="{{name}}">
+            </div>
+            <div class="media-body">
+              <h4 class="media-heading">{{name}}</h4>
+            </div>
+          </li>
+          {{/participants}}
+          </ul>
+        </li>
+      {{/conversations}}
+    </ul>
+  {{/if}}
+</div>
