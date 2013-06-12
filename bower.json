@@ -1,6 +1,6 @@
 {
   "name": "hull-js",
-  "version": "develop",
+  "version": "0.5.2",
   "main": "./lib/hull.js",
   "dependencies": {
     "jquery": "1.9.1",
