@@ -3,7 +3,7 @@ define ->
     slice = Array.prototype.slice
 
     handler = (req, callback, errback)=>
-      path = req.path.replace(/^\/?instagram\//, '')
+      path = req.path
       path = path.substring(1) if (path[0] == "/")
       url  = "/api/v1/services/instagram/" + path
 

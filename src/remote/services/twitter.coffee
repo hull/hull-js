@@ -3,7 +3,7 @@ define ->
     slice = Array.prototype.slice
 
     handler = (req, callback, errback)=>
-      path = req.path.replace(/^\/?twitter\//, '')
+      path = req.path
       path = path.substring(1) if (path[0] == "/")
       url  = "/api/v1/services/twitter/1.1/" + path
 

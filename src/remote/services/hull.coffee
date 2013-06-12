@@ -23,7 +23,7 @@ define ['jquery', 'underscore'], ($, _)->
       analytics.identify(me.id, ident)
 
     handler = (req, callback, errback)=>
-      path = req.path.replace(/^\/?hull\//, '')
+      path = req.path
       path = path.substring(1) if (path[0] == "/")
       url  = "/api/v1/" + path
 
@@ -59,7 +59,7 @@ define ['jquery', 'underscore'], ($, _)->
 
     trackHandler = (req, callback, errback)->
       analytics = require('analytics')
-      eventName = req.path.replace(/^track\//, '')
+      eventName = req.path
 
       analytics.track(eventName, req.params)
 

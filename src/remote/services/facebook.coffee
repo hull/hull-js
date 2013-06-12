@@ -21,7 +21,7 @@ define ->
         errback(errorMsg, { result: res, request: req })
 
   api = ensureLoggedIn (req, callback, errback) ->
-    path = req.path.replace(/^\/?facebook\//, '')
+    path = req.path
     FB.api path, req.method, req.params, resp(req, callback, (msg, res)-> res.time = new Date(); callback(res))
 
   fql = ensureLoggedIn (req, callback, errback) ->
