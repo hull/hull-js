@@ -370,7 +370,6 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
     ###
     HandlebarsHelpers.to_s = (object)->
         return '' unless object?
-        console.log "To_S", object
         object.name||object.title||object.uid||object.description||object
 
     handlebars.registerHelper(k, v) for k,v of HandlebarsHelpers

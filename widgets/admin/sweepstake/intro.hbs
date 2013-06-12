@@ -1,6 +1,6 @@
 <div class="hull-instant-admin">
   <div class="page-header">
-    <h1>Instant Win Admin</h1>
+    <h1>Sweepstake Admin</h1>
   </div>
 
   <div class="control-group">
@@ -12,9 +12,9 @@
   </div>
 
   <br>
-  
+
   <div class="hull-instant-admin__section">
-    <legend class="hull-instant-admin__section-title">Create an Instant Win</legend>
+    <legend class="hull-instant-admin__section-title">Create an Sweepstake</legend>
 
     <div class="control-group">
       <label for="hull-instant-name">Name: </label>
@@ -37,19 +37,19 @@
   </div>
 
   <br>
-  
+
   <div class="hull-instant-admin__section">
     <legend class="hull-instant-admin__section-title">Update Achievement</legend>
 
     <div class="control-group">
-      <label for="hull-achievement-id">Select an Instant Win to Edit: </label>
+      <label for="hull-achievement-id">Select an Sweepstake to Edit: </label>
       <select id="hull-achievement-id" name="hull-achievement-id">
         {{#each achievements}}
           <option value="{{this.id}}">{{this.name}} - {{this.id}}</option>
         {{/each}}
       </select>
     </div>
-    
+
   </div>
 
   <div class="hull-instant-admin__section">
@@ -79,7 +79,7 @@
   </div>
 
   <br>
-  
+
   <div class="hull-instant-admin__section">
     <div class="control-group">
       <label for="hull-prizes-json">Prizes JSON: </label>

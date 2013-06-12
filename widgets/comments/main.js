@@ -39,7 +39,8 @@ define({
 
   actions: {
     comment: 'postComment',
-    delete:  'deleteComment'
+    delete:  'deleteComment',
+    flag:    'flagItem'
   },
 
   options: {
@@ -102,6 +103,16 @@ define({
         this.focusAfterRender = true;
         this.render();
       }, this));
+    }
+  },
+
+  flagItem: function (event, data) {
+    "use strict";
+    event.preventDefault();
+    var id = data.data.id;
+    var isCertain = confirm('Do you want to report this content as inappropriate ?');
+    if (isCertain) {
+      this.sandbox.flag(id);
     }
   }
 });
