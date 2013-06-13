@@ -38,6 +38,7 @@ define({
 
   actions: {
     message: 'postMessage',
+    follow: 'follow'
   },
 
   options: {
@@ -60,13 +61,15 @@ define({
     "use strict";
     if(data && data.conversation) {
       data.messages = data.conversation.messages;
-      data.participants = _.filter(data.conversation.participants, function(p) {
-        return p.id != this.data.me.id
-      }, this);
+      data.participants = data.conversation.participants;
       _.each(data.messages, function(m) {
-        // m.isDeletable = (m.sender.id === this.data.me.id);
+        m.isDeletable = (m.sender.id === this.data.me.id);
+        m.isNew = !m.isDeletable && (!(data.conversation.last_seen[this.data.me.id]) || m.id > data.conversation.last_seen[this.data.me.id])
         return m;
       }, this);
+      data.isFollowing = _.find(data.participants, function(p) {
+        return p.id == this.data.me.id
+      }, this)
     }
     return data;
   },
@@ -76,6 +79,15 @@ define({
       this.$el.find('input,textarea').focus();
       this.focusAfterRender = false;
     }
+    setTimeout(_.bind(function() {
+      var li = $('.hull-messages__list li:last-child');
+      var cid = $('.hull-conversation__form').find('.media').data('hull-conversation-id');
+      
+      var meId = this.data.me.id;
+      if(li) {
+        Hull.data.api(cid + '/conversations/' + li.data('hull-message-id'), 'put');
+      }
+    }, this), 5000);
   },
   toggleLoading: function ($el) {
     "use strict";
@@ -122,5 +134,11 @@ define({
         }, this));
       }
     }
+  },
+  
+  follow: function (e, data) {
+    "use strict";
+    e.preventDefault();
+    
   }
 });
