@@ -6,46 +6,6 @@
   
   <div class="row-fluid">
     <div class="span7">
-      {{#if messages}}
-        <ul class="media-list hull-messages__list">
-          {{#messages}}
-            <li class="media" data-hull-message-id="{{id}}">
-              <div class="pull-left">
-                <img class="media-object img-rounded" src="{{sender.picture}}" alt="{{sender.name}}">
-              </div>
-              <div class="media-body">
-                <div class="pull-right">
-                  <small class="muted">{{fromNow updated_at}}</small>
-                </div>
-                <h4 class="media-heading">
-                  {{sender.name}} 
-                  {{#if isNew}}
-                      <small class="text-success">NEW!</small>
-                    {{/if}}
-                </h4>
-                <div class="hull-messages__description">
-                  {{description}}
-                </div>
-                <div class="hull-messages__actions">
-                    {{#if isDeletable}}
-                      <small>
-                        <a href="#" class='link' data-hull-action="delete" data-hull-id="{{id}}">Delete</a>
-                      </small>
-                    {{/if}}
-                </div>
-              </div>
-            </li>
-          {{/messages}}
-        </ul>
-      {{/if}}
-
-      {{^messages}}
-        <div class="alert alert-info">
-          No messages started yet
-        </div>
-      {{/messages}}
-
-
       <div class="well hull-conversation__form">
         {{#if loggedIn}}
           <form>
@@ -66,36 +26,47 @@
           <div data-hull-widget="login_button@hull"></div>
         {{/if}}
       </div>
-    </div>
-    
-    <div class="span4 offset1">
-      <div class="hull-participants__header">
-        <div class="row">
-          <h2 class="pull-left">Participants</h1>
-          {{#if conversation.is_public}}
-            {{#if isFollowing}}
-              <div class="btn btn-info pull-right">Following</div>
-            {{else}}
-              <div class="btn btn-info pull-right" data-hull-action="follow">Follow</div>
-            {{/if}}
-          {{/if}}
-        </div>
-      </div>
       
-      {{#if participants}}
-        <ul class="media-list hull-participants__list">
-          {{#participants}}
-            <li class="media">
+      {{#if messages}}
+        <ul class="media-list hull-messages__list">
+          {{#messages}}
+            <li class="media" data-hull-message-id="{{id}}">
               <div class="pull-left">
-                <img class="media-object img-rounded" src="{{picture}}" alt="{{name}}">
+                <img class="media-object img-rounded" src="{{sender.picture}}" alt="{{sender.name}}">
               </div>
               <div class="media-body">
-                <h4 class="media-heading">{{name}}</h4>
+                <div class="pull-right">
+                  <small class="muted">{{fromNow updated_at}}</small>
+                </div>
+                <h4 class="media-heading">
+                  {{sender.name}} 
+                  {{#if isNew}}
+                      <small class="text-success">NEW!</small>
+                    {{/if}}
+                </h4>
+                <div class="hull-messages__description">
+                  {{body}}
+                </div>
+                <div class="hull-messages__actions">
+                    {{#if isDeletable}}
+                      <small>
+                        <a href="#" class='link' data-hull-action="deleteMsg" data-hull-id="{{id}}">Delete</a>
+                      </small>
+                    {{/if}}
+                </div>
               </div>
             </li>
-          {{/participants}}
+          {{/messages}}
         </ul>
       {{/if}}
+
+      {{^messages}}
+        <div class="alert alert-info">
+          No messages started yet
+        </div>
+      {{/messages}}
     </div>
+    
+    {{>conversation/participants}}
   </div>
 </div>

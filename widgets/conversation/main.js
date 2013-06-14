@@ -18,6 +18,7 @@
  * ## Template:
  *
  * - `conversations`: 
+ * - `participants`: 
  *
  * ## Datasource:
  *
@@ -32,13 +33,14 @@
 define({
   type: 'Hull',
 
-  templates: ['conversation'],
+  templates: ['conversation','participants'],
 
   refreshEvents: ['model.hull.me.change'],
 
   actions: {
     message: 'postMessage',
-    follow: 'follow'
+    follow: 'follow',
+    deleteMsg: 'deleteMssage'
   },
 
   options: {
@@ -50,21 +52,20 @@ define({
       if(this.options.id) {
         return this.api(this.options.id);
       }
-      else if(this.options.subjectId && this.options.participantIds){
-        var attrs = {participant_ids: this.options.participantIds}
-        return this.api(this.options.subjectId + '/conversations', attrs);
-      }
+    },
+    messages: function () {
+      return this.api(this.options.id + '/messages')
     }
   },
 
   beforeRender: function(data){
     "use strict";
     if(data && data.conversation) {
-      data.messages = data.conversation.messages;
+      data.messages = data.messages;
       data.participants = data.conversation.participants;
       _.each(data.messages, function(m) {
         m.isDeletable = (m.sender.id === this.data.me.id);
-        m.isNew = !m.isDeletable && (!(data.conversation.last_seen[this.data.me.id]) || m.id > data.conversation.last_seen[this.data.me.id])
+        m.isNew = !m.isDeletable && (!(data.conversation.last_read[this.data.me.id]) || (m.id > data.conversation.last_read[this.data.me.id]))
         return m;
       }, this);
       data.isFollowing = _.find(data.participants, function(p) {
@@ -73,6 +74,7 @@ define({
     }
     return data;
   },
+  
   afterRender: function() {
     "use strict";
     if(this.options.focus || this.focusAfterRender) {
@@ -80,12 +82,12 @@ define({
       this.focusAfterRender = false;
     }
     setTimeout(_.bind(function() {
-      var li = $('.hull-messages__list li:last-child');
+      var li = $('.hull-messages__list li:first-child');
       var cid = $('.hull-conversation__form').find('.media').data('hull-conversation-id');
       
       var meId = this.data.me.id;
       if(li) {
-        Hull.data.api(cid + '/conversations/' + li.data('hull-message-id'), 'put');
+        Hull.data.api(cid + '/messages', 'put',  {message_id: li.data('hull-message-id')});
       }
     }, this), 5000);
   },
@@ -126,7 +128,7 @@ define({
       }
       else {
         // Reply to existing conversation
-        var attributes = { message: description };
+        var attributes = { body: description };
         this.api(cid + '/messages', 'post', attributes).then(_.bind(function() {
           this.toggleLoading($formWrapper);
           this.focusAfterRender = true;
@@ -139,6 +141,17 @@ define({
   follow: function (e, data) {
     "use strict";
     e.preventDefault();
+    var $formWrapper = this.$el.find('.hull-conversation__form');
+    var $form = $formWrapper.find('form');
+    var $media = $formWrapper.find('.media');
+    var cid = $media.data('hull-conversation-id');
     
+    this.api(cid + '/participants', 'put').then(_.bind(function() {
+    }, this));
+  },
+  
+  deleteMessage: function(e, data) {
+    "use strict";
+    // TODO: implement
   }
 });
