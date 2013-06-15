@@ -33,7 +33,7 @@
 define({
   type: 'Hull',
 
-  templates: ['conversation','participants'],
+  templates: ['conversation','participants','form'],
 
   refreshEvents: ['model.hull.me.change'],
 
@@ -49,12 +49,17 @@ define({
 
   datasources: {
     conversation: function () {
-      if(this.options.id) {
-        return this.api(this.options.id);
-      }
+      return this.api(this.options.id );
     },
     messages: function () {
-      return this.api(this.options.id + '/messages')
+      // order will default to ASC, if not specified
+      if('desc' == this.options.order) {
+        orderBy = "created_at DESC"
+      }
+      else {
+        orderBy = "created_at ASC"
+      }
+      return this.api(this.options.id + '/messages?order_by=' + orderBy)
     }
   },
 
@@ -71,6 +76,7 @@ define({
       data.isFollowing = _.find(data.participants, function(p) {
         return p.id == this.data.me.id
       }, this)
+      data.isAscending = this.options.order != 'desc';
     }
     return data;
   },
@@ -89,7 +95,7 @@ define({
       if(li) {
         Hull.data.api(cid + '/messages', 'put',  {message_id: li.data('hull-message-id')});
       }
-    }, this), 5000);
+    }, this), 2000);
   },
   toggleLoading: function ($el) {
     "use strict";
