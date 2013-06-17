@@ -40,7 +40,7 @@ define({
   actions: {
     message: 'postMessage',
     follow: 'follow',
-    deleteMsg: 'deleteMssage'
+    deleteMsg: 'deleteMessage'
   },
 
   options: {
@@ -87,13 +87,13 @@ define({
       this.$el.find('input,textarea').focus();
       this.focusAfterRender = false;
     }
+    // Mark msgs as read
     setTimeout(_.bind(function() {
       var li = $('.hull-messages__list li:first-child');
       var cid = $('.hull-conversation__form').find('.media').data('hull-conversation-id');
       
-      var meId = this.data.me.id;
       if(li) {
-        Hull.data.api(cid + '/messages', 'put',  {message_id: li.data('hull-message-id')});
+        Hull.data.api(cid + '/messages', 'put', {});
       }
     }, this), 2000);
   },
@@ -118,46 +118,27 @@ define({
     this.toggleLoading($formWrapper);
     if (description && description.length > 0) {
       var cid = $media.data('hull-conversation-id');
-
-      if(!cid) {
-        var attributes = { 
-          participant_ids: this.options.participantIds,
-          message: description
-        };
-  
-        // Create a new conversation & send initial message
-        this.api(this.options.subjectId + '/conversations', 'post', attributes).then(_.bind(function() {
-          this.toggleLoading($formWrapper);
-          this.focusAfterRender = true;
-          this.render();
-        }, this))
-      }
-      else {
-        // Reply to existing conversation
-        var attributes = { body: description };
-        this.api(cid + '/messages', 'post', attributes).then(_.bind(function() {
-          this.toggleLoading($formWrapper);
-          this.focusAfterRender = true;
-          this.render();
-        }, this));
-      }
+      var attributes = { body: description };
+      this.api(cid + '/messages', 'post', attributes).then(_.bind(function() {
+        this.toggleLoading($formWrapper);
+        this.render();
+      }, this));
     }
   },
   
   follow: function (e, data) {
     "use strict";
     e.preventDefault();
-    var $formWrapper = this.$el.find('.hull-conversation__form');
-    var $form = $formWrapper.find('form');
-    var $media = $formWrapper.find('.media');
-    var cid = $media.data('hull-conversation-id');
     
-    this.api(cid + '/participants', 'put').then(_.bind(function() {
+    this.api(this.options.id + '/participants', 'put').then(_.bind(function() {
+      this.focusAfterRender = true;
+      this.render();
     }, this));
   },
   
   deleteMessage: function(e, data) {
     "use strict";
-    // TODO: implement
+    var mid = $(e.target).data('hull-id');
+    this.api(mid, 'delete')
   }
 });

@@ -37,14 +37,16 @@ define({
 
   datasources: {
     conversations: function () {
-      return this.api('conversations');
+      this.options.visibility
+      var url = 'conversations'
+      if(this.options.visibility) url += '?visibility=' + this.options.visibility;
+      return this.api(url);
     }
   },
 
   beforeRender: function(data){
     "use strict";
-    console.log(data)
-    data.conversations = _.toArray(data.conversations);
+    data.conversations = data.conversations;
     return data;
   }
 });
