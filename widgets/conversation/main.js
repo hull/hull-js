@@ -38,10 +38,9 @@ define({
   refreshEvents: ['model.hull.me.change'],
 
   actions: {
+    create: 'createConvo',
     message: 'postMessage',
-    follow: 'follow',
-    deleteMsg: 'deleteMessage',
-    create: 'createConvo'
+    deleteMsg: 'deleteMessage'
   },
 
   options: {
@@ -120,6 +119,19 @@ define({
     $textarea.attr('disabled', !$textarea.attr('disabled'));
   },
   
+  createConvo: function(e, data) {
+    var $parent = data.el
+    var attrs = {
+      participant_ids: this.options.participantIds,
+      public: this.options.public,
+      name: this.options.convoName
+    }
+    this.api(this.options.subjectId + '/conversations', 'post', attrs).then(_.bind(function(convo) {
+      this.options.id = convo.id;
+      this.render();
+    }, this));
+  },
+  
   postMessage: function (e, data) {
     "use strict";
     e.preventDefault();
@@ -140,16 +152,6 @@ define({
     }
   },
   
-  follow: function (e, data) {
-    "use strict";
-    e.preventDefault();
-    
-    this.api(this.options.id + '/participants', 'put').then(_.bind(function() {
-      this.focusAfterRender = true;
-      this.render();
-    }, this));
-  },
-  
   deleteMessage: function(e, data) {
     "use strict";
     event.preventDefault();
@@ -159,12 +161,5 @@ define({
       .parents('[data-hull-message-id="'+ id +'"]');
     this.api.delete(id).then(function () {$parent.remove();});
     
-  },
-  createConvo: function(e, data) {
-    var $parent = data.el
-    this.api(this.options.subjectId + '/conversations', 'post').then(_.bind(function(convo) {
-      this.options.id = convo.id;
-      this.render();
-    }, this));
   }
 });
