@@ -138,7 +138,12 @@ define({
   
   deleteMessage: function(e, data) {
     "use strict";
-    var mid = $(e.target).data('hull-id');
-    this.api(mid, 'delete')
+    event.preventDefault();
+    var id = data.data.id;
+    var $parent = data.el
+      .addClass('is-removing')
+      .parents('[data-hull-message-id="'+ id +'"]');
+    this.api.delete(id).then(function () {$parent.remove();});
+    
   }
 });
