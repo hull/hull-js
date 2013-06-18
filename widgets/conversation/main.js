@@ -33,14 +33,15 @@
 define({
   type: 'Hull',
 
-  templates: ['conversation','participants','form'],
+  templates: ['conversation','participants','form','conversation_button'],
 
   refreshEvents: ['model.hull.me.change'],
 
   actions: {
     message: 'postMessage',
     follow: 'follow',
-    deleteMsg: 'deleteMessage'
+    deleteMsg: 'deleteMessage',
+    create: 'createConvo'
   },
 
   options: {
@@ -49,23 +50,33 @@ define({
 
   datasources: {
     conversation: function () {
-      return this.api(this.options.id );
-    },
-    messages: function () {
-      // order will default to ASC, if not specified
-      if('desc' == this.options.order) {
-        orderBy = "created_at DESC"
+      if (this.options.id) {
+        return this.api(this.options.id );
       }
       else {
-        orderBy = "created_at ASC"
+        return null;
       }
-      return this.api(this.options.id + '/messages?order_by=' + orderBy)
+    },
+    messages: function () {
+      if (this.options.id) {
+        // order will default to ASC, if not specified
+        if('desc' == this.options.order) {
+          orderBy = "created_at DESC"
+        }
+        else {
+          orderBy = "created_at ASC"
+        }
+        return this.api(this.options.id + '/messages?order_by=' + orderBy)
+      }
+      else {
+        return null;
+      }
     }
   },
 
   beforeRender: function(data){
     "use strict";
-    if(data && data.conversation) {
+    if(data.conversation) {
       data.messages = data.messages;
       data.participants = data.conversation.participants;
       _.each(data.messages, function(m) {
@@ -77,6 +88,9 @@ define({
         return p.id == this.data.me.id
       }, this)
       data.isAscending = this.options.order != 'desc';
+    }
+    else {
+      data.newConvo = true;
     }
     return data;
   },
@@ -92,7 +106,7 @@ define({
       var li = $('.hull-messages__list li:first-child');
       var cid = $('.hull-conversation__form').find('.media').data('hull-conversation-id');
       
-      if(li) {
+      if(li && cid) {
         Hull.data.api(cid + '/messages', 'put', {});
       }
     }, this), 2000);
@@ -145,5 +159,12 @@ define({
       .parents('[data-hull-message-id="'+ id +'"]');
     this.api.delete(id).then(function () {$parent.remove();});
     
+  },
+  createConvo: function(e, data) {
+    var $parent = data.el
+    this.api(this.options.subjectId + '/conversations', 'post').then(_.bind(function(convo) {
+      this.options.id = convo.id;
+      this.render();
+    }, this));
   }
 });

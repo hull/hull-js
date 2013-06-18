@@ -1,3 +1,8 @@
+{{#if newConvo}}
+  {{>conversation/conversation_button}}
+{{/if}}
+
+{{^newConvo}}
 <div class="hull-conversation">
   <div class="hull-conversation__header">
     <h1>Conversation: {{conversation.name}}</h1>
@@ -58,3 +63,4 @@
     {{>conversation/participants}}
   </div>
 </div>
+{{/newConvo}}
