@@ -69,7 +69,7 @@ define({
       data.messages = data.messages;
       data.participants = data.conversation.participants;
       _.each(data.messages, function(m) {
-        m.isDeletable = (m.sender.id === this.data.me.id);
+        m.isDeletable = (m.actor.id === this.data.me.id);
         m.isNew = !m.isDeletable && (!(data.conversation.last_read[this.data.me.id]) || (m.id > data.conversation.last_read[this.data.me.id]))
         return m;
       }, this);
