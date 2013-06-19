@@ -9,6 +9,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
 
     rpc = false
     rawFetch = null
+    emitUserEvent = null
     module =
       require:
         paths:
@@ -91,6 +92,8 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         #
         #
 
+        emitUserEvent = ->
+          app.core.mediator.emit('hull.currentUser', app.core.currentUser)
 
         app.core.setCurrentUser = setCurrentUser = (headers={})->
           return unless app.config.appId
@@ -104,11 +107,11 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
                 id:   headers['Hull-User-Id'],
                 sig:  headers['Hull-User-Sig']
               }
-              app.core.mediator.emit('hull.currentUser', app.core.currentUser)
+              emitUserEvent()
           else
             $.removeCookie(cookieName, path: "/")
             app.core.currentUser = false
-            app.core.mediator.emit('hull.currentUser', app.core.currentUser) if currentUserId
+            emitUserEvent() if currentUserId
 
           app.sandbox.config ?= {}
           app.sandbox.config.curentUser = app.core.currentUser
@@ -277,10 +280,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
           data = remoteConfig.data
 
           if data.headers && data.headers['Hull-User-Id']
-            app.core.currentUser = {
-              id:   data.headers['Hull-User-Id'],
-              sig:  data.headers['Hull-User-Sig']
-            }
+            app.core.setCurrentUser data.headers
 
           window.clearTimeout(timeout)
           app.config.assetsUrl            = remoteConfig.assetsUrl
@@ -320,7 +320,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         base.app    = rawFetch('app', true);
         base.org    = rawFetch('org', true);
 
-        app.core.mediator.emit  'hull.currentUser', app.core.currentUser
+        emitUserEvent()
         app.core.mediator.on    'hull.currentUser', clearModelsCache
 
     module
