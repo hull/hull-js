@@ -94,6 +94,9 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
 
       renderError: ->
 
+      dataError: ->
+        console.log(arguments)
+
       log: (msg)=>
         if @options.debug
           console.warn(@options.name, ":", @options.id, msg)
@@ -108,9 +111,15 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
         try
           keys      = _.keys(@datasources)
           promises  = _.map keys, (k)=>
+            dfd = @sandbox.data.deferred()
             ds = @datasources[k]
             ds.parse(_.extend({}, @, @options || {}))
-            ds.fetch()
+            ds.fetch().then (res)->
+              dfd.resolve(res)
+            , (err)=>
+              dfd.resolve(false)
+              @dataError k, err
+              dfd
 
           widgetDeferred = @sandbox.data.when.apply(undefined, promises)
           templateDeferred = @sandbox.template.load(@templates, @ref)
