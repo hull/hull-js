@@ -73,6 +73,13 @@ define({
     }
   },
 
+  initialize: function() {
+    this.sandbox.on('hull.conversation.pick', function(id) {
+      this.options.id = id;
+      this.render();
+    }, this)
+  },
+  
   beforeRender: function(data){
     "use strict";
     if(data.conversation) {

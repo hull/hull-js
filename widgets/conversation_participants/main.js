@@ -47,12 +47,7 @@ define({
 
   datasources: {
     conversation: function () {
-      if (this.options.id) {
-        return this.api(this.options.id );
-      }
-      else {
-        return null;
-      }
+      return this.api(this.options.id );
     }
   },
 
