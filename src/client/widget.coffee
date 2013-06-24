@@ -105,11 +105,11 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
           console.log "An error occurred with datasource #{datasourceName}", err
         @_renderCount ?= 0
         @_renderCount++
-        ret       = {}
-        errors    = {}
-        dfd       = @sandbox.data.deferred()
+        ret = {}
+        dfd = @sandbox.data.deferred()
+        datasourceErrors = {}
         try
-          keys      = _.keys(@datasources)
+          keys = _.keys(@datasources)
           promises  = _.map keys, (k)=>
             promiseDfd = @sandbox.data.deferred()
             ds = @datasources[k]
@@ -119,7 +119,7 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
             , (err)=>
               handler = @["on#{_.string.capitalize(_.string.camelize(k))}Error"]
               handler = onDataError.bind(@, k) unless _.isFunction(handler)
-              errors[k] = err
+              datasourceErrors[k] = err
               promiseDfd.resolve(handler err)
             promiseDfd
 
@@ -151,7 +151,7 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
         catch e
           console.error("Caught error in buildContext", e.message, e)
           dfd.reject(e)
-        [dfd, errors]
+        [dfd, datasourceErrors]
 
       loggedIn: =>
         return false unless @sandbox.data.api.model('me').id?
@@ -179,6 +179,7 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
       # Start nested widgets...
       render: (tpl, data)=>
         [ctx, errors] = @buildContext.call(@)
+        errors = null unless _.keys(errors)
         ctx.fail (err)->
           console.error("Error fetching Datasources ", err.message, err)
         ctx.then (ctx)=>
