@@ -2,12 +2,12 @@
   <div class="hull-conversation__header">
     <div>You have {{conversation.messages_count_unread}} NEW messages and {{conversation.messages_count}} total messages.</div>
   </div>
-  
+
   <div class="row-fluid">
       {{^isAscending}}
-        {{>conversation/form}}
+        {{> conversation.form}}
       {{/isAscending}}
-      
+
       {{#if messages}}
         <ul class="media-list hull-messages__list">
           {{#messages}}
@@ -48,9 +48,9 @@
           No messages started yet
         </div>
       {{/messages}}
-      
+
       {{#if isAscending}}
-        {{>conversation/form}}
+        {{> conversation.form}}
       {{/if}}
   </div>
 </div>
