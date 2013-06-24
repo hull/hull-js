@@ -55,8 +55,10 @@ define ['underscore', 'jquery'], (_, $)->
       dfd = $.Deferred()
       if _.isFunction(@def)
         ret = @def()
-        dfd = ret.deferred if ret?.deferred
-        dfd.resolve ret
+        if ret?.promise
+          dfd = ret
+        else
+          dfd.resolve ret
       else
         dfd.resolve(false) if /undefined/.test(@def.path)
         if @type == 'model'
