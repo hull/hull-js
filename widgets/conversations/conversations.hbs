@@ -1,0 +1,28 @@
+<div class="hull-conversations-admin">
+  {{#if conversations}}
+    <table class="table table-hover">
+      <tr>
+        <th>Subject</th>
+        <th>Message Count</th>
+        <th>Participants</th>
+        <th>Last updated</th>
+      </tr>
+      {{#conversations}}
+        <tr class="conversation">
+          <td>{{name}}</td>
+          <td>{{messages_count}}</td>
+          <td>
+            <ul>
+            {{#participants}}
+              <li>{{name}}</li>
+            {{/participants}}
+            </ul>
+          </td>
+          <td>{{updated_at}}</td>
+        </tr>
+        </a>
+      {{/conversations}}
+    </table>
+  {{/if}}
+</div>
+
