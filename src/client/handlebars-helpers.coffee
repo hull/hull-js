@@ -48,6 +48,20 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
     HandlebarsHelpers.fromNow = (date)->
       return unless date?
       moment(date).fromNow()
+      
+    ###*
+     * Return a formatted date
+     * Uses [moment.js](http://momentjs.com/) behind the scenes.
+     *
+     *     <span class='date'>{{formatTime date "h:mm A"}}</span>
+     *     => <span class='date'>5:30 PM</span>
+     *
+     * @param  {String} date The date string to format, can be any format moment.js understands
+     * @param  {String} format A format string
+     * @return {String}  A formatted date
+    ###
+    HandlebarsHelpers.formatTime = (date, format)->
+      moment(date).format(format)
 
     ###*
      * Return the Stringified version of an object.
