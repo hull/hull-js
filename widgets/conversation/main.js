@@ -18,7 +18,9 @@
  * ## Template:
  *
  * - `conversations`: 
- * - `participants`: 
+ * - `participants`:  
+ * - `form`: 
+ * - `conversation_button`: 
  *
  * ## Datasource:
  *
@@ -26,7 +28,9 @@
  *
  * ## Action:
  *
+ * - `create`: Creates a conversation
  * - `message`: Submits a new message.
+ * - `deleteMsg`: Deletes a message
  */
 
 /*global define:true, _:true */

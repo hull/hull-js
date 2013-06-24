@@ -1,23 +1,17 @@
 /**
  *
- * Allow to start and reply to a conversation on an object of the current application.
+ * List the current participants of a conversation, and allow users to follow/unfollow it
  *
  * ## Example
  *
- *     <div data-hull-widget="conversation@hull" data-hull-id="OBJECT_ID"></div>
+ *     <div data-hull-widget="conversation_participants@hull" data-hull-id="OBJECT_ID"></div>
  *
  * ## Option:
  *
- * - `id`: Required, The id of the specific conversation object
- * 
- * OR
- *
- * - `subjectid`: Required, The object you want to start a conversation upon.
- * - `participantid`: Required, comma-separated ids of the participants
+ * - `id`: Required, The id of the conversation object
  *
  * ## Template:
  *
- * - `conversations`: 
  * - `participants`: 
  *
  * ## Datasource:
@@ -26,7 +20,7 @@
  *
  * ## Action:
  *
- * - `message`: Submits a new message.
+ * - `follow`: Join/follow the current converstion
  */
 
 /*global define:true, _:true */
