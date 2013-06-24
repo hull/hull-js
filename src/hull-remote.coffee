@@ -10,7 +10,7 @@ define ['aura/aura', 'lib/version'], (Aura, version)->
     hull.app.use('lib/remote/services')
     hull.app.use('lib/remote/services/hull')
 
-    if config.services.settings.facebook_app
+    if config.services.settings.facebook_app?.appId
       hull.app.use('lib/remote/services/facebook')
 
     if config.services.settings.github_app

@@ -1,9 +1,10 @@
 /**
+ * ## Identity
  *
  * Allow users to log in with auth services that you have hooked on your app.
  * When logged in, show a micro-profile card.
  *
- * ## Examples
+ * ### Examples
  *
  *     <div data-hull-widget="identity@hull"></div>
  *     <div data-hull-widget="identity@hull" data-hull-provider="instagram"></div>
@@ -11,12 +12,12 @@
  *     <div data-hull-widget="identity@hull" data-hull-provider="github"></div>
  *     <div data-hull-widget="identity@hull" data-hull-provider="github,facebook"></div>
  *
- * ## Options
+ * ### Options
  *
  * - `provider`: Optional, One or more providers to log users in.
  *   If none specified, will show all configured providers for the app.
  *
- * ## Template
+ * ### Template
  *
  * - `identity`: Show login buttons if the user isn't logged, display a micro profile card if he is.
  *

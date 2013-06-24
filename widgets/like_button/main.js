@@ -1,23 +1,23 @@
 /**
- * # Like Button
+ * ## Like Button
  *
  * Allow users to `like` an object. Likes are not connected to facebook or any other network
  * You can use this as "favorite", "starred", "want"... or of course "like".
+ * It also shows the number of likes the object has.
  *
- * ## Examples
+ * ### Examples
  *
  *     <div data-hull-widget="like_button@hull" data-hull-id="HULL_ID"></div>
  *     <div data-hull-widget="like_button@hull" data-hull-id="YOUR_UNIQUE_ID"></div>
  *     <div data-hull-widget="like_button@hull" data-hull-id="ANY_URL"></div>
  *
- * ## Options
+ * ### Options
  *
- * - `provider`: Optional, One or more providers to log users in.
- *   If none specified, will show all configured providers for the app.
+ * - `id`: Target object to show like button for
  *
- * ## Template
+ * ### Template
  *
- * - `login_button`: Show login buttons if the user isn't logged, logout button if he is.
+ * - `like_button`: Main template. Has 3 states: Unliked, Liked and Working
  *
  */
 
@@ -28,39 +28,17 @@
 
   working: false,
 
-  initialize: function() {
-    if (this.options.liked) {
-      this.isLiked = (this.options.liked == true);
-    }
-  },
-
   datasources: {
-    liked: "me/liked",
+    target: ':id',
+    liked: function(){
+      return this.api("me/liked/"+this.options.id);
+    },
   },
 
-  beforeRender: function(data) {
-    var likedIds = _.map(data.liked,function(l){return l.liked.id});
-
-    // var likedIds = _.pluck(data.liked, 'id');
-    if (!data.me || !data.me.id) {
-      this.isLiked = undefined;
-    } else if (typeof this.isLiked !== 'boolean') {
-      var target=this.id;
-      switch (target){
-        case 'app' :
-          this.id = data.app.id;
-          break;
-        case 'me' :
-          this.id = data.me.id;
-          break;
-        case 'org' :
-          this.id = data.org.id;
-          break;
-      }
-      this.isLiked = _.include(likedIds, this.id);
-    }
-    data.likesCount = this.likesCount || this.options.likesCount;
-    data.isLiked = this.isLiked;
+  beforeRender:function(data){
+    data.likes = data.target.stats.likes||0
+    self.likes = data.likes;
+    self.liked = data.liked;
     return data;
   },
 
@@ -69,14 +47,27 @@
       return;
     }
     this.working = true;
+    var self=this;
     var method = verb === 'unlike' ? 'delete' : 'post';
-    this.isLiked    = !this.isLiked;
-    this.api(this.id + '/likes', method, function(count) {
-      this.working    = false;
-      this.likesCount = count
-      this.render('like_button', { isLiked: this.isLiked, likesCount: this.likesCount });
-    }.bind(this)).fail(function(){
-      this.isLiked = !this.isLiked;
+    self.liked=!self.liked;
+    self.liked? self.likes++:self.likes--;
+
+    self.render(self.getTemplate(),{working:true, likes:self.likes, liked:self.liked});
+
+    //Events should be emitted automatically here so the likes@hull widget
+    //can subscribe and refresh itself.
+    this.api(this.id + '/likes', method)
+    .done(function(likes) {
+      self.likes=likes||0;
+
+    }).fail(function(){
+      self.likes--;
+      self.liked=!self.liked;
+
+    }).always(function(){
+      self.working=false;
+      self.render(self.getTemplate(),{working:self.working, liked:self.liked, likes:self.likes});
+
     });
   },
 

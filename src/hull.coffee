@@ -26,7 +26,7 @@
             _h[k] = window.Hull[k]
           window.Hull = _h
 
-    if window.opener && window.opener.Hull
+    if document.location.hash == "#hull-auth" &&  window.opener && window.opener.Hull
       try
         window.opener.Hull.emit("hull.authComplete")
         return window.close()

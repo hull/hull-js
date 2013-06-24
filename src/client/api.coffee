@@ -9,15 +9,14 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
 
     rpc = false
     rawFetch = null
+    emitUserEvent = null
     module =
       require:
         paths:
           easyXDM: 'components/easyXDM/easyXDM'
-          backbone: 'components/backbone/backbone'
           cookie: 'components/jquery.cookie/jquery.cookie'
         shim:
           easyXDM: { exports: 'easyXDM' }
-          backbone: { exports: 'Backbone', deps: ['underscore', 'jquery'] }
 
 
       # Builds the URL used by easyXDM
@@ -35,7 +34,6 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         sandbox = app.sandbox
 
         _         = require('underscore')
-        Backbone  = require('backbone')
         easyXDM   = require('easyXDM')
 
         slice = Array.prototype.slice
@@ -84,6 +82,8 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         core.data.api = api
         core.track = sandbox.track = (eventName, params)->
           core.data.api({provider:"track", path: eventName}, 'post', params)
+        core.flag = sandbox.flag = (id)->
+          core.data.api({provider:"hull", path:[id, 'flag'].join('/')}, 'post')
 
 
         #
@@ -92,6 +92,8 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         #
         #
 
+        emitUserEvent = ->
+          app.core.mediator.emit('hull.currentUser', app.core.currentUser)
 
         app.core.setCurrentUser = setCurrentUser = (headers={})->
           return unless app.config.appId
@@ -105,11 +107,11 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
                 id:   headers['Hull-User-Id'],
                 sig:  headers['Hull-User-Sig']
               }
-              app.core.mediator.emit('hull.currentUser', app.core.currentUser)
+              emitUserEvent()
           else
             $.removeCookie(cookieName, path: "/")
             app.core.currentUser = false
-            app.core.mediator.emit('hull.currentUser', app.core.currentUser) if currentUserId
+            emitUserEvent() if currentUserId
 
           app.sandbox.config ?= {}
           app.sandbox.config.curentUser = app.core.currentUser
@@ -143,7 +145,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
           dfd.fail(options.error)
           dfd
 
-        BaseHullModel = Backbone.Model.extend
+        BaseHullModel = app.core.mvc.Model.extend
           sync: sync
 
         RawModel = BaseHullModel.extend
@@ -158,7 +160,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
               url = @collection?.url
             url
 
-        Collection = Backbone.Collection.extend
+        Collection = app.core.mvc.Collection.extend
           model: Model
           sync: sync
 
@@ -278,10 +280,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
           data = remoteConfig.data
 
           if data.headers && data.headers['Hull-User-Id']
-            app.core.currentUser = {
-              id:   data.headers['Hull-User-Id'],
-              sig:  data.headers['Hull-User-Sig']
-            }
+            app.core.setCurrentUser data.headers
 
           window.clearTimeout(timeout)
           app.config.assetsUrl            = remoteConfig.assetsUrl
@@ -321,7 +320,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         base.app    = rawFetch('app', true);
         base.org    = rawFetch('org', true);
 
-        app.core.mediator.emit  'hull.currentUser', app.core.currentUser
+        emitUserEvent()
         app.core.mediator.on    'hull.currentUser', clearModelsCache
 
     module

@@ -1,28 +1,33 @@
 /**
+ * ## Achievement button
  *
- * A button that lets a user achieve an something.
+ * A button that lets your users win a badge for an achievement you've previously defined.
  *
- * Using this widget you can implement two very useful functionalities:
+ * Basically, the widget works as follows: specify the secret of the achievemnt at widget declaration, and the achievement will be unlockable immediately.
  *
- * - **Basic Checkins**: without any sort of verification : just specify in the secret in plain text, and the achievement will be unlockable immediately.
- * - **Restricted Checkins**: Do not write the secret in plain text.  Instead, use the server library to compute a user-specific token, and use it only when you want your user to be able to checkin.  The user will then be able to unlock the achievement using a unique token, only valid for him and for a limited time.  Check out the Kitchensink for a working example.
+ * Using server-side hooks, you can also build personal and restricted badges, like badges that require a certain action to be won. See the [hooks documentation]() to discover how they work.
  *
- * ## Example
+ * ### Example
  *
  *     <div data-hull-widget="achieve_button@hull" data-hull-id="ACHIEVEMENT_ID"></div>
  *
- * ## Options
+ * ### Options
  *
  * - `id`: Required, the achievement to unlock
  * - `secret`: Optional, the secret code to the achievement.
  *
- * ## Template
+ * ### Template
  *
- * - `achieve_button`: Displays the status of he achievement as well as a button so the suer can unlock himself the achievement.
+ * - `achieve_button`: Displays the status of the achievement as well as a button so the user can unlock himself the achievement.
  *
- * ## Action
+ * ### Action
  *
  * - `achieve`: Achieve the achievement
+ *
+ * ### Related
+ *
+ * - Widget `admin/achievements` to create achievements
+ * - Achievements/Badges API
 */
 define({
   type: 'Hull',

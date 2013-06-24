@@ -1,0 +1,45 @@
+{
+  "srcFiles": ["src/hullbase.coffee", "src/hull.coffee", "src/client/**/*.coffee"],
+  "requireJS": {
+    "baseUrl": ".",
+    "preserveLicenseComments": true,
+    "paths": {
+      "aura":           "components/aura/lib",
+      "underscore":     "components/underscore/underscore",
+      "eventemitter":   "components/eventemitter2/lib/eventemitter2",
+      "backbone":       "components/backbone/backbone",
+      "easyXDM":        "components/easyXDM/easyXDM",
+      "handlebars":     "node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars",
+      "requireLib":     "components/requirejs/require",
+      "moment":         "components/moment/moment",
+      "cookie":         "components/jquery.cookie/jquery.cookie",
+      "string":         "components/underscore.string/lib/underscore.string",
+      "jquery":         "empty:",
+      "text":           "components/requirejs-text/text",
+      "base64":         "components/base64/base64"
+    },
+    "shim": {
+      "backbone":   { "exports": "Backbone", "deps": ["underscore", "jquery"] },
+      "underscore": { "exports": "_" },
+      "easyXDM":    { "exports": "easyXDM" },
+      "handlebars": { "exports": "Handlebars"}
+    },
+    "include": [
+      "requireLib",
+      "underscore",
+      "moment",
+      "string",
+      "cookie",
+      "base64",
+      "backbone",
+      "handlebars",
+      "easyXDM",
+      "text",
+      "aura/ext/debug",
+      "aura/ext/mediator",
+      "aura/ext/widgets",
+      "lib/hull"
+      ],
+    "out": "dist/<%= PKG_VERSION %>/hull.js"
+  }
+}

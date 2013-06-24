@@ -46,6 +46,7 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
      * @return {String}      A pretty date
     ###
     HandlebarsHelpers.fromNow = (date)->
+      return unless date?
       moment(date).fromNow()
       
     ###*
@@ -169,17 +170,17 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
       _.str.humanize string
 
     ###*
-     * 
+     *
      *      {{pluralize collection.length 'quiz' 'quizzes'}}
      *
      * @param  {number} number
      * @param  {string} single
      * @param  {string} plural
-     * @return {string}       
+     * @return {string}
     ###
     HandlebarsHelpers.pluralize = (number, single, plural) ->
         (if (number <= 1) then single else plural)
-   
+
 
     ###*
      * Renders all characters to lower case and then makes the first upper
@@ -306,6 +307,7 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
       ret = items.join sep
       ret += options.hash['lastSep'] + last if last
       ret
+
     ###*
     * THE DEBUG HELPER
     *
@@ -323,5 +325,65 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
           console.log("====================")
           console.log(optionalValue)
 
+    ###*
+     * write text if value equals another value
+     *
+     *      foo='bar'
+     * 
+     *      1. {{outputIf foo 'bar'}}
+     *      2. {{outputIf foo 'baz' 'checked'}}
+     * 
+     *      => 
+     *      1. 
+     *      2. 'checked'
+    ###
+    HandlebarsHelpers.outputIf = (obj, compare, output='', fallback='')->
+        if obj == compare then output else fallback;
+
+
+    ###*
+     * Maps an activity stream to english actions, with fallbacks from a hash
+     *
+     *      {{activity map activity_entry}}
+     * 
+     *      => 
+     *      'reviewed'
+    ###
+    HandlebarsHelpers.activity = (map, entry)->
+        return '' unless entry? and map?
+
+        verb = entry.verb
+        type = entry.object?.type
+        return '' unless type? and verb?
+
+        sentence = map[verb]?[type]
+        return sentence if sentence?
+
+        fallback = map.fallback
+        return '' unless fallback?
+
+        type = (entry.object?.uid if type is 'entity') || fallback.object[type] || entry.object.description
+
+        (fallback.verb[verb]||verb) + ' ' + type
+
+
+    ###*
+     * Finds a string to show in an object, with fallbacks
+     *
+     *      obj = {
+     *          name:''
+     *          uid:'Pothole on the street'
+     *          description:''
+     *      }
+     * 
+     *      {{named obj}}
+     * 
+     *      => 
+     *      'Pothole on the street'
+     *      
+    ###
+    HandlebarsHelpers.to_s = (object)->
+        return '' unless object?
+        object.name||object.title||object.uid||object.description||object
 
     handlebars.registerHelper(k, v) for k,v of HandlebarsHelpers

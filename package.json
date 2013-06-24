@@ -1,6 +1,6 @@
 {
   "name": "hull-js",
-  "version": "0.4.8",
+  "version": "0.5.2",
   "devDependencies": {
     "mocha": "1.8.1",
     "chai": "1.5.0",
@@ -16,14 +16,13 @@
     "grunt-contrib-concat": "0.1.2",
     "grunt-contrib-connect": "0.1.2",
     "grunt-contrib-handlebars": "0.5.4",
-    "grunt-contrib-jshint": "0.1.1",
     "grunt-contrib-requirejs": "0.4.0",
     "grunt-contrib-uglify": "0.1.1",
     "grunt-contrib-watch": "0.2.0",
     "grunt-hull-dox": "git://github.com/hull/grunt-hull-dox.git",
-    "grunt-hull-widgets": "~0.5.0",
+    "grunt-hull-widgets": "~0.6.0",
     "grunt-mocha": "0.3.1",
-    "bower": "~0.8.6",
+    "bower": "~0.9",
     "coverjs": "0.0.14",
     "grunt-coverjs": "git://github.com/hull/grunt-coverjs.git",
     "plato": "~0.5.0",
@@ -32,5 +31,8 @@
   "scripts": {
     "postinstall": "$(npm bin)/bower install",
     "test": "grunt test"
+  },
+  "engines": {
+    "node": "~0.10"
   }
 }

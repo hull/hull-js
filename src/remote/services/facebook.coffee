@@ -9,7 +9,7 @@ define ->
         base.apply(undefined, args)
       , true
 
-  resp = (req, route, callback, errback) ->
+  resp = (req, callback, errback) ->
     (res) ->
       if (res && !res.error)
         callback({ response: res, provider: 'facebook' })
@@ -20,12 +20,12 @@ define ->
           errorMsg = "[FB Error] Unknown error"
         errback(errorMsg, { result: res, request: req })
 
-  api = ensureLoggedIn (req, route, callback, errback) ->
-    path = req.path.replace(/^\/?facebook\//, '')
-    FB.api path, req.method, req.params, resp(req, route, callback, (msg, res)-> res.time = new Date(); callback(res))
+  api = ensureLoggedIn (req, callback, errback) ->
+    path = req.path
+    FB.api path, req.method, req.params, resp(req, callback, (msg, res)-> res.time = new Date(); callback(res))
 
-  fql = ensureLoggedIn (req, route, callback, errback) ->
-    FB.api({ method: 'fql.query', query: req.params.query }, resp(req, route, callback, errback))
+  fql = ensureLoggedIn (req, callback, errback) ->
+    FB.api({ method: 'fql.query', query: req.params.query }, resp(req, callback, errback))
 
   # The actual extension...
   require:
@@ -38,7 +38,6 @@ define ->
     dfd = app.core.data.deferred()
     FB.init(app.config.services.settings.facebook_app)
     FB.getLoginStatus dfd.resolve
-    app.core.services.add([ { path: "/facebook/fql",    handler: fql } ])
-    app.core.services.add([ { path: "/facebook/*path",  handler: api } ])
-
+    app.core.routeHandlers.fql = fql
+    app.core.routeHandlers.facebook = api
     dfd

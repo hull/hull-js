@@ -1,0 +1,9 @@
+<div class="hull-quiz_admin">
+  {{#if quiz}}
+    {{>admin.quiz.form}}
+  {{/if}}
+
+  {{#unless quiz}}
+    {{>admin.quiz.list}}
+  {{/unless}}
+</div>

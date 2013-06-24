@@ -76,10 +76,12 @@ define(['underscore', 'h5f'], function(_, H5F) {
         return f;
       }, this);
 
+      var profile = data.me.profile || {};
+
       // Check if user.profile contains all the fields with their respective
       // value. If it's the case we consider the form as complete.
       var isComplete = _.every(fields, function(f) {
-        var profileField = data.me.profile[f.name];
+        var profileField = profile[f.name];
         if (f.type === 'checkbox') {
           return profileField == f.value;
         } else {
@@ -138,11 +140,14 @@ define(['underscore', 'h5f'], function(_, H5F) {
     },
 
     _findFieldValue: function(name) {
-      var me = this.data.me.toJSON();
+      var me = this.data.me.toJSON() || {};
 
       var identities = _.reduce(me.identities, function(memo, i) {
         return _.extend(memo, i);
       }, {});
+
+      me.profile = me.profile || {};
+      identities = identities || {};
 
       return me.profile[name] || me[name] || identities[name];
     },
