@@ -94,9 +94,6 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
 
       renderError: ->
 
-      dataError: ->
-        console.log(arguments)
-
       log: (msg)=>
         if @options.debug
           console.warn(@options.name, ":", @options.id, msg)
@@ -104,6 +101,8 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
           console.warn("[DEBUG] #{@options.name}", msg, @)
 
       buildContext: =>
+        onDataError = (datasourceName, err)->
+          console.log "An error occurred with datasource #{datasourceName}", err
         @_renderCount ?= 0
         @_renderCount++
         ret       = {}
@@ -111,15 +110,16 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
         try
           keys      = _.keys(@datasources)
           promises  = _.map keys, (k)=>
-            dfd = @sandbox.data.deferred()
+            promiseDfd = @sandbox.data.deferred()
             ds = @datasources[k]
             ds.parse(_.extend({}, @, @options || {}))
             ds.fetch().then (res)->
-              dfd.resolve(res)
+              promiseDfd.resolve(res)
             , (err)=>
-              dfd.resolve(false)
-              @dataError k, err
-              dfd
+              handler = @["on#{_.string.capitalize(_.string.camelize(k))}Error"]
+              handler = onDataError.bind(@, k) unless _.isFunction(handler)
+              promiseDfd.resolve(handler err)
+            promiseDfd
 
           widgetDeferred = @sandbox.data.when.apply(undefined, promises)
           templateDeferred = @sandbox.template.load(@templates, @ref)
