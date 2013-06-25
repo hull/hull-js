@@ -1,4 +1,4 @@
-define ['underscore'], (_)->
+define ['underscore', 'jquery'], (_, $)->
   #
   # Parses the URI to replace placeholders with actual values
   #
@@ -52,16 +52,29 @@ define ['underscore'], (_)->
     # @returns {mixed} May return an object, a Promise most likely or anything else
     #
     fetch: ()->
+      dfd = $.Deferred()
       if _.isFunction(@def)
         ret = @def()
-        ret && (ret.deferred || ret)
-      else
-        return false if /undefined/.test(@def.path)
-        if @type == 'model'
-          @transport.model(@def).deferred
-        else if @type == 'collection'
-          @transport.collection(@def).deferred
+        if ret?.promise
+          dfd = ret
         else
-          throw new TypeError('Unknown type of datasource: ' + @type);
+          dfd.resolve ret
+      else
+        dfd.resolve(false) if /undefined/.test(@def.path)
+        if @type == 'model'
+          data = @transport.model(@def)
+        else if @type == 'collection'
+          data = @transport.collection(@def)
+        else
+          dfd.reject new TypeError('Unknown type of datasource: ' + @type);
+        if data._fetched
+          dfd.resolve data
+        else
+          data.once 'sync', ->
+            dfd.resolve data
+          data.once 'error', (model, xhr)->
+            dfd.reject xhr
+      dfd.promise()
+
   Datasource
 

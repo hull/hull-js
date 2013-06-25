@@ -63,8 +63,8 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
             callback(res.response)
             promise.resolve(res.response)
           onError = (err)->
-            errback(err)
-            promise.reject(err)
+            errback(err.message)
+            promise.reject(err.message)
           rpc.message params, onSuccess, onError
           promise
 
@@ -142,7 +142,11 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
 
           dfd = api(url, verb, data)
           dfd.then(options.success)
+          dfd.then (resolved)->
+            model.trigger('sync', model, resolved, options)
           dfd.fail(options.error)
+          dfd.fail (rejected)->
+            model.trigger 'error', model, rejected, options
           dfd
 
         BaseHullModel = app.core.mvc.Model.extend
@@ -170,20 +174,15 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
             args = slice.call(arguments)
             eventName = ("model.hull." + model._id + '.' + 'change')
             core.mediator.emit(eventName, { eventName: eventName, model: model, changes: args[1]?.changes })
-          dfd   = model.deferred = core.data.deferred()
           model._id = attrs._id
           models[attrs._id] = model #caching
           if model.id
             model._fetched = true
-            dfd.resolve(model)
           else
             model._fetched = false
             model.fetch
               success: ->
                 model._fetched = true
-                dfd.resolve(model)
-              error:   ->
-                dfd.fail(model)
           model
 
         api.model = (attrs)->

@@ -101,16 +101,27 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
           console.warn("[DEBUG] #{@options.name}", msg, @)
 
       buildContext: =>
+        onDataError = (datasourceName, err)->
+          console.log "An error occurred with datasource #{datasourceName}", err
         @_renderCount ?= 0
         @_renderCount++
-        ret       = {}
-        dfd       = @sandbox.data.deferred()
+        ret = {}
+        dfd = @sandbox.data.deferred()
+        datasourceErrors = {}
         try
-          keys      = _.keys(@datasources)
+          keys = _.keys(@datasources)
           promises  = _.map keys, (k)=>
+            promiseDfd = @sandbox.data.deferred()
             ds = @datasources[k]
             ds.parse(_.extend({}, @, @options || {}))
-            ds.fetch()
+            ds.fetch().then (res)->
+              promiseDfd.resolve(res)
+            , (err)=>
+              handler = @["on#{_.string.capitalize(_.string.camelize(k))}Error"]
+              handler = onDataError.bind(@, k) unless _.isFunction(handler)
+              datasourceErrors[k] = err
+              promiseDfd.resolve(handler err)
+            promiseDfd
 
           widgetDeferred = @sandbox.data.when.apply(undefined, promises)
           templateDeferred = @sandbox.template.load(@templates, @ref)
@@ -140,7 +151,7 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
         catch e
           console.error("Caught error in buildContext", e.message, e)
           dfd.reject(e)
-        dfd
+        [dfd, datasourceErrors]
 
       loggedIn: =>
         return false unless @sandbox.data.api.model('me').id?
@@ -167,12 +178,13 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
       # afterRender
       # Start nested widgets...
       render: (tpl, data)=>
-        ctx = @buildContext.call(@)
+        [ctx, errors] = @buildContext.call(@)
+        errors = null unless _.keys(errors)
         ctx.fail (err)->
           console.error("Error fetching Datasources ", err.message, err)
         ctx.then (ctx)=>
           try
-            beforeCtx = @beforeRender.call(@, ctx)
+            beforeCtx = @beforeRender.call(@, ctx, errors)
             beforeRendering = $.when(beforeCtx)
             beforeRendering.done (dataAfterBefore)=>
               data = _.extend(dataAfterBefore || ctx, data)
