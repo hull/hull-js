@@ -37,7 +37,6 @@ define ->
       dfd.done ->
         app.core.setCurrentUser(false)
         api.model('me').clear()
-        api.model('me').trigger('change')
         callback() if _.isFunction(callback)
       dfd #TODO It would be better to return the promise
 
