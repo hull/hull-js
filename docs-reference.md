@@ -503,7 +503,8 @@ on the currently active template when the event is triggered.
 `hull.js` comes a set of predefined events:
 
 * `model.hull.me.change` is triggered when the current user has any of his properties updated.
-* `hull.authComplete` is triggered when the user has logged in.
+* `hull.auth.complete` is triggered when the user has logged in.
+* `hull.auth.failure` is triggered when the user has failed to log in.
 
 ### Global event communication
 
