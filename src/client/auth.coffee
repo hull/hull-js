@@ -73,6 +73,10 @@ define ->
         # Tell the world that the login process has ended
         app.core.mediator.on "hull.auth.complete", onCompleteAuthentication
 
+        # User need to be able to retry to log in after auth failure
+        app.core.mediator.on "hull.auth.failure", ->
+          authenticating = false
+
         # Are we authenticating the user ?
         app.sandbox.authenticating = module.isAuthenticating
 
