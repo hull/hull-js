@@ -36,6 +36,13 @@ define({
   refreshEvents: ['model.hull.me.change'],
 
   initialize: function() {
+    this.authHasfailed = false;
+
+    this.sandbox.on('hull.auth.failure', _.bind(function() {
+      this.authHasfailed = true;
+      this.render();
+    }, this));
+
     this.authServices = _.map(this.sandbox.config.services.types.auth, function(s) {
       return s.replace(/_app$/, '');
     });
@@ -46,6 +53,7 @@ define({
   },
 
   beforeRender: function(data) {
+    data.authHasfailed = this.authHasfailed;
 
     // If providers are specified, then use only those. else use all configuredauthServices
     if(this.options.provider){
@@ -67,5 +75,9 @@ define({
     data.authServices = this.authServices;
 
     return data;
+  },
+
+  afterRender: function() {
+    this.authHasFailed = false;
   }
 });

@@ -1,3 +1,9 @@
+{{#if authHasfailed}}
+  <div class="alert alert-error">
+    There was an error signing in your account. Maybe you did not approve authorization?
+  </div>
+{{/if}}
+
 {{#if matchingProviders}}
   <div class="hull-identity__signout align-center">
     {{#me}}
