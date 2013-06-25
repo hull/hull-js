@@ -113,13 +113,21 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
 
         dfd = @sandbox.data.deferred()
         datasourceErrors = {}
+        @data = {}
         try
           keys = _.keys(@datasources)
           promises  = _.map keys, (k)=>
-            promiseDfd = @sandbox.data.deferred()
             ds = @datasources[k]
             ds.parse(_.extend({}, @, @options || {}))
-            ds.fetch().then (res)->
+            promiseDfd = @sandbox.data.deferred()
+            ds.fetch().then (res)=>
+              @data[k] = res
+              if _.isFunction res?.toJSON
+                ret[k] = res.toJSON()
+              else if _.isArray(res) && res[1] == 'success' && res[2].status == 200
+                ret[k] = res[0]
+              else
+                ret[k] = res
               promiseDfd.resolve(res)
             , (err)=>
               handler = @["on#{_.string.capitalize(_.string.camelize(k))}Error"]
@@ -127,18 +135,7 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
               datasourceErrors[k] = err
               promiseDfd.resolve(handler err)
             promiseDfd
-          @data = {}
           widgetDeferred = @sandbox.data.when.apply(undefined, promises)
-          widgetDeferred.done ()=>
-            args = slice.call arguments
-            _.map keys, (k,i)=>
-              @data[k] = args[i]
-              if _.isFunction args[i]?.toJSON
-                ret[k] = args[i].toJSON()
-              else if _.isArray(args[i]) && args[i][1] == 'success' && args[i][2].status == 200
-                ret[k] = args[i][0]
-              else
-                ret[k] = args[i]
           templateDeferred = @sandbox.template.load(@templates, @ref)
           templateDeferred.done (tpls)=>
             @_templates     = tpls
@@ -147,7 +144,7 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
             console.error("Error in Building Render Context", err.message, err)
             @renderError.call(@, err.message, err)
             dfd.reject(err)
-          readyDfd.done ()=>
+          readyDfd.done ()->
             dfd.resolve(ret)
 
         catch e
