@@ -1,12 +1,12 @@
 <div class="hull-conversations-admin">
-  {{#if conversations}}
-    <table class="table table-hover">
-      <tr>
-        <th>Subject</th>
-        <th>Message Count</th>
-        <th>Participants</th>
-        <th>Last updated</th>
-      </tr>
+  <table class="table table-hover">
+    <tr>
+      <th>Subject</th>
+      <th>Message Count</th>
+      <th>Participants</th>
+      <th>Last updated</th>
+    </tr>
+    {{#if conversations}}
       {{#conversations}}
         <tr class="conversation">
           <td>{{name}}</td>
@@ -20,9 +20,18 @@
           </td>
           <td>{{updated_at}}</td>
         </tr>
-        </a>
       {{/conversations}}
-    </table>
-  {{/if}}
+    {{else}}
+      <tr>
+        <td colspan="4">
+          {{#if errors.conversations}}
+            <span class="text-error">Unable to retrieve the conversations.</span>
+          {{else}}
+            No conversations
+          {{/if}}
+        </td>
+      </tr>
+    {{/if}}
+  </table>
 </div>
 

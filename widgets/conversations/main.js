@@ -10,7 +10,7 @@
  *
  * ## Template:
  *
- * - `conversations`: 
+ * - `conversations`:
  *
  * ## Datasource:
  *
@@ -28,25 +28,19 @@ define({
 
   refreshEvents: ['model.hull.me.change'],
 
-  actions: {
-  },
-
   options: {
     focus: false
   },
 
   datasources: {
     conversations: function () {
-      this.options.visibility
-      var url = 'conversations'
-      if(this.options.visibility) url += '?visibility=' + this.options.visibility;
-      return this.api(url);
+      return this.api('conversations', {visibility: this.options.visibility || undefined});
     }
   },
 
-  beforeRender: function(data){
+  beforeRender: function(data, errors){
     "use strict";
-    data.conversations = data.conversations;
+    data.errors = errors;
     return data;
   }
 });
