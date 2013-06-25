@@ -1,4 +1,4 @@
-define ['underscore', 'lib/client/datasource', 'lib/client/widget/context'], (_, Datasource, Context)->
+define ['underscore', 'lib/client/datasource', 'lib/client/widget/context', 'promises'], (_, Datasource, Context, promises)->
 
   (app)->
     debug = false
@@ -114,21 +114,21 @@ define ['underscore', 'lib/client/datasource', 'lib/client/widget/context'], (_,
         @data = {}
         try
           keys = _.keys(@datasources)
-          promises  = _.map keys, (k)=>
+          promiseArray  = _.map keys, (k)=>
             ds = @datasources[k]
             ds.parse(_.extend({}, @, @options || {}))
             handler = @["on#{_.string.capitalize(_.string.camelize(k))}Error"]
             ctx.addDatasource(k, ds.fetch(), handler).then (res)=>
               @data[k] = res
-          widgetDeferred = @sandbox.data.when.apply(undefined, promises)
+          widgetDeferred = @sandbox.data.when.apply(undefined, promiseArray)
           templateDeferred = @sandbox.template.load(@templates, @ref)
           templateDeferred.done (tpls)=>
             @_templates     = tpls
-          readyDfd = $.when(widgetDeferred, templateDeferred)
+          readyDfd = promises.when(widgetDeferred, templateDeferred)
           readyDfd.fail (err)=>
             console.error("Error in Building Render Context", err.message, err)
             @renderError.call(@, err.message, err)
-            dfd.reject err 
+            dfd.reject err
           readyDfd.done ()->
             dfd.resolve ctx
 
@@ -168,7 +168,7 @@ define ['underscore', 'lib/client/datasource', 'lib/client/widget/context'], (_,
         ctxPromise.then (ctx)=>
           try
             beforeCtx = @beforeRender.call(@, ctx.build(), ctx.errors())
-            beforeRendering = $.when(beforeCtx)
+            beforeRendering = promises.when(beforeCtx)
             beforeRendering.done (dataAfterBefore)=>
               data = _.extend(dataAfterBefore || ctx, data)
               @doRender(tpl, data)

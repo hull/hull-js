@@ -1,7 +1,7 @@
-define ['underscore', 'jquery'], (_, $)->
+define ['underscore', 'promises'], (_, promises)->
   onDataError = (datasourceName, err)->
     console.log "An error occurred with datasource #{datasourceName}", err
-  _dfd = $.Deferred
+  _dfd = promises.deferred
 
   class Context
     constructor: ()->
