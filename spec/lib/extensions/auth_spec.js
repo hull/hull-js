@@ -48,8 +48,10 @@ define(['spec/support/spec_helper'], function (helpers) {
         appMock.sandbox.logout.should.equal(auth.logout);
       });
       it('should add a listener on `hull.auth.complete` event', function () {
-        evts.should.have.key('hull.auth.complete');
         evts['hull.auth.complete'].should.be.a('function');
+      });
+      it('should add a listener on `hull.auth.failure` event', function () {
+        evts['hull.auth.failure'].should.be.a('function');
       });
     });
 
