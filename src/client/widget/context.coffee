@@ -23,7 +23,9 @@ define ['underscore', 'promises'], (_, promises)->
         dfd.resolve(res)
       , (err)=>
         @_errors[name] = err
-        dfd.resolve(fallback err)
+        resolved = fallback err
+        @add name, resolved
+        dfd.resolve resolved
       dfd
     errors: ->
       @_errors
