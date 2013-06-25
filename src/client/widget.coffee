@@ -104,8 +104,13 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
         onDataError = (datasourceName, err)->
           console.log "An error occurred with datasource #{datasourceName}", err
         @_renderCount ?= 0
-        @_renderCount++
-        ret = {}
+        ret =
+          options: @options
+          loggedIn: @loggedIn()
+          isAdmin: @sandbox.isAdmin
+          debug: @sandbox.config.debug
+          renderCount: ++@_renderCount
+
         dfd = @sandbox.data.deferred()
         datasourceErrors = {}
         try
@@ -122,16 +127,10 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
               datasourceErrors[k] = err
               promiseDfd.resolve(handler err)
             promiseDfd
-
-          widgetDeferred = @sandbox.data.when.apply(undefined, promises)
-          templateDeferred = @sandbox.template.load(@templates, @ref)
           @data = {}
-          readyDfd = $.when(widgetDeferred, templateDeferred)
-          readyDfd.fail (err)=>
-            console.error("Error in Building Render Context", err.message, err)
-            @renderError.call(@, err.message, err)
-          readyDfd.done (data, tpls)=>
-            args = data
+          widgetDeferred = @sandbox.data.when.apply(undefined, promises)
+          widgetDeferred.done ()=>
+            args = slice.call arguments
             _.map keys, (k,i)=>
               @data[k] = args[i]
               if _.isFunction args[i]?.toJSON
@@ -140,12 +139,15 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
                 ret[k] = args[i][0]
               else
                 ret[k] = args[i]
-            ret.options     = @options
-            ret.loggedIn    = @loggedIn()
-            ret.isAdmin     = @sandbox.isAdmin
-            ret.debug       = @sandbox.config.debug
-            ret.renderCount = @_renderCount
+          templateDeferred = @sandbox.template.load(@templates, @ref)
+          templateDeferred.done (tpls)=>
             @_templates     = tpls
+          readyDfd = $.when(widgetDeferred, templateDeferred)
+          readyDfd.fail (err)=>
+            console.error("Error in Building Render Context", err.message, err)
+            @renderError.call(@, err.message, err)
+            dfd.reject(err)
+          readyDfd.done ()=>
             dfd.resolve(ret)
 
         catch e
