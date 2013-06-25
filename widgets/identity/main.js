@@ -36,10 +36,10 @@ define({
   refreshEvents: ['model.hull.me.change'],
 
   initialize: function() {
-    this.authHasfailed = false;
+    this.authHasFailed = false;
 
     this.sandbox.on('hull.auth.failure', _.bind(function() {
-      this.authHasfailed = true;
+      this.authHasFailed = true;
       this.render();
     }, this));
 
@@ -53,7 +53,7 @@ define({
   },
 
   beforeRender: function(data) {
-    data.authHasfailed = this.authHasfailed;
+    data.authHasFailed = this.authHasFailed;
 
     // If providers are specified, then use only those. else use all configuredauthServices
     if(this.options.provider){
