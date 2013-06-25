@@ -1,4 +1,4 @@
-define ['underscore', 'jquery'], (_, $)->
+define ['underscore'], (_)->
   #
   # Parses the URI to replace placeholders with actual values
   #
