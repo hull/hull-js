@@ -11,7 +11,7 @@ define(['lib/client/widget/context', 'jquery'], function (Context, $) {
     describe('initial state', function () {
       it ('should be empty at init', function () {
         var c = new Context();
-        Object.keys(c._context).length.should.eql(0);
+        Object.keys(c.build()).length.should.eql(0);
       });
       it ('should have no error at init', function () {
         var c = new Context();
@@ -21,8 +21,8 @@ define(['lib/client/widget/context', 'jquery'], function (Context, $) {
     it('should be possible to add key value pairs to the context', function () {
       var c = new Context();
       c.add('test', "Awesome");
-      c._context.should.have.keys(['test']);
-      c._context.test.should.eql('Awesome');
+      c.build().should.have.keys(['test']);
+      c.build().test.should.eql('Awesome');
     });
     describe('adding a datasource', function () {
       it('should return a promise', function () {
