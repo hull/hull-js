@@ -10,7 +10,7 @@
         </div>
         <div class="media-body">
           <textarea name='description' class="input-block-level" rows="3" placeholder="Send a message... "></textarea>
-          <button data-hull-action="message" class="btn btn-primary">Reply</button>
+          <button data-hull-action="message" class="btn btn-primary">{{#if isNew}}Send{{else}}Reply{{/if}}</button>
         </div>
       </div>
     </form>

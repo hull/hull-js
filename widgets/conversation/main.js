@@ -98,6 +98,7 @@ define({
         return p.id == this.data.me.id
       }, this)
       data.isAscending = this.options.order != 'desc';
+      data.isNew = !(data.messages && data.messages.length > 0)
     }
     else {
       data.newConvo = true;
