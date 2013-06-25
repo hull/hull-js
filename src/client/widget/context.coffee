@@ -28,6 +28,11 @@ define ['underscore', 'promises'], (_, promises)->
         dfd.resolve resolved
       dfd
     errors: ->
+      try
+        countKeys = _.keys(@_errors).length
+      catch e
+        countKeys = 0
+      return null unless countKeys
       @_errors
     build: ->
       @_context

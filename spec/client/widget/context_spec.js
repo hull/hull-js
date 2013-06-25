@@ -3,7 +3,7 @@ define(['lib/client/widget/context', 'jquery'], function (Context, $) {
   var promises = {
     deferred: $.Deferred,
     when: $.when
-  }
+  };
   describe('Widget context builder', function () {
     it('should be a constructor', function () {
       Context.should.be.a('function');
@@ -13,9 +13,9 @@ define(['lib/client/widget/context', 'jquery'], function (Context, $) {
         var c = new Context();
         Object.keys(c.build()).length.should.eql(0);
       });
-      it ('should have no error at init', function () {
+      it ('should be null at init', function () {
         var c = new Context();
-        Object.keys(c.errors()).length.should.eql(0);
+       expect(c.errors()).to.be.null;
       });
     });
     it('should be possible to add key value pairs to the context', function () {
@@ -39,6 +39,15 @@ define(['lib/client/widget/context', 'jquery'], function (Context, $) {
       });
       describe('The returned promise', function () {
         describe('succeeds', function () {
+          it('should return null for its errors', function () {
+            var c = new Context();
+            var dfd = promises.deferred();
+            var ret = c.addDatasource('test', dfd.promise());
+            ret.then(function (v) {
+              expect(c.errors()).to.be.null;
+            });
+            dfd.resolve(true)
+          });
           it('should resolve to the same value as the datasource if it succeeds', function (done) {
             var c = new Context();
             var dfd = promises.deferred();
