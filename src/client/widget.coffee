@@ -170,7 +170,8 @@ define ['underscore', 'lib/client/datasource', 'lib/client/widget/context', 'pro
             beforeCtx = @beforeRender.call(@, ctx.build(), ctx.errors())
             beforeRendering = promises.when(beforeCtx)
             beforeRendering.done (dataAfterBefore)=>
-              data = _.extend(dataAfterBefore || ctx, data)
+              //FIXME SRSLY need some clarification
+              data = _.extend(dataAfterBefore || ctx.build(), data)
               @doRender(tpl, data)
               _.defer(@afterRender.bind(@, data))
               _.defer((-> @sandbox.start(@$el)).bind(@))
