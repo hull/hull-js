@@ -50,8 +50,7 @@ define ->
       dfd = isAuthenticating
       try
         me = app.sandbox.data.api.model('me')
-        dfd.done -> me.trigger('change')
-        me.fetch(silent: true).then(dfd.resolve, dfd.reject)
+        me.fetch().then(dfd.resolve, dfd.reject)
       catch err
         console.error "Error on auth promise resolution", err
       finally
