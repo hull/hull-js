@@ -1,3 +1,7 @@
+{{#if errors.conversation}}
+  <div class="alert alert-error">Unable to retrieve the conversation</div>
+  {{> conversation.form}}
+{{else}}
 <div class="hull-conversation">
   <div class="hull-conversation__header">
     <div>You have {{conversation.messages_count_unread}} NEW messages and {{conversation.messages_count}} total messages.</div>
@@ -54,3 +58,4 @@
       {{/if}}
   </div>
 </div>
+{{/if}}
