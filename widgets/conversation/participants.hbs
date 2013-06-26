@@ -1,3 +1,29 @@
-{{#if conversation.id}}
-<div data-hull-widget="conversation_participants" data-hull-id="{{conversation.id}}"></div>
-{{/if}}
+<div class="span4 offset1">
+  <div class="hull-participants__header">
+    <div class="row">
+      <h2 class="pull-left">Participants</h1>
+      {{#if conversation.public}}
+        {{#if isFollowing}}
+          <div class="btn btn-info pull-right">Following</div>
+        {{else}}
+          <div class="btn btn-info pull-right" data-hull-action="follow">Follow</div>
+        {{/if}}
+      {{/if}}
+    </div>
+  </div>
+
+  {{#if conversation.participants}}
+    <ul class="media-list hull-participants__list">
+      {{#conversation.participants}}
+        <li class="media">
+          <div class="pull-left">
+            <img class="media-object img-rounded" src="{{picture}}" alt="{{name}}">
+          </div>
+          <div class="media-body">
+            <h4 class="media-heading">{{name}}</h4>
+          </div>
+        </li>
+      {{/conversation.participants}}
+    </ul>
+  {{/if}}
+</div>

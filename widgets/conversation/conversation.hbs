@@ -7,6 +7,11 @@
   </div>
 
   <div class="row-fluid">
+    <div class="hull-conversation__participants">
+      {{> conversation.participants}}
+    </div>
+  </div>
+  <div class="row-fluid">
       {{^isAscending}}
         {{> conversation.form}}
       {{/isAscending}}
