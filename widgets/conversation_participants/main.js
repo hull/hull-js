@@ -53,7 +53,7 @@ define({
     "use strict";
   },
 
-  follow: function (e, data) {
+  follow: function (e/*, data*/) {
     "use strict";
     e.preventDefault();
 

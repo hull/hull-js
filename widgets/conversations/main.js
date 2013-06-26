@@ -20,7 +20,7 @@
  *
  */
 
-/*global define:true, _:true */
+/*global define:true */
 define({
   type: 'Hull',
 
@@ -34,6 +34,7 @@ define({
 
   datasources: {
     conversations: function () {
+      "use strict";
       return this.api('conversations', {visibility: this.options.visibility || undefined});
     }
   },
