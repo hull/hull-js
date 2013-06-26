@@ -25,7 +25,9 @@
       <tr>
         <td colspan="4">
           {{#if errors.conversations}}
-            <span class="text-error">Unable to retrieve the conversations.</span>
+            <div class="alert alert-error">
+              Unable to retrieve the conversations.
+            </div>
           {{else}}
             No conversations
           {{/if}}
