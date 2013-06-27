@@ -268,12 +268,20 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
 
         initialized = core.data.deferred()
 
-        onRemoteMessage = -> console.warn("RPC Message", arguments)
+        onRemoteMessage = (e)-> 
+          if e.error
+            # Get out of the easyXDM try/catch jail
+            setTimeout(
+              -> initialized.reject(e.error)
+            , 0)
+          else 
+            console.warn("RPC Message", arguments)
 
+        #TODO Probably useless now
         timeout = setTimeout(
           ()->
             initialized.reject('Remote loading has failed. Please check "orgUrl" and "appId" in your configuration. This may also be about connectivity.')
-          , 30000)
+          , 3000)
 
         onRemoteReady = (remoteConfig)->
           data = remoteConfig.data
