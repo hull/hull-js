@@ -53,15 +53,13 @@ define ['underscore', 'lib/client/datasource', 'lib/client/widget/context', 'pro
         try
           @events = if _.isFunction(@events) then @events() else @events
           @events ?= {}
-          @events["click [data-hull-action]"] = actionHandler
+          @events["click [data-hull-action]"] = _.bind actionHandler,@
 
           # Building actions hash
           @actions = if _.isFunction(@actions) then @actions() else @actions
           @actions ?= {}
           @actions.login ?= (e, params)=> @sandbox.login(params.data.provider, params.data)
           @actions.logout ?= => @sandbox.logout()
-          for name, action of @actions
-            @actions[name] = action.bind(@) if _.isFunction(action)
 
           unless @className?
             @className = "hull-widget"
