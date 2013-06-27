@@ -6,14 +6,11 @@
           <img class="media-object img-rounded" src="{{actor.picture}}"/>
         </div>
       {{/if}}
-      
+
       <div class="media-body">
         <h5 class="media-heading">
           {{to_s actor}} {{activity ../map this}} {{to_s target}}
         </h5>
-        {{#if object}}
-          <p>{{to_s object}}</p>
-        {{/if}}
         {{#ifEqual object.type "image"}}
           <img src="{{imageUrl object.id "original"}}"/>
         {{/ifEqual}}
