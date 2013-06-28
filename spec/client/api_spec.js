@@ -14,6 +14,11 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
     }, parseInt(Math.random() * 2, 10));
   };
 
+  var config = {
+    appId: "fakeId",
+    orgUrl: "orgUrl"
+  };
+
   var easyXDMMock = {
     Rpc: function (a1, a2) {
       delay(a2.local.ready, {data: {me: {name: "test"}, app: {name: "test", org: {name: "test"}}}});
@@ -33,10 +38,7 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
   define('easyXDM', function () { return easyXDMMock; });
 
   describe("API specs", function () {
-    var env, api, batch, app = aura({
-      appId: "fakeId",
-      orgUrl: "orgUrl"
-    });
+    var env, api, batch, app = aura(config);
 
     var extension = {
       initialize: function (appEnv) {
@@ -48,7 +50,7 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
 
     app
       .use(extension)
-      .use('lib/client/api');
+      .use('lib/api');
 
     var initStatus = app.start();
     before(function (done) {
