@@ -1,4 +1,4 @@
-define ['lib/utils/version', 'lib/hullbase', 'lib/client/api/params'], (version, base, apiParams) ->
+define ['lib/utils/version', 'lib/hullbase', 'lib/api'], (version, base, apiParams) ->
 
   (app) ->
 
@@ -268,13 +268,13 @@ define ['lib/utils/version', 'lib/hullbase', 'lib/client/api/params'], (version,
 
         initialized = core.data.deferred()
 
-        onRemoteMessage = (e)-> 
+        onRemoteMessage = (e)->
           if e.error
             # Get out of the easyXDM try/catch jail
             setTimeout(
               -> initialized.reject(e.error)
             , 0)
-          else 
+          else
             console.warn("RPC Message", arguments)
 
         #TODO Probably useless now
