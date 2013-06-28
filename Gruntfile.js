@@ -2,7 +2,6 @@ module.exports = function (grunt) {
   'use strict';
 
   var helpers = require('./.grunt/helpers')(grunt);
-  var CONTEXT = process.env.CONTEXT || 'prod';
   var clone = grunt.util._.clone;
 
   grunt.loadNpmTasks('grunt-contrib-clean');
@@ -44,14 +43,14 @@ module.exports = function (grunt) {
   var clientRJSConfig = (function () {
     var _c = clientConfig.requireJS;
     _c.include = _c.include.concat(auraExtensions).concat(clientLibs);
-    _c.optimize = CONTEXT !== "prod" ? "none" : "uglify";
+    _c.optimize = grunt.option('dev') ? "none" : "uglify";
     return _c;
   })();
 
   var remoteRJSConfig = (function () {
     var _c = remoteConfig.requireJS;
     _c.include = _c.include.concat(remoteLibs);
-    _c.optimize = CONTEXT !== "prod" ? "none" : "uglify";
+    _c.optimize = grunt.option('dev') ? "none" : "uglify";
     return _c;
   })();
 
@@ -188,7 +187,7 @@ module.exports = function (grunt) {
         src: 'widgets',
         before: ['requirejs:upload', 'requirejs:registration', 'requirejs:dox'],
         dest: 'dist/<%= PKG_VERSION%>',
-        optimize: CONTEXT === 'prod'
+        optimize: !grunt.option('dev')
       }
     },
     describe: {
