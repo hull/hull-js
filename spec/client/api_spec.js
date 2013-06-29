@@ -50,7 +50,7 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
 
     app
       .use(extension)
-      .use('lib/api');
+      .use('lib/client/api');
 
     var initStatus = app.start();
     before(function (done) {

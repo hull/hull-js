@@ -2,7 +2,7 @@ requirejs.config
   require:
     paths:
       easyXDM: 'components/easyXDM/easyXDM'
-define ['lib/version', 'lib/api/params', 'easyXDM', 'jquery'], (version, apiParams, easyXDM, promises)->
+define ['lib/version', 'lib/api/params', 'easyXDM', 'lib/utils/promises'], (version, apiParams, easyXDM, promises)->
   slice = Array.prototype.slice
 
   # Builds the URL used by easyXDM
@@ -15,16 +15,6 @@ define ['lib/version', 'lib/api/params', 'easyXDM', 'jquery'], (version, apiPara
     remoteUrl += "&user_hash=#{config.userHash}" if config.userHash != undefined
     remoteUrl
 
-  # Main method to request the API
-  api = -> message.apply(api, apiParams.parse(slice.call(arguments)))
-
-  # Method-specific function
-  _.each ['get', 'post', 'put', 'delete'], (method)->
-    api[method] = ()->
-      args = apiParams.parse (slice.call(arguments))
-      req         = args[0]
-      req.method  = method
-      message.apply(api, args)
 
   onRemoteMessage = (e)->
     if e.error
@@ -36,7 +26,18 @@ define ['lib/version', 'lib/api/params', 'easyXDM', 'jquery'], (version, apiPara
       console.warn("RPC Message", arguments)
 
   (config)->
-    dfd = promises.Deferred()
+    message = null
+    # Main method to request the API
+    api = -> message.apply(undefined, apiParams.parse(slice.call(arguments)))
+    # Method-specific function
+    _.each ['get', 'post', 'put', 'delete'], (method)->
+      api[method] = ()->
+        args = apiParams.parse (slice.call(arguments))
+        req         = args[0]
+        req.method  = method
+        message.apply(api, args)
+
+    dfd = promises.deferred()
     #TODO Probably useless now
     timeout = setTimeout(
       ()->
@@ -61,12 +62,10 @@ define ['lib/version', 'lib/api/params', 'easyXDM', 'jquery'], (version, apiPara
 
       if data.headers && data.headers['Hull-User-Id']
         setCurrentUser data.headers
-        dfd.resolve 
-          remoteConfig: remoteConfig
-          api: api
-
-
       window.clearTimeout(timeout)
+      dfd.resolve
+        remoteConfig: remoteConfig
+        api: api
 
     url = buildRemoteUrl(config)
     rpc = new easyXDM.Rpc({
@@ -85,7 +84,7 @@ define ['lib/version', 'lib/api/params', 'easyXDM', 'jquery'], (version, apiPara
     ###
     message = (params, callback, errback)->
       console.error("Api not initialized yet") unless rpc
-      promise = promises.Deferred()
+      promise = promises.deferred()
 
       onSuccess = (res)->
         if res.provider == 'hull' && res.headers

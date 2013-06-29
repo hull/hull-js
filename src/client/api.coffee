@@ -1,5 +1,4 @@
 define ['lib/hullbase', 'lib/api'], (base, apiModule) ->
-
   (app) ->
 
     models = {}
@@ -23,8 +22,9 @@ define ['lib/hullbase', 'lib/api'], (base, apiModule) ->
         slice = Array.prototype.slice
 
 
+        apiModule = apiModule(app.config)
         apiModule.then (obj)->
-          core.data.api = obj.api
+          core.data.api = api = obj.api
           core.track = sandbox.track = (eventName, params)->
             core.data.api({provider:"track", path: eventName}, 'post', params)
           core.flag = sandbox.flag = (id)->
@@ -194,6 +194,7 @@ define ['lib/hullbase', 'lib/api'], (base, apiModule) ->
         initialized = core.data.deferred()
         apiModule.then (obj)->
           remoteConfig = obj.remoteConfig
+          data = remoteConfig.data
           app.config.assetsUrl            = remoteConfig.assetsUrl
           app.config.services             = remoteConfig.services
           app.config.widgets.sources.hull = remoteConfig.baseUrl + '/widgets'
