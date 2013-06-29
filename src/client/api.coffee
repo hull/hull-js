@@ -37,8 +37,8 @@ define ['lib/hullbase', 'lib/api'], (base, apiModule) ->
           #
           #
 
-          emitUserEvent = ->
-            app.core.mediator.emit('hull.currentUser', app.core.currentUser)
+          app.core.currentUser = emitUserEvent = ->
+            app.core.mediator.emit('hull.currentUser')
 
 
 
@@ -127,7 +127,7 @@ define ['lib/hullbase', 'lib/api'], (base, apiModule) ->
               model = new _Model()
 
           setupCollection = (path)->
-            route           = (apiParams.parse [path])[0]
+            route           = (api.parseRoute [path])[0]
             collection      = new Collection
             collection.url  = path
             collection.on 'all', ->
@@ -150,7 +150,6 @@ define ['lib/hullbase', 'lib/api'], (base, apiModule) ->
 
           api.collection = (path)->
             throw new Error('A model must have an path...') unless path?
-            fullPath = apiParams.parse([path])[0].path
             setupCollection.call(api, path)
 
           api.batch = ->
@@ -212,8 +211,17 @@ define ['lib/hullbase', 'lib/api'], (base, apiModule) ->
               attrs._id = m
               rawFetch(attrs, true)
 
+          headers = data.headers
+          cookieName = "hull_#{app.config.appId}"
+          currentUserId = $.cookie cookieName
+          if headers?['Hull-User-Id'] && headers?['Hull-User-Sig'] && currentUserId != headers['Hull-User-Id']
+              emitUserEvent(true)
+          else
+            emitUserEvent(true) if currentUserId
           initialized.resolve(data)
 
+        apiModule.fail (e)->
+          initialized.reject e
         initialized.reject(new TypeError 'no organizationURL provided. Can\'t proceed') unless app.config.orgUrl
         initialized.reject(new TypeError 'no applicationID provided. Can\'t proceed') unless app.config.appId
 

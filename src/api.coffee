@@ -27,6 +27,7 @@ define ['lib/version', 'lib/api/params', 'easyXDM', 'lib/utils/promises'], (vers
         req         = args[0]
         req.method  = method
         message.apply(api, args)
+    api.parseRoute = apiParams.parse
 
     dfd = promises.deferred()
     onRemoteMessage = (e)->
@@ -51,11 +52,8 @@ define ['lib/version', 'lib/api/params', 'easyXDM', 'lib/utils/promises'], (vers
       if headers && headers['Hull-User-Id'] && headers['Hull-User-Sig']
         val = btoa(JSON.stringify(headers))
         $.cookie(cookieName, val, path: "/")
-        if currentUserId != headers['Hull-User-Id']
-          emitUserEvent()
       else
         $.removeCookie(cookieName, path: "/")
-        emitUserEvent() if currentUserId
 
     onRemoteReady = (remoteConfig)->
       data = remoteConfig.data
