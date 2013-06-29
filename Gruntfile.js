@@ -180,7 +180,7 @@ module.exports = function (grunt) {
     },
     version: {
       template: "define(function () { return '<%= PKG_VERSION %>';});",
-      dest: 'lib/version.js'
+      dest: 'lib/utils/version.js'
     },
     hull_widgets: {
       hull: {

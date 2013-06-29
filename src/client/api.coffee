@@ -1,4 +1,4 @@
-define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base, apiParams) ->
+define ['lib/utils/version', 'lib/hullbase', 'lib/client/api/params'], (version, base, apiParams) ->
 
   (app) ->
 

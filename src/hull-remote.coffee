@@ -1,4 +1,4 @@
-define ['aura/aura', 'lib/version'], (Aura, version)->
+define ['aura/aura', 'lib/utils/version'], (Aura, version)->
 
   hull = null
 
