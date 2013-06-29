@@ -18,16 +18,25 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
     appId: "fakeId",
     orgUrl: "orgUrl"
   };
+  var mustFail = false;
 
   var easyXDMMock = {
     Rpc: function (a1, a2) {
-      delay(a2.local.ready, {data: {me: {name: "test"}, app: {name: "test", org: {name: "test"}}}});
+      if (mustFail) {
+        delay(a2.local.message.bind(this), {error:"Fail"});
+      } else {
+        delay(a2.local.ready, {data: {me: {name: "test"}, app: {name: "test", org: {name: "test"}}}});
+      }
+      mustFail = false;
     }
   };
 
   easyXDMMock.Rpc.prototype.message = function (conf, successCb, errorCb) {
     var cb;
-    if (conf.path.indexOf('error') === 0) {
+    if (conf.error) {
+      cb = errorCb;
+      conf = conf.error;
+    } else if (conf.path.indexOf('error') === 0) {
       cb = errorCb;
     } else {
       cb = successCb;
@@ -64,6 +73,18 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
     it('should be available in the environment', function () {
       env.sandbox.data.should.contain.keys('api');
       api.should.be.a('function');
+    });
+
+    describe("initializing the API client", function () {
+      it("should reject if there's an error", function (done) {
+        require(['lib/api'], function (apiClient) {
+          mustFail = true;
+          apiClient({appId: "please", orgUrl: "fail"}).then(
+            function () {done(new Error('Error'));},
+            function () {done();}
+          );
+        });
+      });
     });
 
     describe("Basic API requests", function () {

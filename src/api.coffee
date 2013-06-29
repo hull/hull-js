@@ -16,15 +16,6 @@ define ['lib/version', 'lib/api/params', 'easyXDM', 'lib/utils/promises'], (vers
     remoteUrl
 
 
-  onRemoteMessage = (e)->
-    if e.error
-      # Get out of the easyXDM try/catch jail
-      setTimeout(
-        -> initialized.reject(e.error)
-      , 0)
-    else
-      console.warn("RPC Message", arguments)
-
   (config)->
     message = null
     # Main method to request the API
@@ -38,10 +29,19 @@ define ['lib/version', 'lib/api/params', 'easyXDM', 'lib/utils/promises'], (vers
         message.apply(api, args)
 
     dfd = promises.deferred()
+    onRemoteMessage = (e)->
+      if e.error
+        # Get out of the easyXDM try/catch jail
+        setTimeout(
+          -> dfd.reject(e.error)
+        , 0)
+      else
+        console.warn("RPC Message", arguments)
+
     #TODO Probably useless now
     timeout = setTimeout(
       ()->
-        initialized.reject('Remote loading has failed. Please check "orgUrl" and "appId" in your configuration. This may also be about connectivity.')
+        dfd.reject('Remote loading has failed. Please check "orgUrl" and "appId" in your configuration. This may also be about connectivity.')
       , 3000)
 
     setCurrentUser = (headers={})->
