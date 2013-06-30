@@ -1,8 +1,4 @@
-requirejs.config
-  require:
-    paths:
-      easyXDM: 'components/easyXDM/easyXDM'
-define ['lib/version', 'lib/api/params', 'easyXDM', 'lib/utils/promises'], (version, apiParams, easyXDM, promises)->
+define ['underscore','lib/version', 'lib/api/params', 'easyXDM', 'lib/utils/promises'], (_, version, apiParams, easyXDM, promises)->
   slice = Array.prototype.slice
 
   # Builds the URL used by easyXDM

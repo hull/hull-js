@@ -1,0 +1,26 @@
+{
+  "srcFiles": ["src/utils/promises.coffee", "src/api.coffee", "src/api/params.coffee"],
+  "requireJS": {
+    "baseUrl": ".",
+    "preserveLicenseComments": true,
+    "paths": {
+      "underscore":     "components/underscore/underscore",
+      "easyXDM":        "components/easyXDM/easyXDM",
+      "cookie":         "components/jquery.cookie/jquery.cookie",
+      "jquery":         "empty:"
+    },
+    "shim": {
+      "underscore": { "exports": "_" },
+      "easyXDM":    { "exports": "easyXDM" },
+      "jquery":     { "exports": "jQuery" }
+    },
+    "include": [
+      "underscore",
+      "easyXDM",
+      "cookie",
+      "lib/api"
+      ],
+    "out": "dist/<%= PKG_VERSION %>/hull-api.js"
+  }
+}
+

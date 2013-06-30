@@ -20,6 +20,7 @@ module.exports = function (grunt) {
   var pkg = grunt.file.readJSON('bower.json');
   var clientConfig = grunt.file.readJSON('.grunt/client.json');
   var remoteConfig = grunt.file.readJSON('.grunt/remote.json');
+  var apiConfig = grunt.file.readJSON('.grunt/api.json');
 
   var port = 3001;
 
@@ -40,6 +41,11 @@ module.exports = function (grunt) {
     });
 
   //Augment the require.js configuation with some computed elements
+  var apiRJSConfig = (function () {
+    var _c = apiConfig.requireJS;
+    _c.optimize = grunt.option('dev') ? "none" : "uglify";
+    return _c;
+  })();
   var clientRJSConfig = (function () {
     var _c = clientConfig.requireJS;
     _c.include = _c.include.concat(auraExtensions).concat(clientLibs);
@@ -94,6 +100,13 @@ module.exports = function (grunt) {
             return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
           }
         })
+      },
+      api: {
+        files: grunt.file.expandMapping(apiConfig.srcFiles, 'lib/', {
+          rename: function (destBase, destPath) {
+            return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
+          }
+        })
       }
     },
     connect: {
@@ -118,6 +131,9 @@ module.exports = function (grunt) {
           c.out = c.out.replace('hull.js', 'hull.no-underscore.js');
           return c;
         })(clone(clientRJSConfig, true))
+      },
+      api: {
+        options: clone(apiRJSConfig, true)
       },
       client: {
         options: clone(clientRJSConfig, true)
@@ -169,6 +185,10 @@ module.exports = function (grunt) {
         files: remoteConfig.srcFiles,
         tasks: ['dist:remote', 'do_test']
       },
+      api: {
+        files: apiConfig.srcFiles,
+        tasks: ['dist:api', 'do_test']
+      },
       client: {
         files: clientConfig.srcFiles,
         tasks: ['dist:client', 'do_test']
@@ -213,6 +233,7 @@ module.exports = function (grunt) {
     dist: {
       "remote": ['clean:remote', 'coffee:remote', 'version', 'requirejs:remote'],
       "client": ['clean:client', 'coffee:client', 'version', 'requirejs:client'],
+      "api": ['clean:client', 'coffee:api', 'version', 'requirejs:api'],
       "client-no-underscore": ['clean:client', 'coffee:client', 'version', 'requirejs:client-no-underscore'],
       "client-no-backbone": ['clean:client', 'coffee:client', 'version', 'requirejs:client-no-backbone'],
       "widgets": ["hull_widgets"],
@@ -226,7 +247,7 @@ module.exports = function (grunt) {
 
   // default build task
   grunt.registerTask('do_test', ['cover', 'plato', 'mocha']);
-  grunt.registerTask('test', ['dist:client', 'dist:remote', 'do_test']);
+  grunt.registerTask('test', ['dist:client', 'dist:remote', 'dist:api', 'do_test']);
   grunt.registerTask('default', ['connect', 'test', 'dist:widgets', 'watch']);
   grunt.registerTask('deploy', ['dist', 'describe', 's3']);
   grunt.registerTask('reset', ['clean:reset']);
