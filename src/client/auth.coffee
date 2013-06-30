@@ -1,11 +1,9 @@
 define ->
-
   # Holds the state of the authentication process
   # @type {Promise|Boolean}
   authenticating = false
 
   (app) ->
-
     # Starts the login process
     # @throws Error with invalid providerName
     # @returns {Promise|false}
@@ -26,8 +24,6 @@ define ->
 
       authenticating #TODO It would be better to return the promise
 
-
-
     # Starts the logout process
     # @returns {Promise}
     # @TODO Misses a `dfd.fail`
@@ -39,8 +35,6 @@ define ->
         api.model('me').clear()
         callback() if _.isFunction(callback)
       dfd #TODO It would be better to return the promise
-
-
 
     # Callback executed on successful authentication
     onCompleteAuthentication = ()->
@@ -56,8 +50,6 @@ define ->
       finally
         authenticating = false
 
-
-
     # Generates the complete URL to be reached to validate login
     generateAuthUrl = (config, provider, opts)->
       auth_params = opts || {}
@@ -66,11 +58,6 @@ define ->
       auth_params.auth_referer  = module.location.toString()
 
       "#{config.orgUrl}/auth/#{provider}?#{$.param(auth_params)}"
-
-
-    #
-    # Module Definition
-    #
 
     module =
       login: login,
@@ -82,7 +69,11 @@ define ->
       onCompleteAuth: onCompleteAuthentication
       initialize: ->
         # Tell the world that the login process has ended
-        app.core.mediator.on "hull.authComplete", onCompleteAuthentication
+        app.core.mediator.on "hull.auth.complete", onCompleteAuthentication
+
+        # User need to be able to retry to log in after auth failure
+        app.core.mediator.on "hull.auth.failure", ->
+          authenticating = false
 
         # Are we authenticating the user ?
         app.sandbox.authenticating = module.isAuthenticating

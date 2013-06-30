@@ -1,4 +1,12 @@
 (->
+  hash = document.location.hash.match(/^#hull-auth-(complete|failure)$/)
+  if hash != null && window.opener?.Hull?
+    try
+      window.opener.Hull.emit('hull.auth.' + hash[1])
+      window.close()
+    catch e
+      console.error('Something went wrong during the auth: ' + e)
+
   evtPool = {}
   Hull.on = (evt, fn)->
     evtPool[evt] ?= []
@@ -25,13 +33,6 @@
           _.map props, (k)->
             _h[k] = window.Hull[k]
           window.Hull = _h
-
-    if document.location.hash == "#hull-auth" &&  window.opener && window.opener.Hull
-      try
-        window.opener.Hull.emit("hull.authComplete")
-        return window.close()
-      catch e
-        console.warn("Error: " + e)
 
     (config, cb, errcb) ->
       return hull if hull && hull.app
