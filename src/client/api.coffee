@@ -30,20 +30,6 @@ define ['lib/hullbase', 'lib/api'], (base, apiModule) ->
           core.flag = sandbox.flag = (id)->
             core.data.api({provider:"hull", path:[id, 'flag'].join('/')}, 'post')
 
-
-          #
-          #
-          # Current user management
-          #
-          #
-
-          app.core.currentUser = emitUserEvent = ->
-            app.core.mediator.emit('hull.currentUser')
-
-
-
-
-
           #
           #
           # Models/Collection related
@@ -211,13 +197,6 @@ define ['lib/hullbase', 'lib/api'], (base, apiModule) ->
               attrs._id = m
               rawFetch(attrs, true)
 
-          headers = data.headers
-          cookieName = "hull_#{app.config.appId}"
-          currentUserId = $.cookie cookieName
-          if headers?['Hull-User-Id'] && headers?['Hull-User-Sig'] && currentUserId != headers['Hull-User-Id']
-              emitUserEvent(true)
-          else
-            emitUserEvent(true) if currentUserId
           initialized.resolve(data)
 
         apiModule.fail (e)->
@@ -234,6 +213,7 @@ define ['lib/hullbase', 'lib/api'], (base, apiModule) ->
         base.org    = rawFetch('org', true);
 
         emitUserEvent()
-        app.core.mediator.on    'hull.currentUser', clearModelsCache
+        app.core.mediator.on    'hull.login', clearModelsCache
+        app.core.mediator.on    'hull.logout', clearModelsCache
 
     module

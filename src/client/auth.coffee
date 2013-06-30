@@ -33,11 +33,13 @@ define ->
     # @TODO Misses a `dfd.fail`
     logout = (callback=->)->
       api = app.sandbox.data.api;
+      app.sandbox
       dfd = api('logout')
       dfd.done ->
+        app.core.mediator.emit('hull.logout')
         api.model('me').clear()
         callback() if _.isFunction(callback)
-      dfd #TODO It would be better to return the promise
+      dfd.promise() #TODO It would be better to return the promise
 
 
 
@@ -49,7 +51,10 @@ define ->
       dfd = isAuthenticating
       try
         me = app.sandbox.data.api.model('me')
-        me.fetch().then(dfd.resolve, dfd.reject)
+        me.fetch().then ->
+          dfd.resolve()
+          app.core.mediator.emit('hull.login', me)
+        , dfd.reject
       catch err
         console.error "Error on auth promise resolution", err
       finally
