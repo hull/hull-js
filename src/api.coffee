@@ -43,7 +43,7 @@ define ['lib/version', 'lib/api/params', 'easyXDM', 'lib/utils/promises'], (vers
     timeout = setTimeout(
       ()->
         dfd.reject('Remote loading has failed. Please check "orgUrl" and "appId" in your configuration. This may also be about connectivity.')
-      , 3000)
+      , 30000)
 
     setCurrentUser = (headers={})->
       return unless config.appId
