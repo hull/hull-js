@@ -22,7 +22,7 @@
  * - `identity`: Show login buttons if the user isn't logged, display a micro profile card if he is.
  *
  */
-define({
+Hull.define({
   type: 'Hull',
 
   templates: [

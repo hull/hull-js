@@ -29,7 +29,7 @@
  * - Widget `admin/achievements` to create achievements
  * - Achievements/Badges API
 */
-define({
+Hull.define({
   type: 'Hull',
 
   templates: ['achieve_button'],

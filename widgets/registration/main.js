@@ -1,4 +1,4 @@
-define(['underscore', 'h5f'], function(_, H5F) {
+Hull.define(['underscore', 'h5f'], function(_, H5F) {
   return {
     type: 'Hull',
 

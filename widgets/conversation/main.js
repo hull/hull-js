@@ -34,7 +34,7 @@
  */
 
 /*global define:true, _:true, $: true */
-define({
+Hull.define({
   type: 'Hull',
 
   templates: ['conversation','participants','form','conversation_button'],

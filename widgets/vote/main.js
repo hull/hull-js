@@ -19,7 +19,7 @@
  * - `vote_buttons`: Main template. Has 3 states: Upvote, Downvote, Blank
  *
  */
-define({
+Hull.define({
   type: "Hull",
 
   refreshEvents: ['model.hull.me.change'],

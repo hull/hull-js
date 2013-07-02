@@ -20,7 +20,7 @@
  * - Widget `achieve_button` to win a badge from an achievement
  * - Achievements/Badges API
 */
-define({
+Hull.define({
   type: 'Hull',
   templates: ['main'],
   datasources: {

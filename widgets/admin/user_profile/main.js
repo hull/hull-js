@@ -17,7 +17,7 @@
  * - `user_profile`: Displays detailed informations about the selected user.
  *
 */
-define({
+Hull.define({
 
   type: "Hull",
   templates: ['user_profile'],

@@ -31,7 +31,7 @@
  * and `provider_name` containing the name of the asked provider
  *
  */
-define(['underscore'], {
+Hull.define(['underscore'], {
   type: 'Hull',
 
   templates: [

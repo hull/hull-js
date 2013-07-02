@@ -1,4 +1,4 @@
-define(['prism'], function(){
+Hull.define(['prism'], function(){
   return {
     type: 'Hull',
 

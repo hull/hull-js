@@ -38,7 +38,7 @@
  *
  * - `play`: Ensure that the user is logged and play.
  */
-define({
+Hull.define({
   type: 'Hull',
 
   templates: [

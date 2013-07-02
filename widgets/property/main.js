@@ -25,7 +25,7 @@
  *   for easier customization
  *
  */
-define({
+Hull.define({
   type: 'Hull',
 
   templates: [

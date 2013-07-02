@@ -22,7 +22,7 @@
  * - `login_button`: Show login buttons if the user isn't logged, logout button if he is.
  *
  */
-define({
+Hull.define({
   type: 'Hull',
 
   templates: [

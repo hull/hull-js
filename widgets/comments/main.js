@@ -30,7 +30,7 @@
  * - `comment`: Submits a new comment.
  */
 
-define({
+Hull.define({
   type: 'Hull',
 
   templates: ['comments'],

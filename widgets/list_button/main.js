@@ -21,7 +21,7 @@
  * - `list_button`: Shows the button with the right state
  *
  */
-define({
+Hull.define({
   type: "Hull",
 
   refreshEvents: ['model.hull.me.change'],

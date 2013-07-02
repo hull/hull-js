@@ -24,7 +24,7 @@
  */
 
 /*global define:true, _:true */
-define({
+Hull.define({
   type: 'Hull',
 
   templates: ['participants'],

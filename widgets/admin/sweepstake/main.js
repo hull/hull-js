@@ -3,7 +3,7 @@
  * ## Sweepstake admin panel
  *
  */
-define({
+Hull.define({
   type: 'Hull',
 
   templates: ['intro'],

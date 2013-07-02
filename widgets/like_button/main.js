@@ -21,7 +21,7 @@
  *
  */
 
- define({
+Hull.define({
   type: "Hull",
 
   templates: ["like_button"],
