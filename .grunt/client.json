@@ -40,6 +40,10 @@
       "aura/ext/widgets",
       "lib/hull"
       ],
-    "out": "dist/<%= PKG_VERSION %>/hull.js"
+    "out": "dist/<%= PKG_VERSION %>/hull.js",
+    "wrap": {
+      "start": "(function () {var require, requirejs, define; var Handlebars;",
+      "end": " Hull.define = define;window.Handlebars = Handlebars})();"
+    }
   }
 }
