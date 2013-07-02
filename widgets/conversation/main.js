@@ -80,7 +80,7 @@ define({
       data.participants = data.conversation.participants;
       _.each(data.messages, function(m) {
         m.isDeletable = (m.actor.id === this.data.me.id);
-        m.isNew = !m.isDeletable && (!(data.conversation.last_read[this.data.me.id]) || (m.id > data.conversation.last_read[this.data.me.id]));
+        m.isNew = !m.isDeletable && (!(data.conversation.last_read) || (m.id > data.conversation.last_read));
         return m;
       }, this);
       data.isFollowing = _.find(data.participants, function(p) {
