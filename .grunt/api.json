@@ -1,5 +1,5 @@
 {
-  "srcFiles": ["src/utils/promises.coffee", "src/api.coffee", "src/api/params.coffee"],
+  "srcFiles": ["src/utils/promises.coffee", "src/api.coffee", "src/api/**/*.coffee"],
   "requireJS": {
     "baseUrl": ".",
     "preserveLicenseComments": true,

@@ -1,5 +1,5 @@
 {
-  "srcFiles": ["src/hullbase.coffee", "src/hull.coffee", "src/utils/**/*.coffee", "src/client/**/*.coffee", "src/api.coffee", "src/api/params.coffee"],
+  "srcFiles": ["src/hullbase.coffee", "src/hull.coffee", "src/utils/**/*.coffee", "src/client/**/*.coffee", "src/api.coffee", "src/api/**/*.coffee"],
   "requireJS": {
     "baseUrl": ".",
     "preserveLicenseComments": true,
