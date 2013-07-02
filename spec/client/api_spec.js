@@ -25,7 +25,7 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
       if (mustFail) {
         delay(a2.local.message.bind(this), {error:"Fail"});
       } else {
-        delay(a2.local.ready, {data: {me: {name: "test"}, app: {name: "test", org: {name: "test"}}}});
+        delay(a2.local.ready, {services:{types:{auth:[]}},data: {me: {name: "test"}, app: {name: "test", org: {name: "test"}}}});
       }
       mustFail = false;
     }

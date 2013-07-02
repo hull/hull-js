@@ -19,7 +19,7 @@ define(['spec/support/spec_helper'], function (helpers) {
       }
     };
   }
-  describe('The authentication module', function () {
+  xdescribe('The authentication module', function () {
     describe('initialization of the Auth module', function () {
       var auth,
           appMock,
