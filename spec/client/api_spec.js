@@ -1,5 +1,5 @@
 /*global define:true */
-define(['spec/support/spec_helper', 'aura/aura'], function (helper, aura) {
+define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/underscore'], function (helper, aura) {
 
   "use strict";
   /*jshint devel: true, browser: true */
@@ -22,7 +22,7 @@ define(['spec/support/spec_helper', 'aura/aura'], function (helper, aura) {
 
   easyXDMMock.Rpc.prototype.message = function (conf, successCb, errorCb) {
     var cb;
-    if (conf.path.split('/')[1].indexOf('error') === 0) {
+    if (conf.path.indexOf('error') === 0) {
       cb = errorCb;
     } else {
       cb = successCb;
@@ -173,15 +173,23 @@ define(['spec/support/spec_helper', 'aura/aura'], function (helper, aura) {
         api.model.bind(api, {}).should.throw(Error);
       });
 
-      it("should provide a deferred", function () {
-        var model = api.model('anId');
-        model.deferred.should.be.a('object');
+      it("should not be fetched", function () {
+        var model = api.model(_.uniqueId());
+        model._fetched.should.be.false;
+      });
+      it("should not provide an attached deferred to the model", function () {
+        var model = api.model(_.uniqueId());
+        expect(model.deferred).to.be.undefined;
       });
 
-      it("should return the model when the promise is resolved", function (done) {
-        var model = api.model('anId');
-        model.deferred.done(function (fetchedModel) {
-          fetchedModel.should.be.equal(model);
+      it("should trigger the `sync` event when the model has been fetched", function (done) {
+        var model = api.model(_.uniqueId());
+        model.on('error', function (m) {
+          m.should.be.equal(model);
+          done();
+        });
+        model.on('sync', function (m) {
+          m.should.be.equal(model);
           done();
         });
       });

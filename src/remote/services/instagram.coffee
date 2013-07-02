@@ -2,8 +2,8 @@ define ->
   (app)->
     slice = Array.prototype.slice
 
-    handler = (req, route, callback, errback)=>
-      path = req.path.replace(/^\/?instagram\//, '')
+    handler = (req, callback, errback)=>
+      path = req.path
       path = path.substring(1) if (path[0] == "/")
       url  = "/api/v1/services/instagram/" + path
 
@@ -25,4 +25,4 @@ define ->
       return
 
     initialize: (app)->
-      app.core.services.add([ { path: "/instagram/*path",  handler: handler } ])
+      app.core.routeHandlers.instagram = handler

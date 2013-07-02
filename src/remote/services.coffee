@@ -1,4 +1,4 @@
-define ->
+define ['underscore'], (_)->
   rpc = null
 
   catchAll = (res)->
@@ -8,33 +8,37 @@ define ->
   (app)->
     require:
       paths:
-        'easyXDM':            'components/easyXDM/easyXDM'
-        'route-recognizer' :  'components/route-recognizer/dist/route-recognizer.amd'
+        'easyXDM': 'components/easyXDM/easyXDM'
       shim:
         easyXDM: { exports: 'easyXDM' }
 
 
     initialize: (app)->
       core = app.core
-      Router = require('route-recognizer')
-      core.services = new Router
+      core.routeHandlers = {}
 
       onRemoteMessage = (req, callback, errback)->
         throw new Error("Path not recognized #{JSON.stringify(req)}") unless req.path
 
-        routes  = core.services.recognize(req.path)
-
-        if routes && route = routes[0]
-          route.handler(req, route, callback, errback)
+        handler = core.routeHandlers[req.provider]
+        if _.isFunction handler
+          handler(req, callback, errback)
         else
           errback(catchAll(req))
 
-      rpc = new easyXDM.Rpc({
-        acl: app.config.appDomains
-      }, {
-        remote: { message: {}, ready: {} }
-        local:  { message: onRemoteMessage }
-      })
+      try
+        rpc = new easyXDM.Rpc({
+          acl: app.config.appDomains
+        }, {
+          remote: { message: {}, ready: {} }
+          local:  { message: onRemoteMessage }
+        })
+      catch e
+        rpcFall = new easyXDM.Rpc({},
+          remote: {message: {}}
+        )
+        rpcFall.message error: "#{e.message}, please make sure this domain is whitelisted for this app."
+
       true
 
     afterAppStart: -> rpc.ready(app.config)

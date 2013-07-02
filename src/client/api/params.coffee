@@ -30,7 +30,6 @@ define ['underscore'], (_)->
     throw 'No URI provided for the API call' unless path
 
     path        = path.substring(1) if path[0] == "/"
-    path        = [provider, path].join("/")
 
     ret         = []
     ret.push(params) if params?
@@ -57,5 +56,5 @@ define ['underscore'], (_)->
     callback ?= ->
     errback  ?= (err, data)-> console.error('The request has failed: ', err, data)
 
-    [{ path: path, method: method, params: params }, callback, errback]
+    [{ provider: provider, path: path, method: method, params: params }, callback, errback]
 

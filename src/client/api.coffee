@@ -1,4 +1,4 @@
-define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base, apiParams) ->
+define ['lib/utils/version', 'lib/hullbase', 'lib/client/api/params'], (version, base, apiParams) ->
 
   (app) ->
 
@@ -9,6 +9,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
 
     rpc = false
     rawFetch = null
+    emitUserEvent = null
     module =
       require:
         paths:
@@ -62,8 +63,8 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
             callback(res.response)
             promise.resolve(res.response)
           onError = (err)->
-            errback(err)
-            promise.reject(err)
+            errback(err.message)
+            promise.reject(err.message)
           rpc.message params, onSuccess, onError
           promise
 
@@ -91,6 +92,8 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         #
         #
 
+        emitUserEvent = ->
+          app.core.mediator.emit('hull.currentUser', app.core.currentUser)
 
         app.core.setCurrentUser = setCurrentUser = (headers={})->
           return unless app.config.appId
@@ -104,11 +107,11 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
                 id:   headers['Hull-User-Id'],
                 sig:  headers['Hull-User-Sig']
               }
-              app.core.mediator.emit('hull.currentUser', app.core.currentUser)
+              emitUserEvent()
           else
             $.removeCookie(cookieName, path: "/")
             app.core.currentUser = false
-            app.core.mediator.emit('hull.currentUser', app.core.currentUser) if currentUserId
+            emitUserEvent() if currentUserId
 
           app.sandbox.config ?= {}
           app.sandbox.config.curentUser = app.core.currentUser
@@ -139,7 +142,11 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
 
           dfd = api(url, verb, data)
           dfd.then(options.success)
+          dfd.then (resolved)->
+            model.trigger('sync', model, resolved, options)
           dfd.fail(options.error)
+          dfd.fail (rejected)->
+            model.trigger 'error', model, rejected, options
           dfd
 
         BaseHullModel = app.core.mvc.Model.extend
@@ -167,20 +174,15 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
             args = slice.call(arguments)
             eventName = ("model.hull." + model._id + '.' + 'change')
             core.mediator.emit(eventName, { eventName: eventName, model: model, changes: args[1]?.changes })
-          dfd   = model.deferred = core.data.deferred()
           model._id = attrs._id
           models[attrs._id] = model #caching
           if model.id
             model._fetched = true
-            dfd.resolve(model)
           else
             model._fetched = false
             model.fetch
               success: ->
                 model._fetched = true
-                dfd.resolve(model)
-              error:   ->
-                dfd.fail(model)
           model
 
         api.model = (attrs)->
@@ -266,8 +268,16 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
 
         initialized = core.data.deferred()
 
-        onRemoteMessage = -> console.warn("RPC Message", arguments)
+        onRemoteMessage = (e)->
+          if e.error
+            # Get out of the easyXDM try/catch jail
+            setTimeout(
+              -> initialized.reject(e.error)
+            , 0)
+          else
+            console.warn("RPC Message", arguments)
 
+        #TODO Probably useless now
         timeout = setTimeout(
           ()->
             initialized.reject('Remote loading has failed. Please check "orgUrl" and "appId" in your configuration. This may also be about connectivity.')
@@ -277,10 +287,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
           data = remoteConfig.data
 
           if data.headers && data.headers['Hull-User-Id']
-            app.core.currentUser = {
-              id:   data.headers['Hull-User-Id'],
-              sig:  data.headers['Hull-User-Sig']
-            }
+            app.core.setCurrentUser data.headers
 
           window.clearTimeout(timeout)
           app.config.assetsUrl            = remoteConfig.assetsUrl
@@ -320,7 +327,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         base.app    = rawFetch('app', true);
         base.org    = rawFetch('org', true);
 
-        app.core.mediator.emit  'hull.currentUser', app.core.currentUser
+        emitUserEvent()
         app.core.mediator.on    'hull.currentUser', clearModelsCache
 
     module

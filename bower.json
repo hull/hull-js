@@ -1,13 +1,12 @@
 {
   "name": "hull-js",
-  "version": "0.5.2",
+  "version": "develop",
   "main": "./lib/hull.js",
   "dependencies": {
     "jquery": "1.9.1",
     "aura": "latest",
     "backbone": "0.9.9",
     "easyXDM": "2.4.17",
-    "route-recognizer": "latest",
     "require-handlebars-plugin": "0.4.0",
     "analytics": "hull/analytics#0.8.3",
     "base64": "0.1.1",

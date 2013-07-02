@@ -1,0 +1,65 @@
+{{#if errors.conversation}}
+  <div class="alert alert-error">Unable to retrieve the conversation</div>
+{{else}}
+<div class="hull-conversation">
+  <div class="hull-conversation__header">
+    <div>You have {{conversation.messages_count_unread}} NEW messages and {{conversation.messages_count}} total messages.</div>
+  </div>
+
+  <div class="row-fluid">
+    <div class="hull-conversation__participants">
+      {{> conversation.participants}}
+    </div>
+  </div>
+  <div class="row-fluid">
+      {{^isAscending}}
+        {{> conversation.form}}
+      {{/isAscending}}
+
+      {{#if messages}}
+        <ul class="media-list hull-messages__list">
+          {{#messages}}
+            <li class="media" data-hull-message-id="{{id}}">
+              <div class="span2">
+                <span class="pull-right">{{actor.name}}</span>
+              </div>
+              <div class="pull-left">
+                <img class="media-object img-rounded" src="{{actor.picture}}" alt="{{actor.name}}">
+              </div>
+              <div class="media-body">
+                <div class="pull-right">
+                  <small class="muted">{{formatTime updated_at "h:mm A"}}</small>
+                </div>
+                <h4 class="media-heading">
+                  {{#if isNew}}
+                    <small class="text-success">NEW!</small>
+                  {{/if}}
+                </h4>
+                <div class="hull-messages__description">
+                  {{body}}
+                </div>
+                <div class="hull-messages__actions">
+                    {{#if isDeletable}}
+                      <small>
+                        <a href="#" class='link' data-hull-action="deleteMsg" data-hull-id="{{id}}">Delete</a>
+                      </small>
+                    {{/if}}
+                </div>
+              </div>
+            </li>
+          {{/messages}}
+        </ul>
+      {{/if}}
+
+      {{^messages}}
+        <div class="alert alert-info">
+          No messages started yet
+        </div>
+      {{/messages}}
+
+      {{#if isAscending}}
+        {{> conversation.form}}
+      {{/if}}
+  </div>
+</div>
+{{/if}}

@@ -37,7 +37,6 @@ define ->
       dfd.done ->
         app.core.setCurrentUser(false)
         api.model('me').clear()
-        api.model('me').trigger('change')
         callback() if _.isFunction(callback)
       dfd #TODO It would be better to return the promise
 
@@ -51,8 +50,7 @@ define ->
       dfd = isAuthenticating
       try
         me = app.sandbox.data.api.model('me')
-        dfd.done -> me.trigger('change')
-        me.fetch(silent: true).then(dfd.resolve, dfd.reject)
+        me.fetch().then(dfd.resolve, dfd.reject)
       catch err
         console.error "Error on auth promise resolution", err
       finally
