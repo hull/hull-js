@@ -26,15 +26,6 @@
             _h[k] = window.Hull[k]
           window.Hull = _h
 
-    if document.location.hash.indexOf("#hull-auth")==0 &&  window.opener && window.opener.Hull
-      try
-        authCbName = document.location.hash.replace('#hull-auth-', '')
-        cb = window.opener[authCbName]
-        cb(authCbName)
-        return window.close()
-      catch e
-        console.warn("Error: " + e)
-
     (config, cb, errcb) ->
       return hull if hull && hull.app
       hull = { config }
@@ -49,7 +40,6 @@
           .use('lib/client/helpers')
           .use('lib/client/entity')
           .use('lib/client/api')
-          .use('lib/client/auth')
           .use('lib/client/templates')
           .use('lib/client/widget')
           .start({ widgets: 'body' })

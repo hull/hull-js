@@ -1,10 +1,19 @@
-define ->
+if document.location.hash.indexOf("#hull-auth")==0 &&  window.opener && window.opener.Hull
+  try
+    authCbName = document.location.hash.replace('#hull-auth-', '')
+    cb = window.opener[authCbName]
+    cb(authCbName)
+    return window.close()
+  catch e
+    console.warn("Error: " + e)
 
-  # Holds the state of the authentication process
-  # @type {Promise|Boolean}
-  authenticating = false
+define ['underscore', 'lib/utils/promises'], (_, promises)->
 
-  (app) ->
+  (apiFn, config, authServices=[]) ->
+    # Holds the state of the authentication process
+    # @type {Promise|Boolean}
+    authenticating = false
+
 
     # Starts the login process
     # @throws Error with invalid providerName
@@ -13,15 +22,14 @@ define ->
       return module.isAuthenticating() if module.isAuthenticating()
 
       throw 'The provider name must be a String' unless _.isString(providerName)
-      authServices = app.sandbox.config.services.types.auth || []
       providerName = providerName.toLowerCase()
       throw "No authentication service #{providerName} configured for the app" unless ~(authServices.indexOf(providerName + '_app'))
 
-      authenticating = app.sandbox.data.deferred()
+      authenticating = promises.deferred()
       authenticating.providerName = providerName
       authenticating.done callback if _.isFunction(callback)
 
-      authUrl = module.authUrl(app.config, providerName, opts)
+      authUrl = module.authUrl(config, providerName, opts)
       module.authHelper(authUrl)
 
       authenticating #TODO It would be better to return the promise
@@ -32,12 +40,8 @@ define ->
     # @returns {Promise}
     # @TODO Misses a `dfd.fail`
     logout = (callback=->)->
-      api = app.sandbox.data.api;
-      app.sandbox
-      dfd = api('logout')
+      dfd = apiFn('logout')
       dfd.done ->
-        app.core.mediator.emit('hull.logout')
-        api.model('me').clear()
         callback() if _.isFunction(callback)
       dfd.promise() #TODO It would be better to return the promise
 
@@ -45,20 +49,8 @@ define ->
 
     # Callback executed on successful authentication
     onCompleteAuthentication = ()->
-      isAuthenticating = module.isAuthenticating()
-      return unless isAuthenticating && isAuthenticating.state() == 'pending'
-      providerName = isAuthenticating.providerName
-      dfd = isAuthenticating
-      try
-        me = app.sandbox.data.api.model('me')
-        me.fetch().then ->
-          dfd.resolve()
-          app.core.mediator.emit('hull.login', me)
-        , dfd.reject
-      catch err
-        console.error "Error on auth promise resolution", err
-      finally
-        authenticating = false
+      authenticating.resolve()
+      authenticating = false
 
 
 
@@ -78,8 +70,6 @@ define ->
     #
 
     module =
-      login: login,
-      logout: logout,
       isAuthenticating: -> authenticating #TODO It would be better to return Boolean (isXYZ method)
       location: document.location
       authUrl: generateAuthUrl
@@ -92,11 +82,7 @@ define ->
         cbName
       authHelper: (path)-> window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
       onCompleteAuth: onCompleteAuthentication
-      initialize: ->
-        # Are we authenticating the user ?
-        app.sandbox.authenticating = module.isAuthenticating
-
-        app.sandbox.login = login
-        app.sandbox.logout = logout
-
-    module
+    api =
+      login: login
+      logout: logout
+    api

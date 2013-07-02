@@ -1,4 +1,4 @@
-define ['lib/hullbase', 'lib/api'], (base, apiModule) ->
+define ['lib/hullbase', 'lib/api', 'lib/utils/promises'], (base, apiModule, promises) ->
   (app) ->
 
     models = {}
@@ -51,7 +51,7 @@ define ['lib/hullbase', 'lib/api'], (base, apiModule) ->
             if !data? && model && (method == 'create' || method == 'update' || method == 'patch')
               data = options.attrs || model.toJSON(options)
 
-            dfd = api(url, verb, data)
+            dfd = core.data.api(url, verb, data)
             dfd.then(options.success)
             dfd.then (resolved)->
               model.trigger('sync', model, resolved, options)
@@ -96,7 +96,7 @@ define ['lib/hullbase', 'lib/api'], (base, apiModule) ->
                   model._fetched = true
             model
 
-          api.model = (attrs)->
+          core.data.api.model = (attrs)->
             rawFetch(attrs, false)
 
           rawFetch = (attrs, raw)->
@@ -113,7 +113,7 @@ define ['lib/hullbase', 'lib/api'], (base, apiModule) ->
               model = new _Model()
 
           setupCollection = (path)->
-            route           = (api.parseRoute [path])[0]
+            route           = (core.data.api.parseRoute [path])[0]
             collection      = new Collection
             collection.url  = path
             collection.on 'all', ->
@@ -134,11 +134,11 @@ define ['lib/hullbase', 'lib/api'], (base, apiModule) ->
                   dfd.fail(collection)
             collection
 
-          api.collection = (path)->
+          core.data.api.collection = (path)->
             throw new Error('A model must have an path...') unless path?
-            setupCollection.call(api, path)
+            setupCollection.call(core.data.api, path)
 
-          api.batch = ->
+          core.data.api.batch = ->
             err = new Error 'Incorrect arguments passed to Hull.data.api.batch(). Only Arrays, callback and errback are accepted.'
             args      = slice.call(arguments)
             promises  = []
@@ -163,7 +163,7 @@ define ['lib/hullbase', 'lib/api'], (base, apiModule) ->
 
             throw new Error('No request given. Aborting') unless requests.length
             promises = _.map requests, (request)->
-              api.apply(api, request).promise()
+              core.data.api.apply(core.data.api, request).promise()
 
 
             # Actual request
@@ -191,6 +191,25 @@ define ['lib/hullbase', 'lib/api'], (base, apiModule) ->
           app.sandbox.config.services     = remoteConfig.services
           app.sandbox.config.entity_id    = data.entity?.id
           app.sandbox.isAdmin             = remoteConfig.access_token?
+
+          app.sandbox.login = (provider, opts, callback=->)->
+            dfd = promises.deferred()
+            obj.auth.login.apply(undefined, arguments).then ->
+              try
+                me = app.sandbox.data.api.model('me')
+                me.fetch().then ->
+                  app.core.mediator.emit('hull.login', me)
+                  dfd.resolve(me)
+                , dfd.reject
+              catch err
+                console.error "Error on auth promise resolution", err
+                dfd.reject err
+
+          app.sandbox.logout = (callback=->)->
+            obj.auth.logout(callback).then ->
+              app.core.mediator.emit('hull.logout')
+              core.data.api.model('me').clear()
+
           for m in ['me', 'app', 'org', 'entity']
             attrs = data[m]
             if attrs
