@@ -68,6 +68,7 @@ define ->
       auth_params.app_id        = config.appId
       auth_params.callback_url  = config.callback_url || module.location.toString()
       auth_params.auth_referer  = module.location.toString()
+      auth_params.callback_name = module.createCallback()
 
       "#{config.orgUrl}/auth/#{provider}?#{$.param(auth_params)}"
 
@@ -82,12 +83,16 @@ define ->
       isAuthenticating: -> authenticating #TODO It would be better to return Boolean (isXYZ method)
       location: document.location
       authUrl: generateAuthUrl
+      createCallback: ->
+        cbName = "__h__#{Math.random().toString(36).substr(2)}"
+        cbFn = (name)->
+          delete window[name]
+          onCompleteAuthentication.apply undefined, arguments
+        window[cbName] = _.bind(cbFn, undefined, cbName)
+        cbName
       authHelper: (path)-> window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
       onCompleteAuth: onCompleteAuthentication
       initialize: ->
-        # Tell the world that the login process has ended
-        app.core.mediator.on "hull.authComplete", onCompleteAuthentication
-
         # Are we authenticating the user ?
         app.sandbox.authenticating = module.isAuthenticating
 

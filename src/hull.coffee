@@ -26,9 +26,11 @@
             _h[k] = window.Hull[k]
           window.Hull = _h
 
-    if document.location.hash == "#hull-auth" &&  window.opener && window.opener.Hull
+    if document.location.hash.indexOf("#hull-auth")==0 &&  window.opener && window.opener.Hull
       try
-        window.opener.Hull.emit("hull.authComplete")
+        authCbName = document.location.hash.replace('#hull-auth-', '')
+        cb = window.opener[authCbName]
+        cb(authCbName)
         return window.close()
       catch e
         console.warn("Error: " + e)
