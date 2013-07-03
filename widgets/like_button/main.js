@@ -35,8 +35,13 @@ Hull.define({
     },
   },
 
+  onTargetError: function () {
+    "use strict";
+    return { stats: {} };
+  },
+
   beforeRender:function(data){
-    data.likes = data.target.stats.likes||0
+    data.likes = data.target.stats.likes || 0;
     self.likes = data.likes;
     self.liked = data.liked;
     return data;
