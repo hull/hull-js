@@ -16,6 +16,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-git-describe');
   grunt.loadNpmTasks('grunt-coverjs');
   grunt.loadNpmTasks('grunt-plato');
+  grunt.loadNpmTasks('grunt-wrap');
 
   var pkg = grunt.file.readJSON('bower.json');
   var clientConfig = grunt.file.readJSON('.grunt/client.json');
@@ -193,6 +194,22 @@ module.exports = function (grunt) {
     describe: {
       out: 'dist/<%= PKG_VERSION%>/REVISION'
     },
+    wrap: {
+      Handlebars: {
+        src: 'node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars.js',
+        dest: 'lib/shims',
+        wrapper: [
+          '(function () {', ';define("handlebars", function () {return Handlebars;});})()'
+        ]
+      },
+      easyXDM: {
+        src: 'components/easyXDM/easyXDM.js',
+        dest: 'lib/shims',
+        wrapper: [
+          '', ';var _available = window.easyXDM;define("easyXDM", function () {return window.easyXDM.noConflict();});if(!_available){delete window.easyXDM;};'
+        ]
+      }
+    },
     cover: {
       compile: {
         files: {
@@ -211,10 +228,10 @@ module.exports = function (grunt) {
       }
     },
     dist: {
-      "remote": ['clean:remote', 'coffee:remote', 'version', 'requirejs:remote'],
-      "client": ['clean:client', 'coffee:client', 'version', 'requirejs:client'],
-      "client-no-underscore": ['clean:client', 'coffee:client', 'version', 'requirejs:client-no-underscore'],
-      "client-no-backbone": ['clean:client', 'coffee:client', 'version', 'requirejs:client-no-backbone'],
+      "remote": ['clean:remote', 'coffee:remote', 'wrap', 'version', 'requirejs:remote'],
+      "client": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client'],
+      "client-no-underscore": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
+      "client-no-backbone": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
       "widgets": ["hull_widgets"],
       "docs": ['dox']
     }
