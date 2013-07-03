@@ -52,8 +52,9 @@ Hull.define({
   },
 
   beforeRender: function(data){
-    _.each(data.users, function(profile){
-      _.each(profile.user.identities,function(identity){
+    var self = this;
+    this.sandbox.util._.each(data.users, function(profile){
+      self.sandbox.util._.each(profile.user.identities,function(identity){
         identity.type=identity.type.replace(/_(app|account)$/,'');
       });
     });
