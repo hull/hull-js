@@ -34,7 +34,6 @@ Hull.define({
 
   actions: {
     do: function () {
-      debugger
       console.log(this);
     }
   }
