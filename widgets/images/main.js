@@ -59,11 +59,11 @@ Hull.define(['underscore'], {
   actions: {
     authorize: function(){
       if(this.provider==="facebook"){
-        this.sandbox.login('facebook', {scope:this.options.scope}).then(_.bind(function(){
+        this.sandbox.login('facebook', {scope:this.options.scope}).then(this.sandbox.util._.bind(function(){
           this.render();
         },this));
       } else {
-        this.sandbox.login(this.provider,{}).then(_.bind(function(){
+        this.sandbox.login(this.provider,{}).then(this.sandbox.util._.bind(function(){
           // this.render();
         },this));
       }
@@ -82,16 +82,16 @@ Hull.define(['underscore'], {
       var self = this;
 
       // map identities by name
-      var identities = _.reduce(this.me.get('identities'), function(m, i) {
+      var identities = this.sandbox.util._.reduce(this.me.get('identities'), function(m, i) {
         m[i.provider] = i;
         return m;
       }, {});
 
       //Are we logged in to provider, or is provider hull. if Provider is hull, are we asking "me" without being loggedin ?
       if( this.loggedIn()[this.provider] || (this.provider==="hull" && (this.loggedIn() || this.id!=="me"))){
-        this.request(this.provider, identities, this.options).then(_.bind(function(res) {
+        this.request(this.provider, identities, this.options).then(this.sandbox.util._.bind(function(res) {
 
-          var serialized = _.bind(this.serializers[self.provider],this,res,this.options)
+          var serialized = this.sandbox.util._.bind(this.serializers[self.provider],this,res,this.options)
           var images = serialized().slice(0, this.options.limit)
           deferred.resolve(images);
 
@@ -120,9 +120,13 @@ Hull.define(['underscore'], {
       var valid = (this.loggedIn() || this.id!=="me");
       auth.provider = valid;
 
-      auth.provider_name = this.sandbox.config.services.types.auth[0].replace(/_app$/,'');
-
-      deferred.resolve(auth);
+      var authProviders = this.sandbox.config.services.types.auth;
+      if (!authProviders || !authProviders.length) {
+        deferred.reject(new Error('No auth provider for this app'));
+      } else {
+        auth.provider_name = authProviders[0].replace(/_app$/,'');
+        deferred.resolve(auth);
+      }
     } else {
       if (this.loggedIn()[provider]){
         auth.provider=true;
@@ -148,11 +152,11 @@ Hull.define(['underscore'], {
     this.api({provider: "facebook", path: "me/permissions"}).then(function(res) {
 
       //Convert scope to array if given as a string.
-      if(_.isString(scope)){
+      if(this.sandbox.util._.isString(scope)){
         scope = scope.replace(' ','').split(',');
       }
 
-      if(_.isArray(scope) && (_.intersection(_.keys(res.data[0]), scope).length==scope.length)){
+      if(this.sandbox.util._.isArray(scope) && (this.sandbox.util._.intersection(this.sandbox.util._.keys(res.data[0]), scope).length==scope.length)){
         //we have all the perms we need.
         authorization.permissions=true;
       }
@@ -188,7 +192,7 @@ Hull.define(['underscore'], {
     hull: function(res, options) {
       "use strict";
       var sandbox = this.sandbox
-      return _.map(res, function(f) {
+      return this.sandbox.util._.map(res, function(f) {
         return {
           provider: 'hull',
           name: f.name,
@@ -213,7 +217,7 @@ Hull.define(['underscore'], {
           break;
       }
 
-      return _.map(res.data, function(f) {
+      return this.sandbox.util._.map(res.data, function(f) {
         return {
           provider: 'facebook',
           name: f.from.name,
@@ -241,7 +245,7 @@ Hull.define(['underscore'], {
       }
 
 
-      return _.map(res, function(f){
+      return this.sandbox.util._.map(res, function(f){
         var t = "";
         if(f && f.caption){t = f.caption.text;}
         return {
