@@ -61,11 +61,11 @@ Hull.define(['underscore'], {
   actions: {
     authorize: function(){
       if(this.provider==="facebook"){
-        this.sandbox.login('facebook', {scope:this.options.scope}).then(_.bind(function(){
+        this.sandbox.login('facebook', {scope:this.options.scope}).then(this.sandbox.util._.bind(function(){
           this.render();
         },this));
       } else {
-        this.sandbox.login(this.provider,{}).then(_.bind(function(){
+        this.sandbox.login(this.provider,{}).then(this.sandbox.util._.bind(function(){
         },this));
       }
     }
@@ -82,16 +82,16 @@ Hull.define(['underscore'], {
       var self = this;
 
       // map identities by name
-      var identities = _.reduce(this.me.get('identities'), function(m, i) {
+      var identities = this.sandbox.util._.reduce(this.me.get('identities'), function(m, i) {
         m[i.provider] = i;
         return m;
       }, {});
 
       //Are we logged in to provider, or is provider hull. if Provider is hull, are we asking "me" without being loggedin ?
       if( this.loggedIn()[this.provider] || (this.provider==="hull" && (this.loggedIn() || this.getUserId()!=="me"))){
-        this.request(this.provider, identities, this.options).then(_.bind(function(res) {
+        this.request(this.provider, identities, this.options).then(this.sandbox.util._.bind(function(res) {
 
-          var serialized = _.bind(this.serializers[self.provider],this,res,this.options)
+          var serialized = this.sandbox.util._.bind(this.serializers[self.provider],this,res,this.options)
           var friends = serialized().slice(0, this.options.limit)
           deferred.resolve(friends);
 
@@ -119,7 +119,13 @@ Hull.define(['underscore'], {
       var valid = (this.loggedIn() || this.getUserId()!=="me");
       auth.provider = valid;
 
-      auth.provider_name = this.sandbox.config.services.types.auth[0].replace(/_app$/,'');
+      var authProviders = this.sandbox.config.services.types.auth;
+      if (!authProviders || !authProviders.length) {
+        deferred.reject(new Error('No auth provider for this app'));
+      } else {
+        auth.provider_name = authProviders[0].replace(/_app$/,'');
+        deferred.resolve(auth);
+      }
 
       deferred.resolve(auth);
     } else {
@@ -151,11 +157,11 @@ Hull.define(['underscore'], {
       this.api({provider: 'facebook', path:"me/permissions"}).then(function(res) {
 
         //Convert scope to array if given as a string.
-        if(_.isString(scope)){
+        if(this.sandbox.util._.isString(scope)){
           scope = scope.replace(' ','').split(',');
         }
 
-        if(_.isArray(scope) && (_.intersection(_.keys(res.data[0]), scope).length==scope.length)){
+        if(this.sandbox.util._.isArray(scope) && (this.sandbox.util._.intersection(this.sandbox.util._.keys(res.data[0]), scope).length==scope.length)){
           //we have all the perms we need.
           authorization.permissions=true;
         }
@@ -198,7 +204,7 @@ Hull.define(['underscore'], {
 
   serializers: {
     hull: function(res) {
-      return _.map(res, function(f) {
+      return this.sandbox.util._.map(res, function(f) {
         return {
           provider: 'hull',
           name: f.name,
@@ -209,7 +215,7 @@ Hull.define(['underscore'], {
     },
 
     facebook: function(res) {
-      return _.map(res.data, function(f) {
+      return this.sandbox.util._.map(res.data, function(f) {
         return {
           provider: 'facebook',
           name: f.name,
@@ -220,7 +226,7 @@ Hull.define(['underscore'], {
     },
 
     twitter: function(res) {
-      return _.map(res.users, function(f) {
+      return this.sandbox.util._.map(res.users, function(f) {
         return {
           provider: 'twitter',
           name: f.name,
@@ -231,7 +237,7 @@ Hull.define(['underscore'], {
     },
 
     instagram: function(res){
-      return _.map(res, function(f){
+      return this.sandbox.util._.map(res, function(f){
         return {
           provider: 'instagram',
           name: f.full_name,
@@ -242,7 +248,7 @@ Hull.define(['underscore'], {
     },
 
     github: function(res) {
-      return _.map(res, function(f) {
+      return this.sandbox.util._.map(res, function(f) {
         return {
           provider: 'github',
           name: f.login,
