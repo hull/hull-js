@@ -31,6 +31,10 @@ Hull.define({
     target: ':id'
   },
 
+  onTargetError: function () {
+    "use strict";
+    return {};
+  },
   beforeRender: function(data){
     "use strict";
     if (this.sandbox.util._.isArray(data.vote)) {
