@@ -42,7 +42,7 @@ Hull.define({
     if(!data.user){
       return data;
     }
-    _.each(data.user.identities,function(identity){
+    this.sandbox.util._.each(data.user.identities,function(identity){
       identity.type=identity.type.replace(/_(app|account)$/,'');
     });
     return data;
