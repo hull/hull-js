@@ -141,6 +141,7 @@ module.exports = function (grunt) {
       },
       registration: {
         options: {
+          namespace: 'Hull',
           paths: { h5f: 'widgets/registration/h5f' },
           shim: { h5f: { exports: 'H5F' } },
           include: ['h5f'],
