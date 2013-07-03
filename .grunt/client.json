@@ -1,4 +1,5 @@
 {
+  "namespace": "Hull",
   "srcFiles": ["src/hullbase.coffee", "src/hull.coffee", "src/utils/**/*.coffee", "src/client/**/*.coffee"],
   "requireJS": {
     "baseUrl": ".",
@@ -38,8 +39,8 @@
       ],
     "out": "dist/<%= PKG_VERSION %>/hull.js",
     "wrap": {
-      "start": "(function () {var require, requirejs, define,root = {jQuery: jQuery}; (function () {",
-      "end": ";Hull.define = define;}).call(root)})();"
+      "start": "(function () {var require, requirejs, define,root = window.root = {jQuery: jQuery}; (function () {",
+      "end": ";Hull.define = define;}).call(root);debugger;for(var i in root){root.hasOwnProperty(i) && Hull.define(i.toLowerCase(), function (){return root[i];})}})();"
     }
   }
 }
