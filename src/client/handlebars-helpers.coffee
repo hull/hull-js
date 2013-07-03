@@ -1,4 +1,4 @@
-define ['aura-extensions/hull-utils', 'handlebars'], (utils, Handlebars)->
+define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars'], (moment, _,utils, Handlebars)->
 
   (app)->
 
