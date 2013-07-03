@@ -1,4 +1,4 @@
-define ['aura-extensions/hull-utils'], (utils)->
+define ['aura-extensions/hull-utils', 'handlebars'], (utils, Handlebars)->
 
   (app)->
 

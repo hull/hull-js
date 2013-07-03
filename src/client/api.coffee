@@ -1,4 +1,4 @@
-define ['lib/utils/version', 'lib/hullbase', 'lib/client/api/params'], (version, base, apiParams) ->
+define ['lib/utils/version', 'lib/hullbase', 'lib/client/api/params', 'easyXDM'], (version, base, apiParams, easyXDM) ->
 
   (app) ->
 
@@ -13,10 +13,7 @@ define ['lib/utils/version', 'lib/hullbase', 'lib/client/api/params'], (version,
     module =
       require:
         paths:
-          easyXDM: 'components/easyXDM/easyXDM'
           cookie: 'components/jquery.cookie/jquery.cookie'
-        shim:
-          easyXDM: { exports: 'easyXDM' }
 
 
       # Builds the URL used by easyXDM
@@ -34,7 +31,6 @@ define ['lib/utils/version', 'lib/hullbase', 'lib/client/api/params'], (version,
         sandbox = app.sandbox
 
         _         = require('underscore')
-        easyXDM   = require('easyXDM')
 
         slice = Array.prototype.slice
 
