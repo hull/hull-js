@@ -40,8 +40,8 @@ Hull.define({
   beforeRender: function(data) {
     this.id = data.target.id;
     if (data.list && data.list.items) {
-      var itemIds   = _.pluck(data.list.items, "id");
-      data.isListed = _.include(itemIds, this.id);
+      var itemIds   = this.sandbox.util._.pluck(data.list.items, "id");
+      data.isListed = this.sandbox.util._.include(itemIds, this.id);
       this.itemPath = data.list.id + "/items/" + data.target.id;
     }
     return data;
@@ -53,7 +53,7 @@ Hull.define({
     this.api(this.itemPath, method).then(function() {
       list.fetch().then(function() {
         var itemId  = this.id;
-        var item    = _.filter(list.items, function(i) { return i.id === itemId })[0];
+        var item    = this.sandbox.util._.filter(list.items, function(i) { return i.id === itemId })[0];
         this.track("list:" + verb, {
           itemId: this.id,
           listName: list.get("name")
