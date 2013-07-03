@@ -42,7 +42,7 @@ Hull.define(['underscore', 'h5f'], function(_, H5F) {
 
     initialize : function(options, callback) {
       this.formId = "form_"+(new Date()).getTime();
-      _.bindAll(this);
+      this.sandbox.util._.bindAll(this);
     },
 
     validate: function() {
@@ -71,7 +71,7 @@ Hull.define(['underscore', 'h5f'], function(_, H5F) {
 
     beforeRender: function(data) {
       data.formId = this.formId;
-      var fields = _.map(data.fields, function(f) {
+      var fields = this.sandbox.util._.map(data.fields, function(f) {
         f.value = this._findFieldValue(f.name);
         return f;
       }, this);
@@ -80,7 +80,7 @@ Hull.define(['underscore', 'h5f'], function(_, H5F) {
 
       // Check if user.profile contains all the fields with their respective
       // value. If it's the case we consider the form as complete.
-      var isComplete = _.every(fields, function(f) {
+      var isComplete = this.sandbox.util._.every(fields, function(f) {
         var profileField = profile[f.name];
         if (f.type === 'checkbox') {
           return profileField == f.value;
@@ -123,11 +123,11 @@ Hull.define(['underscore', 'h5f'], function(_, H5F) {
           return false;
         }
 
-        var fields = _.clone(this.fields),
+        var fields = this.sandbox.util._.clone(this.fields),
             extra  = {},
             el = this.$el;
 
-        _.each(fields, function(field) {
+        this.sandbox.util._.each(fields, function(field) {
           if (field.type == 'checkbox') {
             extra[field.name] = el.find('#hull-form-' + field.name).is(':checked');
           } else {
@@ -142,9 +142,9 @@ Hull.define(['underscore', 'h5f'], function(_, H5F) {
     _findFieldValue: function(name) {
       var me = this.data.me.toJSON() || {};
 
-      var identities = _.reduce(me.identities, function(memo, i) {
-        return _.extend(memo, i);
-      }, {});
+      var identities = this.sandbox.util._.reduce(me.identities, this.sandbox.util._.bind(function(memo, i) {
+        return this.sandbox.util._.extend(memo, i);
+      }, this), {});
 
       me.profile = me.profile || {};
       identities = identities || {};
