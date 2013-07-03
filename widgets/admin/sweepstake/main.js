@@ -26,23 +26,23 @@ Hull.define({
     this.$achievementPrizes = this.$el.find('#hull-prizes-json');
 
     this.showAchievement();
-    this.$achievementsSelector.on('change', _.bind(this.showAchievement, this));
+    this.$achievementsSelector.on('change', this.sandbox.util._.bind(this.showAchievement, this));
   },
 
 
   showAchievement: function() {
     var id = this.$achievementsSelector.val();
-    var achievement = _.where(this.data.achievements, { id: id })[0];
+    var achievement = this.sandbox.util._.where(this.data.achievements, { id: id })[0];
     if(achievement){
       this.$achievementName.val(achievement.name);
       this.$achievementId.text(achievement.id);
       this.$achievementDescription.val(achievement.description);
       this.$achievementSecret.val(achievement.secret);
 
-      this.api(id + '/prizes', this.signRequest()).then(_.bind(function(res) {
+      this.api(id + '/prizes', this.signRequest()).then(this.sandbox.util._.bind(function(res) {
         var code = {
-          prizes: _.map(res || [], function(p) {
-            return _.pick(p, 'id', 'name', 'description', 'available_at', 'extra');
+          prizes: this.sandbox.util._.map(res || [], function(p) {
+            return this.sandbox.util._.pick(p, 'id', 'name', 'description', 'available_at', 'extra');
           })
         };
         this.$achievementPrizes.val(JSON.stringify(code, null, 2));
@@ -51,7 +51,7 @@ Hull.define({
   },
 
   signRequest: function(data) {
-    return _.extend(data || {}, {
+    return this.sandbox.util._.extend(data || {}, {
       access_token: this.appSecret
     });
   },
@@ -69,7 +69,7 @@ Hull.define({
       if (description.length) { data.description = description; }
       if (secret.length) { data.secret = secret; }
 
-      this.api('app/achievements', 'post', this.signRequest(data)).done(_.bind(function(res) {
+      this.api('app/achievements', 'post', this.signRequest(data)).done(this.sandbox.util._.bind(function(res) {
         alert('Sweepstake Created');
         this.refresh();
       }, this)).fail(function() {
