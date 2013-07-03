@@ -50,7 +50,7 @@ Hull.define({
   findProp: function (obj, prop) {
     "use strict";
     var parts = prop.split('.');
-    _.each(parts, function(p) {
+    this.sandbox.util._.each(parts, function(p) {
       obj = !obj ? undefined : obj[p];
     });
     return obj;
