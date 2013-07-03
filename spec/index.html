@@ -29,6 +29,13 @@
           underscore:   'components/underscore/underscore-min',
           jquery:       'components/jquery/jquery.min',
           handlebars:   'components/require-handlebars-plugin/Handlebars'
+        },
+        config: {
+          shim: {
+            "underscore": {
+              exports: "_"
+            }
+          }
         }
       };
       var runMocha = function() {
