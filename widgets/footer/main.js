@@ -9,7 +9,7 @@
  *
  *
  */
-define({
+Hull.define({
 
   type: "Hull",
 

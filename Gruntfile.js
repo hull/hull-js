@@ -16,6 +16,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-git-describe');
   grunt.loadNpmTasks('grunt-coverjs');
   grunt.loadNpmTasks('grunt-plato');
+  grunt.loadNpmTasks('grunt-wrap');
 
   var pkg = grunt.file.readJSON('bower.json');
   var clientConfig = grunt.file.readJSON('.grunt/client.json');
@@ -109,6 +110,8 @@ module.exports = function (grunt) {
           c.paths.underscore = 'empty:';
           c.paths.backbone = 'empty:';
           c.out = c.out.replace('hull.js', 'hull.no-backbone.js');
+          c.wrap.start = c.wrap.start + ";root._ = window._;";
+          c.wrap.start = c.wrap.start + ";root.Backbone = window.Backbone;";
           return c;
         })(clone(clientRJSConfig, true))
       },
@@ -116,6 +119,7 @@ module.exports = function (grunt) {
         options: (function (c) {
           c.paths.underscore = 'empty:';
           c.out = c.out.replace('hull.js', 'hull.no-underscore.js');
+          c.wrap.start = c.wrap.start + ";root._ = window._;";
           return c;
         })(clone(clientRJSConfig, true))
       },
@@ -140,6 +144,7 @@ module.exports = function (grunt) {
       },
       registration: {
         options: {
+          namespace: 'Hull',
           paths: { h5f: 'widgets/registration/h5f' },
           shim: { h5f: { exports: 'H5F' } },
           include: ['h5f'],
@@ -180,7 +185,7 @@ module.exports = function (grunt) {
     },
     version: {
       template: "define(function () { return '<%= PKG_VERSION %>';});",
-      dest: 'lib/version.js'
+      dest: 'lib/utils/version.js'
     },
     hull_widgets: {
       hull: {
@@ -192,6 +197,22 @@ module.exports = function (grunt) {
     },
     describe: {
       out: 'dist/<%= PKG_VERSION%>/REVISION'
+    },
+    wrap: {
+      Handlebars: {
+        src: 'node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars.js',
+        dest: 'lib/shims',
+        wrapper: [
+          '(function () {', ';define("handlebars", function () {return Handlebars;});})()'
+        ]
+      },
+      easyXDM: {
+        src: 'components/easyXDM/easyXDM.js',
+        dest: 'lib/shims',
+        wrapper: [
+          '', ';var _available = window.easyXDM;define("easyXDM", function () {return window.easyXDM.noConflict();});if(!_available){delete window.easyXDM;};'
+        ]
+      }
     },
     cover: {
       compile: {
@@ -211,10 +232,10 @@ module.exports = function (grunt) {
       }
     },
     dist: {
-      "remote": ['clean:remote', 'coffee:remote', 'version', 'requirejs:remote'],
-      "client": ['clean:client', 'coffee:client', 'version', 'requirejs:client'],
-      "client-no-underscore": ['clean:client', 'coffee:client', 'version', 'requirejs:client-no-underscore'],
-      "client-no-backbone": ['clean:client', 'coffee:client', 'version', 'requirejs:client-no-backbone'],
+      "remote": ['clean:remote', 'coffee:remote', 'wrap', 'version', 'requirejs:remote'],
+      "client": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client'],
+      "client-no-underscore": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
+      "client-no-backbone": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
       "widgets": ["hull_widgets"],
       "docs": ['dox']
     }

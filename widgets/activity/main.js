@@ -37,7 +37,7 @@
  *
  * - `activities`: The activity stream that will be displayed.
  */
-define({
+Hull.define({
   type: 'Hull',
 
   templates: [

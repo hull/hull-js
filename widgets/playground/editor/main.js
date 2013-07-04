@@ -1,4 +1,4 @@
-define({
+Hull.define({
   type: 'Hull',
 
   templates: [
@@ -10,7 +10,7 @@ define({
       throw 'Load CodeMirror before using this widget.';
     }
 
-    this.sandbox.on('hull.playground.load', _.bind(function(code) {
+    this.sandbox.on('hull.playground.load', this.sandbox.util._.bind(function(code) {
       this.editor.setValue(code);
     }, this));
   },

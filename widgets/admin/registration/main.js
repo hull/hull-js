@@ -3,7 +3,7 @@
  * ## Registration form admin panel
  *
  */
-define({
+Hull.define({
   type: 'Hull',
 
   templates: [

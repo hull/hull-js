@@ -1,4 +1,4 @@
-define(['prism'], function(){
+Hull.define(['prism'], function(){
   return {
     type: 'Hull',
 
@@ -18,7 +18,7 @@ define(['prism'], function(){
       console.warn("Data Dox", data);
       var dox = data.dox;
 
-      dox.templates = _.map(dox.templates, function(content, name) {
+      dox.templates = this.sandbox.util._.map(dox.templates, function(content, name) {
         return {
           name: name,
           content: content,
@@ -26,8 +26,8 @@ define(['prism'], function(){
         };
       }, this);
 
-      _.each(dox.widget, function(widget){
-        widget.name = _.find(widget.tags, function(tag){
+      this.sandbox.util._.each(dox.widget, function(widget){
+        widget.name = this.sandbox.util._.find(widget.tags, function(tag){
           return (tag.type === 'name') ? true : false;
         });
       });

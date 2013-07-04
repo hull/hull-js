@@ -21,8 +21,8 @@
     },
     "grunt-hull-widgets": {
       "version": "0.6.0",
-      "from": "grunt-hull-widgets@~0.6.0",
-      "resolved": "https://registry.npmjs.org/grunt-hull-widgets/-/grunt-hull-widgets-0.4.2.tgz"
+      "from": "grunt-hull-widgets@0.6.0",
+      "resolved": "https://registry.npmjs.org/grunt-hull-widgets/-/grunt-hull-widgets-0.6.0.tgz"
     },
     "grunt-mocha": {
       "version": "0.3.1",
@@ -31,6 +31,11 @@
     "grunt-plato": {
       "version": "0.2.0",
       "from": "grunt-plato@~0.2.0"
+    },
+    "grunt-wrap": {
+      "version": "0.2.0",
+      "from": "grunt-wrap@",
+      "resolved": "https://registry.npmjs.org/grunt-wrap/-/grunt-wrap-0.2.0.tgz"
     },
     "sinon-chai": {
       "version": "2.3.1",

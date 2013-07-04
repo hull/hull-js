@@ -20,7 +20,7 @@
  * - Widget `achieve_button` to win a badge from an achievement
  * - Achievements/Badges API
 */
-define({
+Hull.define({
   type: 'Hull',
   templates: ['main'],
   datasources: {
@@ -54,7 +54,7 @@ define({
 
   _getFormData: function (elt) {
     var data = {};
-    _.each($(elt).serializeArray(), function (entry) {
+    this.sandbox.util._.each($(elt).serializeArray(), function (entry) {
       if (!entry.value) return;
       data[entry.name] = entry.value;
     });

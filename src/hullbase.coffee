@@ -24,11 +24,7 @@ Hull.widget     = (widgetName, widgetDef)->
   define("__widget__$#{widgetName}@default", widgetDef)
   return widgetDef
 
-define 'promises', ['jquery'], ($)->
-  deferred: $.Deferred
-  when: $.when
-
-define ['lib/version', 'underscore'], (version, _) ->
+define ['lib/utils/version', 'underscore'], (version, _) ->
   window.Hull.version ||= version
   window.Hull
 
