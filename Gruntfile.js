@@ -117,6 +117,7 @@ module.exports = function (grunt) {
         options: (function (c) {
           c.paths.underscore = 'empty:';
           c.out = c.out.replace('hull.js', 'hull.no-underscore.js');
+          c.wrap.start = c.wrap.start + ";root._ = window._;";
           return c;
         })(clone(clientRJSConfig, true))
       },
