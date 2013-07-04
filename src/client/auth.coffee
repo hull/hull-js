@@ -1,4 +1,4 @@
-define ->
+define ['underscore'], (_)->
 
   # Holds the state of the authentication process
   # @type {Promise|Boolean}

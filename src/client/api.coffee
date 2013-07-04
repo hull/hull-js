@@ -1,4 +1,4 @@
-define ['lib/utils/version', 'lib/hullbase', 'lib/client/api/params', 'easyXDM'], (version, base, apiParams, easyXDM) ->
+define ['underscore', 'lib/utils/version', 'lib/hullbase', 'lib/client/api/params', 'easyXDM'], (_, version, base, apiParams, easyXDM) ->
 
   (app) ->
 
