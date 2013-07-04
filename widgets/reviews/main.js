@@ -3,7 +3,7 @@
  *
  * Not ready yet
  */
-define({
+Hull.define({
   type: "Hull",
 
   refreshEvents: ['model.hull.me.change'],

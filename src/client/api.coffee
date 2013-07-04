@@ -1,4 +1,4 @@
-define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base, apiParams) ->
+define ['lib/utils/version', 'lib/hullbase', 'lib/client/api/params', 'easyXDM'], (version, base, apiParams, easyXDM) ->
 
   (app) ->
 
@@ -13,10 +13,7 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
     module =
       require:
         paths:
-          easyXDM: 'components/easyXDM/easyXDM'
           cookie: 'components/jquery.cookie/jquery.cookie'
-        shim:
-          easyXDM: { exports: 'easyXDM' }
 
 
       # Builds the URL used by easyXDM
@@ -34,7 +31,6 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
         sandbox = app.sandbox
 
         _         = require('underscore')
-        easyXDM   = require('easyXDM')
 
         slice = Array.prototype.slice
 
@@ -268,20 +264,20 @@ define ['lib/version', 'lib/hullbase', 'lib/client/api/params'], (version, base,
 
         initialized = core.data.deferred()
 
-        onRemoteMessage = (e)-> 
+        onRemoteMessage = (e)->
           if e.error
             # Get out of the easyXDM try/catch jail
             setTimeout(
               -> initialized.reject(e.error)
             , 0)
-          else 
+          else
             console.warn("RPC Message", arguments)
 
         #TODO Probably useless now
         timeout = setTimeout(
           ()->
             initialized.reject('Remote loading has failed. Please check "orgUrl" and "appId" in your configuration. This may also be about connectivity.')
-          , 3000)
+          , 30000)
 
         onRemoteReady = (remoteConfig)->
           data = remoteConfig.data

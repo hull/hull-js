@@ -1,4 +1,4 @@
-define ['underscore', 'promises'], (_, promises)->
+define ['underscore', 'lib/utils/promises'], (_, promises)->
   onDataError = (datasourceName, err)->
     console.log "An error occurred with datasource #{datasourceName}", err
   _dfd = promises.deferred

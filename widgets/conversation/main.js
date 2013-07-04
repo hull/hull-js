@@ -34,7 +34,7 @@
  */
 
 /*global define:true, _:true, $: true */
-define({
+Hull.define({
   type: 'Hull',
 
   templates: ['conversation','participants','form','conversation_button'],
@@ -78,12 +78,12 @@ define({
     if(data.conversation) {
       data.messages = data.messages;
       data.participants = data.conversation.participants;
-      _.each(data.messages, function(m) {
+      this.sandbox.util._.each(data.messages, function(m) {
         m.isDeletable = (m.actor.id === this.data.me.id);
         m.isNew = !m.isDeletable && (!(data.conversation.last_read) || (m.id > data.conversation.last_read));
         return m;
       }, this);
-      data.isFollowing = _.find(data.participants, function(p) {
+      data.isFollowing = this.sandbox.util._.find(data.participants, function(p) {
         return p.id === this.data.me.id;
       }, this);
       data.isAscending = this.options.order !== 'desc';
@@ -100,7 +100,7 @@ define({
       this.focusAfterRender = false;
     }
     // Mark msgs as read
-    setTimeout(_.bind(function() {
+    setTimeout(this.sandbox.util._.bind(function() {
       var li = $('.hull-messages__list li:first-child');
       var cid = $('.hull-conversation__form').find('.media').data('hull-conversation-id');
 
@@ -131,7 +131,7 @@ define({
     if (description && description.length > 0) {
       var cid = $media.data('hull-conversation-id');
       var attributes = { body: description };
-      this.api(cid + '/messages', 'post', attributes).then(_.bind(function() {
+      this.api(cid + '/messages', 'post', attributes).then(this.sandbox.util._.bind(function() {
         this.toggleLoading($formWrapper);
         this.render();
       }, this));

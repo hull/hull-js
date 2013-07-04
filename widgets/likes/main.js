@@ -16,7 +16,7 @@
  *
  */
 
- define({
+Hull.define({
   type: "Hull",
 
   templates: ["likes"],
@@ -34,7 +34,6 @@
 
   actions: {
     do: function () {
-      debugger
       console.log(this);
     }
   }

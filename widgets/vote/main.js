@@ -19,7 +19,7 @@
  * - `vote_buttons`: Main template. Has 3 states: Upvote, Downvote, Blank
  *
  */
-define({
+Hull.define({
   type: "Hull",
 
   refreshEvents: ['model.hull.me.change'],
@@ -31,6 +31,10 @@ define({
     target: ':id'
   },
 
+  onTargetError: function () {
+    "use strict";
+    return {};
+  },
   beforeRender: function(data){
     "use strict";
     if (this.sandbox.util._.isArray(data.vote)) {

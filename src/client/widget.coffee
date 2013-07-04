@@ -1,4 +1,4 @@
-define ['underscore', 'lib/client/datasource', 'lib/client/widget/context', 'promises'], (_, Datasource, Context, promises)->
+define ['underscore', 'lib/client/datasource', 'lib/client/widget/context', 'lib/utils/promises'], (_, Datasource, Context, promises)->
 
   (app)->
     debug = false

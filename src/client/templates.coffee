@@ -1,8 +1,8 @@
-define ['lib/hullbase', 'handlebars'], (Hull, Handlebars) ->
+define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
 
   #Compiles the template depending on its definition
   setupTemplate = (tplSrc, tplName) ->
-    engine = module.templateEngine 
+    engine = module.templateEngine
     tplName = tplName.replace(/\//g,'.',)
     if (_.isFunction(tplSrc))
       compiled = engine.template tplSrc
@@ -11,7 +11,7 @@ define ['lib/hullbase', 'handlebars'], (Hull, Handlebars) ->
     engine.registerPartial(tplName, compiled)
     compiled
 
-  # Handles the various priorities and locations of templates 
+  # Handles the various priorities and locations of templates
   _getTemplateDefinition = (name, ref, widgetName, dom)->
     path = "#{ref}/#{name}"
     tplName = [widgetName, name.replace(/^_/, '')].join("/")
@@ -33,12 +33,12 @@ define ['lib/hullbase', 'handlebars'], (Hull, Handlebars) ->
     module.define path, parsed
     parsed
 
-  module = 
+  module =
     global: window
     require: require
     define: define
     templateEngine: Handlebars
-    getTemplateDefinition: _getTemplateDefinition 
+    getTemplateDefinition: _getTemplateDefinition
     initialize: (app) ->
       app.core.template.load = (names=[], ref, format="hbs") ->
         undefinedTemplates = []
@@ -50,7 +50,7 @@ define ['lib/hullbase', 'handlebars'], (Hull, Handlebars) ->
           tplDef = _getTemplateDefinition name, ref, widgetName, app.core.dom.find
           if tplDef
             ret[name] = tplDef
-          else 
+          else
             undefinedTemplates.push([name, "text!#{ref}/#{name}.#{format}"])
         if undefinedTemplates.length > 0
           module.require(_.map(undefinedTemplates, (p) -> p[1]), ->

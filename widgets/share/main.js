@@ -1,7 +1,7 @@
 /**
  * ## Share
  */
-define({
+Hull.define({
   type: 'Hull',
 
   templates: ['twitter'],
