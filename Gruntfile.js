@@ -110,6 +110,8 @@ module.exports = function (grunt) {
           c.paths.underscore = 'empty:';
           c.paths.backbone = 'empty:';
           c.out = c.out.replace('hull.js', 'hull.no-backbone.js');
+          c.wrap.start = c.wrap.start + ";root._ = window._;";
+          c.wrap.start = c.wrap.start + ";root.Backbone = window.Backbone;";
           return c;
         })(clone(clientRJSConfig, true))
       },
