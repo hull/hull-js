@@ -193,17 +193,16 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
           app.sandbox.isAdmin             = remoteConfig.access_token?
 
           app.sandbox.login = (provider, opts, callback=->)->
-            dfd = promises.deferred()
             obj.auth.login.apply(undefined, arguments).then ->
+              app.core.mediator.emit 'hull.auth.complete'
               try
                 me = app.sandbox.data.api.model('me')
                 me.fetch().then ->
                   app.core.mediator.emit('hull.login', me)
-                  dfd.resolve(me)
-                , dfd.reject
               catch err
                 console.error "Error on auth promise resolution", err
-                dfd.reject err
+            , ->
+              app.core.mediator.emit 'hull.auth.failure'
 
           app.sandbox.logout = (callback=->)->
             obj.auth.logout(callback).then ->

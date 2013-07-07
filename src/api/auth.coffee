@@ -1,7 +1,7 @@
-if document.location.hash.indexOf("#hull-auth")==0 &&  window.opener && window.opener.Hull
+if document.location.hash.indexOf("#hull-auth-status-")==0 &&  window.opener && window.opener.Hull
   try
-    authCbName = document.location.hash.replace('#hull-auth-', '')
-    cb = window.opener[authCbName]
+    authCbName = document.location.hash.replace('#hull-auth-status-', '')
+    cb = window.opener.__hull_login_status__
     cb(authCbName)
     return window.close()
   catch e
@@ -44,8 +44,11 @@ define ['underscore', 'lib/utils/promises', 'lib/utils/version'], (_, promises, 
       dfd.promise() #TODO It would be better to return the promise
 
     # Callback executed on successful authentication
-    onCompleteAuthentication = ()->
-      authenticating.resolve()
+    onCompleteAuthentication = (isSuccess)->
+      if isSuccess
+        authenticating.resolve()
+      else
+        authenticating.reject('Login canceled')
       authenticating = false
 
     # Generates the complete URL to be reached to validate login
@@ -64,12 +67,13 @@ define ['underscore', 'lib/utils/promises', 'lib/utils/version'], (_, promises, 
       location: document.location
       authUrl: generateAuthUrl
       createCallback: ->
-        cbName = "__h__#{Math.random().toString(36).substr(2)}"
+        successToken = "__h__#{Math.random().toString(36).substr(2)}"
         cbFn = (name)->
-          delete window[name]
-          onCompleteAuthentication.apply undefined, arguments
-        window[cbName] = _.bind(cbFn, undefined, cbName)
-        cbName
+          delete window.__hull_login_status__
+          result = (name == successToken)
+          onCompleteAuthentication.call undefined, result
+        window.__hull_login_status__ = _.bind(cbFn, undefined)
+        successToken
       authHelper: (path)-> window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
       onCompleteAuth: onCompleteAuthentication
     api =
