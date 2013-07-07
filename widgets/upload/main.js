@@ -24,7 +24,7 @@
  * - `hull.upload.progress`: Triggered when an upload is in progress. The total amount of data as well as the current amount of data transfered are available as a listener parameter.
  * - `hull.upload.done`: Triggered when an upload has finished. References to the uploadded files are available in an Array as the first parameter to the listeners.
  */
-define(['jquery.fileupload'], {
+Hull.define(['jquery.fileupload'], {
   type: 'Hull',
 
   templates: [ 'upload', 'file_single' ],
@@ -113,7 +113,7 @@ define(['jquery.fileupload'], {
 
   afterRender: function () {
     this.form = this.$el.find('form');
-    var opts = _.defaults(this.uploader_options, {
+    var opts = this.sandbox.util._.defaults(this.uploader_options, {
       dataType:         'xml',
       url:              this.form.attr('action'),
       dropZone:         this.$el.find(this.uploader_options.dropZone),
@@ -126,7 +126,7 @@ define(['jquery.fileupload'], {
 
     var emit = this.sandbox.emit, form = this.form;
 
-    _.each(this.uploader_events, function(evt) {
+    this.sandbox.util._.each(this.uploader_events, function(evt) {
       var n = evt.replace(/^fileupload/, '');
       form.on(evt, function(e,d) { emit('hull.upload.' + n, { event: e, data: d }); });
     });
@@ -209,7 +209,7 @@ define(['jquery.fileupload'], {
   onUploadDone: function (data) {
     // var location = $(data.result).find('Location').text();
     // Context.app.addImage(filename: data.files[0].name)
-    _.map(data.files, _.bind(function (file) {
+    this.sandbox.util._.map(data.files, this.sandbox.util._.bind(function (file) {
       file.url = this.fileUrl(file.name);
       file.description = this.description;
     }, this));
@@ -228,6 +228,6 @@ define(['jquery.fileupload'], {
   },
 
   initialize: function () {
-    _.bindAll(this);
+    this.sandbox.util._.bindAll(this);
   }
 });

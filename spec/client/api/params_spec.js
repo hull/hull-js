@@ -1,4 +1,4 @@
-define(['lib/client/api/params'], function (apiParams) {
+define(['lib/api/params'], function (apiParams) {
 
   describe('Normalizing the parameters to API method calls', function () {
     it('should only accept an array as its only parameter', function () {

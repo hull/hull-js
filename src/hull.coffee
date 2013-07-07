@@ -26,13 +26,6 @@
             _h[k] = window.Hull[k]
           window.Hull = _h
 
-    if document.location.hash == "#hull-auth" &&  window.opener && window.opener.Hull
-      try
-        window.opener.Hull.emit("hull.authComplete")
-        return window.close()
-      catch e
-        console.warn("Error: " + e)
-
     (config, cb, errcb) ->
       return hull if hull && hull.app
       hull = { config }
@@ -47,7 +40,6 @@
           .use('lib/client/helpers')
           .use('lib/client/entity')
           .use('lib/client/api')
-          .use('lib/client/auth')
           .use('lib/client/templates')
           .use('lib/client/widget')
           .start({ widgets: 'body' })

@@ -1,4 +1,4 @@
-define ->
+define ['underscore'], (_)->
   parseQueryString = (str)->
     str ||= window.location.search
     objURL = {}

@@ -4,7 +4,7 @@
  * This widget lets you delete entities, their associated comments, likes, reviews, and activity feed entries.
  *
  */
-define({
+Hull.define({
 
   type: "Hull",
 
@@ -21,8 +21,9 @@ define({
 
   beforeRender: function(data){
     data.relations = this.options.relations.split(',');
-    _.map(data.entities,function(entity){
-      entity.relations=_.map(data.relations,function(relation){
+    var self = this;
+    this.sandbox.util._.map(data.entities, function(entity){
+      entity.relations=self.sandbox.util._.map(data.relations,function(relation){
         var rel = entity.stats[relation] || 0;
         if (rel.count) rel = rel.count;
         return {
