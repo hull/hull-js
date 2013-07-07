@@ -268,7 +268,7 @@ module.exports = function (grunt) {
 
   // default build task
   grunt.registerTask('do_test', ['cover', 'plato', 'mocha']);
-  grunt.registerTask('test', ['dist:client', 'dist:remote', 'dist:api', 'do_test']);
+  grunt.registerTask('test', ['dist:api', 'dist:client', 'dist:remote', 'do_test']);
   grunt.registerTask('default', ['connect', 'test', 'dist:widgets', 'watch']);
   grunt.registerTask('deploy', ['dist', 'describe', 's3']);
   grunt.registerTask('reset', ['clean:reset']);
