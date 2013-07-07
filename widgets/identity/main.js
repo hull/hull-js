@@ -39,7 +39,7 @@ Hull.define({
     "use strict";
     this.authHasFailed = false;
 
-    this.sandbox.on('hull.auth.failure', _.bind(function() {
+    this.sandbox.on('hull.auth.failure', this.sandbox.util._.bind(function() {
       this.authHasFailed = true;
       this.render();
     }, this));
