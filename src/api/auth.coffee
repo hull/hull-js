@@ -7,7 +7,7 @@ if document.location.hash.indexOf("#hull-auth")==0 &&  window.opener && window.o
   catch e
     console.warn("Error: " + e)
 
-define ['underscore', 'lib/utils/promises'], (_, promises)->
+define ['underscore', 'lib/utils/promises', 'lib/utils/version'], (_, promises, version)->
 
   (apiFn, config, authServices=[]) ->
     # Holds the state of the authentication process
@@ -61,6 +61,7 @@ define ['underscore', 'lib/utils/promises'], (_, promises)->
       auth_params.callback_url  = config.callback_url || module.location.toString()
       auth_params.auth_referer  = module.location.toString()
       auth_params.callback_name = module.createCallback()
+      auth_params.version       = version
 
       "#{config.orgUrl}/auth/#{provider}?#{$.param(auth_params)}"
 
