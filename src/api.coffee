@@ -1,4 +1,4 @@
-define ['underscore', 'lib/version', 'lib/api/params', 'lib/api/auth', 'easyXDM', 'lib/utils/promises'], (_, version, apiParams, authModule, easyXDM, promises)->
+define ['underscore', 'lib/utils/version', 'lib/api/params', 'lib/api/auth', 'easyXDM', 'lib/utils/promises'], (_, version, apiParams, authModule, easyXDM, promises)->
   slice = Array.prototype.slice
 
   # Builds the URL used by easyXDM
@@ -57,8 +57,8 @@ define ['underscore', 'lib/version', 'lib/api/params', 'lib/api/auth', 'easyXDM'
       if data.headers && data.headers['Hull-User-Id']
         setCurrentUser data.headers
       window.clearTimeout(timeout)
-      
-      
+
+
 
       dfd.resolve
         auth: authModule api, config, remoteConfig.services.types.auth
