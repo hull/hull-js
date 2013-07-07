@@ -14,7 +14,7 @@
  * - `quiz`: The collection of all the quizzes available in the application.
  *
  */
-define({
+Hull.define({
 
   type: "Hull",
 

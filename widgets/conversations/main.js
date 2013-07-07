@@ -10,7 +10,7 @@
  *
  * ## Template:
  *
- * - `conversations`: 
+ * - `conversations`:
  *
  * ## Datasource:
  *
@@ -20,16 +20,13 @@
  *
  */
 
-/*global define:true, _:true */
-define({
+/*global define:true */
+Hull.define({
   type: 'Hull',
 
   templates: ['conversations'],
 
   refreshEvents: ['model.hull.me.change'],
-
-  actions: {
-  },
 
   options: {
     focus: false
@@ -37,16 +34,14 @@ define({
 
   datasources: {
     conversations: function () {
-      this.options.visibility
-      var url = 'conversations'
-      if(this.options.visibility) url += '?visibility=' + this.options.visibility;
-      return this.api(url);
+      "use strict";
+      return this.api('conversations', {visibility: this.options.visibility || undefined});
     }
   },
 
-  beforeRender: function(data){
+  beforeRender: function(data, errors){
     "use strict";
-    data.conversations = data.conversations;
+    data.errors = errors;
     return data;
   }
 });

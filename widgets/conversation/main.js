@@ -9,7 +9,7 @@
  * ## Option:
  *
  * - `id`: Required, The id of the specific conversation object
- * 
+ *
  * OR
  *
  * - `subjectid`: Required, The object you want to start a conversation upon.
@@ -17,10 +17,10 @@
  *
  * ## Template:
  *
- * - `conversations`: 
- * - `participants`:  
- * - `form`: 
- * - `conversation_button`: 
+ * - `conversations`:
+ * - `participants`:
+ * - `form`:
+ * - `conversation_button`:
  *
  * ## Datasource:
  *
@@ -33,8 +33,8 @@
  * - `deleteMsg`: Deletes a message
  */
 
-/*global define:true, _:true */
-define({
+/*global define:true, _:true, $: true */
+Hull.define({
   type: 'Hull',
 
   templates: ['conversation','participants','form','conversation_button'],
@@ -52,59 +52,47 @@ define({
   },
 
   datasources: {
-    conversation: function () {
-      if (this.options.id) {
-        return this.api(this.options.id );
-      }
-      else {
-        return null;
-      }
-    },
+    conversation: ':id',
     messages: function () {
-      if (this.options.id) {
-        // order will default to ASC, if not specified
-        if('desc' == this.options.order) {
-          orderBy = "created_at DESC"
-        }
-        else {
-          orderBy = "created_at ASC"
-        }
-        return this.api(this.options.id + '/messages?order_by=' + orderBy)
+      "use strict";
+      var orderBy;
+      if('desc' === this.options.order) {
+        orderBy = "created_at DESC";
+      } else {
+        orderBy = "created_at ASC";
       }
-      else {
-        return null;
-      }
+      return this.api(this.options.id + '/messages', {orderBy: orderBy});
     }
   },
 
   initialize: function() {
+    "use strict";
     this.sandbox.on('hull.conversation.pick', function(id) {
       this.options.id = id;
       this.render();
-    }, this)
+    }, this);
   },
-  
-  beforeRender: function(data){
+
+  beforeRender: function(data, errors) {
     "use strict";
     if(data.conversation) {
       data.messages = data.messages;
       data.participants = data.conversation.participants;
-      _.each(data.messages, function(m) {
+      this.sandbox.util._.each(data.messages, function(m) {
         m.isDeletable = (m.actor.id === this.data.me.id);
-        m.isNew = !m.isDeletable && (!(data.conversation.last_read[this.data.me.id]) || (m.id > data.conversation.last_read[this.data.me.id]))
+        m.isNew = !m.isDeletable && (!(data.conversation.last_read) || (m.id > data.conversation.last_read));
         return m;
       }, this);
-      data.isFollowing = _.find(data.participants, function(p) {
-        return p.id == this.data.me.id
-      }, this)
-      data.isAscending = this.options.order != 'desc';
-    }
-    else {
-      data.newConvo = true;
+      data.isFollowing = this.sandbox.util._.find(data.participants, function(p) {
+        return p.id === this.data.me.id;
+      }, this);
+      data.isAscending = this.options.order !== 'desc';
+    } else {
+      data.errors = errors;
     }
     return data;
   },
-  
+
   afterRender: function() {
     "use strict";
     if(this.options.focus || this.focusAfterRender) {
@@ -112,12 +100,12 @@ define({
       this.focusAfterRender = false;
     }
     // Mark msgs as read
-    setTimeout(_.bind(function() {
+    setTimeout(this.sandbox.util._.bind(function() {
       var li = $('.hull-messages__list li:first-child');
       var cid = $('.hull-conversation__form').find('.media').data('hull-conversation-id');
-      
+
       if(li && cid) {
-        Hull.data.api(cid + '/messages', 'put', {});
+        this.api(cid + '/messages', 'put', {});
       }
     }, this), 2000);
   },
@@ -129,21 +117,8 @@ define({
     var $textarea = $form.find('textarea');
     $textarea.attr('disabled', !$textarea.attr('disabled'));
   },
-  
-  createConvo: function(e, data) {
-    var $parent = data.el
-    var attrs = {
-      participant_ids: this.options.participantIds,
-      public: this.options.public,
-      name: this.options.convoName
-    }
-    this.api(this.options.subjectId + '/conversations', 'post', attrs).then(_.bind(function(convo) {
-      this.options.id = convo.id;
-      this.render();
-    }, this));
-  },
-  
-  postMessage: function (e, data) {
+
+  postMessage: function (e/*, data*/) {
     "use strict";
     e.preventDefault();
     var $formWrapper = this.$el.find('.hull-conversation__form');
@@ -156,13 +131,15 @@ define({
     if (description && description.length > 0) {
       var cid = $media.data('hull-conversation-id');
       var attributes = { body: description };
-      this.api(cid + '/messages', 'post', attributes).then(_.bind(function() {
+      this.api(cid + '/messages', 'post', attributes).then(this.sandbox.util._.bind(function() {
         this.toggleLoading($formWrapper);
         this.render();
       }, this));
+    } else {
+      this.toggleLoading($formWrapper);
     }
   },
-  
+
   deleteMessage: function(e, data) {
     "use strict";
     event.preventDefault();
@@ -171,6 +148,5 @@ define({
       .addClass('is-removing')
       .parents('[data-hull-message-id="'+ id +'"]');
     this.api.delete(id).then(function () {$parent.remove();});
-    
   }
 });

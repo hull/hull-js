@@ -38,7 +38,7 @@
  *
  * - `play`: Ensure that the user is logged and play.
  */
-define({
+Hull.define({
   type: 'Hull',
 
   templates: [
@@ -84,7 +84,7 @@ define({
   },
 
   initialize: function() {
-    this.authProviders = _.map(this.sandbox.config.services.types.auth, function(s) {
+    this.authProviders = this.sandbox.util._.map(this.sandbox.config.services.types.auth, function(s) {
       return s.replace(/_app$/, '');
     });
   },
@@ -194,10 +194,10 @@ define({
   play: function() {
     "use strict";
     this.render('working');
-    this.api(this.id + '/achieve', 'post', _.bind(function(res) {
+    this.api(this.id + '/achieve', 'post', this.sandbox.util._.bind(function(res) {
       var template = 'played';
       if (this.userCanPlay()) { template = res.data.winner ? 'won' : 'lost'; }
-      _.delay(_.bind(function() {
+      this.sandbox.util._.delay(this.sandbox.util._.bind(function() {
         this.render(template);
       }, this), parseInt(this.options.delay, 10) || 0);
     }, this));

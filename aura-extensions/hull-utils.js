@@ -30,7 +30,7 @@ define({
 
     app.core.dom.getFormData = function(form) {
       var formData = {};
-      _.each($(form).serializeArray(), function(field) {
+      app.sandbox.util._.each($(form).serializeArray(), function(field) {
         formData[field.name] = field.value;
       });
       return formData;

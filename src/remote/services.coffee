@@ -26,12 +26,19 @@ define ['underscore'], (_)->
         else
           errback(catchAll(req))
 
-      rpc = new easyXDM.Rpc({
-        acl: app.config.appDomains
-      }, {
-        remote: { message: {}, ready: {} }
-        local:  { message: onRemoteMessage }
-      })
+      try
+        rpc = new easyXDM.Rpc({
+          acl: app.config.appDomains
+        }, {
+          remote: { message: {}, ready: {} }
+          local:  { message: onRemoteMessage }
+        })
+      catch e
+        rpcFall = new easyXDM.Rpc({},
+          remote: {message: {}}
+        )
+        rpcFall.message error: "#{e.message}, please make sure this domain is whitelisted for this app."
+
       true
 
     afterAppStart: -> rpc.ready(app.config)

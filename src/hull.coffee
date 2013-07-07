@@ -1,12 +1,4 @@
 (->
-  hash = document.location.hash.match(/^#hull-auth-(complete|failure)$/)
-  if hash != null && window.opener?.Hull?
-    try
-      window.opener.Hull.emit('hull.auth.' + hash[1])
-      window.close()
-    catch e
-      console.error('Something went wrong during the auth: ' + e)
-
   evtPool = {}
   Hull.on = (evt, fn)->
     evtPool[evt] ?= []
@@ -48,7 +40,6 @@
           .use('lib/client/helpers')
           .use('lib/client/entity')
           .use('lib/client/api')
-          .use('lib/client/auth')
           .use('lib/client/templates')
           .use('lib/client/widget')
           .start({ widgets: 'body' })

@@ -1,4 +1,4 @@
-define ['underscore', 'lib/client/datasource'], (_, Datasource)->
+define ['underscore', 'lib/client/datasource', 'lib/client/widget/context', 'lib/utils/promises'], (_, Datasource, Context, promises)->
 
   (app)->
     debug = false
@@ -53,15 +53,13 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
         try
           @events = if _.isFunction(@events) then @events() else @events
           @events ?= {}
-          @events["click [data-hull-action]"] = actionHandler
+          @events["click [data-hull-action]"] = _.bind actionHandler,@
 
           # Building actions hash
           @actions = if _.isFunction(@actions) then @actions() else @actions
           @actions ?= {}
           @actions.login ?= (e, params)=> @sandbox.login(params.data.provider, params.data)
           @actions.logout ?= => @sandbox.logout()
-          for name, action of @actions
-            @actions[name] = action.bind(@) if _.isFunction(action)
 
           unless @className?
             @className = "hull-widget"
@@ -101,57 +99,41 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
           console.warn("[DEBUG] #{@options.name}", msg, @)
 
       buildContext: =>
-        onDataError = (datasourceName, err)->
-          console.log "An error occurred with datasource #{datasourceName}", err
         @_renderCount ?= 0
-        @_renderCount++
-        ret = {}
+        ctx = new Context()
+        ctx.add 'options', @options
+        ctx.add 'loggedIn', @loggedIn()
+        ctx.add 'isAdmin', @sandbox.isAdmin
+        ctx.add 'debug', @sandbox.config.debug
+        ctx.add 'renderCount', ++@_renderCount
+
         dfd = @sandbox.data.deferred()
         datasourceErrors = {}
+        @data = {}
         try
           keys = _.keys(@datasources)
-          promises  = _.map keys, (k)=>
-            promiseDfd = @sandbox.data.deferred()
+          promiseArray  = _.map keys, (k)=>
             ds = @datasources[k]
             ds.parse(_.extend({}, @, @options || {}))
-            ds.fetch().then (res)->
-              promiseDfd.resolve(res)
-            , (err)=>
-              handler = @["on#{_.string.capitalize(_.string.camelize(k))}Error"]
-              handler = onDataError.bind(@, k) unless _.isFunction(handler)
-              datasourceErrors[k] = err
-              promiseDfd.resolve(handler err)
-            promiseDfd
-
-          widgetDeferred = @sandbox.data.when.apply(undefined, promises)
+            handler = @["on#{_.string.capitalize(_.string.camelize(k))}Error"]
+            ctx.addDatasource(k, ds.fetch(), handler).then (res)=>
+              @data[k] = res
+          widgetDeferred = @sandbox.data.when.apply(undefined, promiseArray)
           templateDeferred = @sandbox.template.load(@templates, @ref)
-          @data = {}
-          readyDfd = $.when(widgetDeferred, templateDeferred)
+          templateDeferred.done (tpls)=>
+            @_templates     = tpls
+          readyDfd = promises.when(widgetDeferred, templateDeferred)
           readyDfd.fail (err)=>
             console.error("Error in Building Render Context", err.message, err)
             @renderError.call(@, err.message, err)
-          readyDfd.done (data, tpls)=>
-            args = data
-            _.map keys, (k,i)=>
-              @data[k] = args[i]
-              if _.isFunction args[i]?.toJSON
-                ret[k] = args[i].toJSON()
-              else if _.isArray(args[i]) && args[i][1] == 'success' && args[i][2].status == 200
-                ret[k] = args[i][0]
-              else
-                ret[k] = args[i]
-            ret.options     = @options
-            ret.loggedIn    = @loggedIn()
-            ret.isAdmin     = @sandbox.isAdmin
-            ret.debug       = @sandbox.config.debug
-            ret.renderCount = @_renderCount
-            @_templates     = tpls
-            dfd.resolve(ret)
+            dfd.reject err
+          readyDfd.done ()->
+            dfd.resolve ctx
 
         catch e
           console.error("Caught error in buildContext", e.message, e)
           dfd.reject(e)
-        [dfd, datasourceErrors]
+        dfd.promise()
 
       loggedIn: =>
         return false unless @sandbox.data.api.model('me').id?
@@ -178,16 +160,16 @@ define ['underscore', 'lib/client/datasource'], (_, Datasource)->
       # afterRender
       # Start nested widgets...
       render: (tpl, data)=>
-        [ctx, errors] = @buildContext.call(@)
-        errors = null unless _.keys(errors)
-        ctx.fail (err)->
+        ctxPromise = @buildContext.call(@)
+        ctxPromise.fail (err)->
           console.error("Error fetching Datasources ", err.message, err)
-        ctx.then (ctx)=>
+        ctxPromise.then (ctx)=>
           try
-            beforeCtx = @beforeRender.call(@, ctx, errors)
-            beforeRendering = $.when(beforeCtx)
+            beforeCtx = @beforeRender.call(@, ctx.build(), ctx.errors())
+            beforeRendering = promises.when(beforeCtx)
             beforeRendering.done (dataAfterBefore)=>
-              data = _.extend(dataAfterBefore || ctx, data)
+              #FIXME SRSLY need some clarification
+              data = _.extend(dataAfterBefore || ctx.build(), data)
               @doRender(tpl, data)
               _.defer(@afterRender.bind(@, data))
               _.defer((-> @sandbox.start(@$el)).bind(@))

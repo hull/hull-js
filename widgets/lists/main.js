@@ -21,7 +21,7 @@
  *
  * @TODO Don't use DOM events, use widget acions instead
  */
-define({
+Hull.define({
   type: "Hull",
   templates: ['lists'],
   refreshEvents: ['model.hull.me.change'],
