@@ -1,4 +1,4 @@
-define({
+Hull.define({
   type: "Hull",
   templates: ["dox_list"],
 

@@ -15,7 +15,7 @@
     "grunt-contrib-coffee": "0.4.0",
     "grunt-contrib-concat": "0.1.2",
     "grunt-contrib-connect": "0.1.2",
-    "grunt-contrib-handlebars": "0.5.4",
+    "grunt-contrib-handlebars": "0.5.9",
     "grunt-contrib-requirejs": "0.4.0",
     "grunt-contrib-uglify": "0.1.1",
     "grunt-contrib-watch": "0.2.0",
@@ -26,7 +26,8 @@
     "coverjs": "0.0.14",
     "grunt-coverjs": "git://github.com/hull/grunt-coverjs.git",
     "plato": "~0.5.0",
-    "grunt-plato": "~0.2.0"
+    "grunt-plato": "~0.2.0",
+    "grunt-wrap": "~0.2.0"
   },
   "scripts": {
     "postinstall": "$(npm bin)/bower install",

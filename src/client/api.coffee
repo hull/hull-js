@@ -1,4 +1,5 @@
-define ['lib/hullbase', 'lib/api', 'lib/utils/promises'], (base, apiModule, promises) ->
+define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base, apiModule, promises) ->
+
   (app) ->
 
     models = {}
@@ -17,7 +18,6 @@ define ['lib/hullbase', 'lib/api', 'lib/utils/promises'], (base, apiModule, prom
       initialize: (app)->
         core    = app.core
         sandbox = app.sandbox
-        _       = require('underscore')
 
         slice = Array.prototype.slice
 

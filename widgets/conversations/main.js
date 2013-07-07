@@ -21,7 +21,7 @@
  */
 
 /*global define:true */
-define({
+Hull.define({
   type: 'Hull',
 
   templates: ['conversations'],
