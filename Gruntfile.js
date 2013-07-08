@@ -147,6 +147,7 @@ module.exports = function (grunt) {
       },
       upload: {
         options: {
+          namespace: 'Hull',
           paths: {
             jquery: "empty:",
             "jquery.ui.widget" : 'components/jquery-file-upload/js/vendor/jquery.ui.widget',
@@ -169,6 +170,7 @@ module.exports = function (grunt) {
       },
       dox: {
         options: {
+          namespace: 'Hull',
           paths: { prism: 'widgets/dox/dox/prism' },
           shim: { prism: { exports: 'Prism' } },
           include: ['prism'],

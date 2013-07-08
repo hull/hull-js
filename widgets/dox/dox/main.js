@@ -26,8 +26,9 @@ Hull.define(['prism'], function(){
         };
       }, this);
 
+      var self = this;
       this.sandbox.util._.each(dox.widget, function(widget){
-        widget.name = this.sandbox.util._.find(widget.tags, function(tag){
+        widget.name = self.sandbox.util._.find(widget.tags, function(tag){
           return (tag.type === 'name') ? true : false;
         });
       });
