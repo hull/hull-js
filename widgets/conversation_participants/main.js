@@ -1,4 +1,5 @@
 /**
+ * ## Conversation Participants
  *
  * List the current participants of a conversation, and allow users to follow/unfollow it
  *
