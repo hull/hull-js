@@ -1,5 +1,5 @@
 /**
- *
+ * ## Conversation Participants
  * List the current participants of a conversation, and allow users to follow/unfollow it
  *
  * ## Example
@@ -12,7 +12,7 @@
  *
  * ## Template:
  *
- * - `participants`: 
+ * - `participants`: Display a list of the participants in a given conversation
  *
  * ## Datasource:
  *
@@ -20,10 +20,8 @@
  *
  * ## Action:
  *
- * - `follow`: Join/follow the current converstion
+ * - `follow`: Join/follow the current conversation
  */
-
-/*global define:true, _:true */
 define({
   type: 'Hull',
 

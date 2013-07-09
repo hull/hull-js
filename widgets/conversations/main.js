@@ -1,22 +1,21 @@
 /**
+ * ## Conversations
+ * List all conversations within this app
  *
- * List all conversations that a user is a part of in this app
- *
- * ## Example
+ * ## Examples
  *
  *     <div data-hull-widget="conversations@hull"></div>
  *
  * ## Option:
+ * - `visibility`: Optional, the visibility level
  *
  * ## Template:
  *
- * - `conversations`: 
+ * - `conversations`: Display a list of conversations
  *
  * ## Datasource:
  *
- * - `conversations`: List of all the conversations for the user
- *
- * ## Action:
+ * - `conversations`: List of all conversations
  *
  */
 

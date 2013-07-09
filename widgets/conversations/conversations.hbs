@@ -1,4 +1,4 @@
-<div class="hull-conversations-admin">
+<div class="hull-conversations">
   {{#if conversations}}
     <table class="table table-hover">
       <tr>
@@ -18,7 +18,7 @@
             {{/participants}}
             </ul>
           </td>
-          <td>{{updated_at}}</td>
+          <td>{{formatTime updated_at 'HH-mm  aa'}}</td>
         </tr>
         </a>
       {{/conversations}}

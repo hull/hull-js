@@ -1,6 +1,6 @@
 /**
- *
- * Allow to start and reply to a conversation on an object of the current application.
+ * ## Conversation
+ * View a conversation's messages and allow users to reply to the thread. 
  *
  * ## Example
  *
@@ -9,27 +9,18 @@
  * ## Option:
  *
  * - `id`: Required, The id of the specific conversation object
- * 
- * OR
- *
- * - `subjectid`: Required, The object you want to start a conversation upon.
- * - `participantid`: Required, comma-separated ids of the participants
  *
  * ## Template:
  *
- * - `conversations`: 
- * - `participants`:  
- * - `form`: 
- * - `conversation_button`: 
+ * - `conversation`: Lists the messages for a conversation
+ * - `form`: Displays a form to reply to a conversation
  *
  * ## Datasource:
  *
  * - `conversation`: The conversation
  *
  * ## Action:
- *
- * - `create`: Creates a conversation
- * - `message`: Submits a new message.
+ * - `postMsg`: Submits a new message.
  * - `deleteMsg`: Deletes a message
  */
 
@@ -131,19 +122,6 @@ define({
     $textarea.attr('disabled', !$textarea.attr('disabled'));
   },
   
-  createConvo: function(e, data) {
-    var $parent = data.el
-    var attrs = {
-      participant_ids: this.options.participantIds,
-      public: this.options.public,
-      name: this.options.convoName
-    }
-    this.api(this.options.subjectId + '/conversations', 'post', attrs).then(_.bind(function(convo) {
-      this.options.id = convo.id;
-      this.render();
-    }, this));
-  },
-  
   postMessage: function (e, data) {
     "use strict";
     e.preventDefault();
@@ -172,6 +150,5 @@ define({
       .addClass('is-removing')
       .parents('[data-hull-message-id="'+ id +'"]');
     this.api.delete(id).then(function () {$parent.remove();});
-    
   }
 });
