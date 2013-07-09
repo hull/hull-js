@@ -1,4 +1,5 @@
 /**
+ * ## Conversation
  *
  * Allow to start and reply to a conversation on an object of the current application.
  *
