@@ -28,7 +28,7 @@
 define({
   type: 'Hull',
 
-  templates: ['conversation','participants','form','conversation_button'],
+  templates: ['conversation','form'],
 
   refreshEvents: ['model.hull.me.change'],
 
