@@ -1,0 +1,18 @@
+<table class="table">
+  <thead>
+    <tr>
+      <td>Object type</td>
+      <td>Reporter</td>
+      <td>Status</td>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each flags}}
+      <tr>
+        <td>{{type}}</td>
+        <td>{{user.name}} ({{user.email}})</td>
+        <td>??</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
