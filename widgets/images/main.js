@@ -148,15 +148,15 @@ Hull.define(['underscore'], {
   },
   hasFacebookPermissions: function(scope, authorization, deferred){
     "use strict";
-    var sandbox = this.sandbox;
+    var _ = this.sandbox.util._;
     this.api({provider: "facebook", path: "me/permissions"}).then(function(res) {
 
       //Convert scope to array if given as a string.
-      if(this.sandbox.util._.isString(scope)){
+      if(_.isString(scope)){
         scope = scope.replace(' ','').split(',');
       }
 
-      if(this.sandbox.util._.isArray(scope) && (this.sandbox.util._.intersection(this.sandbox.util._.keys(res.data[0]), scope).length==scope.length)){
+      if(_.isArray(scope) && (_.intersection(_.keys(res.data[0]), scope).length==scope.length)){
         //we have all the perms we need.
         authorization.permissions=true;
       }
@@ -191,7 +191,7 @@ Hull.define(['underscore'], {
   serializers: {
     hull: function(res, options) {
       "use strict";
-      var sandbox = this.sandbox
+      var sandbox = this.sandbox;
       return this.sandbox.util._.map(res, function(f) {
         return {
           provider: 'hull',
