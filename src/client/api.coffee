@@ -8,19 +8,17 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
       models = _.pick(models, 'me', 'app', 'org')
 
     rawFetch = null
-    emitUserEvent = null
+
     module =
       require:
         paths:
           cookie: 'components/jquery.cookie/jquery.cookie'
-
 
       initialize: (app)->
         core    = app.core
         sandbox = app.sandbox
 
         slice = Array.prototype.slice
-
 
         apiModule = apiModule(app.config)
         apiModule.then (obj)->
@@ -225,12 +223,10 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
         initialized
 
       afterAppStart: (app)->
-
         base.me     = rawFetch('me', true);
         base.app    = rawFetch('app', true);
         base.org    = rawFetch('org', true);
 
-        emitUserEvent()
         app.core.mediator.on    'hull.login', clearModelsCache
         app.core.mediator.on    'hull.logout', clearModelsCache
 
