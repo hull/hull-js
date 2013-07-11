@@ -45,8 +45,19 @@ Hull.define({
     });
     return dfd;
   },
-  beforeRender: function (data) {
-    console.log(data);
+  actions: {
+    delete: function (evt, ctx) {
+      var self = this;
+      this.api.delete(ctx.data.id).then(function () {
+        self.render();
+      });
+    },
+    unflag: function (evt, ctx) {
+      var self = this;
+      this.api.delete(ctx.data.id + '/flag?all=1').then(function () {
+        self.render();
+      });
+    }
   }
 });
 
