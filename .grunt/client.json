@@ -40,7 +40,7 @@
     "out": "dist/<%= PKG_VERSION %>/hull.js",
     "wrap": {
       "start": "(function () {var require, requirejs, define,root = {jQuery: jQuery}; (function () {",
-      "end": ";Hull.define = define;}).call(root);for(var i in root){root.hasOwnProperty(i) && Hull.define(i.toLowerCase(), function (){return root[i];})}})();"
+      "end": ";Hull.define = define; Hull.require = require; }).call(root);for(var i in root){root.hasOwnProperty(i) && Hull.define(i.toLowerCase(), function (){return root[i];})}})();"
     }
   }
 }
