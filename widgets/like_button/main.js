@@ -65,7 +65,7 @@ Hull.define({
     this.api(this.id + '/likes', method)
     .done(function(likes) {
       self.likes=likes||0;
-
+      self.emit('hull.like.' + self.id);
     }).fail(function(){
       self.likes--;
       self.liked=!self.liked;
