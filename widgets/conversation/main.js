@@ -22,6 +22,7 @@
  * ## Action:
  * - `postMsg`: Submits a new message.
  * - `deleteMsg`: Deletes a message
+ * - `notification`: Enable/disable email notifications for user
  */
 
 /*global define:true, _:true */
@@ -33,9 +34,9 @@ define({
   refreshEvents: ['model.hull.me.change'],
 
   actions: {
-    create: 'createConvo',
     message: 'postMessage',
-    deleteMsg: 'deleteMessage'
+    deleteMsg: 'deleteMessage',
+    notification: 'notification'
   },
 
   options: {
@@ -82,14 +83,20 @@ define({
       data.participants = data.conversation.participants;
       _.each(data.messages, function(m) {
         m.isDeletable = (m.actor.id === this.data.me.id);
-        m.isNew = !m.isDeletable && (!(data.conversation.last_read[this.data.me.id]) || (m.id > data.conversation.last_read[this.data.me.id]))
+        
+        var last_read = data.conversation.last_read;
+        if(last_read instanceof Object){
+          last_read = last_read[this.data.me.id];
+        } 
+        m.isNew = !m.isMe && (last_read ? m.id > last_read : true);
+        
         return m;
       }, this);
       data.isFollowing = _.find(data.participants, function(p) {
         return p.id == this.data.me.id
       }, this)
       data.isAscending = this.options.order != 'desc';
-      data.isNew = !(data.messages && data.messages.length > 0)
+      data.isNew = !(data.messages && data.messages.length > 0);
     }
     else {
       data.newConvo = true;
@@ -150,5 +157,11 @@ define({
       .addClass('is-removing')
       .parents('[data-hull-message-id="'+ id +'"]');
     this.api.delete(id).then(function () {$parent.remove();});
+  },
+  
+  notification: function(e, data) {
+    "use strict";
+    var $notification = this.$el.find('input');
+    this.api(this.options.id + '/participants', 'put', {notification: $notification.prop('checked')});
   }
 });

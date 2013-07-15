@@ -3,6 +3,12 @@
     <div>You have {{conversation.messages_count_unread}} NEW messages and {{conversation.messages_count}} total messages.</div>
   </div>
 
+  {{#if conversation.notification_enabled}}
+  <form class="hull-conversation__notifications">
+    <input type="checkbox" data-hull-action="notification" name="user_notification" {{#if conversation.notification_enabled_user}}checked{{/if}}> Allow email notifications for this conversation
+  </form>
+  {{/if}}
+  
   <div class="row-fluid">
       {{^isAscending}}
         {{> conversation.form}}
