@@ -7,6 +7,9 @@
  *
  *     <div data-hull-widget="admin/flags@hull"></div>
  *
+ * ### Options:
+ *
+ * - `scope`: Defaults to "app", can be "app" or "org"
  *
  * ### Template:
  *
@@ -25,7 +28,10 @@ Hull.define({
   templates: ['main'],
   refreshEvents: ['model.hull.me.change'],
   datasources: {
-    'flags': 'flags/'
+    'flags': ':scope/flagged'
+  },
+  options: {
+    scope: 'app'
   },
   onFlagsError: function (err) {
     return [];
