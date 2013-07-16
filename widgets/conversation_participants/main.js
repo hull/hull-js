@@ -12,7 +12,7 @@
  *
  * ## Template:
  *
- * - `participants`: Display a list of the participants in a given conversation
+ * - `participants`: List of current participants a given conversation
  *
  * ## Datasource:
  *
@@ -22,6 +22,7 @@
  *
  * - `follow`: Join/follow the current conversation
  */
+
 Hull.define({
   type: 'Hull',
 

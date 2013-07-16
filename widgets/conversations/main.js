@@ -11,7 +11,7 @@
  *
  * ## Template:
  *
- * - `conversations`: Display a list of conversations
+ * - `conversations`: Table of conversations
  *
  * ## Datasource:
  *
