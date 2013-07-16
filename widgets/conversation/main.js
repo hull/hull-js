@@ -36,6 +36,7 @@ define({
   actions: {
     message: 'postMessage',
     deleteMsg: 'deleteMessage',
+    deleteConvo: 'deleteConvo',
     notification: 'notification'
   },
 
@@ -79,6 +80,7 @@ define({
   beforeRender: function(data){
     "use strict";
     if(data.conversation) {
+      data.conversation.isDeletable = data.conversation.actor.id == this.data.me.id;
       data.messages = data.messages;
       data.participants = data.conversation.participants;
       _.each(data.messages, function(m) {
@@ -157,6 +159,13 @@ define({
       .addClass('is-removing')
       .parents('[data-hull-message-id="'+ id +'"]');
     this.api.delete(id).then(function () {$parent.remove();});
+  },
+  
+  deleteConvo: function(e, data) {
+    "use strict";
+    event.preventDefault();
+    var id = data.data.id;
+    this.api.delete(id).then(function () {$('.hull-conversation').html('Conversation deleted');});
   },
   
   notification: function(e, data) {

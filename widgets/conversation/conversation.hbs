@@ -1,5 +1,10 @@
+{{#if conversation}}
 <div class="hull-conversation">
   <div class="hull-conversation__header">
+    <h3>{{conversation.name}}</h3>
+    {{#if conversation.isDeleteable}}
+      <button data-hull-action="deleteConvo" data-hull-id="{{conversation.id}}" class="btn pull-right">Delete conversation</button>
+    {{/if}}
     <div>You have {{conversation.messages_count_unread}} NEW messages and {{conversation.messages_count}} total messages.</div>
   </div>
 
@@ -60,3 +65,6 @@
       {{/if}}
   </div>
 </div>
+{{else}}
+  <div class="alert alert-info">No conversation selected</div>
+{{/if}}

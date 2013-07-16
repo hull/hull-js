@@ -8,7 +8,7 @@
         <th>Last updated</th>
       </tr>
       {{#conversations}}
-        <tr class="conversation">
+        <tr class="conversation" data-hull-action="pickConvo" data-hull-id="{{id}}">
           <td>{{name}}</td>
           <td>{{messages_count}}</td>
           <td>
@@ -18,7 +18,7 @@
             {{/participants}}
             </ul>
           </td>
-          <td>{{formatTime updated_at 'HH-mm  aa'}}</td>
+          <td>{{formatTime updated_at 'h:mm a'}}</td>
         </tr>
         </a>
       {{/conversations}}
