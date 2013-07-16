@@ -16,25 +16,25 @@
  * - `subjectid`: Required, The object you want to start a conversation upon.
  * - `participantid`: Required, comma-separated ids of the participants
  *
- * ## Template:
+ * ## Templates:
  *
- * - `conversations`:
- * - `participants`:
- * - `form`:
- * - `conversation_button`:
+ * - `conversation`: The main template, that show conversation's messages,
+ *   participants and form
+ * - `participants`: List of the conversation's participants
+ * - `form`: A form that allow logged user to add messages to the conversation
+ * - `conversation_button`: "Start a Conversation" button
  *
  * ## Datasource:
  *
  * - `conversation`: The conversation
  *
- * ## Action:
+ * ## Actions:
  *
  * - `create`: Creates a conversation
  * - `message`: Submits a new message.
  * - `deleteMsg`: Deletes a message
  */
 
-/*global define:true, _:true, $: true */
 Hull.define({
   type: 'Hull',
 

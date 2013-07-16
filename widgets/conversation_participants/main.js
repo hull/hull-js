@@ -13,7 +13,7 @@
  *
  * ## Template:
  *
- * - `participants`:
+ * - `participants`: List of current participants a given conversation
  *
  * ## Datasource:
  *
@@ -24,7 +24,6 @@
  * - `follow`: Join/follow the current converstion
  */
 
-/*global define:true, _:true */
 Hull.define({
   type: 'Hull',
 

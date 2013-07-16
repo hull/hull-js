@@ -11,7 +11,7 @@
  *
  * ## Template:
  *
- * - `conversations`:
+ * - `conversations`: Table of conversations
  *
  * ## Datasource:
  *
