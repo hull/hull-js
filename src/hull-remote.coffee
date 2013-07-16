@@ -1,4 +1,4 @@
-define ['aura/aura', 'lib/version'], (Aura, version)->
+define ['aura/aura', 'lib/utils/version'], (Aura, version)->
 
   hull = null
 
@@ -21,6 +21,9 @@ define ['aura/aura', 'lib/version'], (Aura, version)->
 
     if config.services.settings.instagram_app
       hull.app.use('lib/remote/services/instagram')
+
+    if config.services.settings.angellist_app
+      hull.app.use('lib/remote/services/angellist')
 
     hull.app.start()
 

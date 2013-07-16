@@ -1,4 +1,4 @@
-define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
+define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars'], (moment, _,utils, Handlebars)->
 
   (app)->
 
@@ -48,7 +48,7 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
     HandlebarsHelpers.fromNow = (date)->
       return unless date?
       moment(date).fromNow()
-      
+
     ###*
      * Return a formatted date
      * Uses [moment.js](http://momentjs.com/) behind the scenes.
@@ -329,12 +329,12 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
      * write text if value equals another value
      *
      *      foo='bar'
-     * 
+     *
      *      1. {{outputIf foo 'bar'}}
      *      2. {{outputIf foo 'baz' 'checked'}}
-     * 
-     *      => 
-     *      1. 
+     *
+     *      =>
+     *      1.
      *      2. 'checked'
     ###
     HandlebarsHelpers.outputIf = (obj, compare, output='', fallback='')->
@@ -345,8 +345,8 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
      * Maps an activity stream to english actions, with fallbacks from a hash
      *
      *      {{activity map activity_entry}}
-     * 
-     *      => 
+     *
+     *      =>
      *      'reviewed'
     ###
     HandlebarsHelpers.activity = (map, entry)->
@@ -375,15 +375,15 @@ define ['aura-extensions/hull-utils', 'handlebars'], (utils, handlebars)->
      *          uid:'Pothole on the street'
      *          description:''
      *      }
-     * 
+     *
      *      {{named obj}}
-     * 
-     *      => 
+     *
+     *      =>
      *      'Pothole on the street'
-     *      
+     *
     ###
     HandlebarsHelpers.to_s = (object)->
         return '' unless object?
         object.name||object.title||object.uid||object.description||object
 
-    handlebars.registerHelper(k, v) for k,v of HandlebarsHelpers
+    Handlebars.registerHelper(k, v) for k,v of HandlebarsHelpers

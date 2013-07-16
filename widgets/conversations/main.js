@@ -1,6 +1,9 @@
 /**
  * ## Conversations
+<<<<<<< HEAD
  * List all conversations within this app
+=======
+>>>>>>> b65acbc2676e1d60b37ad6233733ee3a3d4c0aed
  *
  * ## Examples
  *
@@ -11,7 +14,11 @@
  *
  * ## Template:
  *
+<<<<<<< HEAD
  * - `conversations`: Display a list of conversations
+=======
+ * - `conversations`:
+>>>>>>> b65acbc2676e1d60b37ad6233733ee3a3d4c0aed
  *
  * ## Datasource:
  *
@@ -22,8 +29,8 @@
  * - `pickConvo`: Select a conversation.
  */
 
-/*global define:true, _:true */
-define({
+/*global define:true */
+Hull.define({
   type: 'Hull',
 
   templates: ['conversations'],
@@ -40,10 +47,8 @@ define({
 
   datasources: {
     conversations: function () {
-      this.options.visibility
-      var url = 'conversations'
-      if(this.options.visibility) url += '?visibility=' + this.options.visibility;
-      return this.api(url);
+      "use strict";
+      return this.api('conversations', {visibility: this.options.visibility || undefined});
     }
   },
 
@@ -53,9 +58,9 @@ define({
     }, this)
   },
   
-  beforeRender: function(data){
+  beforeRender: function(data, errors){
     "use strict";
-    data.conversations = data.conversations;
+    data.errors = errors;
     return data;
   },
   

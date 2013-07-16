@@ -21,10 +21,11 @@
  *
  */
 
- define({
+Hull.define({
   type: "Hull",
 
   templates: ["like_button"],
+  refreshEvents: ['model.hull.me.change'],
 
   working: false,
 
@@ -35,8 +36,13 @@
     },
   },
 
+  onTargetError: function () {
+    "use strict";
+    return { stats: {} };
+  },
+
   beforeRender:function(data){
-    data.likes = data.target.stats.likes||0
+    data.likes = data.target.stats.likes || 0;
     self.likes = data.likes;
     self.liked = data.liked;
     return data;
@@ -59,7 +65,7 @@
     this.api(this.id + '/likes', method)
     .done(function(likes) {
       self.likes=likes||0;
-
+      self.sandbox.emit('hull.like.' + self.id);
     }).fail(function(){
       self.likes--;
       self.liked=!self.liked;

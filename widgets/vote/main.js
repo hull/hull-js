@@ -19,7 +19,7 @@
  * - `vote_buttons`: Main template. Has 3 states: Upvote, Downvote, Blank
  *
  */
-define({
+Hull.define({
   type: "Hull",
 
   refreshEvents: ['model.hull.me.change'],
@@ -27,19 +27,19 @@ define({
   templates: ['vote'],
 
   datasources: {
-    vote: function(){
-      if(this.loggedIn()){
-        return this.api(this.id+'/reviews/me');
-      } else {
-        return false;
-      }
-    },
-    target: function(){
-      return this.api(this.id);
-    }
+    vote: ':id/reviews/me',
+    target: ':id'
   },
 
+  onTargetError: function () {
+    "use strict";
+    return {};
+  },
   beforeRender: function(data){
+    "use strict";
+    if (this.sandbox.util._.isArray(data.vote)) {
+      data.vote = data.vote[0];
+    }
     data.split = {
       blank:0,
       yes:0,
@@ -55,6 +55,7 @@ define({
   },
 
   update_vote: function(evt, rating){
+    evt.stopPropagation();
     var description = this.$el.find("textarea").val();
     var self= this;
     if(rating!=undefined){
@@ -66,7 +67,6 @@ define({
         self.render();
       });
     }
-    evt.stopPropagation();
   },
 
   actions: {

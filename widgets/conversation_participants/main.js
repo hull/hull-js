@@ -22,7 +22,7 @@
  *
  * - `follow`: Join/follow the current conversation
  */
-define({
+Hull.define({
   type: 'Hull',
 
   templates: ['participants'],
@@ -38,25 +38,24 @@ define({
   },
 
   datasources: {
-    conversation: function () {
-      return this.api(this.options.id );
-    }
+    conversation: ':id'
   },
 
-  beforeRender: function(data){
+  beforeRender: function(data, errors){
     "use strict";
+    data.errors = errors;
     return data;
   },
-  
+
   afterRender: function() {
     "use strict";
   },
-  
-  follow: function (e, data) {
+
+  follow: function (e/*, data*/) {
     "use strict";
     e.preventDefault();
-    
-    this.api(this.options.id + '/participants', 'put').then(_.bind(function() {
+
+    this.api(this.options.id + '/participants', 'put').then(this.sandbox.util._.bind(function() {
       this.focusAfterRender = true;
       this.render();
     }, this));

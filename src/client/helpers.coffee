@@ -1,7 +1,7 @@
-define ['underscore', 'jquery'], (_,$)->
+define ['underscore'], (_)->
 
   (app)->
-    
+
     sandbox = app.sandbox
     core = app.core
 

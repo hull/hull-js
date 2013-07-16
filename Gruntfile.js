@@ -2,7 +2,6 @@ module.exports = function (grunt) {
   'use strict';
 
   var helpers = require('./.grunt/helpers')(grunt);
-  var CONTEXT = process.env.CONTEXT || 'prod';
   var clone = grunt.util._.clone;
 
   grunt.loadNpmTasks('grunt-contrib-clean');
@@ -17,10 +16,12 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-git-describe');
   grunt.loadNpmTasks('grunt-coverjs');
   grunt.loadNpmTasks('grunt-plato');
+  grunt.loadNpmTasks('grunt-wrap');
 
   var pkg = grunt.file.readJSON('bower.json');
   var clientConfig = grunt.file.readJSON('.grunt/client.json');
   var remoteConfig = grunt.file.readJSON('.grunt/remote.json');
+  var apiConfig = grunt.file.readJSON('.grunt/api.json');
 
   var port = 3001;
 
@@ -41,17 +42,22 @@ module.exports = function (grunt) {
     });
 
   //Augment the require.js configuation with some computed elements
+  var apiRJSConfig = (function () {
+    var _c = apiConfig.requireJS;
+    _c.optimize = grunt.option('dev') ? "none" : "uglify";
+    return _c;
+  })();
   var clientRJSConfig = (function () {
     var _c = clientConfig.requireJS;
     _c.include = _c.include.concat(auraExtensions).concat(clientLibs);
-    _c.optimize = CONTEXT !== "prod" ? "none" : "uglify";
+    _c.optimize = grunt.option('dev') ? "none" : "uglify";
     return _c;
   })();
 
   var remoteRJSConfig = (function () {
     var _c = remoteConfig.requireJS;
     _c.include = _c.include.concat(remoteLibs);
-    _c.optimize = CONTEXT !== "prod" ? "none" : "uglify";
+    _c.optimize = grunt.option('dev') ? "none" : "uglify";
     return _c;
   })();
 
@@ -95,6 +101,13 @@ module.exports = function (grunt) {
             return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
           }
         })
+      },
+      api: {
+        files: grunt.file.expandMapping(apiConfig.srcFiles, 'lib/', {
+          rename: function (destBase, destPath) {
+            return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
+          }
+        })
       }
     },
     connect: {
@@ -110,6 +123,8 @@ module.exports = function (grunt) {
           c.paths.underscore = 'empty:';
           c.paths.backbone = 'empty:';
           c.out = c.out.replace('hull.js', 'hull.no-backbone.js');
+          c.wrap.start = c.wrap.start + ";root._ = window._;";
+          c.wrap.start = c.wrap.start + ";root.Backbone = window.Backbone;";
           return c;
         })(clone(clientRJSConfig, true))
       },
@@ -117,8 +132,12 @@ module.exports = function (grunt) {
         options: (function (c) {
           c.paths.underscore = 'empty:';
           c.out = c.out.replace('hull.js', 'hull.no-underscore.js');
+          c.wrap.start = c.wrap.start + ";root._ = window._;";
           return c;
         })(clone(clientRJSConfig, true))
+      },
+      api: {
+        options: clone(apiRJSConfig, true)
       },
       client: {
         options: clone(clientRJSConfig, true)
@@ -128,6 +147,7 @@ module.exports = function (grunt) {
       },
       upload: {
         options: {
+          namespace: 'Hull',
           paths: {
             jquery: "empty:",
             "jquery.ui.widget" : 'components/jquery-file-upload/js/vendor/jquery.ui.widget',
@@ -141,6 +161,7 @@ module.exports = function (grunt) {
       },
       registration: {
         options: {
+          namespace: 'Hull',
           paths: { h5f: 'widgets/registration/h5f' },
           shim: { h5f: { exports: 'H5F' } },
           include: ['h5f'],
@@ -149,6 +170,7 @@ module.exports = function (grunt) {
       },
       dox: {
         options: {
+          namespace: 'Hull',
           paths: { prism: 'widgets/dox/dox/prism' },
           shim: { prism: { exports: 'Prism' } },
           include: ['prism'],
@@ -170,6 +192,10 @@ module.exports = function (grunt) {
         files: remoteConfig.srcFiles,
         tasks: ['dist:remote', 'do_test']
       },
+      api: {
+        files: apiConfig.srcFiles,
+        tasks: ['dist:api', 'do_test']
+      },
       client: {
         files: clientConfig.srcFiles,
         tasks: ['dist:client', 'do_test']
@@ -181,18 +207,34 @@ module.exports = function (grunt) {
     },
     version: {
       template: "define(function () { return '<%= PKG_VERSION %>';});",
-      dest: 'lib/version.js'
+      dest: 'lib/utils/version.js'
     },
     hull_widgets: {
       hull: {
         src: 'widgets',
         before: ['requirejs:upload', 'requirejs:registration', 'requirejs:dox'],
         dest: 'dist/<%= PKG_VERSION%>',
-        optimize: CONTEXT === 'prod'
+        optimize: !grunt.option('dev')
       }
     },
     describe: {
       out: 'dist/<%= PKG_VERSION%>/REVISION'
+    },
+    wrap: {
+      Handlebars: {
+        src: 'node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars.js',
+        dest: 'lib/shims',
+        wrapper: [
+          '(function () {', ';define("handlebars", function () {return Handlebars;});})()'
+        ]
+      },
+      easyXDM: {
+        src: 'components/easyXDM/easyXDM.js',
+        dest: 'lib/shims',
+        wrapper: [
+          '', ';var _available = window.easyXDM;define("easyXDM", function () {return window.easyXDM.noConflict();});if(!_available){delete window.easyXDM;};'
+        ]
+      }
     },
     cover: {
       compile: {
@@ -212,10 +254,11 @@ module.exports = function (grunt) {
       }
     },
     dist: {
-      "remote": ['clean:remote', 'coffee:remote', 'version', 'requirejs:remote'],
-      "client": ['clean:client', 'coffee:client', 'version', 'requirejs:client'],
-      "client-no-underscore": ['clean:client', 'coffee:client', 'version', 'requirejs:client-no-underscore'],
-      "client-no-backbone": ['clean:client', 'coffee:client', 'version', 'requirejs:client-no-backbone'],
+      "remote": ['clean:remote', 'coffee:remote', 'wrap', 'version', 'requirejs:remote'],
+      "client": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client'],
+      "api": ['clean:client', 'coffee:api', 'version', 'requirejs:api'],
+      "client-no-underscore": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
+      "client-no-backbone": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
       "widgets": ["hull_widgets"],
       "docs": ['dox']
     }
@@ -227,7 +270,7 @@ module.exports = function (grunt) {
 
   // default build task
   grunt.registerTask('do_test', ['cover', 'plato', 'mocha']);
-  grunt.registerTask('test', ['dist:client', 'dist:remote', 'do_test']);
+  grunt.registerTask('test', ['dist:api', 'dist:client', 'dist:remote', 'do_test']);
   grunt.registerTask('default', ['connect', 'test', 'dist:widgets', 'watch']);
   grunt.registerTask('deploy', ['dist', 'describe', 's3']);
   grunt.registerTask('reset', ['clean:reset']);

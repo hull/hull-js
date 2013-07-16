@@ -11,10 +11,10 @@
       {{/if}}
     </div>
   </div>
-  
-  {{#if participants}}
+
+  {{#if conversation.participants}}
     <ul class="media-list hull-participants__list">
-      {{#participants}}
+      {{#conversation.participants}}
         <li class="media">
           <div class="pull-left">
             <img class="media-object img-rounded" src="{{picture}}" alt="{{name}}">
@@ -23,7 +23,7 @@
             <h4 class="media-heading">{{name}}</h4>
           </div>
         </li>
-      {{/participants}}
+      {{/conversation.participants}}
     </ul>
   {{/if}}
 </div>

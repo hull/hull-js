@@ -25,8 +25,8 @@
  * - `notification`: Enable/disable email notifications for user
  */
 
-/*global define:true, _:true */
-define({
+/*global define:true, _:true, $: true */
+Hull.define({
   type: 'Hull',
 
   templates: ['conversation','form'],
@@ -45,45 +45,34 @@ define({
   },
 
   datasources: {
-    conversation: function () {
-      if (this.options.id) {
-        return this.api(this.options.id );
-      }
-      else {
-        return null;
-      }
-    },
+    conversation: ':id',
     messages: function () {
-      if (this.options.id) {
-        // order will default to ASC, if not specified
-        if('desc' == this.options.order) {
-          orderBy = "created_at DESC"
-        }
-        else {
-          orderBy = "created_at ASC"
-        }
-        return this.api(this.options.id + '/messages?order_by=' + orderBy)
+      "use strict";
+      var orderBy;
+      if('desc' === this.options.order) {
+        orderBy = "created_at DESC";
+      } else {
+        orderBy = "created_at ASC";
       }
-      else {
-        return null;
-      }
+      return this.api(this.options.id + '/messages', {orderBy: orderBy});
     }
   },
 
   initialize: function() {
+    "use strict";
     this.sandbox.on('hull.conversation.pick', function(id) {
       this.options.id = id;
       this.render();
-    }, this)
+    }, this);
   },
-  
-  beforeRender: function(data){
+
+  beforeRender: function(data, errors) {
     "use strict";
     if(data.conversation) {
       data.conversation.isDeletable = data.conversation.actor.id == this.data.me.id;
       data.messages = data.messages;
       data.participants = data.conversation.participants;
-      _.each(data.messages, function(m) {
+      this.sandbox.util._.each(data.messages, function(m) {
         m.isDeletable = (m.actor.id === this.data.me.id);
         
         var last_read = data.conversation.last_read;
@@ -102,10 +91,11 @@ define({
     }
     else {
       data.newConvo = true;
+      data.errors = errors;
     }
     return data;
   },
-  
+
   afterRender: function() {
     "use strict";
     if(this.options.focus || this.focusAfterRender) {
@@ -113,12 +103,12 @@ define({
       this.focusAfterRender = false;
     }
     // Mark msgs as read
-    setTimeout(_.bind(function() {
+    setTimeout(this.sandbox.util._.bind(function() {
       var li = $('.hull-messages__list li:first-child');
       var cid = $('.hull-conversation__form').find('.media').data('hull-conversation-id');
-      
+
       if(li && cid) {
-        Hull.data.api(cid + '/messages', 'put', {});
+        this.api(cid + '/messages', 'put', {});
       }
     }, this), 2000);
   },
@@ -131,7 +121,7 @@ define({
     $textarea.attr('disabled', !$textarea.attr('disabled'));
   },
   
-  postMessage: function (e, data) {
+  postMessage: function (e/*, data*/) {
     "use strict";
     e.preventDefault();
     var $formWrapper = this.$el.find('.hull-conversation__form');
@@ -144,13 +134,15 @@ define({
     if (description && description.length > 0) {
       var cid = $media.data('hull-conversation-id');
       var attributes = { body: description };
-      this.api(cid + '/messages', 'post', attributes).then(_.bind(function() {
+      this.api(cid + '/messages', 'post', attributes).then(this.sandbox.util._.bind(function() {
         this.toggleLoading($formWrapper);
         this.render();
       }, this));
+    } else {
+      this.toggleLoading($formWrapper);
     }
   },
-  
+
   deleteMessage: function(e, data) {
     "use strict";
     event.preventDefault();

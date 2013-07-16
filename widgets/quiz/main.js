@@ -33,7 +33,7 @@
  * - `submit`: Triggered when the user click on the submit button and push his score to the api.
  *
  */
-define({
+Hull.define({
   type: "Hull",
 
   trackingData: function() {

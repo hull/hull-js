@@ -1,3 +1,4 @@
+
 <div class="hull-conversations">
   {{#if conversations}}
     <table class="table table-hover">
@@ -20,9 +21,20 @@
           </td>
           <td>{{formatTime updated_at 'h:mm a'}}</td>
         </tr>
-        </a>
       {{/conversations}}
-    </table>
-  {{/if}}
+    {{else}}
+      <tr>
+        <td colspan="4">
+          {{#if errors.conversations}}
+            <div class="alert alert-error">
+              Unable to retrieve the conversations.
+            </div>
+          {{else}}
+            No conversations
+          {{/if}}
+        </td>
+      </tr>
+    {{/if}}
+  </table>
 </div>
 

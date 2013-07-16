@@ -1,5 +1,6 @@
 {
-  "srcFiles": ["src/hullbase.coffee", "src/hull.coffee", "src/client/**/*.coffee"],
+  "namespace": "Hull",
+  "srcFiles": ["src/hullbase.coffee", "src/hull.coffee", "src/utils/**/*.coffee", "src/client/**/*.coffee", "src/api.coffee", "src/api/**/*.coffee"],
   "requireJS": {
     "baseUrl": ".",
     "preserveLicenseComments": true,
@@ -8,8 +9,8 @@
       "underscore":     "components/underscore/underscore",
       "eventemitter":   "components/eventemitter2/lib/eventemitter2",
       "backbone":       "components/backbone/backbone",
-      "easyXDM":        "components/easyXDM/easyXDM",
-      "handlebars":     "node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars",
+      "easyXDM":        "lib/shims/components/easyXDM/easyXDM",
+      "handlebars":     "lib/shims/node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars",
       "requireLib":     "components/requirejs/require",
       "moment":         "components/moment/moment",
       "cookie":         "components/jquery.cookie/jquery.cookie",
@@ -20,9 +21,7 @@
     },
     "shim": {
       "backbone":   { "exports": "Backbone", "deps": ["underscore", "jquery"] },
-      "underscore": { "exports": "_" },
-      "easyXDM":    { "exports": "easyXDM" },
-      "handlebars": { "exports": "Handlebars"}
+      "underscore": { "exports": "_" }
     },
     "include": [
       "requireLib",
@@ -32,14 +31,16 @@
       "cookie",
       "base64",
       "backbone",
-      "handlebars",
-      "easyXDM",
       "text",
       "aura/ext/debug",
       "aura/ext/mediator",
       "aura/ext/widgets",
       "lib/hull"
       ],
-    "out": "dist/<%= PKG_VERSION %>/hull.js"
+    "out": "dist/<%= PKG_VERSION %>/hull.js",
+    "wrap": {
+      "start": "(function () {var require, requirejs, define,root = {jQuery: jQuery}; (function () {",
+      "end": ";Hull.define = define; Hull.require = require; }).call(root);for(var i in root){root.hasOwnProperty(i) && Hull.define(i.toLowerCase(), function (){return root[i];})}})();"
+    }
   }
 }

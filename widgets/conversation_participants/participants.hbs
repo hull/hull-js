@@ -1,3 +1,8 @@
+{{#if errors.conversation}}
+<div class="alert alert-error">
+  Unable to retrieve the participants for this conversation
+</div>
+{{else}}
 <div class="span4 offset1">
   <div class="hull-participants__header">
     <div class="row">
@@ -11,7 +16,7 @@
       {{/if}}
     </div>
   </div>
-  
+
   {{#if conversation.participants}}
     <ul class="media-list hull-participants__list">
       {{#conversation.participants}}
@@ -27,3 +32,4 @@
     </ul>
   {{/if}}
 </div>
+{{/if}}

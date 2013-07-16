@@ -30,7 +30,7 @@
     },
 
     afterAppStart: function(app) {
-      _.delay(function() {
+      app.sandbox.util._.delay(function() {
         if (!app.core.mvc.History.started) {
           app.core.mvc.history.start();
         };

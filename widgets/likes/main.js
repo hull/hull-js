@@ -16,10 +16,11 @@
  *
  */
 
- define({
+Hull.define({
   type: "Hull",
 
   templates: ["likes"],
+  refreshEvents: ['hull.like.**'],
 
   datasources: {
     target: ':id',
@@ -34,7 +35,6 @@
 
   actions: {
     do: function () {
-      debugger
       console.log(this);
     }
   }

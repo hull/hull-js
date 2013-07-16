@@ -21,7 +21,7 @@
  * - `list_button`: Shows the button with the right state
  *
  */
-define({
+Hull.define({
   type: "Hull",
 
   refreshEvents: ['model.hull.me.change'],
@@ -33,33 +33,34 @@ define({
   },
 
   datasources: {
-    list: function() { return this.api.model("me/lists/" + this.options.listName); },
+    list: function() {
+      return this.api.model("me/lists/" + this.options.listName).fetch();
+    },
     target: ":id"
   },
 
   beforeRender: function(data) {
     this.id = data.target.id;
+    var self = this;
+    var _ = this.sandbox.util._;
     if (data.list && data.list.items) {
       var itemIds   = _.pluck(data.list.items, "id");
       data.isListed = _.include(itemIds, this.id);
-      this.itemPath = data.list.id + "/items/" + data.target.id;
+      self.itemPath = data.list.id + "/items/" + data.target.id;
     }
-    return data;
   },
 
   toggle: function(verb) {
     var list = this.data.list;
     var method = verb === 'remove' ? 'delete' : 'post';
+    var self = this;
+    var _ = this.sandbox.util._;
     this.api(this.itemPath, method).then(function() {
-      list.fetch().then(function() {
-        var itemId  = this.id;
-        var item    = _.filter(list.items, function(i) { return i.id === itemId })[0];
-        this.track("list:" + verb, {
-          itemId: this.id,
-          listName: list.get("name")
-        });
-        this.render();
-      }.bind(this));
+      this.track("list:" + verb, {
+        itemId: self.id,
+        listName: list.name
+      });
+      this.render();
     }.bind(this));
   },
 

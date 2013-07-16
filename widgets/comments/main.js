@@ -30,7 +30,7 @@
  * - `comment`: Submits a new comment.
  */
 
-define({
+Hull.define({
   type: 'Hull',
 
   templates: ['comments'],
@@ -53,7 +53,7 @@ define({
 
   beforeRender: function(data){
     "use strict";
-    _.each(data.comments, function(c) {
+    this.sandbox.util._.each(data.comments, function(c) {
       c.isDeletable = (c.user.id === this.data.me.id);
       return c;
     }, this);
@@ -98,7 +98,7 @@ define({
 
     if (description && description.length > 0) {
       var attributes = { description: description };
-      this.api(this.id + '/comments', 'post', attributes).then(_.bind(function() {
+      this.api(this.id + '/comments', 'post', attributes).then(this.sandbox.util._.bind(function() {
         this.toggleLoading($formWrapper);
         this.focusAfterRender = true;
         this.render();
