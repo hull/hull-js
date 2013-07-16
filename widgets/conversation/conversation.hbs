@@ -9,7 +9,6 @@
         {{#if conversation.isDeleteable}}
           <button data-hull-action="deleteConvo" data-hull-id="{{conversation.id}}" class="btn pull-right">Delete conversation</button>
         {{/if}}
-        <div>You have {{conversation.messages_count_unread}} NEW messages and {{conversation.messages_count}} total messages.</div>
       </div>
 
       {{#if conversation.notification_enabled}}
@@ -30,6 +29,7 @@
 
           {{#if messages}}
             <ul class="media-list hull-messages__list">
+              <div>You have {{conversation.messages_count_unread}} NEW messages and {{conversation.messages_count}} total messages.</div>
               {{#messages}}
                 <li class="media" data-hull-message-id="{{id}}">
                   <div class="span2">

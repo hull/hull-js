@@ -14,6 +14,7 @@
  *
  * - `conversation`: Lists the messages for a conversation
  * - `form`: Displays a form to reply to a conversation
+ * - `participants`: Lists the participants for the conversation
  *
  * ## Datasource:
  *
@@ -29,7 +30,7 @@
 Hull.define({
   type: 'Hull',
 
-  templates: ['conversation','form'],
+  templates: ['conversation','form','participants'],
 
   refreshEvents: ['model.hull.me.change'],
 
@@ -45,16 +46,25 @@ Hull.define({
   },
 
   datasources: {
-    conversation: ':id',
+    conversation: function() {
+      if(this.options.id) {
+        return this.api(this.options.id);
+      }
+    },
     messages: function () {
       "use strict";
-      var orderBy;
-      if('desc' === this.options.order) {
-        orderBy = "created_at DESC";
-      } else {
-        orderBy = "created_at ASC";
+      if(this.options.id) {
+        var orderBy;
+        if('desc' === this.options.order) {
+          orderBy = "created_at DESC";
+        } else {
+          orderBy = "created_at ASC";
+        }
+        return this.api(this.options.id + '/messages', {order_by: orderBy});
       }
-      return this.api(this.options.id + '/messages', {orderBy: orderBy});
+      else {
+        return null;
+      }
     }
   },
 
@@ -69,7 +79,7 @@ Hull.define({
   beforeRender: function(data, errors) {
     "use strict";
     if(data.conversation) {
-      data.conversation.isDeletable = data.conversation.actor.id == this.data.me.id;
+      data.conversation.isDeleteable = data.conversation.actor.id == this.data.me.id;
       data.messages = data.messages;
       data.participants = data.conversation.participants;
       this.sandbox.util._.each(data.messages, function(m) {
@@ -83,7 +93,7 @@ Hull.define({
         
         return m;
       }, this);
-      data.isFollowing = _.find(data.participants, function(p) {
+      data.isFollowing = this.sandbox.util._.find(data.participants, function(p) {
         return p.id == this.data.me.id
       }, this)
       data.isAscending = this.options.order != 'desc';

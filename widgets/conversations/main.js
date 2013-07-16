@@ -1,9 +1,6 @@
 /**
  * ## Conversations
-<<<<<<< HEAD
  * List all conversations within this app
-=======
->>>>>>> b65acbc2676e1d60b37ad6233733ee3a3d4c0aed
  *
  * ## Examples
  *
@@ -14,11 +11,7 @@
  *
  * ## Template:
  *
-<<<<<<< HEAD
  * - `conversations`: Display a list of conversations
-=======
- * - `conversations`:
->>>>>>> b65acbc2676e1d60b37ad6233733ee3a3d4c0aed
  *
  * ## Datasource:
  *
