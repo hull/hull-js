@@ -1,14 +1,16 @@
-<div class="hull-conversations-admin">
-  <table class="table table-hover">
-    <tr>
-      <th>Subject</th>
-      <th>Message Count</th>
-      <th>Participants</th>
-      <th>Last updated</th>
-    </tr>
-    {{#if conversations}}
+
+<div class="hull-conversations">
+  <header>{{subject_name}}</header>
+  {{#if conversations}}
+    <table class="table table-hover">
+      <tr>
+        <th>Title</th>
+        <th>Message Count</th>
+        <th>Participants</th>
+        <th>Last updated</th>
+      </tr>
       {{#conversations}}
-        <tr class="conversation">
+        <tr class="conversation" data-hull-action="pickConvo" data-hull-id="{{id}}">
           <td>{{name}}</td>
           <td>{{messages_count}}</td>
           <td>
@@ -18,7 +20,7 @@
             {{/participants}}
             </ul>
           </td>
-          <td>{{updated_at}}</td>
+          <td>{{formatTime updated_at 'h:mm a'}}</td>
         </tr>
       {{/conversations}}
     {{else}}
@@ -29,7 +31,7 @@
               Unable to retrieve the conversations.
             </div>
           {{else}}
-            No conversations
+            <div class="conversations-empty">No conversations started yet</div>
           {{/if}}
         </td>
       </tr>

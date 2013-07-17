@@ -1,6 +1,5 @@
 /**
  * ## Conversation Participants
- *
  * List the current participants of a conversation, and allow users to follow/unfollow it
  *
  * ## Example
@@ -21,7 +20,7 @@
  *
  * ## Action:
  *
- * - `follow`: Join/follow the current converstion
+ * - `follow`: Join/follow the current conversation
  */
 
 Hull.define({

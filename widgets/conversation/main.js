@@ -1,7 +1,6 @@
 /**
  * ## Conversation
- *
- * Allow to start and reply to a conversation on an object of the current application.
+ * View a conversation's messages and allow users to reply to the thread. 
  *
  * ## Example
  *
@@ -10,11 +9,6 @@
  * ## Option:
  *
  * - `id`: Required, The id of the specific conversation object
- *
- * OR
- *
- * - `subjectid`: Required, The object you want to start a conversation upon.
- * - `participantid`: Required, comma-separated ids of the participants
  *
  * ## Templates:
  *
@@ -33,19 +27,21 @@
  * - `create`: Creates a conversation
  * - `message`: Submits a new message.
  * - `deleteMsg`: Deletes a message
+ * - `notification`: Enable/disable email notifications for user
  */
 
 Hull.define({
   type: 'Hull',
 
-  templates: ['conversation','participants','form','conversation_button'],
+  templates: ['conversation','form','participants'],
 
   refreshEvents: ['model.hull.me.change'],
 
   actions: {
-    create: 'createConvo',
     message: 'postMessage',
-    deleteMsg: 'deleteMessage'
+    deleteMsg: 'deleteMessage',
+    deleteConvo: 'deleteConvo',
+    notification: 'notification'
   },
 
   options: {
@@ -53,16 +49,25 @@ Hull.define({
   },
 
   datasources: {
-    conversation: ':id',
+    conversation: function() {
+      if(this.options.id) {
+        return this.api(this.options.id);
+      }
+    },
     messages: function () {
       "use strict";
-      var orderBy;
-      if('desc' === this.options.order) {
-        orderBy = "created_at DESC";
-      } else {
-        orderBy = "created_at ASC";
+      if(this.options.id) {
+        var orderBy;
+        if('desc' === this.options.order) {
+          orderBy = "created_at DESC";
+        } else {
+          orderBy = "created_at ASC";
+        }
+        return this.api(this.options.id + '/messages', {order_by: orderBy});
       }
-      return this.api(this.options.id + '/messages', {orderBy: orderBy});
+      else {
+        return null;
+      }
     }
   },
 
@@ -77,18 +82,28 @@ Hull.define({
   beforeRender: function(data, errors) {
     "use strict";
     if(data.conversation) {
+      data.conversation.isDeleteable = data.conversation.actor.id == this.data.me.id;
       data.messages = data.messages;
       data.participants = data.conversation.participants;
       this.sandbox.util._.each(data.messages, function(m) {
         m.isDeletable = (m.actor.id === this.data.me.id);
-        m.isNew = !m.isDeletable && (!(data.conversation.last_read) || (m.id > data.conversation.last_read));
+        
+        var last_read = data.conversation.last_read;
+        if(last_read instanceof Object){
+          last_read = last_read[this.data.me.id];
+        } 
+        m.isNew = !m.isMe && (last_read ? m.id > last_read : true);
+        
         return m;
       }, this);
       data.isFollowing = this.sandbox.util._.find(data.participants, function(p) {
-        return p.id === this.data.me.id;
-      }, this);
-      data.isAscending = this.options.order !== 'desc';
-    } else {
+        return p.id == this.data.me.id
+      }, this)
+      data.isAscending = this.options.order != 'desc';
+      data.isNew = !(data.messages && data.messages.length > 0);
+    }
+    else {
+      data.newConvo = true;
       data.errors = errors;
     }
     return data;
@@ -118,7 +133,7 @@ Hull.define({
     var $textarea = $form.find('textarea');
     $textarea.attr('disabled', !$textarea.attr('disabled'));
   },
-
+  
   postMessage: function (e/*, data*/) {
     "use strict";
     e.preventDefault();
@@ -149,5 +164,18 @@ Hull.define({
       .addClass('is-removing')
       .parents('[data-hull-message-id="'+ id +'"]');
     this.api.delete(id).then(function () {$parent.remove();});
+  },
+  
+  deleteConvo: function(e, data) {
+    "use strict";
+    event.preventDefault();
+    var id = data.data.id;
+    this.api.delete(id).then(function () {$('.hull-conversation').html('Conversation deleted');});
+  },
+  
+  notification: function(e, data) {
+    "use strict";
+    var $notification = this.$el.find('input');
+    this.api(this.options.id + '/participants', 'put', {notification: $notification.prop('checked')});
   }
 });
