@@ -1,9 +1,10 @@
 
 <div class="hull-conversations">
+  <header>{{subject_name}}</header>
   {{#if conversations}}
     <table class="table table-hover">
       <tr>
-        <th>Subject</th>
+        <th>Title</th>
         <th>Message Count</th>
         <th>Participants</th>
         <th>Last updated</th>
@@ -30,7 +31,7 @@
               Unable to retrieve the conversations.
             </div>
           {{else}}
-            No conversations
+            <div class="conversations-empty">No conversations started yet</div>
           {{/if}}
         </td>
       </tr>
