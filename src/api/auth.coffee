@@ -7,7 +7,7 @@ if document.location.hash.indexOf("#hull-auth-status-")==0 &&  window.opener && 
   catch e
     console.warn("Error: " + e)
 
-define ['underscore', 'lib/utils/promises', 'lib/utils/version'], (_, promises, version)->
+define ['jquery', 'underscore', 'lib/utils/promises', 'lib/utils/version'], ($, _, promises, version)->
 
   (apiFn, config, authServices=[]) ->
     # Holds the state of the authentication process

@@ -1,4 +1,4 @@
-define ['underscore', 'lib/client/datasource', 'lib/client/widget/context', 'lib/utils/promises'], (_, Datasource, Context, promises)->
+define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/context', 'lib/utils/promises'], ($, _, Datasource, Context, promises)->
 
   (app)->
     debug = false
