@@ -43,15 +43,14 @@ Hull.define({
       "use strict";
       var url = this.options.id ? this.options.id : '';
       url += '/conversations';
+
       return this.api(url, {visibility: this.options.visibility || undefined});
     }
   },
 
   initialize: function() {
     this.sandbox.on('hull.conversation.reload', function(id) {
-      if(id) {
-        this.options.id = id;
-      }
+      this.options.id = id;
       this.render();
     }, this)
   },
@@ -64,6 +63,5 @@ Hull.define({
   
   pickConversation: function(e, action) {
     this.sandbox.emit('hull.conversation.pick', action.data.id);
-  },
-  
+  }
 });
