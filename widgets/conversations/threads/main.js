@@ -59,6 +59,9 @@ Hull.define({
   },
   
   select: function(e, action) {
+    var selected = action.el;
+    this.$el.find('[data-hull-action="select"]').not(selected).removeClass('selected')
+    selected.addClass('selected')
     this.sandbox.emit('hull.conversation.select', action.data.id);
   }
 });
