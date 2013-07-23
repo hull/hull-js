@@ -4,7 +4,7 @@
  *
  * ## Example
  *
- *     <div data-hull-widget="conversation@hull" data-hull-id="OBJECT_ID"></div>
+ *     <div data-hull-widget="conversations/thread@hull" data-hull-id="OBJECT_ID"></div>
  *
  * ## Options:
  *
@@ -33,7 +33,7 @@
 Hull.define({
   type: 'Hull',
 
-  templates: ['conversation','form','participants'],
+  templates: ['thread','form','participants'],
 
   refreshEvents: ['model.hull.me.change'],
 

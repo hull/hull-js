@@ -5,7 +5,7 @@
  *
  * ## Example
  *
- *     <div data-hull-widget="default@hull" data-hull-id="OBJECT_ID"></div>
+ *     <div data-hull-widget="conversations/default@hull" data-hull-id="OBJECT_ID"></div>
  *
  * ## Option:
  *

@@ -4,7 +4,7 @@
  *
  * ## Examples
  *
- *     <div data-hull-widget="conversations@hull"></div>
+ *     <div data-hull-widget="conversations/list@hull"></div>
  *
  * ## Option:
  * - `visibility`: Optional, the visibility level
@@ -26,7 +26,7 @@
 Hull.define({
   type: 'Hull',
 
-  templates: ['threads'],
+  templates: ['list'],
 
   refreshEvents: ['model.hull.me.change'],
 
