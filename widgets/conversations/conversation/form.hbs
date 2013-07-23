@@ -1,7 +1,7 @@
-<div class="well hull-conversation__form">
+<div class="well">
   {{#if loggedIn}}
-    <form>
-      <div class='media' data-hull-conversation-id="{{conversation.id}}">
+    <form data-hull-item="form">
+      <div class='media'>
         <div class="span2">
           <span class="pull-right">{{me.name}}</span>
         </div>
@@ -10,7 +10,7 @@
         </div>
         <div class="media-body">
           <textarea name='description' class="input-block-level" rows="3" placeholder="Send a message... "></textarea>
-          <button data-hull-action="message" class="btn btn-primary">{{#if isNew}}Send{{else}}Reply{{/if}}</button>
+          <button data-hull-action="message" data-hull-id="{{conversation.id}}" class="btn btn-primary">{{#if isNew}}Send{{else}}Reply{{/if}}</button>
         </div>
       </div>
     </form>

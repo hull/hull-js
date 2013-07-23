@@ -5,7 +5,7 @@
  *
  * ## Example
  *
- *     <div data-hull-widget="conversation-default@hull" data-hull-id="OBJECT_ID"></div>
+ *     <div data-hull-widget="default@hull" data-hull-id="OBJECT_ID"></div>
  *
  * ## Option:
  *
@@ -13,7 +13,7 @@
  *
  * ## Template:
  *
- * - `conversation-default`: Renders a conversation widget
+ * - `default`: Renders a conversation widget
  *
  * ## Datasource:
  *
@@ -22,8 +22,8 @@
  */
 
 /*global define:true, _:true */
-Hull.widget('conversation-default', {
-  templates: ['conversation-default'],
+Hull.widget('default', {
+  templates: ['default'],
 
   refreshEvents: ['model.hull.me.change'],
 

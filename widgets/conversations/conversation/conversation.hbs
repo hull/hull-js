@@ -19,12 +19,12 @@
   
       <div class="row-fluid">
         <div class="hull-conversation__participants">
-          {{> conversation.participants}}
+          {{> conversations.conversation.participants}}
         </div>
       </div>
       <div class="row-fluid">
           {{^isAscending}}
-            {{> conversation.form}}
+            {{> conversations.conversation.form}}
           {{/isAscending}}
 
           {{#if messages}}
@@ -70,7 +70,7 @@
           {{/messages}}
 
           {{#if isAscending}}
-            {{> conversation.form}}
+            {{> conversations.conversation.form}}
           {{/if}}
       </div>
     </div>

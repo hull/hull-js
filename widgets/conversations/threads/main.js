@@ -26,12 +26,12 @@
 Hull.define({
   type: 'Hull',
 
-  templates: ['conversations'],
+  templates: ['threads'],
 
   refreshEvents: ['model.hull.me.change'],
 
   actions: {
-    pickConvo: "pickConversation",
+    select: "select",
   },
 
   options: {
@@ -40,10 +40,8 @@ Hull.define({
 
   datasources: {
     conversations: function () {
-      "use strict";
       var url = this.options.id ? this.options.id : '';
       url += '/conversations';
-
       return this.api(url, {visibility: this.options.visibility || undefined});
     }
   },
@@ -56,12 +54,11 @@ Hull.define({
   },
   
   beforeRender: function(data, errors){
-    "use strict";
     data.errors = errors;
     return data;
   },
   
-  pickConversation: function(e, action) {
-    this.sandbox.emit('hull.conversation.pick', action.data.id);
+  select: function(e, action) {
+    this.sandbox.emit('hull.conversation.select', action.data.id);
   }
 });
