@@ -176,10 +176,10 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/cont
               @isInitialized = true;
 
             beforeRendering.fail (err)=>
-              console.error("Error in beforeRender", err.message, err)
+              console.error("Error in beforeRender on ", this.options.name,  err.message, err)
               @renderError.call(@, err)
           catch err
-            console.error("Error in beforeRender", err.message, err)
+            console.error("Error in beforeRender on ", this.options.name,  err.message, err)
             @renderError.call(@, err)
 
       trackingData: {}

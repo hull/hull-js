@@ -1,6 +1,6 @@
 /**
  * ## Conversation
- * View a conversation's messages and allow users to reply to the thread. 
+ * View a conversation's messages and allow users to reply to the thread.
  *
  * ## Example
  *
@@ -38,10 +38,10 @@ Hull.define({
   refreshEvents: ['model.hull.me.change'],
 
   actions: {
-    message: 'message',
-    deleteMsg: 'deleteMsg',
+    message:      'message',
+    deleteMsg:    'deleteMsg',
     notification: 'notification',
-    delete: 'delete'
+    delete:       'delete'
   },
 
   options: {
@@ -87,13 +87,13 @@ Hull.define({
       data.participants = data.conversation.participants;
       this.sandbox.util._.each(data.messages, function(m) {
         m.isDeletable = (m.actor.id === this.data.me.id);
-        
+
         var last_read = data.conversation.last_read;
         if(last_read instanceof Object){
           last_read = last_read[this.data.me.id];
-        } 
+        }
         m.isNew = !m.isMe && (last_read ? m.id > last_read : true);
-        
+
         return m;
       }, this);
       data.isFollowing = this.sandbox.util._.find(data.participants, function(p) {
@@ -101,7 +101,7 @@ Hull.define({
       }, this)
       data.isAscending = this.options.order != 'desc';
       data.isNew = !(data.messages && data.messages.length > 0);
-      _.each(data.messages, function(m){
+      this.sandbox.util._.each(data.messages, function(m){
         m.isMe = (m.actor.id===data.me.id);
       });
     }
@@ -136,7 +136,7 @@ Hull.define({
     var $textarea = $form.find('textarea');
     $textarea.attr('disabled', !$textarea.attr('disabled'));
   },
-  
+
   message: function (e, data) {
     "use strict";
     e.preventDefault();
@@ -166,14 +166,14 @@ Hull.define({
       .parents('[data-hull-message-id="'+ id +'"]');
     this.api.delete(id).then(function () {$parent.remove();});
   },
-  
+
   delete: function(e, data) {
     "use strict";
     event.preventDefault();
     var id = data.data.id;
     this.api.delete(id).then(function () {$('.hull-conversation').html('Conversation destroyd');});
   },
-  
+
   notification: function(e, data) {
     "use strict";
     var $notification = this.$el.find('input');
