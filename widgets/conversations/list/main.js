@@ -4,7 +4,7 @@
  *
  * ## Examples
  *
- *     <div data-hull-widget="conversations@hull"></div>
+ *     <div data-hull-widget="conversations/list@hull"></div>
  *
  * ## Option:
  * - `visibility`: Optional, the visibility level
@@ -26,12 +26,12 @@
 Hull.define({
   type: 'Hull',
 
-  templates: ['conversations'],
+  templates: ['list'],
 
   refreshEvents: ['model.hull.me.change'],
 
   actions: {
-    pickConvo: "pickConversation",
+    select: "select",
   },
 
   options: {
@@ -40,10 +40,8 @@ Hull.define({
 
   datasources: {
     conversations: function () {
-      "use strict";
       var url = this.options.id ? this.options.id : '';
       url += '/conversations';
-
       return this.api(url, {visibility: this.options.visibility || undefined});
     }
   },
@@ -56,12 +54,14 @@ Hull.define({
   },
   
   beforeRender: function(data, errors){
-    "use strict";
     data.errors = errors;
     return data;
   },
   
-  pickConversation: function(e, action) {
-    this.sandbox.emit('hull.conversation.pick', action.data.id);
+  select: function(e, action) {
+    var selected = action.el;
+    this.$el.find('[data-hull-action="select"]').not(selected).removeClass('selected')
+    selected.addClass('selected')
+    this.sandbox.emit('hull.conversation.select', action.data.id);
   }
 });

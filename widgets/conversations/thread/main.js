@@ -1,12 +1,12 @@
 /**
  * ## Conversation
- * View a conversation's messages and allow users to reply to the thread. 
+ * View a conversation's messages and allow users to reply to the thread.
  *
  * ## Example
  *
- *     <div data-hull-widget="conversation@hull" data-hull-id="OBJECT_ID"></div>
+ *     <div data-hull-widget="conversations/thread@hull" data-hull-id="OBJECT_ID"></div>
  *
- * ## Option:
+ * ## Options:
  *
  * - `id`: Required, The id of the specific conversation object
  *
@@ -26,22 +26,22 @@
  *
  * - `create`: Creates a conversation
  * - `message`: Submits a new message.
- * - `deleteMsg`: Deletes a message
+ * - `deleteMsg`: destroys a message
  * - `notification`: Enable/disable email notifications for user
  */
 
 Hull.define({
   type: 'Hull',
 
-  templates: ['conversation','form','participants'],
+  templates: ['thread','form','participants'],
 
   refreshEvents: ['model.hull.me.change'],
 
   actions: {
-    message: 'postMessage',
-    deleteMsg: 'deleteMessage',
-    deleteConvo: 'deleteConvo',
-    notification: 'notification'
+    message:      'message',
+    deleteMsg:    'deleteMsg',
+    notification: 'notification',
+    delete:       'delete'
   },
 
   options: {
@@ -73,7 +73,7 @@ Hull.define({
 
   initialize: function() {
     "use strict";
-    this.sandbox.on('hull.conversation.pick', function(id) {
+    this.sandbox.on('hull.conversation.select', function(id) {
       this.options.id = id;
       this.render();
     }, this);
@@ -82,25 +82,28 @@ Hull.define({
   beforeRender: function(data, errors) {
     "use strict";
     if(data.conversation) {
-      data.conversation.isDeleteable = data.conversation.actor.id == this.data.me.id;
+      data.conversation.isDeletable = data.conversation.actor.id == data.me.id;
       data.messages = data.messages;
       data.participants = data.conversation.participants;
       this.sandbox.util._.each(data.messages, function(m) {
         m.isDeletable = (m.actor.id === this.data.me.id);
-        
+
         var last_read = data.conversation.last_read;
         if(last_read instanceof Object){
           last_read = last_read[this.data.me.id];
-        } 
+        }
         m.isNew = !m.isMe && (last_read ? m.id > last_read : true);
-        
+
         return m;
       }, this);
       data.isFollowing = this.sandbox.util._.find(data.participants, function(p) {
-        return p.id == this.data.me.id
+        return p.id == data.me.id;
       }, this)
       data.isAscending = this.options.order != 'desc';
       data.isNew = !(data.messages && data.messages.length > 0);
+      this.sandbox.util._.each(data.messages, function(m){
+        m.isMe = (m.actor.id===data.me.id);
+      });
     }
     else {
       data.newConvo = true;
@@ -133,30 +136,28 @@ Hull.define({
     var $textarea = $form.find('textarea');
     $textarea.attr('disabled', !$textarea.attr('disabled'));
   },
-  
-  postMessage: function (e/*, data*/) {
+
+  message: function (e, data) {
     "use strict";
     e.preventDefault();
-    var $formWrapper = this.$el.find('.hull-conversation__form');
-    var $form = $formWrapper.find('form');
-    var $media = $formWrapper.find('.media');
+    var $form = this.$el.find("[data-hull-item='form']");
     var formData = this.sandbox.dom.getFormData($form);
     var description = formData.description;
 
-    this.toggleLoading($formWrapper);
+    this.toggleLoading($form);
     if (description && description.length > 0) {
-      var cid = $media.data('hull-conversation-id');
+      var cid = data.data.id;
       var attributes = { body: description };
       this.api(cid + '/messages', 'post', attributes).then(this.sandbox.util._.bind(function() {
-        this.toggleLoading($formWrapper);
+        this.toggleLoading($form);
         this.render();
       }, this));
     } else {
-      this.toggleLoading($formWrapper);
+      this.toggleLoading($form);
     }
   },
 
-  deleteMessage: function(e, data) {
+  deleteMsg: function(e, data) {
     "use strict";
     event.preventDefault();
     var id = data.data.id;
@@ -165,14 +166,14 @@ Hull.define({
       .parents('[data-hull-message-id="'+ id +'"]');
     this.api.delete(id).then(function () {$parent.remove();});
   },
-  
-  deleteConvo: function(e, data) {
+
+  delete: function(e, data) {
     "use strict";
     event.preventDefault();
     var id = data.data.id;
-    this.api.delete(id).then(function () {$('.hull-conversation').html('Conversation deleted');});
+    this.api.delete(id).then(function () {$('.hull-conversation').html('Conversation destroyd');});
   },
-  
+
   notification: function(e, data) {
     "use strict";
     var $notification = this.$el.find('input');
