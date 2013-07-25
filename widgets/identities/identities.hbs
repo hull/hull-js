@@ -1,0 +1,32 @@
+{{#if authHasFailed}}
+  <div class="alert alert-error">
+    Another user is already registered with this identity.
+  </div>
+{{/if}}
+
+{{#if loggedIn}}
+
+<h2>Identities</h2>
+<ul class="unstyled">
+  {{#authServices}}
+  <li>
+    <i class="icon-{{name}}"></i>
+    {{#identity}}{{name}}{{/identity}}
+    {{#if availableAction}}
+    <button data-hull-action="{{availableAction}}" data-hull-provider="{{name}}" class="btn btn-small btn-link">
+      {{actionName}}
+    </button>
+    {{/if}}
+  </li>
+  {{/authServices}}
+  <li>
+    <button data-hull-action="logout" class="btn btn-small btn-link">
+      Sign Out
+    </button>
+  </li>
+</ul>
+
+
+{{else}}
+<div data-hull-widget="login_button@hull"></div>
+{{/if}}
