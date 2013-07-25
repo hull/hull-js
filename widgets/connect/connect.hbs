@@ -1,0 +1,12 @@
+<ul>
+  {{#authServices}}
+  <li>
+    {{name}}
+    {{#if availableAction}}
+      <button data-hull-action="{{availableAction}}" data-hull-provider="{{name}}" class="btn">
+        {{availableAction}}
+      </button>
+    {{/if}}
+  </li>
+  {{/authServices}}
+</ul>

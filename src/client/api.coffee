@@ -190,7 +190,8 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
           app.sandbox.config.entity_id    = data.entity?.id
           app.sandbox.isAdmin             = remoteConfig.access_token?
 
-          app.sandbox.login = (provider, opts, callback=->)->
+
+          app.sandbox.login = (provider, opts={}, callback=->)->
             obj.auth.login.apply(undefined, arguments).then ->
               try
                 me = app.sandbox.data.api.model('me')
@@ -208,6 +209,14 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
               app.core.mediator.emit('hull.auth.logout')
               app.core.mediator.emit('hull.logout')
               core.data.api.model('me').clear()
+
+          app.sandbox.connect = (provider, opts={}, callback=->)->
+            opts.mode = 'connect'
+            app.sandbox.login(provider, opts, callback)
+
+          app.sandbox.disconnect = (provider, callback=->)->
+            core.data.api("me/identities/#{provider}", 'delete').then ->
+              app.sandbox.data.api.model('me').fetch().then callback
 
           for m in ['me', 'app', 'org', 'entity']
             attrs = data[m]
