@@ -20,6 +20,7 @@ Hull.define({
   type: "Hull",
 
   templates: ["likes"],
+  refreshEvents: ['hull.like.**'],
 
   datasources: {
     target: ':id',

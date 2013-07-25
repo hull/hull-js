@@ -25,14 +25,16 @@ Hull.define({
   type: "Hull",
 
   templates: ["like_button"],
+  refreshEvents: ['model.hull.me.change'],
 
   working: false,
 
   datasources: {
-    target: ':id',
+    // target: ':id',
+    target: ":id",
     liked: function(){
       return this.api("me/liked/"+this.options.id);
-    },
+    }
   },
 
   onTargetError: function () {
@@ -41,9 +43,14 @@ Hull.define({
   },
 
   beforeRender:function(data){
-    data.likes = data.target.stats.likes || 0;
-    self.likes = data.likes;
-    self.liked = data.liked;
+    data.likes = this.likes || data.target.stats.likes || 0
+    if(this.liked!==undefined){
+      data.liked = this.liked
+    }
+
+    this.likes = data.likes
+    this.liked = data.liked
+
     return data;
   },
 
@@ -51,27 +58,27 @@ Hull.define({
     if (this.working) {
       return;
     }
-    this.working = true;
+    this.working = false;
     var self=this;
     var method = verb === 'unlike' ? 'delete' : 'post';
-    self.liked=!self.liked;
-    self.liked? self.likes++:self.likes--;
 
-    self.render(self.getTemplate(),{working:true, likes:self.likes, liked:self.liked});
+    self.liked=!self.liked;
+    (self.liked)? self.likes++ : self.likes--;
+
+
+    self.render(self.getTemplate(),{working:self.working, likes:self.likes, liked:self.liked});
 
     //Events should be emitted automatically here so the likes@hull widget
     //can subscribe and refresh itself.
     this.api(this.id + '/likes', method)
     .done(function(likes) {
-      self.likes=likes||0;
-
+      self.sandbox.emit('hull.like.' + self.id);
     }).fail(function(){
-      self.likes--;
+      (self.liked)? self.likes-- : self.likes++;
       self.liked=!self.liked;
-
+      self.render(self.getTemplate(),{working:self.working, liked:self.liked, likes:self.likes});
     }).always(function(){
       self.working=false;
-      self.render(self.getTemplate(),{working:self.working, liked:self.liked, likes:self.likes});
 
     });
   },

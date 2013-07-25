@@ -1,10 +1,10 @@
 /**
- *
+ * ## Conversation Participants
  * List the current participants of a conversation, and allow users to follow/unfollow it
  *
  * ## Example
  *
- *     <div data-hull-widget="conversation_participants@hull" data-hull-id="OBJECT_ID"></div>
+ *     <div data-hull-widget="conversation/participants@hull" data-hull-id="OBJECT_ID"></div>
  *
  * ## Option:
  *
@@ -12,7 +12,7 @@
  *
  * ## Template:
  *
- * - `participants`:
+ * - `participants`: List of current participants a given conversation
  *
  * ## Datasource:
  *
@@ -20,10 +20,9 @@
  *
  * ## Action:
  *
- * - `follow`: Join/follow the current converstion
+ * - `follow`: Join/follow the current conversation
  */
 
-/*global define:true, _:true */
 Hull.define({
   type: 'Hull',
 

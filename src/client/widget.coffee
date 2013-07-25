@@ -1,4 +1,4 @@
-define ['underscore', 'lib/client/datasource', 'lib/client/widget/context', 'lib/utils/promises'], (_, Datasource, Context, promises)->
+define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/context', 'lib/utils/promises'], ($, _, Datasource, Context, promises)->
 
   (app)->
     debug = false
@@ -59,6 +59,8 @@ define ['underscore', 'lib/client/datasource', 'lib/client/widget/context', 'lib
           @actions = if _.isFunction(@actions) then @actions() else @actions
           @actions ?= {}
           @actions.login ?= (e, params)=> @sandbox.login(params.data.provider, params.data)
+          @actions.connect ?= (e, params)=> @sandbox.connect(params.data.provider, params.data)
+          @actions.disconnect ?= (e, params)=> @sandbox.disconnect(params.data.provider)
           @actions.logout ?= => @sandbox.logout()
 
           unless @className?
@@ -176,10 +178,10 @@ define ['underscore', 'lib/client/datasource', 'lib/client/widget/context', 'lib
               @isInitialized = true;
 
             beforeRendering.fail (err)=>
-              console.error("Error in beforeRender", err.message, err)
+              console.error("Error in beforeRender on ", this.options.name,  err.message, err)
               @renderError.call(@, err)
           catch err
-            console.error("Error in beforeRender", err.message, err)
+            console.error("Error in beforeRender on ", this.options.name,  err.message, err)
             @renderError.call(@, err)
 
       trackingData: {}

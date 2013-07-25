@@ -8,19 +8,17 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
       models = _.pick(models, 'me', 'app', 'org')
 
     rawFetch = null
-    emitUserEvent = null
+
     module =
       require:
         paths:
           cookie: 'components/jquery.cookie/jquery.cookie'
-
 
       initialize: (app)->
         core    = app.core
         sandbox = app.sandbox
 
         slice = Array.prototype.slice
-
 
         apiModule = apiModule(app.config)
         apiModule.then (obj)->
@@ -192,22 +190,33 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
           app.sandbox.config.entity_id    = data.entity?.id
           app.sandbox.isAdmin             = remoteConfig.access_token?
 
-          app.sandbox.login = (provider, opts, callback=->)->
+
+          app.sandbox.login = (provider, opts={}, callback=->)->
             obj.auth.login.apply(undefined, arguments).then ->
-              app.core.mediator.emit 'hull.auth.complete'
               try
                 me = app.sandbox.data.api.model('me')
                 me.fetch().then ->
+                  app.core.mediator.emit 'hull.auth.complete', me
                   app.core.mediator.emit('hull.login', me)
               catch err
+                app.core.mediator.emit 'hull.auth.failure', err
                 console.error "Error on auth promise resolution", err
-            , ->
-              app.core.mediator.emit 'hull.auth.failure'
+            , (err)->
+              app.core.mediator.emit 'hull.auth.failure', err
 
           app.sandbox.logout = (callback=->)->
             obj.auth.logout(callback).then ->
+              app.core.mediator.emit('hull.auth.logout')
               app.core.mediator.emit('hull.logout')
               core.data.api.model('me').clear()
+
+          app.sandbox.connect = (provider, opts={}, callback=->)->
+            opts.mode = 'connect'
+            app.sandbox.login(provider, opts, callback)
+
+          app.sandbox.disconnect = (provider, callback=->)->
+            core.data.api("me/identities/#{provider}", 'delete').then ->
+              app.sandbox.data.api.model('me').fetch().then callback
 
           for m in ['me', 'app', 'org', 'entity']
             attrs = data[m]
@@ -225,12 +234,10 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
         initialized
 
       afterAppStart: (app)->
-
         base.me     = rawFetch('me', true);
         base.app    = rawFetch('app', true);
         base.org    = rawFetch('org', true);
 
-        emitUserEvent()
         app.core.mediator.on    'hull.login', clearModelsCache
         app.core.mediator.on    'hull.logout', clearModelsCache
 

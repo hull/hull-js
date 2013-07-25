@@ -1,4 +1,4 @@
-define ['underscore', 'lib/utils/version', 'lib/api/params', 'lib/api/auth', 'easyXDM', 'lib/utils/promises'], (_, version, apiParams, authModule, easyXDM, promises)->
+define ['jquery', 'underscore', 'lib/utils/version', 'lib/api/params', 'lib/api/auth', 'easyXDM', 'lib/utils/promises'], ($, _, version, apiParams, authModule, easyXDM, promises)->
   slice = Array.prototype.slice
 
   # Builds the URL used by easyXDM

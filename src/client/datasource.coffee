@@ -1,4 +1,4 @@
-define ['underscore'], (_)->
+define ['lib/utils/promises', 'underscore'], (promises, _)->
   #
   # Parses the URI to replace placeholders with actual values
   #
@@ -52,7 +52,7 @@ define ['underscore'], (_)->
     # @returns {mixed} May return an object, a Promise most likely or anything else
     #
     fetch: ()->
-      dfd = $.Deferred()
+      dfd = promises.deferred()
       if _.isFunction(@def)
         ret = @def()
         if ret?.promise

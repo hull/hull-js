@@ -7,7 +7,7 @@ if document.location.hash.indexOf("#hull-auth-status-")==0 &&  window.opener && 
   catch e
     console.warn("Error: " + e)
 
-define ['underscore', 'lib/utils/promises', 'lib/utils/version'], (_, promises, version)->
+define ['jquery', 'underscore', 'lib/utils/promises', 'lib/utils/version'], ($, _, promises, version)->
 
   (apiFn, config, authServices=[]) ->
     # Holds the state of the authentication process
@@ -55,7 +55,8 @@ define ['underscore', 'lib/utils/promises', 'lib/utils/version'], (_, promises, 
     generateAuthUrl = (config, provider, opts)->
       auth_params = opts || {}
       auth_params.app_id        = config.appId
-      auth_params.callback_url  = config.callback_url || module.location.toString()
+      # The following is here for backward compatibility. Must be removed at first sight next time
+      auth_params.callback_url  = config.callback_url || config.callbackUrl || module.location.toString()
       auth_params.auth_referer  = module.location.toString()
       auth_params.callback_name = module.createCallback()
       auth_params.version       = version
