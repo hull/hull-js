@@ -1,3 +1,4 @@
+{{#if loggedIn}}
 <ul>
   {{#authServices}}
   <li>
@@ -9,4 +10,12 @@
     {{/if}}
   </li>
   {{/authServices}}
+  <li>
+    <button data-hull-action="logout" class="btn">
+      Logout
+    </button>
+  </li>
 </ul>
+{{else}}
+<div data-hull-widget="login_button@hull"></div>
+{{/if}}
