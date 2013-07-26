@@ -59,8 +59,8 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/cont
           @actions = if _.isFunction(@actions) then @actions() else @actions
           @actions ?= {}
           @actions.login ?= (e, params)=> @sandbox.login(params.data.provider, params.data)
-          @actions.connect ?= (e, params)=> @sandbox.connect(params.data.provider, params.data)
-          @actions.disconnect ?= (e, params)=> @sandbox.disconnect(params.data.provider)
+          @actions.linkIdentity ?= (e, params)=> @sandbox.linkIdentity(params.data.provider, params.data)
+          @actions.unlinkIdentity ?= (e, params)=> @sandbox.unlinkIdentity(params.data.provider)
           @actions.logout ?= => @sandbox.logout()
 
           unless @className?

@@ -1,12 +1,12 @@
 {{#if matchingProviders}}
-  <button data-hull-action="logout" class="btn btn-small btn-link"> 
+  <button data-hull-action="logout" class="btn btn-small btn-link">
     Sign Out
   </button>
 {{else}}
   {{#if loggedOut}}
     {{#loggedOut}}
       <button data-hull-action="login" data-hull-provider="{{.}}" class="btn btn-{{.}}">
-        Sign In with {{classify .}}
+        <i class="icon-{{.}}"></i> Sign In with {{classify .}}
       </button>
     {{/loggedOut}}
   {{/if}}
