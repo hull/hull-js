@@ -1,28 +1,37 @@
 {{#if authHasFailed}}
   <div class="alert alert-error">
     Another user is already registered with this identity.
+    Please <a data-hull-action="logout" class="btn-link btn-inline">sign out</a> first if you want to use it.
   </div>
 {{/if}}
 
 {{#if loggedIn}}
 
+
 <ul class="unstyled">
+  <li>
+    <p>
+      {{me.name}} via {{classify me.main_identity}},
+      <a data-hull-action="logout" class="btn-link btn-inline">
+        Sign Out
+      </a>
+    </p>
+  </li>
   {{#authServices}}
+  {{#if availableAction}}
   <li>
-    <i class="icon-{{name}}"></i>
-    {{#identity}}{{name}}{{/identity}}
-    {{#if availableAction}}
-    <button data-hull-action="{{availableAction}}" data-hull-provider="{{name}}" class="btn btn-small btn-link">
-      {{actionName}}
+    <p>
+    <button data-hull-action="{{availableAction}}" data-hull-provider="{{name}}" class="btn btn-small {{#if identity}}btn-success{{/if}}">
+      <i class="icon-{{name}}"></i>
+      {{classify actionName}}
+      your
+      {{classify name}}
+      account
     </button>
-    {{/if}}
+    </p>
   </li>
+  {{/if}}
   {{/authServices}}
-  <li>
-    <button data-hull-action="logout" class="btn btn-small btn-link">
-      Sign Out
-    </button>
-  </li>
 </ul>
 
 
