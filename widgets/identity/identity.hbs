@@ -5,29 +5,28 @@
 {{/if}}
 
 {{#if matchingProviders}}
-  <div class="hull-identity__signout align-center">
-    {{#me}}
-    {{#if picture}}<img class="img-rounded" src="{{picture}}" alt="{{me.name}}">{{/if}}
-    <h1> {{name}} </h1>
-    {{#if description}}
-      <p>{{description}}</p>
+  <div class='media'>
+    {{#if me.picture}}
+    <div class="pull-left">
+      <img class="media-object img-rounded" src="{{me.picture}}" alt="{{me.name}}" width="70px" height="70px">
+    </div>
     {{/if}}
-    <hr>
-    {{/me}}
-    <button data-hull-action="logout" class="btn btn-small btn-link">
-      Sign Out
-    </button>
-    <p>
-      <small>
-        Logged in with {{join loggedInProviders}}
-      </small>
-    </p>
+    <div class="media-body">
+      <h4 class="media-heading">{{me.name}}</h4>
+      via {{join loggedInProviders}}
+      <br>
+      <a data-hull-action="logout" class="btn-link btn-inline">
+        Sign Out
+      </a>
+    </div>
   </div>
+
 {{else}}
   {{#if loggedOut}}
     <div class="hull-identity__signin">
       {{#loggedOut}}
         <button data-hull-action="login" data-hull-provider="{{.}}" class="btn btn-{{.}}">
+          <i class="icon-{{.}}"></i>
           Sign In with {{classify .}}
         </button>
       {{/loggedOut}}
