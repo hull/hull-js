@@ -28,6 +28,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/cont
       catch err
         console.error("Error in action handler: ", action, err.message, err)
       finally
+        e.preventDefault()
         e.stopPropagation()
         e.stopImmediatePropagation()
 
