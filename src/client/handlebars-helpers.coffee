@@ -1,7 +1,6 @@
-define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars', 'twitter_text'], (moment, _,utils, Handlebars, twttr)->
+define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars'], (moment, _,utils, Handlebars)->
 
   (app)->
-
     __seq = new Date().getTime()
 
     HandlebarsHelpers = {}
