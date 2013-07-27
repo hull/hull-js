@@ -1,6 +1,7 @@
 define({
   require: {
     paths: {
+      twitter_text:   'components/twitter-text/twitter-text',
       moment:         'components/moment/moment',
       string:         'components/underscore.string/lib/underscore.string',
       cookie:         'components/jquery.cookie/jquery.cookie',

@@ -1,4 +1,4 @@
-define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars'], (moment, _,utils, Handlebars)->
+define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars', 'twitter_text'], (moment, _,utils, Handlebars, twttr)->
 
   (app)->
 
@@ -48,6 +48,23 @@ define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars'], (mo
     HandlebarsHelpers.fromNow = (date)->
       return unless date?
       moment(date).fromNow()
+
+    ###*
+     * Auto-links URLs in text.
+     * Uses [twitter-text.js](https://github.com/twitter/twitter-text-js) behind the scenes.
+     * 
+     *     snippet="You have to try http://hull.io/try"
+     *
+     * 
+     *     <p class='content'>{{autoLink snippet}}</p>
+     *     => <p class='content'>You have to try <a href="http://hull.io/try">http://hull.io/try</a></p>
+     *
+     * @param  {String} date The content
+     * @return {String}      The content with clickable URLs
+    ###
+    HandlebarsHelpers.autoLink = (content)->
+      return unless content?
+      twttr.txt.autoLink(content)
 
     ###*
      * Return a formatted date
