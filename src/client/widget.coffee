@@ -47,6 +47,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/cont
         @api          = @sandbox.data.api
         @datasources  = _.extend {}, default_datasources, @datasources, options.datasources
         @refresh     ?= _.throttle(@render, 200)
+        @widgetName   = options.name
 
         for k, v of @options
           options[k] ||= v
@@ -177,7 +178,8 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/cont
               _.defer(@afterRender.bind(@, data))
               _.defer((-> @sandbox.start(@$el)).bind(@))
               @isInitialized = true;
-
+              # debugger
+              @emitLifecycleEvent('render')
             beforeRendering.fail (err)=>
               console.error("Error in beforeRender on ", this.options.name,  err.message, err)
               @renderError.call(@, err)
@@ -186,6 +188,10 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/cont
             @renderError.call(@, err)
 
       trackingData: {}
+
+      emitLifecycleEvent: (name)->
+        @sandbox.emit("hull.#{@widgetName.replace('/','.')}.#{name}",{cid:@cid})
+
 
       track: (name, data = {}) ->
         defaultData = _.result(this, 'trackingData')

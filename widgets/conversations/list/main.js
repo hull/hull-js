@@ -47,7 +47,7 @@ Hull.define({
   },
 
   initialize: function() {
-    this.sandbox.on('hull.conversation.reload', function(id) {
+    this.sandbox.on('hull.conversations.select', function(id) {
       this.options.id = id;
       this.render();
     }, this)
