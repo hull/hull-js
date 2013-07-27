@@ -62,9 +62,9 @@
       }
     },
     "grunt-hull-dox": {
-      "version": "0.2.1",
+      "version": "0.2.2",
       "from": "grunt-hull-dox@git://github.com/hull/grunt-hull-dox.git",
-      "resolved": "git://github.com/hull/grunt-hull-dox.git#2cf5e66f16b9db941fd9ebe460debccb4cccbe85",
+      "resolved": "git://github.com/hull/grunt-hull-dox.git#7f23ada359cdd2929d7165d4ab1a9c3dfecfd22f",
       "dependencies": {
         "dox": {
           "version": "0.4.3",
