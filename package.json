@@ -27,7 +27,8 @@
     "grunt-coverjs": "git://github.com/hull/grunt-coverjs.git",
     "plato": "~0.5.0",
     "grunt-plato": "~0.2.0",
-    "grunt-wrap": "~0.2.0"
+    "grunt-wrap": "~0.2.0",
+    "git-rev": "~0.2.1"
   },
   "scripts": {
     "postinstall": "$(npm bin)/bower install",

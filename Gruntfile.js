@@ -265,16 +265,27 @@ module.exports = function (grunt) {
   };
 
   helpers.appendAWSConfig(gruntConfig);
-
   grunt.initConfig(gruntConfig);
 
-  // default build task
   grunt.registerTask('do_test', ['cover', 'plato', 'mocha']);
   grunt.registerTask('test', ['dist:api', 'dist:client', 'dist:remote', 'do_test']);
   grunt.registerTask('default', ['connect', 'test', 'dist:widgets', 'watch']);
-  grunt.registerTask('deploy', ['dist', 'describe', 's3']);
   grunt.registerTask('reset', ['clean:reset']);
 
-  //custom Tasks
+  grunt.registerTask('deploy', ['dist', 'describe', 's3:prod']);
+
+  var git = require('git-rev');
+
+  grunt.registerTask('staging', 'Put files in Staging', function(){
+    var done = this.async();
+    git.branch(function(branch){
+      gruntConfig.GIT_BRANCH = branch;
+      grunt.initConfig(gruntConfig);
+      grunt.task.run('dist', 'describe', 's3:staging');
+      done();
+    });
+  })
+
   require('./.grunt/customTasks')(grunt);
+
 };
