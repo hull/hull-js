@@ -47,10 +47,16 @@ Hull.define({
   },
 
   initialize: function() {
-    this.sandbox.on('hull.conversations.select', function(id) {
+    this.sandbox.on('hull.conversations.*', function(id) {
       this.options.id = id;
       this.render();
-    }, this)
+      this.highlight(id);
+    }, this);
+
+    this.sandbox.on('hull.conversation.thread.delete', function() {
+     this.render();
+     this.sandbox.emit('hull.conversation.select', null);
+    }, this);
   },
   
   beforeRender: function(data, errors){
@@ -58,10 +64,14 @@ Hull.define({
     return data;
   },
   
-  select: function(e, action) {
-    var selected = action.el;
+  highlight: function(id){
+    var selected = this.$el.find('[data-hull-id="'+id+'"]');
     this.$el.find('[data-hull-action="select"]').not(selected).removeClass('selected')
-    selected.addClass('selected')
+    selected.addClass('selected');
+  },
+
+  select: function(e, action) {
+    this.highlight(action.data.id);
     this.sandbox.emit('hull.conversation.select', action.data.id);
   }
 });
