@@ -171,7 +171,10 @@ Hull.define({
     "use strict";
     event.preventDefault();
     var id = data.data.id;
-    this.api.delete(id).then(function () {$('.hull-conversation').html('Conversation destroyd');});
+    var self = this;
+    this.api.delete(id).then(function () {
+      self.sandbox.emit('hull.conversation.thread.delete', {id:id, cid:self.cid});
+    });
   },
 
   notification: function(e, data) {
