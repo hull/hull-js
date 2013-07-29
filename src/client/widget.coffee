@@ -205,4 +205,4 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/cont
         app: new Datasource 'app', app.core.data.api
         org: new Datasource 'org', app.core.data.api
       debug = app.config.debug
-      app.core.registerWidgetType("Hull", HullWidget.prototype)
+      app.components.addType("Hull", HullWidget.prototype)

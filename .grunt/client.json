@@ -34,7 +34,7 @@
       "text",
       "aura/ext/debug",
       "aura/ext/mediator",
-      "aura/ext/widgets",
+      "aura/ext/components",
       "lib/hull"
       ],
     "out": "dist/<%= PKG_VERSION %>/hull.js",

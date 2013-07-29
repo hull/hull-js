@@ -45,7 +45,7 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
         names = [names] if _.isString(names)
         dfd   = app.core.data.deferred()
         ret = {}
-        widgetName = ref.replace('__widget__$', '').split('@')[0]
+        widgetName = ref.replace('__component__$', '').split('@')[0]
         for name in names
           tplDef = _getTemplateDefinition name, ref, widgetName, app.core.dom.find
           if tplDef

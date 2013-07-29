@@ -30,7 +30,7 @@
       "analytics",
       "aura/ext/debug",
       "aura/ext/mediator",
-      "aura/ext/widgets",
+      "aura/ext/components",
       "lib/hull",
       "lib/hull-remote"
     ],

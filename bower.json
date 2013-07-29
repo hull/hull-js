@@ -3,8 +3,8 @@
   "version": "develop",
   "main": "./lib/hull.js",
   "dependencies": {
-    "jquery": "1.9.1",
-    "aura": "git://github.com/hull/aura.git#0.9.0-pre.1",
+    "jquery": "1.10.*",
+    "aura": "0.9.*",
     "backbone": "0.9.9",
     "easyXDM": "2.4.17",
     "require-handlebars-plugin": "0.4.0",

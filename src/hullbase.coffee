@@ -21,7 +21,7 @@ Hull.widget     = (widgetName, widgetDef)->
   throw "The widget #{widgetName} must have a definition" unless Object.prototype.toString.apply(widgetDef) == '[object Object]'
 
   widgetDef.type ?= "Hull"
-  define("__widget__$#{widgetName}@default", widgetDef)
+  define("__component__$#{widgetName}@default", widgetDef)
   return widgetDef
 
 define ['lib/utils/version', 'underscore'], (version, _) ->

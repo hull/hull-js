@@ -10,7 +10,7 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
       app.core.mediator.setMaxListeners(100)
 
     afterAppStart: (app)->
-      sb = app.createSandbox();
+      sb = app.sandboxes.create();
       _.extend(HullDef, sb);
       for evt, cbArray of evtPool
         _.each cbArray, (cb)->

@@ -77,8 +77,8 @@ module.exports = function (grunt) {
     },
     dox: {
       files: {
-        baseDir: 'widgets',
-        src: 'widgets/**/main.js',
+        baseDir: 'aura_components',
+        src: 'aura_components/**/main.js',
         dest: 'dist/<%= PKG_VERSION %>/docs'
       }
     },
@@ -156,25 +156,25 @@ module.exports = function (grunt) {
           include: [
             'jquery.fileupload'
           ],
-          out: 'tmp/widgets/upload/deps/jquery.fileupload.js'
+          out: 'tmp/aura_components/upload/deps/jquery.fileupload.js'
         }
       },
       registration: {
         options: {
           namespace: 'Hull',
-          paths: { h5f: 'widgets/registration/h5f' },
+          paths: { h5f: 'aura_components/registration/h5f' },
           shim: { h5f: { exports: 'H5F' } },
           include: ['h5f'],
-          out: 'tmp/widgets/registration/deps.js'
+          out: 'tmp/aura_components/registration/deps.js'
         }
       },
       dox: {
         options: {
           namespace: 'Hull',
-          paths: { prism: 'widgets/dox/dox/prism' },
+          paths: { prism: 'aura_components/dox/dox/prism' },
           shim: { prism: { exports: 'Prism' } },
           include: ['prism'],
-          out: 'tmp/widgets/dox/dox/deps.js'
+          out: 'tmp/aura_components/dox/dox/deps.js'
         }
       }
     },
@@ -185,7 +185,7 @@ module.exports = function (grunt) {
     },
     watch: {
       widgets: {
-        files: ['widgets/**/*'],
+        files: ['aura_components/**/*'],
         tasks: ['hull_widgets']
       },
       remote: {
@@ -211,7 +211,7 @@ module.exports = function (grunt) {
     },
     hull_widgets: {
       hull: {
-        src: 'widgets',
+        src: 'aura_components',
         before: ['requirejs:upload', 'requirejs:registration', 'requirejs:dox'],
         dest: 'dist/<%= PKG_VERSION%>',
         optimize: !grunt.option('dev')
