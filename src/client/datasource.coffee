@@ -13,7 +13,7 @@ define ['lib/utils/promises', 'underscore'], (promises, _)->
     uri
 
   #
-  # Helps managing the various definitions a widget datasource can take
+  # Helps managing the various definitions a component datasource can take
   # Sets decent defaults, validates input, and sends requests to the API
   #
   class Datasource
@@ -77,4 +77,3 @@ define ['lib/utils/promises', 'underscore'], (promises, _)->
       dfd.promise()
 
   Datasource
-

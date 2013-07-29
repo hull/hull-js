@@ -1,6 +1,6 @@
 {{#unless authorized.provider}}
     <small>You need to sign in.</small>
-    <div data-hull-widget="login_button@hull" data-hull-provider="{{authorized.provider_name}}"></div>
+    <div data-hull-component="login_button@hull" data-hull-provider="{{authorized.provider_name}}"></div>
 {{else}}
   {{#unless authorized.permissions}}
     You need to give permissions to show these images.

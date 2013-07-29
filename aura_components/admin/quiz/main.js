@@ -1,7 +1,7 @@
 /**
  * ## Quiz Admin
  *
- * This widget allows you to edit and add quizzes in your application.
+ * This component allows you to edit and add quizzes in your application.
  *
  * ### Templates
  *

@@ -1,15 +1,15 @@
 /**
- * ## Flagging widget
+ * ## Flagging component
  *
  * Allows a user to flag an object considered as inappropriate
  *
  * ### Example
  *
- *     <div data-hull-widget="flag@hull" data-hull-id="HULL_OBJECT_ID"></div>
+ *     <div data-hull-component="flag@hull" data-hull-id="HULL_OBJECT_ID"></div>
  *
  * or if you want to reference any other Entity (for example the id of a product)
  *
- *     <div data-hull-widget="flag@hull" data-hull-uid="YOUR_OBJECT_ID"></div>
+ *     <div data-hull-component="flag@hull" data-hull-uid="YOUR_OBJECT_ID"></div>
  *
  * ### Option:
  *

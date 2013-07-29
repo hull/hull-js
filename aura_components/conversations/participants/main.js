@@ -4,7 +4,7 @@
  *
  * ## Example
  *
- *     <div data-hull-widget="conversation/participants@hull" data-hull-id="OBJECT_ID"></div>
+ *     <div data-hull-component="conversation/participants@hull" data-hull-id="OBJECT_ID"></div>
  *
  * ## Option:
  *

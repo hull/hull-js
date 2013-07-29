@@ -5,7 +5,7 @@
  *
  * ### Example
  *
- *     <div data-hull-widget="admin/flags@hull"></div>
+ *     <div data-hull-component="admin/flags@hull"></div>
  *
  * ### Options:
  *

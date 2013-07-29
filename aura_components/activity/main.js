@@ -3,17 +3,17 @@
  *
  * Activity streams from the actions on your app.
  *
- * This widget contains the translation map from the Activty Streams format to your own choice of wording.
- * Everything is stored in the "map" hash in the widget.
+ * This component contains the translation map from the Activty Streams format to your own choice of wording.
+ * Everything is stored in the "map" hash in the component.
  *
  * Every activity is made of an `actor`, a `verb`, an `object`, and a `target`
  *
- * For now, you have to copy the code for this widget and change it to fit it to your application.
+ * For now, you have to copy the code for this component and change it to fit it to your application.
  * We will make this easier in the future.
  *
  * ### Example
  *
- *     <div data-hull-widget="activity@hull" data-hull-per-page="10"></div>
+ *     <div data-hull-component="activity@hull" data-hull-per-page="10"></div>
  *
  * ### Options
  *

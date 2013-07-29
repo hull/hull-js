@@ -6,9 +6,9 @@
  *
  * ### Examples
  *
- *     <div data-hull-widget="list_button@hull" data-hull-id="app" data-hull-list-name="favorites"></div>
- *     <div data-hull-widget="list_button@hull" data-hull-id="HULL_ID" data-hull-list-name="favorites"></div>
- *     <div data-hull-widget="list_button@hull" data-hull-uid="ANY_UNIQUE_ID" data-hull-list-name="favorites"></div>
+ *     <div data-hull-component="list_button@hull" data-hull-id="app" data-hull-list-name="favorites"></div>
+ *     <div data-hull-component="list_button@hull" data-hull-id="HULL_ID" data-hull-list-name="favorites"></div>
+ *     <div data-hull-component="list_button@hull" data-hull-uid="ANY_UNIQUE_ID" data-hull-list-name="favorites"></div>
  *
  * ### Options
  *

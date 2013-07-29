@@ -5,7 +5,7 @@
  *
  * ### Example
  *
- *     <div data-hull-widget="admin/achievements@hull"></div>
+ *     <div data-hull-component="admin/achievements@hull"></div>
  *
  * ### Template
  *
@@ -17,7 +17,7 @@
  *
  * ### Related
  *
- * - Widget `achieve_button` to win a badge from an achievement
+ * - Component `achieve_button` to win a badge from an achievement
  * - Achievements/Badges API
 */
 Hull.define({

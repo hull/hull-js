@@ -24,8 +24,8 @@ define(['chai', 'sinonChai'], function(chai, sinonChai) {
     'spec/lib/hullbase_spec',
     'spec/lib/hull_spec',
     'spec/client/datasource_spec',
-    'spec/client/widget_spec',
-    'spec/client/widget/context_spec',
+    'spec/client/component_spec',
+    'spec/client/component/context_spec',
     'spec/lib/extensions/auth_spec',
     'spec/client/api/params_spec'
   ];

@@ -7,9 +7,9 @@
  *
  * ### Examples
  *
- *     <div data-hull-widget="like_button@hull" data-hull-id="HULL_ID"></div>
- *     <div data-hull-widget="like_button@hull" data-hull-id="YOUR_UNIQUE_ID"></div>
- *     <div data-hull-widget="like_button@hull" data-hull-id="ANY_URL"></div>
+ *     <div data-hull-component="like_button@hull" data-hull-id="HULL_ID"></div>
+ *     <div data-hull-component="like_button@hull" data-hull-id="YOUR_UNIQUE_ID"></div>
+ *     <div data-hull-component="like_button@hull" data-hull-id="ANY_URL"></div>
  *
  * ### Options
  *
@@ -68,7 +68,7 @@ Hull.define({
 
     self.render(self.getTemplate(),{working:self.working, likes:self.likes, liked:self.liked});
 
-    //Events should be emitted automatically here so the likes@hull widget
+    //Events should be emitted automatically here so the likes@hull component
     //can subscribe and refresh itself.
     this.api(this.id + '/likes', method)
     .done(function(likes) {

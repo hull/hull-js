@@ -1,10 +1,10 @@
 "use strict";
-define(['lib/client/widget/context', 'jquery'], function (Context, $) {
+define(['lib/client/component/context', 'jquery'], function (Context, $) {
   var promises = {
     deferred: $.Deferred,
     when: $.when
   };
-  describe('Widget context builder', function () {
+  describe('Component context builder', function () {
     it('should be a constructor', function () {
       Context.should.be.a('function');
     });

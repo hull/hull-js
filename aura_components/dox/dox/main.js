@@ -4,13 +4,13 @@ Hull.define(['prism'], function(){
 
     templates: [
       'dox',
-      'widget',
+      'component',
       'template'
     ],
 
     datasources: {
       dox: function() {
-        return $.getJSON(this.getWidgetSource(this.options.inspect));
+        return $.getJSON(this.getComponentSource(this.options.inspect));
       }
     },
 
@@ -27,8 +27,8 @@ Hull.define(['prism'], function(){
       }, this);
 
       var self = this;
-      this.sandbox.util._.each(dox.widget, function(widget){
-        widget.name = self.sandbox.util._.find(widget.tags, function(tag){
+      this.sandbox.util._.each(dox.component, function(component){
+        component.name = self.sandbox.util._.find(component.tags, function(tag){
           return (tag.type === 'name') ? true : false;
         });
       });
@@ -41,13 +41,13 @@ Hull.define(['prism'], function(){
       Prism.highlightAll();
     },
 
-    getWidgetSource: function(widget) {
+    getComponentSource: function(component) {
       var source = [];
 
       source.push(this.options.source || 'http://hull-js.s3.amazonaws.com/');
       source.push(Hull.version);
       source.push('/docs/');
-      source.push(widget.replace(/^\s+|\s+$/g, ''));
+      source.push(component.replace(/^\s+|\s+$/g, ''));
       source.push('/main.json');
 
       return source.join('');

@@ -4,7 +4,7 @@
  *
  * ## Examples
  *
- *     <div data-hull-widget="conversations/list@hull"></div>
+ *     <div data-hull-component="conversations/list@hull"></div>
  *
  * ## Option:
  * - `visibility`: Optional, the visibility level

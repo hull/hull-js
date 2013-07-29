@@ -6,7 +6,7 @@
  *
  * ### Example
  *
- *     <div data-hull-widget="friends@hull"></div>
+ *     <div data-hull-component="friends@hull"></div>
  *
  * ### Options
  *

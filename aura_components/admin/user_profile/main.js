@@ -6,7 +6,7 @@
  *
  * ### Example
  *
- *     <div data-hull-widget="admin/user_profile@hull"></div>
+ *     <div data-hull-component="admin/user_profile@hull"></div>
  *
  * ### Options
  *

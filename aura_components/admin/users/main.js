@@ -3,12 +3,12 @@
  * ## User list
  *
  * Displays the list of the users of your app.
- * The access to this widget is limited to the administrators, you will need the Spplication Secret
+ * The access to this component is limited to the administrators, you will need the Spplication Secret
  * to have access to the data.
  *
  * ### Example
  *
- *     <div data-hull-widget="admin/users@hull" app-id="app"></div>
+ *     <div data-hull-component="admin/users@hull" app-id="app"></div>
  *
  * ### Options
  *

@@ -1,4 +1,4 @@
-define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/context', 'lib/utils/promises'], ($, _, Datasource, Context, promises)->
+define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/context', 'lib/utils/promises'], ($, _, Datasource, Context, promises)->
 
   (app)->
     debug = false
@@ -17,7 +17,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/cont
         fn = @actions[action] || @["#{action}Action"]
         fn = @[fn] if _.isString(fn)
         unless _.isFunction(fn)
-          throw new Error("Can't find action #{action} on this Widget")
+          throw new Error("Can't find action #{action} on this component")
         data = {}
         for k,v of source.data()
           do ->
@@ -32,8 +32,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/cont
         e.stopPropagation()
         e.stopImmediatePropagation()
 
-
-    class HullWidget extends app.core.mvc.View
+    class HullComponent extends app.core.mvc.View
       actions: {}
 
       templates: []
@@ -43,11 +42,11 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/cont
       isInitialized: false
 
       constructor: (options)->
-        @ref          = options.ref
-        @api          = @sandbox.data.api
-        @datasources  = _.extend {}, default_datasources, @datasources, options.datasources
-        @refresh     ?= _.throttle(@render, 200)
-        @widgetName   = options.name
+        @ref = options.ref
+        @api = @sandbox.data.api
+        @datasources = _.extend {}, default_datasources, @datasources, options.datasources
+        @refresh ?= _.throttle(@render, 200)
+        @componentName = options.name
 
         for k, v of @options
           options[k] ||= v
@@ -66,7 +65,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/cont
           @actions.logout ?= => @sandbox.logout()
 
           unless @className?
-            @className = "hull-widget"
+            @className = "hull-component"
             @className += " hull-#{@namespace}" if @namespace?
 
           _.each @datasources, (ds, i)=>
@@ -75,7 +74,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/cont
 
           @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
         catch e
-          console.error("Error loading HullWidget", e.message)
+          console.error("Error loading HullComponent", e.message)
         sb = @sandbox
         getId = ()->
           return @id if @id
@@ -122,11 +121,11 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/cont
             handler = @["on#{_.string.capitalize(_.string.camelize(k))}Error"]
             ctx.addDatasource(k, ds.fetch(), handler).then (res)=>
               @data[k] = res
-          widgetDeferred = @sandbox.data.when.apply(undefined, promiseArray)
+          componentDeferred = @sandbox.data.when.apply(undefined, promiseArray)
           templateDeferred = @sandbox.template.load(@templates, @ref)
           templateDeferred.done (tpls)=>
             @_templates     = tpls
-          readyDfd = promises.when(widgetDeferred, templateDeferred)
+          readyDfd = promises.when(componentDeferred, templateDeferred)
           readyDfd.fail (err)=>
             console.error("Error in Building Render Context", err.message, err)
             @renderError.call(@, err.message, err)
@@ -162,7 +161,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/cont
       # Call beforeRender
       # doRender
       # afterRender
-      # Start nested widgets...
+      # Start nested components...
       render: (tpl, data)=>
         ctxPromise = @buildContext.call(@)
         ctxPromise.fail (err)->
@@ -190,13 +189,12 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/cont
       trackingData: {}
 
       emitLifecycleEvent: (name)->
-        @sandbox.emit("hull.#{@widgetName.replace('/','.')}.#{name}",{cid:@cid})
-
+        @sandbox.emit("hull.#{@componentName.replace('/','.')}.#{name}",{cid:@cid})
 
       track: (name, data = {}) ->
         defaultData = _.result(this, 'trackingData')
         defaultData = if _.isObject(defaultData) then defaultData else {}
-        data = _.extend { id: @id, widget: @options.name }, defaultData, data
+        data = _.extend { id: @id, component: @options.name }, defaultData, data
         @sandbox.track(name, data)
 
     (app)->
@@ -205,4 +203,4 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/widget/cont
         app: new Datasource 'app', app.core.data.api
         org: new Datasource 'org', app.core.data.api
       debug = app.config.debug
-      app.components.addType("Hull", HullWidget.prototype)
+      app.components.addType("Hull", HullComponent.prototype)

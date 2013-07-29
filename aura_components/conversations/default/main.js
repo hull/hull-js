@@ -1,11 +1,11 @@
 /**
  * ## Conversation Default
- * This widget will default to load the first conversation that comes back for the subject. 
+ * This component will default to load the first conversation that comes back for the subject. 
  * If none returns, it will create a default conversation for you.
  *
  * ## Example
  *
- *     <div data-hull-widget="conversations/default@hull" data-hull-id="OBJECT_ID"></div>
+ *     <div data-hull-component="conversations/default@hull" data-hull-id="OBJECT_ID"></div>
  *
  * ## Option:
  *
@@ -13,7 +13,7 @@
  *
  * ## Template:
  *
- * - `default`: Renders a conversation widget
+ * - `default`: Renders a conversation component
  *
  * ## Datasource:
  *
@@ -22,7 +22,7 @@
  */
 
 /*global define:true, _:true */
-Hull.widget('default', {
+Hull.component('default', {
   templates: ['default'],
 
   refreshEvents: ['model.hull.me.change'],

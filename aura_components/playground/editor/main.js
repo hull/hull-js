@@ -7,7 +7,7 @@ Hull.define({
 
   initialize: function() {
     if (typeof CodeMirror === 'undefined') {
-      throw 'Load CodeMirror before using this widget.';
+      throw 'Load CodeMirror before using this component.';
     }
 
     this.sandbox.on('hull.playground.load', this.sandbox.util._.bind(function(code) {

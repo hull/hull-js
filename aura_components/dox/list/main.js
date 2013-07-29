@@ -7,12 +7,12 @@ Hull.define({
   },
 
   datasources: {
-    widgets: function() {
+    components: function() {
       return $.getJSON(this.options.source+'index.json');
     }
   },
   beforeRender: function(data) {
-    data.widgets = data.widgets[0].widgets;
+    data.components = data.components[0].components;
     data.source = this.options.source;
     return data;
   }

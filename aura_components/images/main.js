@@ -5,7 +5,7 @@
  *
  * ### Example
  *
- *     <div data-hull-widget="images@hull"></div>
+ *     <div data-hull-component="images@hull"></div>
  *
  * ### Options
  *

@@ -1,7 +1,7 @@
 /**
- * ## Reset widget
+ * ## Reset component
  *
- * This widget lets you delete entities, their associated comments, likes, reviews, and activity feed entries.
+ * This component lets you delete entities, their associated comments, likes, reviews, and activity feed entries.
  *
  */
 Hull.define({

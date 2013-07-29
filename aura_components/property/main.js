@@ -6,7 +6,7 @@
  * ### Examples
  *
  *     <div
- *          data-hull-widget="property@hull"
+ *          data-hull-component="property@hull"
  *          data-hull-id="me"
  *          data-hull-property="name"
  *          data-hull-default-text="Not found"
@@ -21,7 +21,7 @@
  *
  * ### Template
  *
- * - `property`: Displays the property with no markup. Markup must be in the parents widget
+ * - `property`: Displays the property with no markup. Markup must be in the parents component
  *   for easier customization
  *
  */

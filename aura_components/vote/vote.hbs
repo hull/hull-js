@@ -5,7 +5,7 @@
       <button class="btn btn-tiny {{outputIf vote.rating -1 'btn-success'}} dropdown" data-hull-action='{{outputIf vote.rating -1 'unvote' 'downvote'}}'><span class='caret'></span></button>
     </div>
   {{else}}
-    <div data-hull-widget="login_button@hull"></div>
+    <div data-hull-component="login_button@hull"></div>
   {{/if}}
   <small class='result'>▲{{split.yes}}</small>
   <small class='result'>▼{{split.no}}</small>

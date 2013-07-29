@@ -3,13 +3,13 @@
  *
  * A button that lets your users win a badge for an achievement you've previously defined.
  *
- * Basically, the widget works as follows: specify the secret of the achievemnt at widget declaration, and the achievement will be unlockable immediately.
+ * Basically, the component works as follows: specify the secret of the achievemnt at component declaration, and the achievement will be unlockable immediately.
  *
  * Using server-side hooks, you can also build personal and restricted badges, like badges that require a certain action to be won. See the [hooks documentation]() to discover how they work.
  *
  * ### Example
  *
- *     <div data-hull-widget="achieve_button@hull" data-hull-id="ACHIEVEMENT_ID"></div>
+ *     <div data-hull-component="achieve_button@hull" data-hull-id="ACHIEVEMENT_ID"></div>
  *
  * ### Options
  *
@@ -26,7 +26,7 @@
  *
  * ### Related
  *
- * - Widget `admin/achievements` to create achievements
+ * - Component `admin/achievements` to create achievements
  * - Achievements/Badges API
 */
 Hull.define({

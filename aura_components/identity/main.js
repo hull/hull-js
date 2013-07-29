@@ -6,11 +6,11 @@
  *
  * ### Examples
  *
- *     <div data-hull-widget="identity@hull"></div>
- *     <div data-hull-widget="identity@hull" data-hull-provider="instagram"></div>
- *     <div data-hull-widget="identity@hull" data-hull-provider="facebook"></div>
- *     <div data-hull-widget="identity@hull" data-hull-provider="github"></div>
- *     <div data-hull-widget="identity@hull" data-hull-provider="github,facebook"></div>
+ *     <div data-hull-component="identity@hull"></div>
+ *     <div data-hull-component="identity@hull" data-hull-provider="instagram"></div>
+ *     <div data-hull-component="identity@hull" data-hull-provider="facebook"></div>
+ *     <div data-hull-component="identity@hull" data-hull-provider="github"></div>
+ *     <div data-hull-component="identity@hull" data-hull-provider="github,facebook"></div>
  *
  * ### Options
  *

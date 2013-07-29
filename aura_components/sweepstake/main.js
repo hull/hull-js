@@ -6,11 +6,11 @@
  *
  * A player can play once a day provided he or she loses at each attempt. A player that wins the prize will not be allowed to play the game anymore.
  *
- * To create a sweepstake, use the `admin/sweepstake@hull` widget which will let you create a sweepstake and add prizes to it.
+ * To create a sweepstake, use the `admin/sweepstake@hull` component which will let you create a sweepstake and add prizes to it.
  *
  * ### Example
  *
- *     <div data-hull-widget="sweepstake@hull"  data-hull-id="SWEEPSTAKE_ID"></div>
+ *     <div data-hull-component="sweepstake@hull"  data-hull-id="SWEEPSTAKE_ID"></div>
  *
  * ### Options
  *

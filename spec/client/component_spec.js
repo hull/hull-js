@@ -1,17 +1,17 @@
   /*global describe:true, it:true, before: true, sinon: true, define: true */
 
 define(['aura/aura'], function(aura) {
-  describe('Widget', function() {
+  describe('Component', function() {
     var app;
-    var Widget;
-    var widget;
+    var Component;
+    var component;
 
-    function createWidgetInstance(properties) {
+    function createComponentInstance(properties) {
       var Constructor;
       if (typeof properties === 'object') {
-        Constructor = Widget.extend(properties);
+        Constructor = Component.extend(properties);
       } else {
-        Constructor = Widget;
+        Constructor = Component;
       }
 
       var w = new Constructor({ ref: 'fake_ref' });
@@ -29,45 +29,45 @@ define(['aura/aura'], function(aura) {
       app = aura({ appId: 'fake_app', orgUrl: 'fake_org' });
       app.use(apiMock);
       app.use('aura-extensions/aura-backbone');
-      app.use('lib/client/widget');
+      app.use('lib/client/component');
       app.start().done(function() {
-        var sandbox = app.createSandbox();
+        var sandbox = app.sandboxes.create();
         sandbox.config = { debug: false };
         sandbox.template = {
           load: function () {
             return $.Deferred();
           }
         };
-        Widget = app.core.Widgets.Hull.extend({ sandbox: sandbox });
+        Component = app.core.Components.Hull.extend({ sandbox: sandbox });
         done();
       });
     });
 
     beforeEach(function() {
-      widget = createWidgetInstance();
+      component = createComponentInstance();
     });
 
     describe('#track', function() {
       var spy;
       beforeEach(function() {
-        spy = widget.sandbox.track = sinon.spy();
+        spy = component.sandbox.track = sinon.spy();
       });
 
       it('should be defined', function() {
-        widget.track.should.be.a('function');
+        component.track.should.be.a('function');
       });
 
       it('should call sandbox.track', function() {
-        widget.track('test');
+        component.track('test');
         spy.should.have.been.calledWith('test');
       });
 
       describe('when trackingData is an object', function() {
         it('should extend data with trackingData', function() {
-          var widget = createWidgetInstance({ trackingData: { foo: 'bar' } });
-          spy = widget.sandbox.track = sinon.spy();
+          var component = createComponentInstance({ trackingData: { foo: 'bar' } });
+          spy = component.sandbox.track = sinon.spy();
 
-          widget.track('test');
+          component.track('test');
           var trackingData = spy.args[0][1];
 
           trackingData.should.have.property('foo', 'bar');
@@ -76,26 +76,26 @@ define(['aura/aura'], function(aura) {
 
       describe('when trackingData is a function', function() {
         it('should extend data with object returned by trackingData', function() {
-          var widget = createWidgetInstance({
+          var component = createComponentInstance({
             trackingData: function() {
               return { foo: 'bar' };
             }
           });
-          spy = widget.sandbox.track = sinon.spy();
+          spy = component.sandbox.track = sinon.spy();
 
-          widget.track('test');
+          component.track('test');
           var trackingData = spy.args[0][1];
 
           trackingData.should.have.property('foo', 'bar');
         });
       });
 
-      it('should extend data with widget id and name', function() {
-        widget.track('test', { foo: 'bar' });
+      it('should extend data with component id and name', function() {
+        component.track('test', { foo: 'bar' });
         var trackingData = spy.args[0][1];
         trackingData.should.deep.equal({
           id: 'fake_id',
-          widget: 'fake_name',
+          component: 'fake_name',
           foo: 'bar'
         });
       });

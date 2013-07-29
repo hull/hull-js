@@ -6,9 +6,9 @@
  *
  * ### Examples
  *
- *     <div data-hull-widget="vote_buttons@hull" data-hull-id="HULL_ID"></div>
- *     <div data-hull-widget="vote_buttons@hull" data-hull-id="YOUR_UNIQUE_ID"></div>
- *     <div data-hull-widget="vote_buttons@hull" data-hull-id="ANY_URL"></div>
+ *     <div data-hull-component="vote_buttons@hull" data-hull-id="HULL_ID"></div>
+ *     <div data-hull-component="vote_buttons@hull" data-hull-id="YOUR_UNIQUE_ID"></div>
+ *     <div data-hull-component="vote_buttons@hull" data-hull-id="ANY_URL"></div>
  *
  * ### Options
  *

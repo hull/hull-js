@@ -2,15 +2,15 @@
  * ## Login button
  *
  * Allow users to log in with auth services that you have hooked on your app.
- * For a more complete widget, look at the Identity widget.
+ * For a more complete component, look at the Identity component.
  *
  * ### Examples
  *
- *     <div data-hull-widget="login_button@hull"></div>
- *     <div data-hull-widget="login_button@hull" data-hull-provider="instagram"></div>
- *     <div data-hull-widget="login_button@hull" data-hull-provider="facebook"></div>
- *     <div data-hull-widget="login_button@hull" data-hull-provider="github"></div>
- *     <div data-hull-widget="login_button@hull" data-hull-provider="github,facebook"></div>
+ *     <div data-hull-component="login_button@hull"></div>
+ *     <div data-hull-component="login_button@hull" data-hull-provider="instagram"></div>
+ *     <div data-hull-component="login_button@hull" data-hull-provider="facebook"></div>
+ *     <div data-hull-component="login_button@hull" data-hull-provider="github"></div>
+ *     <div data-hull-component="login_button@hull" data-hull-provider="github,facebook"></div>
  *
  * ### Options
  *

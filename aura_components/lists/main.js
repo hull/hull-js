@@ -13,13 +13,13 @@
  *
  * ### Datasources
  *
- * `lists`: Contains the contents of the list for which the widget has been instantiated
+ * `lists`: Contains the contents of the list for which the component has been instantiated
  *
  * ### Events:
  *
  * `form submit`: When the user submits the form included in the template, a list is created with the properties defined in the forms
  *
- * @TODO Don't use DOM events, use widget acions instead
+ * @TODO Don't use DOM events, use component acions instead
  */
 Hull.define({
   type: "Hull",
