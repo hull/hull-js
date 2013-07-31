@@ -1,6 +1,6 @@
 {
   "name": "hull-js",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "dependencies": {
     "chai": {
       "version": "1.5.0",
@@ -61,37 +61,6 @@
         }
       }
     },
-    "grunt-hull-dox": {
-      "version": "0.2.2",
-      "from": "grunt-hull-dox@git://github.com/hull/grunt-hull-dox.git",
-      "resolved": "git://github.com/hull/grunt-hull-dox.git#7f23ada359cdd2929d7165d4ab1a9c3dfecfd22f",
-      "dependencies": {
-        "dox": {
-          "version": "0.4.3",
-          "from": "dox@*",
-          "dependencies": {
-            "github-flavored-markdown": {
-              "version": "1.0.1",
-              "from": "github-flavored-markdown@>= 0.0.1"
-            },
-            "commander": {
-              "version": "0.6.1",
-              "from": "commander@0.6.1"
-            }
-          }
-        },
-        "rimraf": {
-          "version": "2.1.4",
-          "from": "rimraf@2.x",
-          "dependencies": {
-            "graceful-fs": {
-              "version": "1.2.1",
-              "from": "graceful-fs@~1"
-            }
-          }
-        }
-      }
-    },
     "grunt-lib-phantomjs": {
       "version": "0.3.0",
       "from": "grunt-lib-phantomjs@0.3.0",
@@ -111,6 +80,41 @@
             "package": {
               "version": "1.0.1",
               "from": "package@>= 1.0.0 < 1.2.0"
+            }
+          }
+        }
+      }
+    },
+    "grunt-hull-dox": {
+      "version": "0.2.2",
+      "from": "grunt-hull-dox@git://github.com/hull/grunt-hull-dox.git#7f23ada359cdd2929d7165d4ab1a9c3dfecfd22f",
+      "resolved": "git://github.com/hull/grunt-hull-dox.git#7f23ada359cdd2929d7165d4ab1a9c3dfecfd22f",
+      "dependencies": {
+        "dox": {
+          "version": "0.4.3",
+          "from": "dox@0.4.3",
+          "resolved": "https://registry.npmjs.org/dox/-/dox-0.4.3.tgz",
+          "dependencies": {
+            "github-flavored-markdown": {
+              "version": "1.0.1",
+              "from": "github-flavored-markdown@1.0.1",
+              "resolved": "https://registry.npmjs.org/github-flavored-markdown/-/github-flavored-markdown-1.0.1.tgz"
+            },
+            "commander": {
+              "version": "0.6.1",
+              "from": "commander@0.6.1"
+            }
+          }
+        },
+        "rimraf": {
+          "version": "2.1.4",
+          "from": "rimraf@2.1.4",
+          "resolved": "https://registry.npmjs.org/rimraf/-/rimraf-2.1.4.tgz",
+          "dependencies": {
+            "graceful-fs": {
+              "version": "1.2.1",
+              "from": "graceful-fs@1.2.1",
+              "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-1.2.1.tgz"
             }
           }
         }
