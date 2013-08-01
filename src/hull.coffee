@@ -38,6 +38,8 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
         .use(myApp())
         .use('aura-extensions/aura-handlebars') #TODO Can probably be removed. See the file for details.
         .use('aura-extensions/aura-backbone')
+        .use('aura-extensions/aura-moment')
+        .use('aura-extensions/aura-twitter-text')
         .use('aura-extensions/hull-utils')
         .use('lib/client/handlebars-helpers')
         .use('lib/client/helpers')
