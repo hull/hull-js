@@ -56,7 +56,7 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
       throw err if !errcb
 
     initProcess.done ()->
-      hull.app.sandbox.emit('hull.started')
+      hull.app.sandbox.emit('hull.init')
       cb(window.Hull) if cb
 
     return hull
