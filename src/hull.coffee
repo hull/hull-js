@@ -10,13 +10,13 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
       app.core.mediator.setMaxListeners(100)
 
     afterAppStart: (app)->
-      sb = app.createSandbox();
+      sb = app.sandboxes.create();
       _.extend(HullDef, sb);
       for evt, cbArray of evtPool
         _.each cbArray, (cb)->
           app.core.mediator.on evt, cb
       if !app.config.debug
-        props = ['widget', 'templates', 'emit', 'on', 'version', 'track', 'login', 'logout', 'data']
+        props = ['component', 'templates', 'emit', 'on', 'version', 'track', 'login', 'logout', 'data']
         props.concat(app.config.expose || [])
         _h = {}
         _.map props, (k)->
@@ -46,8 +46,8 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
         .use('lib/client/entity')
         .use('lib/client/api')
         .use('lib/client/templates')
-        .use('lib/client/widget')
-        .start({ widgets: 'body' })
+        .use('lib/client/component')
+        .start({ components: 'body' })
 
     initProcess.fail (err)->
       errcb(err) if errcb
