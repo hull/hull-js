@@ -12,7 +12,7 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
     module =
       require:
         paths:
-          cookie: 'components/jquery.cookie/jquery.cookie'
+          cookie: 'bower_components/jquery.cookie/jquery.cookie'
 
       initialize: (app)->
         core    = app.core
