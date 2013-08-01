@@ -36,5 +36,8 @@
   },
   "engines": {
     "node": "~0.10"
+  },
+  "dependencies": {
+    "bower": "~1.0.3"
   }
 }

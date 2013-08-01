@@ -6,7 +6,7 @@
 
     <title>Hull App...</title>
 
-    <script src="../components/jquery/jquery.js"></script>
+    <script src="../bower_components/jquery/jquery.js"></script>
     <link rel="stylesheet" href="//hullstrap.s3.amazonaws.com/stylesheets/hullstrap.css">
     <script src="//hullstrap.s3.amazonaws.com/javascripts/hullstrap.js"></script>
     <script src="../dist/develop/hull.js"></script>
@@ -17,16 +17,14 @@
     <div class="container">
         <div class="row">
           <div class="page-header">
-            <h1>Hull.js Widgets</h1>
+            <h1>Hull.js Components</h1>
           </div>
         </div>
 
         <div class="row">
-          <div data-hull-widget="identities" class="span6"></div>
-          <div data-hull-widget="identity" class="span6"></div>
+          <div data-hull-component="identity@hull" class="span6"></div>
         </div>
     </div>
-    <div data-hull-widget="footer@hull"></div>
 
   </body>
 </html>

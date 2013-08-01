@@ -12,7 +12,7 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
     module =
       require:
         paths:
-          cookie: 'components/jquery.cookie/jquery.cookie'
+          cookie: 'bower_components/jquery.cookie/jquery.cookie'
 
       initialize: (app)->
         core    = app.core
@@ -180,7 +180,7 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
           data = remoteConfig.data
           app.config.assetsUrl            = remoteConfig.assetsUrl
           app.config.services             = remoteConfig.services
-          app.config.widgets.sources.hull = remoteConfig.baseUrl + '/widgets'
+          app.components.addSource('hull', remoteConfig.baseUrl + '/aura_components')
           app.sandbox.config ?= {}
           app.sandbox.config.debug        = app.config.debug
           app.sandbox.config.assetsUrl    = remoteConfig.assetsUrl
