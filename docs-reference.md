@@ -24,7 +24,7 @@ The `opts` parameter is an Object Literal that accepts the following keys:
 * `orgUrl`: The associated Hull subdomain in which your application resides.
 It can also be found in [the admin][admin], in the description of your organization.
 * `debug`: a Boolean flag for your app to output a bunch of logs in the console.
-* `widgets`: Declares your widgets sources. See [the relevant section to use widgets sources]() for details.
+* `components`: Declares your components sources. See [the relevant section to use components sources]() for details.
 
 As a minimal setup, you should type the following:
 
@@ -35,95 +35,95 @@ As a minimal setup, you should type the following:
 
 Where `YOUR_APP_ID` and `YOUR_ORGANIZATION_URL` are as defined in [the administration][admin].
 
-The next section will cover the basics of using widgets in Hull.
+The next section will cover the basics of using components in Hull.
 Although Hull provides you direct access to its API, best luck is that you will
-want to give widgets a try, to eventually build some by yourself for more reusability!
+want to give components a try, to eventually build some by yourself for more reusability!
 
-# Getting started with widgets
+# Getting started with components
 
-As a starter, we'll show you how to make use of the prepackaged widgets.
-All the concepts outlined in this section will still be valid when you'll come to create your own widgets.
+As a starter, we'll show you how to make use of the prepackaged components.
+All the concepts outlined in this section will still be valid when you'll come to create your own components.
 
-## Using prepackaged widgets
+## Using prepackaged components
 
-Hull comes packaged with a [bunch of widgets](/docs/widgets/hull_widgets), all you need to do to start a widget
+Hull comes packaged with a [bunch of components](/docs/components/hull_components), all you need to do to start a component
 is add a tag to your page alongside a couple of data-attributes.
 
-In this section, we will use the `identity` widget as an example. It allows your users to log
+In this section, we will use the `identity` component as an example. It allows your users to log
 in using any of the social networks your app is bound to (see [the admin][admin] for binding authentication services to your app).
 
-### Locate the widget in your page
+### Locate the component in your page
 
-Start by placing a `<div>` tag wherever you want the widget to be located; consider this tag as a placeholder for the rendered widget.
+Start by placing a `<div>` tag wherever you want the component to be located; consider this tag as a placeholder for the rendered component.
 
     <div></div>
 
-This widget will be rendered __inside__ this element. You don't have to use a div,
+This component will be rendered __inside__ this element. You don't have to use a div,
 feel free to use the appropriate HTML tag.
 
-### Specifying the widget type
+### Specifying the component type
 
-Use the data-attribute `data-hull-widget` to specify which widget has to be instantiated.
-In this case where we want to use the `identity` widget, we will write:
+Use the data-attribute `data-hull-component` to specify which component has to be instantiated.
+In this case where we want to use the `identity` component, we will write:
 
-    <div data-hull-widget="identity@hull"></div>
+    <div data-hull-component="identity@hull"></div>
 
-Note the `@hull` notation. Hull provide means to use widgets from various locations,
-which we call _widget sources_, and all the prepackaged widgets come from the `hull` source.
+Note the `@hull` notation. Hull provide means to use components from various locations,
+which we call _component sources_, and all the prepackaged components come from the `hull` source.
 
-You can [learn more about widget sources below]().
+You can [learn more about component sources below]().
 
 ### Look 'Ma, it's working!
 
-That's all that is required to have a fully functional login widget... Really. Refresh your page to see the results.
+That's all that is required to have a fully functional login component... Really. Refresh your page to see the results.
 
 To summarize things up:
 
 1. Insert `hull.js` in your page
-2. Add the necessary markup for your widgets
+2. Add the necessary markup for your components
 3. Execute `Hull.init(opts)` with your credentials
 
-**That's enough to run the widgets, but you may still want to go a litle further. Here's an excerpt of what you can do more:**
+**That's enough to run the components, but you may still want to go a litle further. Here's an excerpt of what you can do more:**
 
 <a href="#" id="passing_parameters"></a>
-### Passing parameters to a widget
+### Passing parameters to a component
 
-Most of the time, you will need to customize the behaviour of your widgets.
-In Hull, you can pass options to your widgets by using `data-hull-` attributes,
+Most of the time, you will need to customize the behaviour of your components.
+In Hull, you can pass options to your components by using `data-hull-` attributes,
 just like you would pass arguments to a method.
 
-Following our example, the `identity` widget accepts one `provider` parameter, so you can choose
+Following our example, the `identity` component accepts one `provider` parameter, so you can choose
 the authentication provider you want your users to connect with.
 
-Tell the widget you want to use only Twitter OAuth as a valid uthentication method by typing:
+Tell the component you want to use only Twitter OAuth as a valid uthentication method by typing:
 
-    <div data-hull-widget="identity@hull" data-hull-provider="twitter"></div>
+    <div data-hull-component="identity@hull" data-hull-provider="twitter"></div>
 
-Of course, if a widget requires more options, declare as many `data-hull-` options
+Of course, if a component requires more options, declare as many `data-hull-` options
 as necessary.
 
-All the options that you pass using `data-hull-` attributes are available in the instance of your widget under `this.options`.
+All the options that you pass using `data-hull-` attributes are available in the instance of your component under `this.options`.
 
 As an example, if you have used:
 
-    <div data-hull-eidget="myWidget" data-hull-foo="FOO" data-hull-bar="BAR">
+    <div data-hull-eidget="myComponent" data-hull-foo="FOO" data-hull-bar="BAR">
 
-You can access the options in the widget's instance as:
+You can access the options in the component's instance as:
 
     this.options.foo; // corresponds to `data-hull-foo` attribute
     this.options.bar; // corresponds to `data-hull-bar` attribute
 
-Some remarks regarding the `identity` widget:
+Some remarks regarding the `identity` component:
 
 * We have many providers available, you can find them all from the admin, under the
 `authentication services` page.
 * Having registered at least one provider is required in your Hull app if you want to use authentication.
-* If you don't provide a `data-hull-provider` to the widget, users will be able to authenticate to the provider they prefer in the list
+* If you don't provide a `data-hull-provider` to the component, users will be able to authenticate to the provider they prefer in the list
 of the services attached to your app.
 
 ### Overriding templates
 
-Our prepackaged widgets come with some default markup, fit to work natively with [Twitter Bootstrap](http://twitter.github.com/bootstrap).
+Our prepackaged components come with some default markup, fit to work natively with [Twitter Bootstrap](http://twitter.github.com/bootstrap).
 However, it may not fit your design and if you ever want to customize the rendering of the template, [many options are available](#overriding_templates).
 
 We will see in this section the fastest (yet not the most optimized) way to do so.
@@ -151,97 +151,97 @@ There are a few things to be noticed here:
 * The user itself is bound to the context of the template, that's what makes {{name}} available.
 * Look at the `data-hull-action` attribute in the login button. `data-hull-action` represent special `click` handlers. Learn more [here]().
 
-### More about prepackaged widgets
+### More about prepackaged components
 
 Now you can already start adding social features in your app or even build a complete 100% social app with Hull!
-To know everything about our prepackaged widgets, refer to the [widgets reference]().
+To know everything about our prepackaged components, refer to the [components reference]().
 
-## Creating your own widgets
+## Creating your own components
 
 ### File structure
 
-In Hull, there's a golden rule abut widgets coming from [Aura](#architecture) stating that:
+In Hull, there's a golden rule abut components coming from [Aura](#architecture) stating that:
 
-* At the filesystem level, each widget must be placed in its own folder.
-* The name of the folder is used as the name of the widget.
+* At the filesystem level, each component must be placed in its own folder.
+* The name of the folder is used as the name of the component.
 
-By default, in Hull, widgets are looked after in a folder called `widgets`, but you can obviously change this.
-See the [Configuration](/docs/Hull.js/configuration) page for details on how to change the default behaviour and add more _widget sources_ for your widgets.
+By default, in Hull, components are looked after in a folder called `components`, but you can obviously change this.
+See the [Configuration](/docs/Hull.js/configuration) page for details on how to change the default behaviour and add more _component sources_ for your components.
 
-Every subfolder of `widgets` is the description of a widget. The contents of a widget folder should be as follows:
+Every subfolder of `components` is the description of a component. The contents of a component folder should be as follows:
 
-* A `main.js` file that will bootstrap and describe the widgets, specifying its templates, dependencies and overall behaviour. This file is mandatory, no matter how small it can be.
+* A `main.js` file that will bootstrap and describe the components, specifying its templates, dependencies and overall behaviour. This file is mandatory, no matter how small it can be.
 * One or many template files, in the form of \*.hbs files. These files will be referenced by `main.js`.
-* Assets, dependencies, pretty much anything that would be necessary to the widget and only to the widget.
+* Assets, dependencies, pretty much anything that would be necessary to the component and only to the component.
 
-A basic widget could have this file structure:
+A basic component could have this file structure:
 
     /
-    |-/widgets
+    |-/aura_components
     |---/foo
     |-----main.js
     |-----foo.hbs
     |-----bar.hbs
     |-----image.png
 
-<a name="#widgets_sources"></a>
-### Widget sources
+<a name="#components_sources"></a>
+### Component sources
 
-Hull can fetch widgets from many places, called _widget sources_. By default, Hull knows 2 sources:
+Hull can fetch components from many places, called _component sources_. By default, Hull knows 2 sources:
 
-* `hull`, which is he location for our [packaged widgets](/docs/widgets/packaged_widgets)
-* `default`, which is the default location for your widgets, has for default value `./widgets`. This means that if your baseURL is `/path/to/my/app`,
-then the default source intends to find its widgets into `/path/to/my/app/widgets`.
+* `hull`, which is he location for our [packaged components](/docs/components/packaged_components)
+* `default`, which is the default location for your components, has for default value `./components`. This means that if your baseURL is `/path/to/my/app`,
+then the default source intends to find its components into `/path/to/my/app/components`.
 
 By configuring Hull at startup, you can override these settings (except from the `hull` source) and add as many sources you want.
 
-Using sources can be very useful if you add 3rd-party widgets, or want to separate your widgets by concerns.
+Using sources can be very useful if you add 3rd-party components, or want to separate your components by concerns.
 
-Widgets from a source are namespaced, meaning that you can have 2 widgets with the same name, as long as they don't come from the same source.
+Components from a source are namespaced, meaning that you can have 2 components with the same name, as long as they don't come from the same source.
 
 Declaring a new source is made during the initialization process of `hull.js`, as part of its [configuration](/docs/Hull.js/configuration).
 
-### Coding the empty widget
+### Coding the empty component
 
-Let's say you want to create a widget named `awesome`.
+Let's say you want to create a component named `awesome`.
 
-To create this widget, make sure:
+To create this component, make sure:
 
-* You've configured your widgets sources (or use the default one, see the previous section for details)
-* You've created a folder named `awesome` in one of your widgets sources.
+* You've configured your components sources (or use the default one, see the previous section for details)
+* You've created a folder named `awesome` in one of your components sources.
 
 Then, create a file called `main.js` with the following contents:
 
-    Hull.widget('awesome', {
+    Hull.component('awesome', {
       datasources: {},
       templates: [],
       initialize: function () {},
       beforeRender: function (data) {},
       afterRender: function () {},
-      /* append your own widgets methods */
+      /* append your own components methods */
     });
 
-That's it, you've created a widget. Alright, it's not exactly useful nor awsome as it is (as it doeas does strictly _nothing_), but that's pretty much it.
+That's it, you've created a component. Alright, it's not exactly useful nor awsome as it is (as it doeas does strictly _nothing_), but that's pretty much it.
 You could even have skipped all the contents of the Object literal and be good to go.
 
 ### Add some features
 
-To know what to do with each of these properties and what to expect from them, please refer to the [Widget API](#widget_api)
+To know what to do with each of these properties and what to expect from them, please refer to the [Component API](#component_api)
 
 # Hull.js technical reference
 
 ## Datasources
 
-Having a good understanding of what they are and what you can do with them will help you leverage the performances and features of your widgets and applications.
+Having a good understanding of what they are and what you can do with them will help you leverage the performances and features of your components and applications.
 
 Basically, datasources are in charge of communicating with Hull's server APIs and the services attached to your application (Twitter, Facebook...).
-We made it easy to get datasources into your widgets, through the property `datasources`.
+We made it easy to get datasources into your components, through the property `datasources`.
 
 ### Syntax Overview
 
-As a reminder, you create a widgets with the following syntax:
+As a reminder, you create a components with the following syntax:
 
-<pre class='language-javascript'><code>Hull.widget("my_awesome_widget", {
+<pre class='language-javascript'><code>Hull.component("my_awesome_component", {
   "datasources": {
 
     friends: "/me/friends",
@@ -305,7 +305,7 @@ You can specify the provider by using the object notation (see example above) an
 
 ### Default datasources
 
-Hull automatically provides each widgets with 3 default datasources:
+Hull automatically provides each components with 3 default datasources:
 
 * `/me`: your Hull profile, and the associated profile in attached services, if any and if the user is logged in
 * `/app`: the App object in Hull. To this object, you can bind app-wide data, such as files, comments...
@@ -318,35 +318,35 @@ They follow the standard convention `:param_name`.
 
 The parameter of the datasource will be resolved by looking up properties in the folowing order:
 
-* a property of the widget instance (`this.param_name`)
-* a key in the `options` hash of the widget (`this.options.param_name`)
+* a property of the component instance (`this.param_name`)
+* a key in the `options` hash of the component (`this.options.param_name`)
 
 The latter means that you can pass options to your datasources directly from `data-hull-` attributes.
-This is very useful to widget nesting and dynamic widget instantiation.
+This is very useful to component nesting and dynamic component instantiation.
 See [Passing parameters](passing_parameters) for details.
 
-## Render flow / widget lifecycle
+## Render flow / component lifecycle
 
-### Widget initialization
+### Component initialization
 
-Widgets are instantiated lazily, which means they will be created only when there is in the app an HTML tag
-with a `data-hull-widget` attribute which value can be resolved to a widget definition.
+Components are instantiated lazily, which means they will be created only when there is in the app an HTML tag
+with a `data-hull-component` attribute which value can be resolved to a component definition.
 
-After some internal work on the definition provided in `main.js` (extension of the Javascript base prototype of Widget, mainly),
-an instance of the widget is created, starting the following tasks:
+After some internal work on the definition provided in `main.js` (extension of the Javascript base prototype of Component, mainly),
+an instance of the component is created, starting the following tasks:
 
 * The datasources are being resolved asynchronously
 * The templates are being resolved asynchronously
 * the `initialize` method is called.
 
-__This method is the first entry point for developers where they can customize the behaviour of the widget.__
+__This method is the first entry point for developers where they can customize the behaviour of the component.__
 Due to the async nature of datasource and template resolutions, it is very hazardous to consider them as available during the execution
 of thr `initialize` method.
 
 ### Datasources resolution
 
-When a widget is instantiated, all the datasources declared in the configuration start being resolved.
-When all the datasources are resolved, the data that has been fetched is bound to the widget as properties to `this.data`.
+When a component is instantiated, all the datasources declared in the configuration start being resolved.
+When all the datasources are resolved, the data that has been fetched is bound to the component as properties to `this.data`.
 
 Every key in `this.datasources` (which dt)is the container of datasources definition) will eventually have a corresponding key in `this.data`.
 Whereas the former is the container of datasources definitions, the latter contains the _actual_ data that has been fetched.
@@ -384,28 +384,28 @@ If at any time a rendering error occurs, the method renderError will be called, 
 
 ### Post-rendering
 
-When the widget has been rendered, the method `afterRender` is executed, for the developer to be able to act upon the data as well as the markup.
+When the component has been rendered, the method `afterRender` is executed, for the developer to be able to act upon the data as well as the markup.
 This may be used to add custom listeers to DOM events, or bind data to specific DOM nods.
 
 <a href="#" id="overriding_templates"></a>
 ## Overriding templates
 
-Hull's packaged widgets come with their own templates, that you can override.
+Hull's packaged components come with their own templates, that you can override.
 We chose [Handlebars](http://handlebarsjs.com/) because it is fast and powerful.
 We provide a bunch of ways to customize and override the templates.
 
-__The next sections applies for the packaged widgets, but also for your custom templates.__
+__The next sections applies for the packaged components, but also for your custom templates.__
 
 <a name="template_names"></a>
 ### Namimg templates
 
 First things first, if you want to write or override a template, you must know how they're named.
 
-Following the filesystem structure of a [widget](/docs/widgets/creating widgets), the full name of a template is
+Following the filesystem structure of a [component](/docs/components/creating components), the full name of a template is
 
-    widget_name/widget_template
+    component_name/component_template
 
-As an example, in a widget named `foo`, if you have 2 templates named `bar` and `baz`, the names of the two templates will be:
+As an example, in a component named `foo`, if you have 2 templates named `bar` and `baz`, the names of the two templates will be:
 
     foo/bar
     foo/baz
@@ -427,34 +427,34 @@ where `WIDGET_NAME/TEMPLATE_NAME` is as described in the previous section.
 Another (cleaner, to be honest) way is to store your templates in `Hull.templates`.
 It is a Javascript Object literal, in which the keys are the templates IDs, and the values are the templates themselves.
 
-As an example, to override the template `foo/bar` (Remember: it's the template `bar` of the widget `foo`), just do the following:
+As an example, to override the template `foo/bar` (Remember: it's the template `bar` of the component `foo`), just do the following:
 
     Hull.templates["foo/bar"] = "You are awesome, {{name}}!";
 
 
 If you have already precompiled [Handlebars](http://handlebarsjs.com) templates, you can use them as the values for the entries of `Hull.templates`.
 
-**Please note**: This is the actual way that we use to include the templates for the packaged widgets.
+**Please note**: This is the actual way that we use to include the templates for the packaged components.
 
 ## User interaction
 
-The purpose of a widget is present data to the user so he can interact with it.
+The purpose of a component is present data to the user so he can interact with it.
 To fulfill this purpose, `hull.js` exposes an easy interface to catch user-generated events.
 
 ### Actions
 
-In your widgets, you can use the `actions` property to simply define custom click handlers.
-The `actions` property of a widget is a hash which keys are the names of the actions
+In your components, you can use the `actions` property to simply define custom click handlers.
+The `actions` property of a component is a hash which keys are the names of the actions
 you want to trigger and values are methods that you want to be executed on click.
 
 Here's an example of how you do it:
 
-    Hull.widget('naiveABTestingWidget', {
+    Hull.component('naiveABTestingComponent', {
       "templates": ['main' 'signupFormA', 'signupFormB'],
       "actions": {
         /**
          * When the action is triggered, this action renders randomly
-         * one of the two templates of the widget
+         * one of the two templates of the component
          * @param {jQuery} elt The DOM element on which the action has been triggered
          * @param {Object} evt The event that has been triggered
          * @param {Object} data The data associated with the element (specified by data-hull-* attributes)
@@ -466,7 +466,7 @@ Here's an example of how you do it:
       }
     });
 
-The above snippet indicates what needs to be done, now we have to indicate our widgets _when_
+The above snippet indicates what needs to be done, now we have to indicate our components _when_
 the action needs to be triggered. This happens in the template, using a simple `data-hull-action` attribute.
 
     <a href="#" data-hull-action="abTest">Signup</a>
@@ -474,7 +474,7 @@ the action needs to be triggered. This happens in the template, using a simple `
 Whenever the user clicks the Signup link, the `abTest` action is triggered.
 
 __Note on event bubbling__: Remember that events bubble! If you don't call `evt.stopPropagation()`, the action will
- bubble up to the DOM root. If this widget is contained in another Hull widget,
+ bubble up to the DOM root. If this component is contained in another Hull component,
 its parent will throw an error if it doesn't have an `abTest` action defined.
 
 __Note on default actions__: If you bind actions to elements that have default actions, like `<a>`,`<input>`
@@ -483,21 +483,21 @@ is not executed.
 
 ## Event-driven communication
 
-As all the widgets are meant to be independent and have as little dependencies as possible,
-the communication between widgets and between a widget and the core of `hull.js` happens through events,
+As all the components are meant to be independent and have as little dependencies as possible,
+the communication between components and between a component and the core of `hull.js` happens through events,
 thanks to a global mediator.
 
-### Using events to refresh the widget
+### Using events to refresh the component
 
 Following [Backbone][backbone] conventions, we have provided `hull.js` with a mechanism to
-automatically refresh widgets (on demand) when a specific event occurs.
-These events can be setup in the `refreshEvents` property of a widget.
+automatically refresh components (on demand) when a specific event occurs.
+These events can be setup in the `refreshEvents` property of a component.
 
-    Hull.widget('customEventsExample', {
+    Hull.component('customEventsExample', {
       "refreshEvents": ['my.events.custom1'],
     });
 
-In this example, the widget will subscribe to the event `my.events.custom1` and perform a refresh
+In this example, the component will subscribe to the event `my.events.custom1` and perform a refresh
 on the currently active template when the event is triggered.
 
 `hull.js` comes a set of predefined events:
@@ -508,7 +508,7 @@ on the currently active template when the event is triggered.
 
 ### Global event communication
 
-Every instance of widgets have a bunch of method for generating events:
+Every instance of components have a bunch of method for generating events:
 
 #### this.emit(eventName, data);
 
@@ -531,48 +531,48 @@ This method cancels the subscription to the event specified in parameter.
 
 * `eventName` {String}: The name of the event
 
-<a href="#" id="widget_api"></a>
-## Widget API Reference
+<a href="#" id="component_api"></a>
+## Component API Reference
 
-### Widget Properties
+### Component Properties
 
 #### options
 
-A hash of properties for the widget. These options will be overridden by `data-hull-` attributes
+A hash of properties for the component. These options will be overridden by `data-hull-` attributes
 
 #### template
 
 The name of the template that will be rendered at the next call to `this.render()`.
 This will be overridden if `this.render` is called with a template name as its first argument.
-The value of `template` __must__ be one of the values of the `templates` array at the declaration of the widget.
+The value of `template` __must__ be one of the values of the `templates` array at the declaration of the component.
 
 #### datasources
 
-The definition of the datasources used by the widget. See [The relevant section](#datasources) for details.
+The definition of the datasources used by the component. See [The relevant section](#datasources) for details.
 
 #### $el
 
-A jQuery element representing the root node of the widget.
+A jQuery element representing the root node of the component.
 
 #### sandbox
 
-The instance of the sandbox for the current widget. See [the sandbox reference](sandbox) for details.
+The instance of the sandbox for the current component. See [the sandbox reference](sandbox) for details.
 
 #### isInitialized
 
-A boolean value indicating if the widget has finished being initialized. Useful if you register to events and they trigger before the widget is done initializing.
+A boolean value indicating if the component has finished being initialized. Useful if you register to events and they trigger before the component is done initializing.
 
-### Widgets Methods
+### Components Methods
 
 #### initialize()
 
-The `initialize` method is used to bootstrap your widget. You should basically consider it as a constructor. Whatever needs to be setup straight after the widget has been created (_created_, not _rendered_; rendering happens later)
+The `initialize` method is used to bootstrap your component. You should basically consider it as a constructor. Whatever needs to be setup straight after the component has been created (_created_, not _rendered_; rendering happens later)
 happens here. Basically, this is where you will setup the events, private vars/objects, that kind of stuff.
 
 #### renderTemplate(tplName, data)
 
 * __tplName__ {String} The identifier of the template you want to compile
-* __data__ {Object} The data to be passed to the template engine. It will be used to define the context of the widget
+* __data__ {Object} The data to be passed to the template engine. It will be used to define the context of the component
 
 The method returns the __String__ of HTML corresponding to the compiled template.
 
@@ -613,7 +613,7 @@ By default, it returns the first element of `this.templates`.
 * __tpl__ {String} The name of the template to be used
 * __data__ {Object} The data to be used as the template's context
 
-Renders into the root element of the widget the specified template and binds some specific data as its context.
+Renders into the root element of the component the specified template and binds some specific data as its context.
 
 #### afterRender(data)
 
@@ -624,9 +624,9 @@ This method takes no parameters and has no return value.
 
 #### render(optTpl)
 
-You can call `this.render()` in any method in the widget to refresh the view. But you can specify 2 very useful parameters:
+You can call `this.render()` in any method in the component to refresh the view. But you can specify 2 very useful parameters:
 
-* __templateName__ {String} as the first argument will specify which of the template of the widget has to be rendered. Very useful for widgets with multiple views.
+* __templateName__ {String} as the first argument will specify which of the template of the component has to be rendered. Very useful for components with multiple views.
 * __data__ {Object} as a second argument will add/override any data computed by the datasources and the `beforeRender` method.
 
 #### track(name, data)
@@ -695,7 +695,7 @@ renderError method
 
 ## Templates & Available helpers
 
-## Events emitted by packaged widgets
+## Events emitted by packaged components
 
 <a href="#" id="hull_api"></a>
 ## Hull API
@@ -706,7 +706,7 @@ Hull offers an unified API to let you query data from Hull or from a third party
 All of the API is available from 2 endpoints in the JS library:
 
 * From anywhere in your app: `Hull.data.api()`
-* From within a widget: `this.api()`
+* From within a component: `this.api()`
 
 If you wish to access the data from Hull for the current user, just type:
 
@@ -730,11 +730,11 @@ See the API Reference and Services Reference for details.
 
 ## Provider permissions
 
-## Making apps with widgets ?
+## Making apps with components ?
 
 ### Structuring your app
 
-* Widgets nesting
+* Components nesting
 
 ### Building your app
 
@@ -754,7 +754,7 @@ We also store everything for further applications.
 
 <pre class='language-javascript'><code>Hull.track('event name', { foo:'bar', arbitrary:'data' });</code></pre>
 
-**Widgets automatically do this behind the scenes.**
+**Components automatically do this behind the scenes.**
 
 <a href="#" id="architecture"></a>
 # Hull architecture
@@ -769,7 +769,7 @@ We also store everything for further applications.
 * [moment.js](http://momentjs.com/)
 * [jQuery](http://jquery.com/)
 
-You don't have to know any of them to use and build your own widgets.
+You don't have to know any of them to use and build your own components.
 We don't require in-depth (if any) knowledge of any of these libraries/frameworks to build your own social application.
 
 ### We are dedicated to Open-Source.

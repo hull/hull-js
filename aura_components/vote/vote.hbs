@@ -1,0 +1,11 @@
+  <h4>{{target.uid}}</h4>
+  {{#if loggedIn}}
+    <div class='btn-group'>
+      <button class="btn btn-tiny {{outputIf vote.rating 1 'btn-success'}} dropup" data-hull-action='{{outputIf vote.rating 1 'unvote' 'upvote'}}'><span class='caret'></span></button>
+      <button class="btn btn-tiny {{outputIf vote.rating -1 'btn-success'}} dropdown" data-hull-action='{{outputIf vote.rating -1 'unvote' 'downvote'}}'><span class='caret'></span></button>
+    </div>
+  {{else}}
+    <div data-hull-component="login_button@hull"></div>
+  {{/if}}
+  <small class='result'>▲{{split.yes}}</small>
+  <small class='result'>▼{{split.no}}</small>

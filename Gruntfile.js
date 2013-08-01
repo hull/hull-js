@@ -77,8 +77,8 @@ module.exports = function (grunt) {
     },
     dox: {
       files: {
-        baseDir: 'widgets',
-        src: 'widgets/**/main.js',
+        baseDir: 'aura_components',
+        src: 'aura_components/**/main.js',
         dest: 'dist/<%= PKG_VERSION %>/docs'
       }
     },
@@ -150,31 +150,31 @@ module.exports = function (grunt) {
           namespace: 'Hull',
           paths: {
             jquery: "empty:",
-            "jquery.ui.widget" : 'components/jquery-file-upload/js/vendor/jquery.ui.widget',
-            "jquery.fileupload" : 'components/jquery-file-upload/js/jquery.fileupload'
+            "jquery.ui.widget" : 'bower_components/jquery-file-upload/js/vendor/jquery.ui.widget',
+            "jquery.fileupload" : 'bower_components/jquery-file-upload/js/jquery.fileupload'
           },
           include: [
             'jquery.fileupload'
           ],
-          out: 'tmp/widgets/upload/deps/jquery.fileupload.js'
+          out: 'tmp/aura_components/upload/deps/jquery.fileupload.js'
         }
       },
       registration: {
         options: {
           namespace: 'Hull',
-          paths: { h5f: 'widgets/registration/h5f' },
+          paths: { h5f: 'aura_components/registration/h5f' },
           shim: { h5f: { exports: 'H5F' } },
           include: ['h5f'],
-          out: 'tmp/widgets/registration/deps.js'
+          out: 'tmp/aura_components/registration/deps.js'
         }
       },
       dox: {
         options: {
           namespace: 'Hull',
-          paths: { prism: 'widgets/dox/dox/prism' },
+          paths: { prism: 'aura_components/dox/dox/prism' },
           shim: { prism: { exports: 'Prism' } },
           include: ['prism'],
-          out: 'tmp/widgets/dox/dox/deps.js'
+          out: 'tmp/aura_components/dox/dox/deps.js'
         }
       }
     },
@@ -185,7 +185,7 @@ module.exports = function (grunt) {
     },
     watch: {
       widgets: {
-        files: ['widgets/**/*'],
+        files: ['aura_components/**/*'],
         tasks: ['hull_widgets']
       },
       remote: {
@@ -211,7 +211,7 @@ module.exports = function (grunt) {
     },
     hull_widgets: {
       hull: {
-        src: 'widgets',
+        src: 'aura_components',
         before: ['requirejs:upload', 'requirejs:registration', 'requirejs:dox'],
         dest: 'dist/<%= PKG_VERSION%>',
         optimize: !grunt.option('dev')
@@ -229,7 +229,7 @@ module.exports = function (grunt) {
         ]
       },
       easyXDM: {
-        src: 'components/easyXDM/easyXDM.js',
+        src: 'bower_components/easyXDM/easyXDM.js',
         dest: 'lib/shims',
         wrapper: [
           '', ';var _available = window.easyXDM;define("easyXDM", function () {return window.easyXDM.noConflict();});if(!_available){delete window.easyXDM;};'
@@ -265,16 +265,28 @@ module.exports = function (grunt) {
   };
 
   helpers.appendAWSConfig(gruntConfig);
-
   grunt.initConfig(gruntConfig);
 
-  // default build task
+  grunt.registerTask('target','Set current target', function(){
+    var done = this.async();
+    git.branch(function(branch){
+      grunt.config.set("PKG_VERSION",branch);
+      grunt.config.set("GIT_BRANCH",branch);
+      done();
+    });
+
+  });
   grunt.registerTask('do_test', ['cover', 'plato', 'mocha']);
   grunt.registerTask('test', ['dist:api', 'dist:client', 'dist:remote', 'do_test']);
   grunt.registerTask('default', ['connect', 'test', 'dist:widgets', 'watch']);
-  grunt.registerTask('deploy', ['dist', 'describe', 's3']);
   grunt.registerTask('reset', ['clean:reset']);
 
-  //custom Tasks
+  grunt.registerTask('deploy', ['dist', 'describe', 's3:prod']);
+
+  grunt.registerTask('staging', ['target','dist', 'describe', 's3:staging']);
+
+  var git = require('git-rev');
+
   require('./.grunt/customTasks')(grunt);
+
 };
