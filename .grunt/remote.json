@@ -4,15 +4,15 @@
     "baseUrl": ".",
     "preserveLicenseComments": true,
     "paths": {
-      "aura":               "components/aura/lib",
-      "underscore":         "components/underscore/underscore",
-      "eventemitter":       "components/eventemitter2/lib/eventemitter2",
-      "easyXDM":            "components/easyXDM/easyXDM",
-      "requireLib":         "components/requirejs/require",
-      "jquery":             "components/jquery/jquery",
-      "text":               "components/requirejs-text/text",
-      "analytics":          "components/analytics/analytics",
-      "base64":             "components/base64/base64"
+      "aura":               "bower_components/aura/lib",
+      "underscore":         "bower_components/underscore/underscore",
+      "eventemitter":       "bower_components/eventemitter2/lib/eventemitter2",
+      "easyXDM":            "bower_components/easyXDM/easyXDM",
+      "requireLib":         "bower_components/requirejs/require",
+      "jquery":             "bower_components/jquery/jquery",
+      "text":               "bower_components/requirejs-text/text",
+      "analytics":          "bower_components/analytics/analytics",
+      "base64":             "bower_components/base64/base64"
     },
     "shim": {
       "underscore": { "exports": "_" },

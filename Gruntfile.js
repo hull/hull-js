@@ -150,8 +150,8 @@ module.exports = function (grunt) {
           namespace: 'Hull',
           paths: {
             jquery: "empty:",
-            "jquery.ui.widget" : 'components/jquery-file-upload/js/vendor/jquery.ui.widget',
-            "jquery.fileupload" : 'components/jquery-file-upload/js/jquery.fileupload'
+            "jquery.ui.widget" : 'bower_components/jquery-file-upload/js/vendor/jquery.ui.widget',
+            "jquery.fileupload" : 'bower_components/jquery-file-upload/js/jquery.fileupload'
           },
           include: [
             'jquery.fileupload'
@@ -229,7 +229,7 @@ module.exports = function (grunt) {
         ]
       },
       easyXDM: {
-        src: 'components/easyXDM/easyXDM.js',
+        src: 'bower_components/easyXDM/easyXDM.js',
         dest: 'lib/shims',
         wrapper: [
           '', ';var _available = window.easyXDM;define("easyXDM", function () {return window.easyXDM.noConflict();});if(!_available){delete window.easyXDM;};'
