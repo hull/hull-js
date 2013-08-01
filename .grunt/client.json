@@ -9,7 +9,7 @@
       "underscore":     "bower_components/underscore/underscore",
       "eventemitter":   "bower_components/eventemitter2/lib/eventemitter2",
       "backbone":       "bower_components/backbone/backbone",
-      "easyXDM":        "lib/shims/components/easyXDM/easyXDM",
+      "easyXDM":        "lib/shims/bower_components/easyXDM/easyXDM",
       "handlebars":     "lib/shims/node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars",
       "requireLib":     "bower_components/requirejs/require",
       "moment":         "bower_components/moment/moment",
