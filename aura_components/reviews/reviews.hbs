@@ -1,0 +1,41 @@
+{{#if loggedIn}}
+{{#with review}}
+  <form>
+    <fieldset>
+      <legend>Review {{object.name}}</legend>
+      <label for="reviewsSelect">Rating:</label>
+      <select id="reviewsSelect" data-hull-rating value="{{rating}}">
+        <option {{outputIf rating 1 'selected'}}>1</option>
+        <option {{outputIf rating 2 'selected'}}>2</option>
+        <option {{outputIf rating 3 'selected'}}>3</option>
+        <option {{outputIf rating 4 'selected'}}>4</option>
+        <option {{outputIf rating 5 'selected'}}>5</option>
+      </select>
+      <label for="reviewsText">Review</label>
+      <textarea data-hull-description id="reviewsText">{{description}}</textarea>
+      <div class=''><button data-hull-action="review" type='submit' class="btn">Review</button></div>
+    </fieldset>
+  </form>
+{{/with}}
+{{else}}
+  <div data-hull-component="login_button@hull"></div>
+{{/if}}
+
+{{#if reviews}}
+  <ul class="unstyled">
+    {{#reviews}}
+      <li>
+        <span class="badge">{{rating}}</span>
+        <span>
+          {{description}} <small>(by <strong>{{user.name}}</strong>)</small>
+        </span>
+      </li>
+    {{/reviews}}
+  </ul>
+{{/if}}
+
+{{^reviews}}
+  <div class="">
+    No reviews for the moment
+  </div>
+{{/reviews}}

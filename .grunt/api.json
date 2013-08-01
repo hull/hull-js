@@ -4,9 +4,9 @@
     "baseUrl": ".",
     "preserveLicenseComments": true,
     "paths": {
-      "underscore":     "components/underscore/underscore",
-      "easyXDM":        "components/easyXDM/easyXDM",
-      "cookie":         "components/jquery.cookie/jquery.cookie",
+      "underscore":     "bower_components/underscore/underscore",
+      "easyXDM":        "bower_components/easyXDM/easyXDM",
+      "cookie":         "bower_components/jquery.cookie/jquery.cookie",
       "jquery":         "empty:"
     },
     "shim": {
