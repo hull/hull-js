@@ -1,4 +1,4 @@
-define ['lib/utils/promises', 'underscore'], (promises, _)->
+define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)->
   #
   # Parses the URI to replace placeholders with actual values
   #
@@ -30,11 +30,9 @@ define ['lib/utils/promises', 'underscore'], (promises, _)->
         ds =
           path: ds
           provider: 'hull'
-        @type = if (ds.path.lastIndexOf('/') in [-1, 0]) then 'model' else 'collection'
       else if _.isObject(ds) && !_.isFunction(ds)
         throw _errDefinition unless ds.path
         ds.provider = ds.provider || 'hull'
-        @type = ds.type || 'collection'
       @def = ds
 
     #
@@ -60,20 +58,17 @@ define ['lib/utils/promises', 'underscore'], (promises, _)->
         else
           dfd.resolve ret
       else
-        dfd.resolve(false) if /undefined/.test(@def.path)
-        if @type == 'model'
-          data = @transport.model(@def)
-        else if @type == 'collection'
-          data = @transport.collection(@def)
-        else
-          dfd.reject new TypeError('Unknown type of datasource: ' + @type);
-        if data._fetched
-          dfd.resolve data
-        else
-          data.once 'sync', ->
-            dfd.resolve data
-          data.once 'error', (model, xhr)->
-            dfd.reject xhr
+        if /undefined/.test(@def.path)
+          dfd.resolve(false)
+          return dfd.promise()
+        transportDfd = @transport(@def)
+        transportDfd.then (obj)->
+          if _.isArray(obj)
+            dfd.resolve (new Backbone.Collection obj)
+          else
+            dfd.resolve (new Backbone.Model obj)
+        , (err)->
+          dfd.reject err
       dfd.promise()
 
   Datasource
