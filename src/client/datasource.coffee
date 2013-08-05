@@ -1,4 +1,4 @@
-define ['lib/utils/promises', 'underscore'], (promises, _)->
+define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)->
   #
   # Parses the URI to replace placeholders with actual values
   #
@@ -13,7 +13,7 @@ define ['lib/utils/promises', 'underscore'], (promises, _)->
     uri
 
   #
-  # Helps managing the various definitions a widget datasource can take
+  # Helps managing the various definitions a component datasource can take
   # Sets decent defaults, validates input, and sends requests to the API
   #
   class Datasource
@@ -21,6 +21,9 @@ define ['lib/utils/promises', 'underscore'], (promises, _)->
     # @param {String|Object|Function} A potentially partial definition of the datasource
     #
     constructor: (ds, transport) ->
+      if (ds instanceof Backbone.Model || ds instanceof Backbone.Collection)
+        @def = ds
+        return
       @transport = transport
       _errDefinition  = new TypeError('Datasource is missing its definition. Cannot continue.')
       _errTransport   = new TypeError('Datasource is missing a transport. Cannot continue.')
@@ -30,11 +33,9 @@ define ['lib/utils/promises', 'underscore'], (promises, _)->
         ds =
           path: ds
           provider: 'hull'
-        @type = if (ds.path.lastIndexOf('/') in [-1, 0]) then 'model' else 'collection'
       else if _.isObject(ds) && !_.isFunction(ds)
         throw _errDefinition unless ds.path
         ds.provider = ds.provider || 'hull'
-        @type = ds.type || 'collection'
       @def = ds
 
     #
@@ -42,7 +43,8 @@ define ['lib/utils/promises', 'underscore'], (promises, _)->
     # @param {Object} bindings Key/Value pairs to replace the placeholders wih their values
     #
     parse:(bindings)->
-      @def.path = parseURI(@def.path, bindings) unless _.isFunction(@def)
+      unless (@def instanceof Backbone.Model || @def instanceof Backbone.Collection)
+        @def.path = parseURI(@def.path, bindings) unless _.isFunction(@def)
 
     #
     # Send the requests.
@@ -53,28 +55,26 @@ define ['lib/utils/promises', 'underscore'], (promises, _)->
     #
     fetch: ()->
       dfd = promises.deferred()
-      if _.isFunction(@def)
+      if (@def instanceof Backbone.Model || @def instanceof Backbone.Collection)
+        dfd.resolve @def
+      else if _.isFunction(@def)
         ret = @def()
         if ret?.promise
           dfd = ret
         else
           dfd.resolve ret
       else
-        dfd.resolve(false) if /undefined/.test(@def.path)
-        if @type == 'model'
-          data = @transport.model(@def)
-        else if @type == 'collection'
-          data = @transport.collection(@def)
-        else
-          dfd.reject new TypeError('Unknown type of datasource: ' + @type);
-        if data._fetched
-          dfd.resolve data
-        else
-          data.once 'sync', ->
-            dfd.resolve data
-          data.once 'error', (model, xhr)->
-            dfd.reject xhr
+        if /undefined/.test(@def.path)
+          dfd.resolve(false)
+          return dfd.promise()
+        transportDfd = @transport(@def)
+        transportDfd.then (obj)->
+          if _.isArray(obj)
+            dfd.resolve (new Backbone.Collection obj)
+          else
+            dfd.resolve (new Backbone.Model obj)
+        , (err)->
+          dfd.reject err
       dfd.promise()
 
   Datasource
-

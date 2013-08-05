@@ -12,7 +12,7 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
     module =
       require:
         paths:
-          cookie: 'components/jquery.cookie/jquery.cookie'
+          cookie: 'bower_components/jquery.cookie/jquery.cookie'
 
       initialize: (app)->
         core    = app.core
@@ -180,7 +180,7 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
           data = remoteConfig.data
           app.config.assetsUrl            = remoteConfig.assetsUrl
           app.config.services             = remoteConfig.services
-          app.config.widgets.sources.hull = remoteConfig.baseUrl + '/widgets'
+          app.components.addSource('hull', remoteConfig.baseUrl + '/aura_components')
           app.sandbox.config ?= {}
           app.sandbox.config.debug        = app.config.debug
           app.sandbox.config.assetsUrl    = remoteConfig.assetsUrl
@@ -210,11 +210,11 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
               app.core.mediator.emit('hull.logout')
               core.data.api.model('me').clear()
 
-          app.sandbox.connect = (provider, opts={}, callback=->)->
+          app.sandbox.linkIdentity = (provider, opts={}, callback=->)->
             opts.mode = 'connect'
             app.sandbox.login(provider, opts, callback)
 
-          app.sandbox.disconnect = (provider, callback=->)->
+          app.sandbox.unlinkIdentity = (provider, callback=->)->
             core.data.api("me/identities/#{provider}", 'delete').then ->
               app.sandbox.data.api.model('me').fetch().then callback
 
