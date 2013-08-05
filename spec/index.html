@@ -27,6 +27,7 @@
           sinonChai: 'node_modules/sinon-chai/lib/sinon-chai',
           fixtures: 'spec/fixtures',
           underscore: 'bower_components/underscore/underscore-min',
+          backbone: 'bower_components/backbone/backbone-min',
           jquery: 'bower_components/jquery/jquery.min',
           text: 'bower_components/requirejs-text/text',
           handlebars: 'bower_components/require-handlebars-plugin/Handlebars'
@@ -34,6 +35,9 @@
           shim: {
             "underscore": {
               exports: "_"
+            },
+            "backbone": {
+              exports: "Backbone"
             }
         }
       };
