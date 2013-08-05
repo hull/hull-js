@@ -21,6 +21,9 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
     # @param {String|Object|Function} A potentially partial definition of the datasource
     #
     constructor: (ds, transport) ->
+      if (ds instanceof Backbone.Model || ds instanceof Backbone.Collection)
+        @def = ds
+        return
       @transport = transport
       _errDefinition  = new TypeError('Datasource is missing its definition. Cannot continue.')
       _errTransport   = new TypeError('Datasource is missing a transport. Cannot continue.')
@@ -40,7 +43,8 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
     # @param {Object} bindings Key/Value pairs to replace the placeholders wih their values
     #
     parse:(bindings)->
-      @def.path = parseURI(@def.path, bindings) unless _.isFunction(@def)
+      unless (@def instanceof Backbone.Model || @def instanceof Backbone.Collection)
+        @def.path = parseURI(@def.path, bindings) unless _.isFunction(@def)
 
     #
     # Send the requests.
@@ -51,7 +55,9 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
     #
     fetch: ()->
       dfd = promises.deferred()
-      if _.isFunction(@def)
+      if (@def instanceof Backbone.Model || @def instanceof Backbone.Collection)
+        dfd.resolve @def
+      else if _.isFunction(@def)
         ret = @def()
         if ret?.promise
           dfd = ret

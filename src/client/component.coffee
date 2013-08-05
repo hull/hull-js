@@ -199,8 +199,8 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
 
     (app)->
       default_datasources =
-        me: new Datasource 'me', app.core.data.api
-        app: new Datasource 'app', app.core.data.api
-        org: new Datasource 'org', app.core.data.api
+        me: new Datasource app.core.data.api.model('me')
+        app: new Datasource app.core.data.api.model('app')
+        org: new Datasource app.core.data.api.model('org')
       debug = app.config.debug
       app.components.addType("Hull", HullComponent.prototype)
