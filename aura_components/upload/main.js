@@ -228,6 +228,7 @@ Hull.define(['jquery.fileupload'], {
   },
 
   initialize: function () {
-    this.sandbox.util._.bindAll(this);
+    var _ = this.sandbox.util._;
+    _.bindAll.apply(undefined, [this].concat(_.functions(this)));
   }
 });

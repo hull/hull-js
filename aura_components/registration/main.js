@@ -42,7 +42,8 @@ Hull.define(['underscore', 'h5f'], function(_, H5F) {
 
     initialize : function(options, callback) {
       this.formId = "form_"+(new Date()).getTime();
-      this.sandbox.util._.bindAll(this);
+      var _ = this.sandbox.util._;
+      _.bindAll.apply(undefined, [this].concat(_.functions(this)));
     },
 
     validate: function() {
