@@ -1,4 +1,25 @@
 define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)->
+
+  # Parses the "Link" header
+  #
+  # @param {String} header the link header
+  # @return {Object} links the pagination links
+  parseLinkHeader = (header) ->
+    links = {}
+    header.replace /<([^>]*)>;\s*rel="([\w]*)\"/g, (match, url, rel) ->
+      links[rel] = url
+
+    links
+
+  parseQueryString = (path) ->
+    path = path.split('?')[1] || path
+
+    params = {}
+    path.replace /([^?&=]+)(=([^&]*))?/g, (match, key, $, value) ->
+      params[key] = value if value?
+
+    params
+
   #
   # Parses the URI to replace placeholders with actual values
   #
@@ -42,7 +63,7 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
     # Replaces the placeholders in the URI with actual data
     # @param {Object} bindings Key/Value pairs to replace the placeholders wih their values
     #
-    parse:(bindings)->
+    parse: (bindings) ->
       unless (@def instanceof Backbone.Model || @def instanceof Backbone.Collection)
         @def.path = parseURI(@def.path, bindings) unless _.isFunction(@def)
 
@@ -68,13 +89,39 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
           dfd.resolve(false)
           return dfd.promise()
         transportDfd = @transport(@def)
-        transportDfd.then (obj)->
+        transportDfd.then (obj, headers) =>
           if _.isArray(obj)
+            @paginationLinks = parseLinkHeader(headers['Link'])
             dfd.resolve (new Backbone.Collection obj)
           else
             dfd.resolve (new Backbone.Model obj)
         , (err)->
           dfd.reject err
       dfd.promise()
+
+    isPaginable: ->
+      @paginationLinks?
+
+    isFirst: ->
+      !@paginationLinks.first
+
+    isLast: ->
+      !@paginationLinks.last
+
+    previous: ->
+      unless @isFirst()
+        @def.path = @paginationLinks.prev
+
+    next: ->
+      unless @isLast()
+        @def.path = @paginationLinks.next
+
+    sort: (field, direction = 'ASC') ->
+      params = parseQueryString(@def.path)
+      params.order_by = field + ' ' + direction
+      params = _.map params, (v, k) ->
+        k + '=' + v
+
+      @def.path = @def.path.split('?')[0] + '?' + params.join('&')
 
   Datasource

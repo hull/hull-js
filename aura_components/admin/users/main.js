@@ -24,20 +24,7 @@
 Hull.define({
   type: 'Hull',
 
-  templates: ['users', 'forbidden'],
-
-  appId: 'app',
-
-  params: {
-    page: 0,
-    limit: 30
-  },
-
-  initialize: function() {
-    if (this.options.appId) {
-      this.appId = this.options.appId;
-    }
-  },
+  templates: ['users'],
 
   renderError: function(err) {
     if (err.message.status === 401) {
@@ -46,36 +33,39 @@ Hull.define({
   },
 
   datasources: {
-    users: function() {
-      return this.api(this.appId + '/users', this.params);
-    }
+    users: 'users'
   },
 
   beforeRender: function(data){
-    var self = this;
-    this.sandbox.util._.each(data.users, function(profile){
-      self.sandbox.util._.each(profile.user.identities,function(identity){
-        identity.type=identity.type.replace(/_(app|account)$/,'');
-      });
-    });
+    var datasource = this.datasources.users;
+
+    data.showPagination = datasource.isPaginable();
+    data.showNextButton = !datasource.isLastPage();
+    data.showPreviousButton = !datasource.isFirstPage();
+
     return data;
   },
 
   actions: {
     nextPage: function() {
-      this.params.page += 1;
-      this.render();
+      var datasource = this.datasources.users;
+      if (!datasource.isLastPage()) {
+        datasource.nextPage();
+        this.render();
+      }
     },
 
     previousPage: function() {
-      this.params.page -= 1;
-      this.render();
+      var datasource = this.datasources.users;
+      if (!datasource.isFirstPage()) {
+        datasource.previousPage();
+        this.render();
+      }
     },
 
     selectUser: function(event, action) {
       this.sandbox.emit('hull-admin.user.select', action.data.id);
       event.preventDefault();
     }
-
   }
 });
