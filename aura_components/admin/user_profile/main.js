@@ -1,5 +1,4 @@
 /**
- *
  * ## User profile
  *
  * Displays the profile of an user of your app.
@@ -18,34 +17,46 @@
  *
 */
 Hull.define({
+  type: 'Hull',
 
-  type: "Hull",
-  templates: ['user_profile'],
+  templates: [
+    'user_profile'
+  ],
 
   datasources: {
     user: function() {
-      if (this.id) {
-        return this.api.model(this.id);
-      }
+      if (this.user) { return this.api(this.user); }
     }
   },
 
   initialize: function() {
-    this.id = this.options.id;
-    this.sandbox.on('hull-admin.user.select', function(id) {
-      this.id = id;
-      this.render();
-    }, this);
+    this.sandbox.on('hull.user.select', this.sandbox.util._.bind(this.renderUser, this));
   },
 
   beforeRender: function(data){
-    if(!data.user){
-      return data;
-    }
-    this.sandbox.util._.each(data.user.identities,function(identity){
-      identity.type=identity.type.replace(/_(app|account)$/,'');
-    });
-    return data;
-  }
+    if (!data.user) { return; }
 
+    data.userHasProfiles = !this.sandbox.util._.isEmpty(data.user.profiles);
+  },
+
+  actions: {
+    promote: function(e, action) {
+      this.promoteUser(action.data.role);
+    }
+  },
+
+  renderUser: function(id) {
+    var displayedUser = this.data.user;
+    if (displayedUser && displayedUser.id === id) { return; }
+
+    this.user = id;
+    this.render();
+  },
+
+  promoteUser: function(role) {
+    var method = role === 'admin' ? 'post' : 'delete';
+    this.api('admins/' + this.data.user.id, method).then(this.sandbox.util._.bind(function() {
+      this.render();
+    }, this));
+  }
 });

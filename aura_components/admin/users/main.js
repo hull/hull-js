@@ -40,8 +40,8 @@ Hull.define({
     var datasource = this.datasources.users;
 
     data.showPagination = datasource.isPaginable();
-    data.showNextButton = !datasource.isLastPage();
-    data.showPreviousButton = !datasource.isFirstPage();
+    data.showNextButton = !datasource.isLast();
+    data.showPreviousButton = !datasource.isFirst();
 
     return data;
   },
@@ -49,23 +49,31 @@ Hull.define({
   actions: {
     nextPage: function() {
       var datasource = this.datasources.users;
-      if (!datasource.isLastPage()) {
-        datasource.nextPage();
+      if (!datasource.isLast()) {
+        datasource.next();
         this.render();
       }
     },
 
     previousPage: function() {
       var datasource = this.datasources.users;
-      if (!datasource.isFirstPage()) {
-        datasource.previousPage();
+      if (!datasource.isFirst()) {
+        datasource.previous();
         this.render();
       }
     },
 
     selectUser: function(event, action) {
-      this.sandbox.emit('hull-admin.user.select', action.data.id);
-      event.preventDefault();
+      this.sandbox.emit('hull.user.select', action.data.id);
+    },
+
+    sort: function(event, action) {
+      this.sort(action.data.field, action.data.direction);
     }
+  },
+
+  sort: function(field, direction) {
+    this.datasources.users.sort(field, direction);
+    this.render();
   }
 });

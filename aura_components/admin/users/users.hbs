@@ -1,3 +1,15 @@
+<div class="btn-group">
+  <a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
+    Sort by <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu">
+    <li><a href="#" data-hull-action="sort" data-hull-field="created_at" data-hull-direction="desc">Created At</a></li>
+    <li><a href="#" data-hull-action="sort" data-hull-field="name">Name</a></li>
+    <li><a href="#" data-hull-action="sort" data-hull-field="email">Email</a></li>
+    <li><a href="#" data-hull-action="sort" data-hull-field="stats.sign_in_count" data-hull-direction="desc">Sign In Count</a></li>
+  </ul>
+</div>
+
 <ul class="nav nav-tabs nav-stacked list list-user">
   {{#each users}}
     <li>
@@ -13,8 +25,6 @@
                 <span class="name">{{name}}</span>
                 {{#if email}} <small class="email">{{email}}</small> {{/if}}
               </h5>
-
-              <span class="hidden created-at">{{fromNow created_at}}</span>
 
               <ul class="unstyled">
                 <li><strong>Created: </strong>{{fromNow created_at}}</li>
@@ -37,10 +47,12 @@
 </ul>
 
 {{#if showPagination}}
-  {{#if showPreviousButton}}
-    <button data-hull-action='previousPage' class="btn">← Previous</button>
-  {{/if}}
-  {{#if showNextButton}}
-    <button data-hull-action='nextPage' class="btn">Next →</button>
-  {{/if}}
+  <p>
+    {{#if showPreviousButton}}
+      <button data-hull-action='previousPage' class="btn">← Previous</button>
+    {{/if}}
+    {{#if showNextButton}}
+      <button data-hull-action='nextPage' class="btn">Next →</button>
+    {{/if}}
+  </p>
 {{/if}}
