@@ -30,7 +30,7 @@ Hull.define({
   },
 
   initialize: function() {
-    this.sandbox.on('hull.user.select', this.sandbox.util._.bind(this.renderUser, this));
+    this.sandbox.on('hull.user.select', this.renderUser, this);
   },
 
   beforeRender: function(data){
