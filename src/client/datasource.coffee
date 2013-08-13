@@ -11,6 +11,10 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
 
     links
 
+  # Parse query string from a path
+  #
+  # @param {String} a path with a query string
+  # @return {Object}
   parseQueryString = (path) ->
     path = path.split('?')[1] || path
 
@@ -99,24 +103,44 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
           dfd.reject err
       dfd.promise()
 
+    # Is datasource paginable?
+    #
+    # @returns {Boolean}
     isPaginable: ->
       @paginationLinks?
 
+    # Is datasource on the first page?
+    #
+    # @returns {Boolean}
     isFirst: ->
       !@paginationLinks.first
 
+    # Is datasource on the last page?
+    #
+    # @returns {Boolean}
     isLast: ->
       !@paginationLinks.last
 
+    # Go to previous page.
+    #
+    # Change datasource path to the path of the previous page.
     previous: ->
       unless @isFirst()
         @def.path = @paginationLinks.prev
 
+    # Go to next page.
+    #
+    # Change datasource path to the path of the next page.
     next: ->
       unless @isLast()
         @def.path = @paginationLinks.next
 
+    # Sort the datasource by a given field in a given direction.
+    #
+    # @param {String} field the field to sort the datasource by.
+    # @param {String} direction default to `"ASC"`. Can be `"DESC"` or `"ASC"`
     sort: (field, direction = 'ASC') ->
+      # TODO This can be moved
       params = parseQueryString(@def.path)
       params.order_by = field + ' ' + direction
       params = _.map params, (v, k) ->
