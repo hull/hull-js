@@ -1,4 +1,29 @@
 define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)->
+
+  # Parses the "Link" header
+  #
+  # @param {String} header the link header
+  # @return {Object} links the pagination links
+  parseLinkHeader = (header) ->
+    links = {}
+    header.replace /<([^>]*)>;\s*rel="([\w]*)\"/g, (match, url, rel) ->
+      links[rel] = url
+
+    links
+
+  # Parse query string from a path
+  #
+  # @param {String} a path with a query string
+  # @return {Object}
+  parseQueryString = (path) ->
+    path = path.split('?')[1] || path
+
+    params = {}
+    path.replace /([^?&=]+)(=([^&]*))?/g, (match, key, $, value) ->
+      params[key] = value if value?
+
+    params
+
   #
   # Parses the URI to replace placeholders with actual values
   #
@@ -42,7 +67,7 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
     # Replaces the placeholders in the URI with actual data
     # @param {Object} bindings Key/Value pairs to replace the placeholders wih their values
     #
-    parse:(bindings)->
+    parse: (bindings) ->
       unless (@def instanceof Backbone.Model || @def instanceof Backbone.Collection)
         @def.path = parseURI(@def.path, bindings) unless _.isFunction(@def)
 
@@ -68,13 +93,59 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
           dfd.resolve(false)
           return dfd.promise()
         transportDfd = @transport(@def)
-        transportDfd.then (obj)->
+        transportDfd.then (obj, headers) =>
           if _.isArray(obj)
+            @paginationLinks = parseLinkHeader(headers['Link'])
             dfd.resolve (new Backbone.Collection obj)
           else
             dfd.resolve (new Backbone.Model obj)
         , (err)->
           dfd.reject err
       dfd.promise()
+
+    # Is datasource paginable?
+    #
+    # @returns {Boolean}
+    isPaginable: ->
+      @paginationLinks?
+
+    # Is datasource on the first page?
+    #
+    # @returns {Boolean}
+    isFirst: ->
+      !@paginationLinks.first
+
+    # Is datasource on the last page?
+    #
+    # @returns {Boolean}
+    isLast: ->
+      !@paginationLinks.last
+
+    # Go to previous page.
+    #
+    # Change datasource path to the path of the previous page.
+    previous: ->
+      unless @isFirst()
+        @def.path = @paginationLinks.prev
+
+    # Go to next page.
+    #
+    # Change datasource path to the path of the next page.
+    next: ->
+      unless @isLast()
+        @def.path = @paginationLinks.next
+
+    # Sort the datasource by a given field in a given direction.
+    #
+    # @param {String} field the field to sort the datasource by.
+    # @param {String} direction default to `"ASC"`. Can be `"DESC"` or `"ASC"`
+    sort: (field, direction = 'ASC') ->
+      # TODO This can be moved
+      params = parseQueryString(@def.path)
+      params.order_by = field + ' ' + direction
+      params = _.map params, (v, k) ->
+        k + '=' + v
+
+      @def.path = @def.path.split('?')[0] + '?' + params.join('&')
 
   Datasource

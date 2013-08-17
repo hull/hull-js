@@ -11,7 +11,6 @@ define ['jquery', 'underscore', 'lib/utils/version', 'lib/api/params', 'lib/api/
     remoteUrl += "&user_hash=#{config.userHash}" if config.userHash != undefined
     remoteUrl
 
-
   (config)->
     message = null
     # Main method to request the API
@@ -58,8 +57,6 @@ define ['jquery', 'underscore', 'lib/utils/version', 'lib/api/params', 'lib/api/
         setCurrentUser data.headers
       window.clearTimeout(timeout)
 
-
-
       dfd.resolve
         auth: authModule api, config, remoteConfig.services.types.auth
         remoteConfig: remoteConfig
@@ -88,7 +85,7 @@ define ['jquery', 'underscore', 'lib/utils/version', 'lib/api/params', 'lib/api/
         if res.provider == 'hull' && res.headers
           setCurrentUser(res.headers)
         callback(res.response)
-        promise.resolve(res.response)
+        promise.resolve(res.response, res.headers)
       onError = (err)->
         errback(err.message)
         promise.reject(err.message)
