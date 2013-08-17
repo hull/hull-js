@@ -35,7 +35,6 @@ Hull.define({
 
   beforeRender: function(data){
     if (!data.user) { return; }
-
     data.userHasProfiles = !this.sandbox.util._.isEmpty(data.user.profiles);
   },
 
@@ -55,8 +54,9 @@ Hull.define({
 
   promoteUser: function(role) {
     var method = role === 'admin' ? 'post' : 'delete';
-    this.api('admins/' + this.data.user.id, method).then(this.sandbox.util._.bind(function() {
-      this.render();
-    }, this));
+    var self = this;
+    this.api('admins/' + this.data.user.id, method).then(function() {
+      self.render();
+    });
   }
 });
