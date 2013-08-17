@@ -25,7 +25,7 @@ Hull.define({
 
   datasources: {
     user: function() {
-      if (this.user) { return this.api(this.user); }
+      if (this.user) { return this.api(this.user, { fields: 'user.profiles' }); }
     }
   },
 
