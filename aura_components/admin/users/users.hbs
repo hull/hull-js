@@ -1,47 +1,58 @@
+<div class="btn-group">
+  <a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
+    Sort by <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu">
+    <li><a href="#" data-hull-action="sort" data-hull-field="created_at" data-hull-direction="desc">Created At</a></li>
+    <li><a href="#" data-hull-action="sort" data-hull-field="name">Name</a></li>
+    <li><a href="#" data-hull-action="sort" data-hull-field="email">Email</a></li>
+    <li><a href="#" data-hull-action="sort" data-hull-field="stats.sign_in_count" data-hull-direction="desc">Sign In Count</a></li>
+  </ul>
+</div>
+
 <ul class="nav nav-tabs nav-stacked list list-user">
-  {{#users}}
+  {{#each users}}
     <li>
-      <a href="#" data-hull-action="selectUser" data-hull-id="{{user.id}}">
+      <a href="#" data-hull-action="selectUser" data-hull-id="{{id}}">
           <div class="media">
-            {{#user}}
-              {{#if picture}}
-                <div class="pull-left">
-                  <img src="{{picture}}" width="50" height="50"/>
-                </div>
-              {{/if}}
-              <div class="media-body">
-                <h5 class="media-heading">
-                  <span class="name">{{name}}</span>
-                  {{#if email}} <small class="email">{{email}}</small> {{/if}}
-                </h5>
-
-                <span class="hidden created-at">{{fromNow created_at}}</span>
-
-                <ul class="unstyled">
-                  <li><strong>Created: </strong>{{fromNow created_at}}</li>
-                  {{#if identities}}
-                    <li class="provider"><strong>Provider: </strong>
-                      {{#identities}}
-                        <i class="icon-{{type}}"></i> {{humanize type}}
-                      {{/identities}}
-                    </li>
-                  {{/if}}
-                  <li class="sign-in-count"><strong>Sign in count: </strong>{{stats.sign_in_count}}</li>
-                </ul>
-
+            {{#if picture}}
+              <div class="pull-left">
+                <img src="{{picture}}" width="50" height="50"/>
               </div>
-            {{/user}}
+            {{/if}}
+            <div class="media-body">
+              <h5 class="media-heading">
+                <span class="name">{{name}}</span>
+                {{#if email}} <small class="email">{{email}}</small> {{/if}}
+              </h5>
+
+              <ul class="unstyled">
+                <li><strong>Created: </strong>{{fromNow created_at}}</li>
+                {{#if identities}}
+                  <li class="provider"><strong>Provider: </strong>
+                    {{#identities}}
+                      <i class="icon-{{type}}"></i> {{humanize type}}
+                    {{/identities}}
+                  </li>
+                {{/if}}
+                <li class="sign-in-count"><strong>Sign in count: </strong>{{stats.sign_in_count}}</li>
+              </ul>
+
+            </div>
           </div>
           <i class="icon-chevron-right"></i>
         </a>
     </li>
-  {{/users}}
+  {{/each}}
 </ul>
-<div class='row'>
-  <div class="span12">
-    <p>
-      <button data-hull-action='previousPage' class="btn">← Prev</button>
+
+{{#if showPagination}}
+  <p>
+    {{#if showPreviousButton}}
+      <button data-hull-action='previousPage' class="btn">← Previous</button>
+    {{/if}}
+    {{#if showNextButton}}
       <button data-hull-action='nextPage' class="btn">Next →</button>
-    </p>
-  </div>
-</div>
+    {{/if}}
+  </p>
+{{/if}}
