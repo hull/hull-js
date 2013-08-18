@@ -1,41 +1,26 @@
-
-<div class="hull-conversations">
-  <header>{{subject_name}}</header>
-  {{#if conversations}}
-    <table class="table table-hover">
-      <tr>
-        <th>Title</th>
-        <th>Message Count</th>
-        <th>Participants</th>
-        <th>Last updated</th>
-      </tr>
-      {{#conversations}}
-        <tr class="conversation" data-hull-action="select" data-hull-id="{{id}}">
-          <td>{{name}}</td>
-          <td>{{messages_count}}</td>
-          <td>
-            <ul>
-            {{#participants}}
-              <li>{{name}}</li>
-            {{/participants}}
-            </ul>
-          </td>
-          <td>{{formatTime updated_at 'h:mm a'}}</td>
-        </tr>
-      {{/conversations}}
-    {{else}}
-      <tr>
-        <td colspan="4">
-          {{#if errors.conversations}}
-            <div class="alert alert-error">
-              Unable to retrieve the conversations.
-            </div>
-          {{else}}
-            <div class="conversations-empty">No conversations started yet</div>
-          {{/if}}
-        </td>
-      </tr>
-    {{/if}}
-  </table>
-</div>
-
+{{#each conversations}}
+  <div class="media item" data-hull-action="select" data-hull-id="{{id}}">
+    <a class="pull-left" href="#">
+      <img class="media-object img-rounded" src="{{actor.picture}}" width="50" height="50">
+    </a>
+    <div class="media-body">
+      <h5 class="media-heading">
+        <span class="">
+        {{#if messages_count_unread}}
+          <span class="badge badge-important pull-right">
+            <i class="icon-envelope icon-white"></i> {{messages_count_unread}}
+          </span>
+        {{/if}}
+        </span>
+        {{name}}
+      </h5>
+      <small>updated {{fromNow updated_at}}</small>
+    </div>
+  </div>
+{{else}}
+  {{#if errors.conversations}}
+    <div class="alert alert-error">
+      Unable to retrieve the conversations.
+    </div>
+  {{/if}}
+{{/each}}

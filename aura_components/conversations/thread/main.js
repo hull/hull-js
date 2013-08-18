@@ -40,7 +40,8 @@ Hull.define({
   actions: {
     message:      'message',
     deleteMsg:    'deleteMsg',
-    notification: 'notification',
+    enableNotifications: 'enableNotifications',
+    disableNotifications: 'disableNotifications',
     delete:       'delete'
   },
 
@@ -72,7 +73,6 @@ Hull.define({
   },
 
   initialize: function() {
-    "use strict";
     this.sandbox.on('hull.conversation.select', function(id) {
       this.options.id = id;
       this.render();
@@ -80,30 +80,32 @@ Hull.define({
   },
 
   beforeRender: function(data, errors) {
-    "use strict";
-    if(data.conversation) {
-      data.conversation.isDeletable = data.conversation.actor.id == data.me.id;
-      data.messages = data.messages;
+    var _ = this.sandbox.util._;
+    data.isAscending = this.options.order != 'desc';
+    if (data.conversation) {
       data.participants = data.conversation.participants;
-      this.sandbox.util._.each(data.messages, function(m) {
-        m.isDeletable = (m.actor.id === this.data.me.id);
+      if (this.loggedIn()) {
+        data.conversation.isDeletable = data.conversation.actor.id == data.me.id;
+        _.each(data.messages, function(m) {
+          m.isDeletable = (m.actor.id === this.data.me.id);
 
-        var last_read = data.conversation.last_read;
-        if(last_read instanceof Object){
-          last_read = last_read[this.data.me.id];
-        }
-        m.isNew = !m.isMe && (last_read ? m.id > last_read : true);
+          var last_read = data.conversation.last_read;
+          if(last_read instanceof Object){
+            last_read = last_read[this.data.me.id];
+          }
+          m.isNew = !m.isMe && (last_read ? m.id > last_read : true);
 
-        return m;
-      }, this);
-      data.isFollowing = this.sandbox.util._.find(data.participants, function(p) {
-        return p.id == data.me.id;
-      }, this)
-      data.isAscending = this.options.order != 'desc';
-      data.isNew = !(data.messages && data.messages.length > 0);
-      this.sandbox.util._.each(data.messages, function(m){
-        m.isMe = (m.actor.id===data.me.id);
-      });
+          return m;
+        }, this);
+        data.isFollowing = _.find(data.participants, function(p) {
+          return p.id == data.me.id;
+        }, this)
+
+        data.isNew = !(data.messages && data.messages.length > 0);
+        _.each(data.messages, function(m){
+          m.isMe = (m.actor.id === data.me.id);
+        });
+      }
     }
     else {
       data.newConvo = true;
@@ -112,22 +114,30 @@ Hull.define({
     return data;
   },
 
-  afterRender: function() {
+  afterRender: function(data) {
     "use strict";
+    var self = this;
     if(this.options.focus || this.focusAfterRender) {
       this.$el.find('input,textarea').focus();
       this.focusAfterRender = false;
     }
-    // Mark msgs as read
-    setTimeout(this.sandbox.util._.bind(function() {
-      var li = $('.hull-messages__list li:first-child');
-      var cid = $('.hull-conversation__form').find('.media').data('hull-conversation-id');
 
-      if(li && cid) {
-        this.api(cid + '/messages', 'put', {});
+
+    var tips = this.$el.find('[data-toggle="tooltip"]');
+    if (tips && tips.tooltip) {
+      tips.tooltip();
+    } else {
+      console.warn("------> NO tooltip !")
+    }
+
+    // Mark msgs as read
+    setTimeout(function() {
+      if (self.options.id && data.messages) {
+        self.api(self.options.id + '/messages', 'put');
       }
-    }, this), 2000);
+    }, 2000);
   },
+
   toggleLoading: function ($el) {
     "use strict";
     var $form = $el.toggleClass('is-loading');
@@ -177,9 +187,18 @@ Hull.define({
     });
   },
 
-  notification: function(e, data) {
-    "use strict";
-    var $notification = this.$el.find('input');
-    this.api(this.options.id + '/participants', 'put', {notification: $notification.prop('checked')});
+  disableNotifications: function(e, data) {
+    var self = this;
+    this.api(this.options.id + '/notifications', 'delete').then(function() {
+      self.render();
+    });
+
+  },
+
+  enableNotifications: function(e, data) {
+    var self = this;
+    this.api(this.options.id + '/notifications', 'put').then(function() {
+      self.render();
+    });
   }
 });

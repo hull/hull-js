@@ -6,7 +6,7 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
   # @return {Object} links the pagination links
   parseLinkHeader = (header) ->
     links = {}
-    header.replace /<([^>]*)>;\s*rel="([\w]*)\"/g, (match, url, rel) ->
+    header?.replace /<([^>]*)>;\s*rel="([\w]*)\"/g, (match, url, rel) ->
       links[rel] = url
 
     links
