@@ -1,0 +1,7 @@
+{{#if conversation.participants}}
+  <div class="hull-participants__list">
+    {{#conversation.participants}}
+    <img data-toggle="tooltip" title="{{name}}" class="img-rounded" src="{{picture}}" alt="{{name}}" width="36" height="36">
+    {{/conversation.participants}}
+  </div>
+{{/if}}

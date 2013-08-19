@@ -40,6 +40,22 @@ module.exports = function (grunt) {
                   rel: 'dist/'
                 }
               ]
+            },
+            staging:{
+              upload:[
+                {
+                  gzip:  true,
+                  src: 'dist/<%= PKG_VERSION %>/**/*',
+                  dest: '<%= GIT_BRANCH %>',
+                  rel: 'dist/<%= PKG_VERSION %>'
+                },
+                {
+                  gzip:  false,
+                  src: 'dist/<%= PKG_VERSION %>/**/*',
+                  dest: '<%= GIT_BRANCH %>',
+                  rel: 'dist/<%= PKG_VERSION %>'
+                }
+              ]
             }
           };
         }

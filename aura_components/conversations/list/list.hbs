@@ -1,0 +1,26 @@
+{{#each conversations}}
+  <div class="media item" data-hull-action="select" data-hull-id="{{id}}">
+    <a class="pull-left" href="#">
+      <img class="media-object img-rounded" src="{{actor.picture}}" width="50" height="50">
+    </a>
+    <div class="media-body">
+      <h5 class="media-heading">
+        <span class="">
+        {{#if messages_count_unread}}
+          <span class="badge badge-important pull-right">
+            <i class="icon-envelope icon-white"></i> {{messages_count_unread}}
+          </span>
+        {{/if}}
+        </span>
+        {{name}}
+      </h5>
+      <small>updated {{fromNow updated_at}}</small>
+    </div>
+  </div>
+{{else}}
+  {{#if errors.conversations}}
+    <div class="alert alert-error">
+      Unable to retrieve the conversations.
+    </div>
+  {{/if}}
+{{/each}}

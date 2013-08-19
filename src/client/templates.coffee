@@ -12,9 +12,9 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
     compiled
 
   # Handles the various priorities and locations of templates
-  _getTemplateDefinition = (name, ref, widgetName, dom)->
+  _getTemplateDefinition = (name, ref, componentName, dom)->
     path = "#{ref}/#{name}"
-    tplName = [widgetName, name.replace(/^_/, '')].join("/")
+    tplName = [componentName, name.replace(/^_/, '')].join("/")
     localTpl = dom("script[data-hull-template='#{tplName}']")
     if localTpl.length
       parsed = setupTemplate(localTpl.text(), tplName)
@@ -45,9 +45,9 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
         names = [names] if _.isString(names)
         dfd   = app.core.data.deferred()
         ret = {}
-        widgetName = ref.replace('__widget__$', '').split('@')[0]
+        componentName = ref.replace('__component__$', '').split('@')[0]
         for name in names
-          tplDef = _getTemplateDefinition name, ref, widgetName, app.core.dom.find
+          tplDef = _getTemplateDefinition name, ref, componentName, app.core.dom.find
           if tplDef
             ret[name] = tplDef
           else
@@ -57,7 +57,7 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
             res = Array.prototype.slice.call(arguments)
             for t,i in res
               name = undefinedTemplates[i][0]
-              tplName = [widgetName, name].join("/")
+              tplName = [componentName, name].join("/")
               ret[name] = setupTemplate(t, tplName)
             dfd.resolve(ret)
           , (err)->

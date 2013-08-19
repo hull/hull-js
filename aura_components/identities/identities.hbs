@@ -1,0 +1,50 @@
+{{#if authHasFailed}}
+  <div class="alert alert-error">
+    Another user is already registered with this identity.
+    Please <a data-hull-action="logout" class="btn-link btn-inline">sign out</a> first if you want to use it.
+  </div>
+{{/if}}
+
+{{#if loggedIn}}
+
+
+<ul class="unstyled">
+  <li>
+    <p>
+      <div class='media'>
+        {{#if me.picture}}
+        <div class="pull-left">
+          <img class="media-object img-rounded" src="{{me.picture}}" alt="{{me.name}}" width="50px" height="50px">
+        </div>
+        {{/if}}
+        <div class="media-body">
+          <h4 class="media-heading">{{me.name}}</h4>
+          via {{me.main_identity}},
+          <a data-hull-action="logout" class="btn-link btn-inline">
+            Sign Out
+          </a>
+        </div>
+      </div>
+    </p>
+  </li>
+  {{#authServices}}
+  {{#if availableAction}}
+  <li>
+    <p>
+    <button data-hull-action="{{availableAction}}" data-hull-provider="{{name}}" class="btn btn-small {{#if identity}}btn-success{{/if}}">
+      <i class="icon-{{name}}"></i>
+      {{classify actionName}}
+      your
+      {{classify name}}
+      account
+    </button>
+    </p>
+  </li>
+  {{/if}}
+  {{/authServices}}
+</ul>
+
+
+{{else}}
+<div data-hull-component="login_button@hull"></div>
+{{/if}}
