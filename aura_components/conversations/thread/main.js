@@ -46,7 +46,8 @@ Hull.define({
   },
 
   options: {
-    focus: false
+    focus: true,
+    order: 'desc'
   },
 
   datasources: {
@@ -56,20 +57,21 @@ Hull.define({
       }
     },
     messages: function () {
-      "use strict";
       if(this.options.id) {
-        var orderBy;
-        if('desc' === this.options.order) {
-          orderBy = "created_at DESC";
-        } else {
-          orderBy = "created_at ASC";
-        }
-        return this.api(this.options.id + '/messages', {order_by: orderBy});
+        return this.api(this.options.id + '/messages', this.getMessagesParams());
       }
       else {
         return null;
       }
     }
+  },
+
+  getMessagesParams: function() {
+    var params = {  };
+    if (this.options.limit) {
+      params.per_page = this.options.limit;
+    }
+    return params;
   },
 
   initialize: function() {
@@ -83,51 +85,49 @@ Hull.define({
     var _ = this.sandbox.util._;
     data.isAscending = this.options.order != 'desc';
     if (data.conversation) {
+      window._messages = data.messages;
       data.participants = data.conversation.participants;
       if (this.loggedIn()) {
-        data.conversation.isDeletable = data.conversation.actor.id == data.me.id;
+        data.conversation.isDeletable = (data.conversation.actor && data.conversation.actor.id == data.me.id);
         _.each(data.messages, function(m) {
-          m.isDeletable = (m.actor.id === this.data.me.id);
+          m.isDeletable = m.actor && (m.actor.id === this.data.me.id);
 
           var last_read = data.conversation.last_read;
           if(last_read instanceof Object){
             last_read = last_read[this.data.me.id];
           }
           m.isNew = !m.isMe && (last_read ? m.id > last_read : true);
-
+          m.isMe = m.actor && (m.actor.id === data.me.id);
           return m;
         }, this);
+
         data.isFollowing = _.find(data.participants, function(p) {
           return p.id == data.me.id;
         }, this)
 
         data.isNew = !(data.messages && data.messages.length > 0);
-        _.each(data.messages, function(m){
-          m.isMe = (m.actor.id === data.me.id);
-        });
       }
     }
     else {
       data.newConvo = true;
       data.errors = errors;
     }
+    if('desc' !== this.options.order) {
+      data.messages = data.messages.reverse();
+    }
     return data;
   },
 
   afterRender: function(data) {
-    "use strict";
     var self = this;
     if(this.options.focus || this.focusAfterRender) {
       this.$el.find('input,textarea').focus();
       this.focusAfterRender = false;
     }
 
-
     var tips = this.$el.find('[data-toggle="tooltip"]');
     if (tips && tips.tooltip) {
       tips.tooltip();
-    } else {
-      console.warn("------> NO tooltip !")
     }
 
     // Mark msgs as read
@@ -139,7 +139,6 @@ Hull.define({
   },
 
   toggleLoading: function ($el) {
-    "use strict";
     var $form = $el.toggleClass('is-loading');
     var $btn = $form.find('.btn');
     $btn.attr('disabled', !$btn.attr('disabled'));
@@ -148,37 +147,34 @@ Hull.define({
   },
 
   message: function (e, data) {
-    "use strict";
     e.preventDefault();
+    var self = this;
     var $form = this.$el.find("[data-hull-item='form']");
     var formData = this.sandbox.dom.getFormData($form);
-    var description = formData.description;
-
+    var body = formData.body;
     this.toggleLoading($form);
-    if (description && description.length > 0) {
+    if (body && body.length > 0) {
       var cid = data.data.id;
-      var attributes = { body: description };
-      this.api(cid + '/messages', 'post', attributes).then(this.sandbox.util._.bind(function() {
-        this.toggleLoading($form);
-        this.render();
-      }, this));
+      var attributes = { body: body };
+      this.api(cid + '/messages', 'post', attributes).then(function() {
+        self.toggleLoading($form);
+        self.render();
+      });
     } else {
       this.toggleLoading($form);
     }
   },
 
   deleteMsg: function(e, data) {
-    "use strict";
-    event.preventDefault();
+    e.preventDefault();
     var id = data.data.id;
     var $parent = data.el
       .addClass('is-removing')
       .parents('[data-hull-message-id="'+ id +'"]');
-    this.api.delete(id).then(function () {$parent.remove();});
+    this.api.delete(id).then(function () { $parent.remove(); });
   },
 
   delete: function(e, data) {
-    "use strict";
     event.preventDefault();
     var id = data.data.id;
     var self = this;
@@ -192,7 +188,6 @@ Hull.define({
     this.api(this.options.id + '/notifications', 'delete').then(function() {
       self.render();
     });
-
   },
 
   enableNotifications: function(e, data) {

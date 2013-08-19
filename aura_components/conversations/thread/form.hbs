@@ -6,7 +6,7 @@
           <img class="media-object img-rounded" src="{{me.picture}}" alt="{{me.name}}" width="70" height="70">
         </div>
         <div class="media-body">
-          <textarea name='description' class="input-block-level" rows="3" placeholder="Send a message... "></textarea>
+          <textarea name='body' class="input-block-level" rows="3" placeholder="Send a message... "></textarea>
           <button data-hull-action="message" data-hull-id="{{conversation.id}}" class="btn btn-primary">
             {{#if isNew}}Send{{else}}Reply{{/if}}
           </button> {{#me}}as {{name}}{{/me}}
