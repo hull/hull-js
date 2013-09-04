@@ -64,7 +64,8 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
         ds.provider = ds.provider || 'hull'
 
       unless _.isFunction(ds)
-        ds.params = parseQueryString(ds.path)
+        params = ds.params || {}
+        ds.params = _.extend(parseQueryString(ds.path), params)
         ds.path = ds.path.split('?')[0]
 
       @def = ds
