@@ -41,6 +41,7 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
   # Helps managing the various definitions a component datasource can take
   # Sets decent defaults, validates input, and sends requests to the API
   #
+
   class Datasource
     #
     # @param {String|Object|Function} A potentially partial definition of the datasource
@@ -50,20 +51,26 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
         @def = ds
         return
       @transport = transport
+
       _errDefinition  = new TypeError('Datasource is missing its definition. Cannot continue.')
       _errTransport   = new TypeError('Datasource is missing a transport. Cannot continue.')
       throw _errDefinition unless ds
       throw _errTransport unless @transport
+
       if _.isString(ds)
-        ds =
-          path: ds
-          provider: 'hull'
+        ds = path: ds, provider: 'hull'
       else if _.isObject(ds) && !_.isFunction(ds)
         throw _errDefinition unless ds.path
         ds.provider = ds.provider || 'hull'
+
+      unless _.isFunction(ds)
+        params = ds.params || {}
+        ds.params = _.extend(parseQueryString(ds.path), params)
+        ds.path = ds.path.split('?')[0]
+
       @def = ds
 
-    #
+
     # Replaces the placeholders in the URI with actual data
     # @param {Object} bindings Key/Value pairs to replace the placeholders wih their values
     #
@@ -140,12 +147,12 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
     # @param {String} field the field to sort the datasource by.
     # @param {String} direction default to `"ASC"`. Can be `"DESC"` or `"ASC"`
     sort: (field, direction = 'ASC') ->
-      # TODO This can be moved
-      params = parseQueryString(@def.path)
-      params.order_by = field + ' ' + direction
-      params = _.map params, (v, k) ->
-        k + '=' + v
+      @def.params.order_by = field + ' ' + direction
 
-      @def.path = @def.path.split('?')[0] + '?' + params.join('&')
+    where: (query, extend = false) ->
+      if extend
+        query = _.extend(@def.params.where, query)
+
+      @def.params.where = query
 
   Datasource
