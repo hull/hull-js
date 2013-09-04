@@ -1,4 +1,4 @@
-<div class="btn-group">
+<div class="btn-group pull-right">
   <a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
     Sort by <span class="caret"></span>
   </a>
@@ -9,6 +9,15 @@
     <li><a href="#" data-hull-action="sort" data-hull-field="stats.sign_in_count" data-hull-direction="desc">Sign In Count</a></li>
   </ul>
 </div>
+
+<form class="form form-search js-hull-users-search">
+  <input type="text" class="js-hull-users-search-query" placeholder="Search by email" value="{{currentQuery}}">
+  <button type="submit" class="btn">Search</button>
+</form>
+
+{{#if currentQuery}}
+<p><small>Result for: <strong>{{currentQuery}}</strong>. <a href="#" data-hull-action="resetSearch">clear</a></small></p>
+{{/if}}
 
 <ul class="nav nav-tabs nav-stacked list list-user">
   {{#each users}}

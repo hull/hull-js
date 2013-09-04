@@ -38,12 +38,21 @@ Hull.define({
 
   beforeRender: function(data){
     var datasource = this.datasources.users;
-
     data.showPagination = datasource.isPaginable();
     data.showNextButton = !datasource.isLast();
     data.showPreviousButton = !datasource.isFirst();
 
+    data.currentQuery = this.currentQuery;
+
     return data;
+  },
+
+  afterRender: function() {
+    var $searchForm = this.$('.js-hull-users-search');
+    $searchForm.on('submit', this.sandbox.util._.bind(function(e) {
+      e.preventDefault();
+      this.search($searchForm.find('.js-hull-users-search-query').val());
+    }, this));
   },
 
   actions: {
@@ -69,11 +78,31 @@ Hull.define({
 
     sort: function(event, action) {
       this.sort(action.data.field, action.data.direction);
+    },
+
+    resetSearch: function() {
+      this.search();
     }
   },
 
   sort: function(field, direction) {
     this.datasources.users.sort(field, direction);
     this.render();
+  },
+
+  search: function(email) {
+    var query;
+    if (!this.sandbox.util._.string.isBlank(email)) {
+      this.datasources.users.where({ email: email });
+      query = email;
+    } else {
+      this.datasources.users.where({});
+      query = null;
+    }
+
+    if (this.currentQuery !== email) {
+      this.currentQuery = query;
+      this.render();
+    }
   }
 });
