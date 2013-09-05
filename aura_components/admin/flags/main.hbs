@@ -10,7 +10,12 @@
     {{#each flags}}
       <tr>
         <td>{{type}}</td>
-        <td>{{user.name}} ({{user.email}})</td>
+        <td>
+          <p>{{user.name}} ({{user.email}})</p>
+          <blockquote>
+            {{description}}
+          </blockquote>
+        </td>
         <td>
           <a class="btn" data-hull-id="{{id}}" data-hull-action="unflag">Unflag</a>
           <a class="btn btn-danger"  data-hull-id="{{id}}" data-hull-action="delete">Delete</a>
