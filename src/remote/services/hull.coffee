@@ -1,4 +1,7 @@
 define ['jquery', 'underscore'], ($, _)->
+  API_PATH = '/api/v1/'
+  API_PATH_REGEXP = /^\/?api\/v1\//
+  RESPONSE_HEADER = ['Hull-User-Id', 'Hull-User-Sig', 'Link']
 
   (app)->
 
@@ -22,10 +25,15 @@ define ['jquery', 'underscore'], ($, _)->
 
       analytics.identify(me.id, ident)
 
-    handler = (req, route, callback, errback)=>
-      path = req.path.replace(/^\/?hull\//, '')
-      path = path.substring(1) if (path[0] == "/")
-      url  = "/api/v1/" + path
+    normalizePath = (path) ->
+      if API_PATH_REGEXP.test(path)
+        return path.replace(API_PATH_REGEXP, API_PATH)
+
+      path = path.substring(1) if path[0] == '/'
+      API_PATH + path
+
+    handler = (req, callback, errback)=>
+      url = normalizePath(req.path)
 
       if req.method.toLowerCase() != 'get'
         req_data = JSON.stringify(req.params || {})
@@ -44,29 +52,31 @@ define ['jquery', 'underscore'], ($, _)->
         dataType: 'json'
         headers: request_headers
 
-
-      _headers = ['Hull-User-Id', 'Hull-User-Sig']
-
       request.done (response)->
-        identify(_.clone(response)) if path == 'me'
-        headers = {}
-        _.map _headers, (h)-> headers[h] = request.getResponseHeader(h)
+        identify(_.clone(response)) if url == '/api/v1/me'
+
+        headers = _.reduce RESPONSE_HEADER, (memo, name) ->
+          value = request.getResponseHeader(name)
+          memo[name] = value if value?
+          memo
+        , {}
+
         callback({ response: response, headers: headers, provider: 'hull' })
 
       request.fail(errback)
 
       return
 
-    trackHandler = (req, route, callback, errback)->
+    trackHandler = (req, callback, errback)->
       analytics = require('analytics')
-      eventName = req.path.replace(/^track\//, '')
+      eventName = req.path
 
       analytics.track(eventName, req.params)
 
       req.path = "t"
       req.params.event ?= eventName
       req.params = { t: btoa(JSON.stringify(req.params)) }
-      handler(req, route, callback, errback)
+      handler(req, callback, errback)
 
     require:
       paths:
@@ -87,7 +97,6 @@ define ['jquery', 'underscore'], ($, _)->
         identified = true
         identify(app.config.data.me)
 
-      analytics.track("init", { appId: config.appId })
-      app.core.services.add([ { path: 'hull/*path',  handler: handler } ])
-      app.core.services.add([ { path: 'track/*path', handler: trackHandler } ])
-
+      analytics.track("init", { appId: app.config.appId })
+      app.core.routeHandlers.hull = handler
+      app.core.routeHandlers.track = trackHandler

@@ -1,0 +1,70 @@
+{{#if errors.conversation}}
+  <div class="alert alert-error">Unable to retrieve the conversation</div>
+{{else}}
+  {{#if conversation}}
+    <div class="hull-conversation">
+      <div class="hull-conversation__header">
+        <h2>
+          <span class="pull-right muted"><small>started {{fromNow conversation.created_at}}</small></span>
+          {{conversation.name}}
+        </h2>
+        {{#if conversation.isDeleteable}}
+          <button data-hull-action="deleteConvo" data-hull-id="{{conversation.id}}" class="btn btn-link text-error pull-right">Delete conversation</button>
+        {{/if}}
+        <div class="hull-conversation__participants text-right">
+          {{> conversations.thread.participants}}
+        </div>
+      </div>
+      <hr />
+      <div class="row-fluid">
+          {{^isAscending}}
+            {{> conversations.thread.form}}
+          {{/isAscending}}
+
+          {{#if messages}}
+            <ul class="media-list hull-messages__list">
+              {{#messages}}
+              <li class="media" data-hull-message-id="{{id}}">
+                <div class="pull-left">
+                  <img class="media-object img-rounded" src="{{actor.picture}}" alt="{{actor.name}}" width="50" height="50">
+                </div>
+                <div class="media-body">
+                  <div class="pull-right text-right">
+                    <small class="muted">{{fromNow updated_at}}</small>
+                    {{#if isNew}}
+                    <br>
+                    <small class="text-success">NEW</small>
+                    {{/if}}
+                  </div>
+                  <h5 class="media-heading">{{actor.name}}</h5>
+                  <div class="hull-messages__body">
+                    {{{autoLink body}}}
+                  </div>
+                  <div class="hull-messages__actions">
+                      {{#if isDeletable}}
+                        <small>
+                          <a href="#" class='link' data-hull-action="deleteMsg" data-hull-id="{{id}}">Delete</a>
+                        </small>
+                      {{/if}}
+                  </div>
+                </div>
+              </li>
+              {{/messages}}
+            </ul>
+          {{/if}}
+
+          {{^messages}}
+            <div class="alert alert-info">
+              No messages started yet
+            </div>
+          {{/messages}}
+
+          {{#if isAscending}}
+            {{> conversations.thread.form}}
+          {{/if}}
+      </div>
+    </div>
+  {{else}}
+    <div class="alert alert-info">No conversation selected</div>
+  {{/if}}
+{{/if}}

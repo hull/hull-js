@@ -1,0 +1,39 @@
+{
+  "srcFiles": ["src/hullbase.coffee", "src/hull.coffee", "src/hull-remote.coffee", "src/utils/**/*.coffee", "src/remote/**/*.coffee"],
+  "requireJS": {
+    "baseUrl": ".",
+    "preserveLicenseComments": true,
+    "paths": {
+      "aura":               "bower_components/aura/lib",
+      "underscore":         "bower_components/underscore/underscore",
+      "eventemitter":       "bower_components/eventemitter2/lib/eventemitter2",
+      "easyXDM":            "bower_components/easyXDM/easyXDM",
+      "requireLib":         "bower_components/requirejs/require",
+      "jquery":             "bower_components/jquery/jquery",
+      "text":               "bower_components/requirejs-text/text",
+      "analytics":          "bower_components/analytics/analytics",
+      "base64":             "bower_components/base64/base64"
+    },
+    "shim": {
+      "underscore": { "exports": "_" },
+      "analytics": { "exports": "analytics" },
+      "easyXDM":    { "exports": "easyXDM" }
+    },
+    "include": [
+      "requireLib",
+      "jquery",
+      "underscore",
+      "eventemitter",
+      "easyXDM",
+      "text",
+      "base64",
+      "analytics",
+      "aura/ext/debug",
+      "aura/ext/mediator",
+      "aura/ext/components",
+      "lib/hull",
+      "lib/hull-remote"
+    ],
+    "out": "dist/<%= PKG_VERSION %>/hull-remote.js"
+  }
+}

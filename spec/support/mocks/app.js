@@ -7,7 +7,10 @@ define(function () {
     var stub = sinon.stub({
       use: function () { },
       start: function () { },
-      stop: function () { }
+      stop: function () { },
+      sandbox: {
+        emit: function () {}
+      }
     });
     module.app = stub;
     stub.use.returns(stub);
@@ -15,7 +18,6 @@ define(function () {
     var auraModule = sinon.spy(function () {
       return stub;
     });
-
 
     require.undef('aura/aura');
     require.undef('lib/hull');

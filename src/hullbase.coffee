@@ -6,25 +6,25 @@
 
 Hull = window.Hull = window.Hull || {}
 
-Hull.templates  ?= {}
-Hull.init       = (config, cb, errcb)->
-  require ['lib/hull'], (app)->
+Hull.templates ?= {}
+
+Hull.init = (config, cb, errcb) ->
+  require ['lib/hull'], (app) ->
     app(config, cb, errcb)
 
-Hull.widget     = (widgetName, widgetDef)->
+Hull.component = Hull.widget = (componentName, componentDef) ->
   #Validates the name
-  throw 'A widget must have a identifier' unless widgetName
-  throw 'The widget identifier must be a String' unless Object.prototype.toString.apply(widgetName) == '[object String]'
+  throw 'A component must have a identifier' unless componentName
+  throw 'The component identifier must be a String' unless Object.prototype.toString.apply(componentName) == '[object String]'
 
   #Fetch the definition
-  widgetDef = widgetDef() if Object.prototype.toString.apply(widgetDef) == '[object Function]'
-  throw "The widget #{widgetName} must have a definition" unless Object.prototype.toString.apply(widgetDef) == '[object Object]'
+  componentDef = componentDef() if Object.prototype.toString.apply(componentDef) == '[object Function]'
+  throw "The component #{componentName} must have a definition" unless Object.prototype.toString.apply(componentDef) == '[object Object]'
 
-  widgetDef.type ?= "Hull"
-  define("__widget__$#{widgetName}@default", widgetDef)
-  return widgetDef
+  componentDef.type ?= "Hull"
+  define("__component__$#{componentName}@default", componentDef)
+  return componentDef
 
-define ['lib/version', 'underscore'], (version, _) ->
+define ['lib/utils/version', 'underscore'], (version, _) ->
   window.Hull.version ||= version
   window.Hull
-

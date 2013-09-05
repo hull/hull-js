@@ -1,6 +1,8 @@
+# Hull.js [ ![Codeship Status for hull/hull-js](https://www.codeship.io/projects/caa4ef70-af23-0130-003e-2acfafa7a2f4/status?branch=develop) ](https://www.codeship.io/projects/4004)
+
 # Building the library
 
-Checkout 
+Checkout
 
     git@github.com:hull/hull-js.git
 
@@ -39,9 +41,9 @@ Open in your browser
 Drink your coffee.
 
 
-# Deploying to S3 : 
+# Deploying to S3 :
 
-Create a `grunt-aws.json` file at the root, with the following content : 
+Create a `grunt-aws.json` file at the root, with the following content :
 
     {
       "key":"YOUR_AWS_KEY",
@@ -50,4 +52,13 @@ Create a `grunt-aws.json` file at the root, with the following content :
     }
 
 
+# Developing locally (force @hull to fetch from js.hull.dev)
 
+    <script src="//hull-js.s3.amazonaws.com/develop/hull.js"></script>
+    <script>
+      Hull.init({
+        appId: 'YOUR_APP_ID',
+        orgUrl: 'YOUR_APP_ID',
+        jsUrl: 'http://js.hull.dev/dist'
+      });
+    </script>

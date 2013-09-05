@@ -1,12 +1,14 @@
 .DS_Store
 node_modules
-components
+bower_components
 npm-debug.log
 /lib
 app/app.js
 /tmp
 /dist
 .sass-cache
-grunt-aws.json
+.grunt/grunt-aws.json
 /node_modules.bak/
 /build
+
+/grunt-aws.json

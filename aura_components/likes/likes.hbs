@@ -1,0 +1,13 @@
+<h5 class='title'>Likes for {{target.name}}</h5>
+<ul class="likes unstyled">
+  {{#likes}}
+    <li class="media">
+      <div class="pull-left">
+        <img class="media-object" src={{user.picture}} width="50" height="50"></img>
+      </div>
+      <div class="media-body">
+        <h4 class="media-heading">{{user.name}}</h4>
+      </div>
+    </li>
+  {{/likes}}
+</ul>

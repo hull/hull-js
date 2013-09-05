@@ -1,6 +1,7 @@
 define({
   require: {
     paths: {
+      twitter_text:   'components/twitter-text/twitter-text',
       moment:         'components/moment/moment',
       string:         'components/underscore.string/lib/underscore.string',
       cookie:         'components/jquery.cookie/jquery.cookie',
@@ -30,7 +31,7 @@ define({
 
     app.core.dom.getFormData = function(form) {
       var formData = {};
-      _.each($(form).serializeArray(), function(field) {
+      app.sandbox.util._.each($(form).serializeArray(), function(field) {
         formData[field.name] = field.value;
       });
       return formData;

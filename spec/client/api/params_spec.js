@@ -1,4 +1,4 @@
-define(['lib/client/api/params'], function (apiParams) {
+define(['lib/api/params'], function (apiParams) {
 
   describe('Normalizing the parameters to API method calls', function () {
     it('should only accept an array as its only parameter', function () {
@@ -14,16 +14,24 @@ define(['lib/client/api/params'], function (apiParams) {
         apiParams.parse.bind(undefined, [{path: ''}]).should.throw;
         apiParams.parse.bind(undefined, [{}]).should.throw;
       });
+      it('should remove the leading "/" in the path', function () {
+        apiParams.parse(['/abc'])[0].path.should.equal('abc');
+        apiParams.parse([{path: '/abc'}])[0].path.should.equal('abc');
+      });
     });
 
     describe('Defining the provider', function () {
       it('should be possible to specify the provider with an object that contains a non-empty `provider` attribute', function () {
-        apiParams.parse([{path: 'abc', provider: 'prov'}])[0].path.should.equal('prov/abc');
+        apiParams.parse([{path: 'abc', provider: 'prov'}])[0].path.should.equal('abc');
+        apiParams.parse([{path: 'abc', provider: 'prov'}])[0].provider.should.equal('prov');
       });
       it('defaults to `hull`', function () {
-        apiParams.parse(['abc'])[0].path.should.equal('hull/abc');
-        apiParams.parse([{path: 'abc', provider: ''}])[0].path.should.equal('hull/abc');
-        apiParams.parse([{path: 'abc'}])[0].path.should.equal('hull/abc');
+        apiParams.parse(['abc'])[0].path.should.equal('abc');
+        apiParams.parse(['abc'])[0].provider.should.equal('hull');
+        apiParams.parse([{path: 'abc', provider: ''}])[0].path.should.equal('abc');
+        apiParams.parse([{path: 'abc', provider: ''}])[0].provider.should.equal('hull');
+        apiParams.parse([{path: 'abc'}])[0].path.should.equal('abc');
+        apiParams.parse([{path: 'abc'}])[0].provider.should.equal('hull');
       });
     });
 

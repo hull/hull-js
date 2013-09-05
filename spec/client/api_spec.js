@@ -1,5 +1,5 @@
 /*global define:true */
-define(['spec/support/spec_helper', 'aura/aura'], function (helper, aura) {
+define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/underscore'], function (helper, aura) {
 
   "use strict";
   /*jshint devel: true, browser: true */
@@ -14,15 +14,29 @@ define(['spec/support/spec_helper', 'aura/aura'], function (helper, aura) {
     }, parseInt(Math.random() * 2, 10));
   };
 
+  var config = {
+    appId: "fakeId",
+    orgUrl: "orgUrl"
+  };
+  var mustFail = false;
+
   var easyXDMMock = {
     Rpc: function (a1, a2) {
-      delay(a2.local.ready, {data: {me: {name: "test"}, app: {name: "test", org: {name: "test"}}}});
+      if (mustFail) {
+        delay(a2.local.message.bind(this), {error:"Fail"});
+      } else {
+        delay(a2.local.ready, {services:{types:{auth:[]}},data: {me: {name: "test"}, app: {name: "test", org: {name: "test"}}}});
+      }
+      mustFail = false;
     }
   };
 
   easyXDMMock.Rpc.prototype.message = function (conf, successCb, errorCb) {
     var cb;
-    if (conf.path.split('/')[1].indexOf('error') === 0) {
+    if (conf.error) {
+      cb = errorCb;
+      conf = conf.error;
+    } else if (conf.path.indexOf('error') === 0) {
       cb = errorCb;
     } else {
       cb = successCb;
@@ -33,14 +47,13 @@ define(['spec/support/spec_helper', 'aura/aura'], function (helper, aura) {
   define('easyXDM', function () { return easyXDMMock; });
 
   describe("API specs", function () {
-    var env, api, app = aura({
-      appId: "fakeId",
-      orgUrl: "orgUrl"
-    });
+    var env, api, batch, app = aura(config);
 
     var extension = {
       initialize: function (appEnv) {
         env = appEnv;
+        app.core = app.core || {};
+        app.core.mvc = window.Backbone;
       }
     };
 
@@ -48,10 +61,10 @@ define(['spec/support/spec_helper', 'aura/aura'], function (helper, aura) {
       .use(extension)
       .use('lib/client/api');
 
-    var initStatus = app.start();
-    before(function (done) {
-      initStatus.then(function () {
-        api = env.createSandbox().data.api;
+    before(function(done) {
+      app.start().then(function () {
+        api = app.sandboxes.create().data.api;
+        batch = api.batch;
         done();
       });
     });
@@ -59,6 +72,18 @@ define(['spec/support/spec_helper', 'aura/aura'], function (helper, aura) {
     it('should be available in the environment', function () {
       env.sandbox.data.should.contain.keys('api');
       api.should.be.a('function');
+    });
+
+    describe("initializing the API client", function () {
+      it("should reject if there's an error", function (done) {
+        require(['lib/api'], function (apiClient) {
+          mustFail = true;
+          apiClient({appId: "please", orgUrl: "fail"}).then(
+            function () {done(new Error('Error'));},
+            function () {done();}
+          );
+        });
+      });
     });
 
     describe("Basic API requests", function () {
@@ -89,6 +114,80 @@ define(['spec/support/spec_helper', 'aura/aura'], function (helper, aura) {
       });
     });
 
+    describe('batching requests', function () {
+      var spySuccess, spyFailure;
+      beforeEach(function () {
+        spySuccess = sinon.spy();
+        spyFailure = sinon.spy();
+      });
+
+      it('should throw if more than 2 functions are defined', function () {
+        batch.bind(undefined, function () {}, function () {}, function () {}).should.throw(Error);
+      });
+      it('should only accept Arrays apart from callback/errback', function () {
+        batch.bind(undefined, 'url').should.throw(Error);
+        batch.bind(undefined, {}).should.throw(Error);
+        batch.bind(undefined, 123).should.throw(Error);
+        batch.bind(undefined, null).should.throw(Error);
+        batch.bind(undefined, true).should.throw(Error);
+        batch.bind(undefined, []).should.not.throw(Error);
+      });
+      it('should execute callback when successful', function (done) {
+        var ret = batch(['success'], spySuccess, spyFailure);
+        ret.always(function () {
+          spySuccess.should.have.been.called;
+          spyFailure.should.not.have.been.called;
+          done();
+        });
+      });
+      it('should execute errback when failed', function (done) {
+        var ret = batch(['error'], spySuccess, spyFailure);
+        ret.always(function () {
+          spySuccess.should.not.have.been.called;
+          spyFailure.should.have.been.called;
+          done();
+        });
+      });
+      it('should execute callback when all requests succeed', function (done) {
+        var ret = batch(['success'], ['success'], spySuccess, spyFailure);
+        ret.always(function () {
+          spySuccess.should.have.been.called;
+          spyFailure.should.not.have.been.called;
+          done();
+        });
+      });
+      it('should execute errback when one request failed', function (done) {
+        var ret = batch(['error'], ['success'], spySuccess, spyFailure);
+        ret.always(function () {
+          spySuccess.should.not.have.been.called;
+          spyFailure.should.have.been.called;
+          done();
+        });
+      });
+      describe('individuals callbacks', function () {
+        it('should call individual callbacks on success', function (done) {
+          var spySuccess2 = sinon.spy(),
+              spyFailure2 = sinon.spy(),
+              ret = batch(['success', spySuccess, spyFailure], ['success', spySuccess2, spyFailure2]);
+          ret.always(function () {
+            spySuccess.should.have.been.called;
+            spyFailure.should.not.have.been.called;
+            spySuccess2.should.have.been.called;
+            spyFailure2.should.not.have.been.called;
+            done();
+          });
+        });
+        it('should call individual errbacks on failure', function (done) {
+          var ret = batch(['error', spySuccess, spyFailure]);
+          ret.always(function () {
+            spySuccess.should.not.have.been.called;
+            spyFailure.should.have.been.called;
+            done();
+          });
+        });
+      });
+    });
+
     describe('Models', function () {
       it("should be provided an id", function () {
         api.model.bind(api, 'anId').should.not.throw(Error);
@@ -96,15 +195,23 @@ define(['spec/support/spec_helper', 'aura/aura'], function (helper, aura) {
         api.model.bind(api, {}).should.throw(Error);
       });
 
-      it("should provide a deferred", function () {
-        var model = api.model('anId');
-        model.deferred.should.be.a('object');
+      it("should not be fetched", function () {
+        var model = api.model(_.uniqueId());
+        model._fetched.should.be.false;
+      });
+      it("should not provide an attached deferred to the model", function () {
+        var model = api.model(_.uniqueId());
+        expect(model.deferred).to.be.undefined;
       });
 
-      it("should return the model when the promise is resolved", function (done) {
-        var model = api.model('anId');
-        model.deferred.done(function (fetchedModel) {
-          fetchedModel.should.be.equal(model);
+      it("should trigger the `sync` event when the model has been fetched", function (done) {
+        var model = api.model(_.uniqueId());
+        model.on('error', function (m) {
+          m.should.be.equal(model);
+          done();
+        });
+        model.on('sync', function (m) {
+          m.should.be.equal(model);
           done();
         });
       });

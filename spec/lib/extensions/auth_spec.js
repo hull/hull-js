@@ -19,7 +19,7 @@ define(['spec/support/spec_helper'], function (helpers) {
       }
     };
   }
-  describe('The authentication module', function () {
+  xdescribe('The authentication module', function () {
     describe('initialization of the Auth module', function () {
       var auth,
           appMock,
@@ -47,32 +47,45 @@ define(['spec/support/spec_helper'], function (helpers) {
         appMock.sandbox.should.contain.keys('logout');
         appMock.sandbox.logout.should.equal(auth.logout);
       });
-      it('should add a listener on `hull.authComplete` event', function () {
-        evts.should.have.keys(['hull.authComplete']);
-        evts['hull.authComplete'].should.be.a('function');
+    });
+
+    xdescribe('Building a backdoor', function () {
+      it('should create a function oin window', function () {
+
+      });
+      it('should return the name of the function', function () {
+
       });
     });
 
     describe('The authentication URL', function () {
       var authUrlFn,
           authModule,
-          config = {appId: 'appId', orgUrl: 'orgUrl'};
+          config = {appId: 'appId', orgUrl: 'orgUrl'},
+          authModuleCallbackFn ;
       before(helpers.reset('lib/client/auth', function (module) {
         authModule = module({});
         authUrlFn = authModule.authUrl;
         authModule.location = 'app_location'; //Mocks the document.location
+        authModuleCallbackFn = authModule.createCallback;
+        authModule.createCallback = function () {
+          return 'YAY';
+        };
       }));
+      after(function () {
+        authModule.createCallback = authModuleCallbackFn;
+      });
       it('should append the callback_url and auth_referer', function () {
-        authUrlFn(config, 'provider').should.eql('orgUrl/auth/provider?app_id=appId&callback_url=app_location&auth_referer=app_location');
+        authUrlFn(config, 'provider').should.eql('orgUrl/auth/provider?app_id=appId&callback_url=app_location&auth_referer=app_location&callback_name=YAY');
       });
       it('should be possible to specify callback_url', function () {
         var config = {appId: 'appId', orgUrl: 'orgUrl', callback_url: 'callback_url'};
-        authUrlFn(config, 'provider').should.eql('orgUrl/auth/provider?app_id=appId&callback_url=callback_url&auth_referer=app_location');
+        authUrlFn(config, 'provider').should.eql('orgUrl/auth/provider?app_id=appId&callback_url=callback_url&auth_referer=app_location&callback_name=YAY');
       });
       it('should append any custom options', function () {
         var config = {appId: 'appId', orgUrl: 'orgUrl'};
         var opts = {a:'0', b: '1', c:'2'};
-        authUrlFn(config, 'provider', opts).should.eql('orgUrl/auth/provider?a=0&b=1&c=2&app_id=appId&callback_url=app_location&auth_referer=app_location');
+        authUrlFn(config, 'provider', opts).should.eql('orgUrl/auth/provider?a=0&b=1&c=2&app_id=appId&callback_url=app_location&auth_referer=app_location&callback_name=YAY');
       });
     });
 
