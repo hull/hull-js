@@ -37,6 +37,8 @@ Hull.define({
 
   refreshEvents: ['model.hull.me.change'],
 
+  requiredOptions: ['id'],
+
   actions: {
     comment: 'postComment',
     delete:  'deleteComment',
