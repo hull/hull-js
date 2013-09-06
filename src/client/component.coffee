@@ -84,7 +84,8 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
           return @id if @id
           return sb.util.entity.encode(@uid) if @uid
           sb.config.entity_id
-        options.id = getId.call(options)
+        id = getId.call(options)
+        options.id = id if id
         if @validateOptions(options)
           app.core.mvc.View.prototype.constructor.apply(@, arguments)
           @render()
