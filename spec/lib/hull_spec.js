@@ -83,7 +83,7 @@ define(['../support/mocks/app'], function (appMock) {
         _h.app.sandbox.emit = spy;
         appMock.initDeferred.resolve();
         spy.should.have.been.called;
-        spy.should.have.been.calledWith('hull.started');
+        spy.should.have.been.calledWith('hull.init');
       });
     });
   });

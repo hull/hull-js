@@ -1,0 +1,39 @@
+<div class="well">
+  {{#if loggedIn}}
+    <form data-hull-item="form">
+      <div class='media'>
+        <div class="pull-left">
+          <img class="media-object img-rounded" src="{{me.picture}}" alt="{{me.name}}" width="70" height="70">
+        </div>
+        <div class="media-body">
+          <textarea name='body' class="input-block-level" rows="3" placeholder="Send a message... "></textarea>
+          <button data-hull-action="message" data-hull-id="{{conversation.id}}" class="btn btn-primary">
+            {{#if isNew}}Send{{else}}Reply{{/if}}
+          </button> {{#me}}as {{name}}{{/me}}
+
+          {{#if conversation.notification_enabled}}
+          {{#if conversation.notification_enabled_user}}
+          <div class="pull-right">
+            <a class="btn-link" data-hull-action="disableNotifications">
+              <span class="text-success">
+                Notifications enabled
+              </span>
+            </a>
+          </div>
+          {{else}}
+          <div class="pull-right">
+            <a class="btn-link muted" data-hull-action="enableNotifications">
+              <span class="muted">
+                Notifications muted
+              </span>
+            </a>
+          </div>
+          {{/if}}
+          {{/if}}
+        </div>
+      </div>
+    </form>
+  {{else}}
+    <div data-hull-component="login_button@hull"></div>
+  {{/if}}
+</div>
