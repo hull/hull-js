@@ -1,0 +1,17 @@
+<li class="new">
+  <div class="row-fluid">
+    <form>
+      <div class="input-append">
+        <input name="name" id="name" class="span9" type="text"/>
+        <button class="btn" href="#" type="submit">Create</button>
+      </div>
+    </form>
+  </div>
+</li>
+{{#each elements}}
+<li data-hull-action='toggleListed' data-hull-list-id='{{id}}'>
+	<i class="icon icon-list"></i>
+	{{name}}
+  <span class="pull-right listed {{cssClass}}"></span>
+</li>
+{{/each}}
