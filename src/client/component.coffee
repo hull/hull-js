@@ -163,7 +163,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
       # afterRender
       # Start nested components...
       render: (tpl, data)=>
-        ctxPromise = @buildContext.call(@)
+        ctxPromise = @buildContext()
         ctxPromise.fail (err)->
           console.error("Error fetching Datasources ", err.message, err)
         ctxPromise.then (ctx)=>
