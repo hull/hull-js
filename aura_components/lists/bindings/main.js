@@ -113,7 +113,7 @@ Hull.define({
     var _ = this.sandbox.util._;
     this.api.post('me/lists', listData).then(_.bind(function (list) {
       this.data.lists.unshift({id: list.id, name: list.name});
-      this.updateView();
+      this.addToList(list.id).then(_.bind(this.updateView, this));
     }, this));
   },
   /*
