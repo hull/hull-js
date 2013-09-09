@@ -3,6 +3,10 @@
     Sort by <span class="caret"></span>
   </a>
   <ul class="dropdown-menu">
+    {{#unless org.public}}
+      <li><a href="#" data-hull-action="sort" data-hull-field="approved" data-hull-direction="desc">Aproved</a></li>
+      <li><a href="#" data-hull-action="sort" data-hull-field="approved">Unproved</a></li>
+    {{/unless}}
     <li><a href="#" data-hull-action="sort" data-hull-field="created_at" data-hull-direction="desc">Created At</a></li>
     <li><a href="#" data-hull-action="sort" data-hull-field="name">Name</a></li>
     <li><a href="#" data-hull-action="sort" data-hull-field="email">Email</a></li>
