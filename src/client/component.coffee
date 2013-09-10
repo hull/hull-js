@@ -127,6 +127,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
             ds = @datasources[k]
             ds.parse(_.extend({}, @, @options || {}))
             handler = @["on#{_.string.capitalize(_.string.camelize(k))}Error"]
+            handler = _.bind(handler, @) if _.isFunction(handler)
             ctx.addDatasource(k, ds.fetch(), handler).then (res)=>
               @data[k] = res
           componentDeferred = @sandbox.data.when.apply(undefined, promiseArray)
