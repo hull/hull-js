@@ -38,7 +38,9 @@ Hull.define({
   actions: {
     achieve: function() {
       var self = this;
-      this.api(this.id + '/achieve', 'post', { secret: this.options.secret }).then(this.refresh, function (err) {
+      this.api(this.id + '/achieve', 'post', { secret: this.options.secret }).then(function () {
+        self.refresh();
+      }, function (err) {
         self.renderError(err.statusText);
       });
     }
