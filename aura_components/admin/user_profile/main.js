@@ -35,12 +35,27 @@ Hull.define({
 
   beforeRender: function(data){
     if (!data.user) { return; }
+
     data.userHasProfiles = !this.sandbox.util._.isEmpty(data.user.profiles);
   },
 
   actions: {
     promote: function(e, action) {
       this.promoteUser(action.data.role);
+    },
+
+    approve: function() {
+      var self = this;
+      this.api(this.data.user.id + '/approve', 'post').then(function() {
+        self.render();
+      });
+    },
+
+    unapprove: function() {
+      var self = this;
+      this.api(this.data.user.id + '/unapprove', 'post').then(function() {
+        self.render();
+      });
     }
   },
 
