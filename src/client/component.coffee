@@ -41,6 +41,10 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
 
       isInitialized: false
 
+      requiredOptions: []
+
+      options: {}
+
       constructor: (options)->
         @ref = options.ref
         @api = @sandbox.data.api
@@ -80,9 +84,20 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
           return @id if @id
           return sb.util.entity.encode(@uid) if @uid
           sb.config.entity_id
-        options.id = getId.call(options)
-        app.core.mvc.View.prototype.constructor.apply(@, arguments)
-        @render()
+        id = getId.call(options)
+        options.id = id if id
+        if @validateOptions(options)
+          app.core.mvc.View.prototype.constructor.apply(@, arguments)
+          @render()
+
+      validateOptions: (options)->
+        valid = true
+        optionKeys = _.keys options
+        _.each @requiredOptions, (name)=>
+          if !_.contains(optionKeys, name)
+            valid = valid && false
+            console.error "Missing parameter to component #{@componentName}: data-hull-#{name}"
+        valid
 
       renderTemplate: (tpl, data)=>
         _tpl = @_templates?[tpl]
