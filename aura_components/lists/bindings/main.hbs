@@ -1,0 +1,44 @@
+{{#if loggedIn}}
+<div class="btn btn-mini">...</div>
+  <div class="hidden">
+    <ul class="lists"></ul>
+  </div>
+</div>
+<style type="text/css">
+  [data-hull-component^="lists/bindings"] .popover-content {
+    padding: 0;
+  }
+  [data-hull-component^="lists/bindings"] ul {
+    margin: 0;
+    min-width: 200px;
+  }
+
+  [data-hull-component^="lists/bindings"] ul li.new form {
+    margin:0;
+  }
+  [data-hull-component^="lists/bindings"] ul li.new,
+  [data-hull-component^="lists/bindings"] ul li.new:hover  {
+    padding: 5px 5px;
+    background-color: #D1D1D1;
+  }
+  [data-hull-component^="lists/bindings"] ul li.new .input-append {
+    margin: 0;
+  }
+  [data-hull-component^="lists/bindings"] ul li {
+    list-style-type: none;
+    padding: 9px 14px;
+  }
+  [data-hull-component^="lists/bindings"] ul li:hover {
+    background-color: #f1f3f5;
+    cursor: pointer;
+  }
+  [data-hull-component^="lists/bindings"] ul li .icon {
+    padding-right: 10px;
+  }
+
+  [data-hull-component^="lists/bindings"] ul li .listed::before {
+    content:'✔';
+    color: #468847;
+  }
+</style>
+{{/if}}
