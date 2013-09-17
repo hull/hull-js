@@ -103,6 +103,7 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
         transportDfd.then (obj, headers) =>
           if _.isArray(obj)
             @paginationLinks = parseLinkHeader(headers['Link'])
+            console.log @paginationLinks
             dfd.resolve (new Backbone.Collection obj)
           else
             dfd.resolve (new Backbone.Model obj)
@@ -133,14 +134,14 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
     # Change datasource path to the path of the previous page.
     previous: ->
       unless @isFirst()
-        @def.path = @paginationLinks.prev
+        _.extend(@def.params, parseQueryString(@paginationLinks.prev))
 
     # Go to next page.
     #
     # Change datasource path to the path of the next page.
     next: ->
       unless @isLast()
-        @def.path = @paginationLinks.next
+        _.extend(@def.params, parseQueryString(@paginationLinks.next))
 
     # Sort the datasource by a given field in a given direction.
     #
