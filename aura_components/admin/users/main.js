@@ -37,8 +37,8 @@ Hull.define({
   },
 
   initialize: function() {
-    this.query = {}
-    this.currentQuery = {}
+    this.query = {};
+    this.currentQuery = {};
   },
 
   beforeRender: function(data){
@@ -54,7 +54,7 @@ Hull.define({
       All: { action: 'resetFilter', isActive: this.query.approved == null },
       Approved: { action: 'filterApproved', isActive: this.query.approved === true },
       Unapproved: { action: 'filterUnapproved', isActive: this.query.approved === false }
-    }
+    };
   },
 
   afterRender: function() {
@@ -126,10 +126,10 @@ Hull.define({
   },
 
   queryHasChanged: function() {
-    var _ = this.sandbox.util._
+    var _ = this.sandbox.util._;
 
-    if (_.isEmpty(this.query) && _.isEmpty(this.currentQuery)) { return false; };
-    if (_.size(this.query) !== _.size(this.currentQuery)) { return true; };
+    if (_.isEmpty(this.query) && _.isEmpty(this.currentQuery)) { return false; }
+    if (_.size(this.query) !== _.size(this.currentQuery)) { return true; }
 
     return !this.sandbox.util._.every(this.query, function(v, k) {
       return this.currentQuery[k] === v;
