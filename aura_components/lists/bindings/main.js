@@ -88,6 +88,11 @@ Hull.define({
       promise.then(_.bind(this.updateView, this));
     }
   },
+  initialize: function () {
+    if (!this.sandbox.util._.isFunction(this.$el.popovr)) {
+      throw new Error('The component ' + this.componentName + ' requires jQuery.popover.');
+    }
+  },
   /*
    * Creates the popover in which the user will perform the actions
    */
