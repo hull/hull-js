@@ -46,7 +46,7 @@ Hull.define({
     lists: function () {
       "use strict";
       var _ = this.sandbox.util._;
-      return !this.loggedIn() && true || this.api('me/lists').then(function(data) {
+      return !this.loggedIn() && [] || this.api('me/lists').then(function(data) {
         return _.map(data, function (list) {
           return {id: list.id, name: list.name};
         });
@@ -89,7 +89,7 @@ Hull.define({
     }
   },
   initialize: function () {
-    if (!this.sandbox.util._.isFunction(this.$el.popovr)) {
+    if (!this.sandbox.util._.isFunction(this.$el.popover)) {
       throw new Error('The component ' + this.componentName + ' requires jQuery.popover.');
     }
   },
