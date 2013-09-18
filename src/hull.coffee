@@ -49,7 +49,7 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
         .use('lib/client/component')
         .use (app)->
           window.Hull.parse = (el)->
-            app.sandbox.start(el)
+            app.sandboxes.create().start(el)
         .start({ components: 'body' })
 
     initProcess.fail (err)->
