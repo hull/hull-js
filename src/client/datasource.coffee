@@ -103,7 +103,6 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
         transportDfd.then (obj, headers) =>
           if _.isArray(obj)
             @paginationLinks = parseLinkHeader(headers['Link'])
-            console.log @paginationLinks
             dfd.resolve (new Backbone.Collection obj)
           else
             dfd.resolve (new Backbone.Model obj)
@@ -155,5 +154,6 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
         query = _.extend(@def.params.where, query)
 
       @def.params.where = query
+      @def.params.page = 1
 
   Datasource
