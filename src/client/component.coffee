@@ -76,7 +76,6 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
             ds = _.bind ds, @ if _.isFunction ds
             @datasources[i] = new Datasource(ds, @api) unless ds instanceof Datasource
 
-          @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
         catch e
           console.error("Error loading HullComponent", e.message)
         sb = @sandbox
@@ -88,6 +87,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
         options.id = id if id
         if @validateOptions(options)
           app.core.mvc.View.prototype.constructor.apply(@, arguments)
+          @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
           @render()
 
       validateOptions: (options)->
