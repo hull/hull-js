@@ -191,7 +191,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
               data = _.extend(dataAfterBefore || ctx.build(), data)
               @doRender(tpl, data)
               _.defer(@afterRender.bind(@, data))
-              _.defer((-> @sandbox.start(@$el)).bind(@))
+              _.defer((-> @sandbox.start(@$el, { reset: true })).bind(@))
               @isInitialized = true;
               # debugger
               @emitLifecycleEvent('render')
