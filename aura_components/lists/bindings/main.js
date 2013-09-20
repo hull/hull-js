@@ -89,6 +89,7 @@ Hull.define({
     }
   },
   initialize: function () {
+    "use strict";
     if (!this.sandbox.util._.isFunction(this.$el.popover)) {
       throw new Error('The component ' + this.componentName + ' requires jQuery.popover.');
     }
@@ -99,14 +100,11 @@ Hull.define({
   afterRender: function () {
     "use strict";
     var btn = this.$el.find('.btn-mini');
-    var self = this;
     btn.popover({
       title: 'Add to List',
       html: true,
       placement: 'bottom',
-      content: function () {
-        return self.$find('.hidden').html();
-      }
+      content: ''
     });
     this.$el.on('shown', this.sandbox.util._.bind(this.renderPopover, this));
   },
@@ -183,6 +181,7 @@ Hull.define({
    * Renders the lists in the popover
    */
   refreshElements: function () {
+    "use strict";
     var $elts = this.$el.find('.popover-content .lists');
     var _ = this.sandbox.util._;
     this.$find('input[type=text][name=name]').val('');
