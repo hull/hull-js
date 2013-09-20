@@ -32,7 +32,7 @@ Hull.define({
     listName: 'likes'
   },
 
-  requiredOptions: ['list_name'],
+  requiredOptions: ['listName'],
 
   datasources: {
     list: function() {
