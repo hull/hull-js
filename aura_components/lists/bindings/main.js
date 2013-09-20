@@ -35,7 +35,7 @@
 /*global Hull:true */
 Hull.define({
   type: 'Hull',
-  templates: ['main', 'elements'],
+  templates: ['main', 'elements', 'loggedOut', 'header'],
   refreshEvents: ['model.hull.me.change'],
   requiredOptions: ['id'],
 
@@ -85,7 +85,7 @@ Hull.define({
       var listId = ctx.data.listId;
       var method = this.isItemInList(listId) ? 'removeFromList' : 'addToList';
       var promise = this[method](listId);
-      promise.then(_.bind(this.updateView, this));
+      promise.then(_.bind(this.refreshElements, this));
     }
   },
   initialize: function () {
@@ -108,7 +108,7 @@ Hull.define({
         return self.$find('.hidden').html();
       }
     });
-    this.updateView();
+    this.$el.on('shown', this.sandbox.util._.bind(this.renderPopover, this));
   },
   /*
    * Creates a new list for the user
@@ -118,7 +118,7 @@ Hull.define({
     var _ = this.sandbox.util._;
     this.api.post('me/lists', listData).then(_.bind(function (list) {
       this.data.lists.unshift({id: list.id, name: list.name});
-      this.addToList(list.id).then(_.bind(this.updateView, this));
+      this.addToList(list.id).then(_.bind(this.refreshElements, this));
     }, this));
   },
   /*
@@ -165,15 +165,31 @@ Hull.define({
   /*
    * Renders the partial for all the lists, with the correct data
    */
-  updateView: function () {
+  renderPopover: function () {
     "use strict";
+    var $popoverContent = this.$el.find('.popover-content');
+    if (!this.loggedIn()) {
+      $popoverContent.html(this.renderTemplate('loggedOut'));
+    } else {
+      var contents = this.renderTemplate('header', {
+        id: this.id
+      });
+      $popoverContent.html(contents);
+      this.refreshElements();
+    }
+    Hull.parse($popoverContent);
+  },
+  /*
+   * Renders the lists in the popover
+   */
+  refreshElements: function () {
+    var $elts = this.$el.find('.popover-content .lists');
     var _ = this.sandbox.util._;
-    var self = this;
     this.$find('input[type=text][name=name]').val('');
-    _.each(this.data.lists, function (list) {
-      list.cssClass = self.isItemInList(list.id) ? '' : 'hidden';
-    });
-    this.$el.find('ul.lists').html(this.renderTemplate('elements', {
+    _.each(this.data.lists, _.bind(function (list) {
+      list.cssClass = this.isItemInList(list.id) ? '' : 'hidden';
+    }, this));
+    $elts.html(this.renderTemplate('elements', {
       elements: this.data.lists
     }));
   }
