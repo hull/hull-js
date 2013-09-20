@@ -41,6 +41,10 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
 
       isInitialized: false
 
+      requiredOptions: []
+
+      options: {}
+
       constructor: (options)->
         @ref = options.ref
         @api = @sandbox.data.api
@@ -72,7 +76,6 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
             ds = _.bind ds, @ if _.isFunction ds
             @datasources[i] = new Datasource(ds, @api) unless ds instanceof Datasource
 
-          @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
         catch e
           console.error("Error loading HullComponent", e.message)
         sb = @sandbox
@@ -80,9 +83,21 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
           return @id if @id
           return sb.util.entity.encode(@uid) if @uid
           sb.config.entity_id
-        options.id = getId.call(options)
-        app.core.mvc.View.prototype.constructor.apply(@, arguments)
-        @render()
+        id = getId.call(options)
+        options.id = id if id
+        if @validateOptions(options)
+          app.core.mvc.View.prototype.constructor.apply(@, arguments)
+          @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
+          @render()
+
+      validateOptions: (options)->
+        valid = true
+        optionKeys = _.keys options
+        _.each @requiredOptions, (name)=>
+          if !_.contains(optionKeys, name)
+            valid = valid && false
+            console.error "Missing parameter to component #{@componentName}: data-hull-#{name}"
+        valid
 
       renderTemplate: (tpl, data)=>
         _tpl = @_templates?[tpl]
@@ -119,6 +134,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
             ds = @datasources[k]
             ds.parse(_.extend({}, @, @options || {}))
             handler = @["on#{_.string.capitalize(_.string.camelize(k))}Error"]
+            handler = _.bind(handler, @) if _.isFunction(handler)
             ctx.addDatasource(k, ds.fetch(), handler).then (res)=>
               @data[k] = res
           componentDeferred = @sandbox.data.when.apply(undefined, promiseArray)
@@ -163,7 +179,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
       # afterRender
       # Start nested components...
       render: (tpl, data)=>
-        ctxPromise = @buildContext.call(@)
+        ctxPromise = @buildContext()
         ctxPromise.fail (err)->
           console.error("Error fetching Datasources ", err.message, err)
         ctxPromise.then (ctx)=>
@@ -175,7 +191,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
               data = _.extend(dataAfterBefore || ctx.build(), data)
               @doRender(tpl, data)
               _.defer(@afterRender.bind(@, data))
-              _.defer((-> @sandbox.start(@$el)).bind(@))
+              _.defer((-> @sandbox.start(@$el, { reset: true })).bind(@))
               @isInitialized = true;
               # debugger
               @emitLifecycleEvent('render')

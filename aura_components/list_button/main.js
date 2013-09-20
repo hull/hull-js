@@ -32,6 +32,8 @@ Hull.define({
     listName: 'likes'
   },
 
+  requiredOptions: ['listName'],
+
   datasources: {
     list: function() {
       return this.api.model("me/lists/" + this.options.listName).fetch();

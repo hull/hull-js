@@ -31,13 +31,27 @@
 */
 Hull.define({
   type: 'Hull',
+  requiredOptions: ['id', 'secret'],
 
-  templates: ['achieve_button'],
+  templates: ['achieve_button', 'achieve_error'],
 
   actions: {
     achieve: function() {
-      this.api(this.id + '/achieve', 'post', { secret: this.options.secret }).then(this.refresh);
+      var self = this;
+      this.api(this.id + '/achieve', 'post', { secret: this.options.secret }).then(function () {
+        self.refresh();
+      }, function (err) {
+        self.renderError(err.statusText);
+      });
     }
+  },
+
+  onAchievementError: function (error) {
+    this.actions.achieve = function () {};
+  },
+
+  renderError: function (errorMessage) {
+    this.$el.html(this.renderTemplate('achieve_error', {message: errorMessage}));
   },
 
   datasources: {

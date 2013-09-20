@@ -7,7 +7,6 @@ define(['lib/client/datasource'], function (Datasource) {
 
   var api = function () {};
 
-
   describe("Datasources", function () {
     it('Datasource should be a prototype', function () {
       Datasource.should.be.a('function');
@@ -39,17 +38,17 @@ define(['lib/client/datasource'], function (Datasource) {
         fn2.should.not.throw;
       });
 
-
       describe("With a string", function () {
         it("should be allowed with a non-empty string", function () {
           var ds = new Datasource('1234', api);
-          ds.def.should.have.keys(['path', 'provider']);
+          ds.def.should.have.keys(['path', 'provider', 'params']);
         });
 
         it("should use 'hull' as a provider", function () {
           var ds = new Datasource('1234', api);
           ds.def.provider.should.eql('hull');
         });
+
       });
 
       describe("With an object", function () {
@@ -95,6 +94,40 @@ define(['lib/client/datasource'], function (Datasource) {
         ds.parse.bind(ds, {abc: 'Hull', de: '.io'}).should.throw('Cannot resolve datasource binding :def');
       });
     });
+
+    describe('definition path', function() {
+      it('removes query string', function() {
+        var path = new Datasource('foo?bar=baz', api).def.path;
+        path.should.equal('foo');
+      });
+    });
+
+    describe('definition params', function() {
+      it('parses query string from path', function() {
+        var params = new Datasource('foo/bar?bar=baz&baz=qux', api).def.params;
+        params.should.eql({
+          bar: 'baz',
+          baz: 'qux'
+        });
+      });
+
+      it('extends params with query string', function() {
+        var params = new Datasource({
+          path: 'hello?foo=bar',
+          params: { bar: 'baz' }
+        }, api).def.params;
+
+        params.should.eql({ foo: 'bar', bar: 'baz' });
+      });
+
+      it('params has precedence over query string', function() {
+        var params = new Datasource({
+          path: 'hello?foo=bar',
+          params: { foo: 'baz' }
+        }, api).def.params;
+
+        params.should.eql({ foo: 'baz' });
+      });
+    });
   });
 });
-

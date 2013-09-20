@@ -37,6 +37,8 @@ Hull.define({
 
   refreshEvents: ['model.hull.me.change'],
 
+  requiredOptions: ['id'],
+
   actions: {
     comment: 'postComment',
     delete:  'deleteComment',
@@ -44,72 +46,77 @@ Hull.define({
   },
 
   options: {
-    focus: false
+    focus: false,
+    perPage: 10,
+    page: 1
   },
 
   datasources: {
     comments: ':id/comments'
   },
 
-  beforeRender: function(data){
-    "use strict";
+  initialize: function() {
+    var query = {};
+
+    if (this.options.startPage) {
+      query.page = this.options.startPage;
+    } else {
+      query.skip = this.options.skip || 0;
+    }
+
+    query.limit = this.options.limit || this.options.perPage;
+    this.query = query;
+  },
+
+  beforeRender: function(data) {
     this.sandbox.util._.each(data.comments, function(c) {
-      c.isDeletable = (c.user.id === this.data.me.id);
+      c.isDeletable = (c.user.id === data.me.id);
       return c;
     }, this);
     return data;
   },
+
   afterRender: function() {
-    "use strict";
     if(this.options.focus || this.focusAfterRender) {
       this.$el.find('input,textarea').focus();
       this.focusAfterRender = false;
     }
   },
 
-  deleteComment: function(event, data) {
-    "use strict";
+  deleteComment: function(event, action) {
     event.preventDefault();
-    var id = data.data.id;
-    var $parent = data.el
+    var id = action.data.id;
+    var $parent = action.el
       .addClass('is-removing')
       .parents('[data-hull-comment-id="'+ id +'"]');
     this.api.delete(id).then(function () {$parent.remove();});
   },
 
-  toggleLoading: function ($el) {
-    "use strict";
-    var $form = $el.toggleClass('is-loading');
-    var $btn = $form.find('.btn');
-    $btn.attr('disabled', !$btn.attr('disabled'));
-    var $textarea = $form.find('textarea');
-    $textarea.attr('disabled', !$textarea.attr('disabled'));
+  toggleLoading: function () {
+    this.$el.toggleClass('is-loading');
+    this.$find('input,textarea,button').attr('disabled', this.$el.hasClass('is-loading'));
   },
 
   postComment: function (e) {
-    "use strict";
     e.preventDefault();
-    var $formWrapper = this.$el.find('.hull-comments__form');
-    var $form = $formWrapper.find('form');
-    var formData = this.sandbox.dom.getFormData($form);
-    var description = formData.description;
-
-    this.toggleLoading($formWrapper);
+    var self = this, $form = this.$find('form'),
+        formData = this.sandbox.dom.getFormData($form),
+        description = formData.description;
+    this.toggleLoading();
 
     if (description && description.length > 0) {
       var attributes = { description: description };
-      this.api(this.id + '/comments', 'post', attributes).then(this.sandbox.util._.bind(function() {
-        this.toggleLoading($formWrapper);
-        this.focusAfterRender = true;
-        this.render();
-      }, this));
+      this.api(this.id + '/comments', 'post', attributes).then(function() {
+        self.toggleLoading();
+        self.focusAfterRender = true;
+        self.render();
+      });
     }
   },
 
-  flagItem: function (event, data) {
-    "use strict";
+  flagItem: function (event, action) {
     event.preventDefault();
-    var id = data.data.id;
+    var id = action.data.id;
     var isCertain = confirm('Do you want to report this content as inappropriate ?');
     if (isCertain) {
       this.sandbox.flag(id);

@@ -40,12 +40,14 @@ Hull.define({
   actions: {
     message:      'message',
     deleteMsg:    'deleteMsg',
-    notification: 'notification',
+    enableNotifications: 'enableNotifications',
+    disableNotifications: 'disableNotifications',
     delete:       'delete'
   },
 
   options: {
-    focus: false
+    focus: true,
+    order: 'desc'
   },
 
   datasources: {
@@ -55,15 +57,8 @@ Hull.define({
       }
     },
     messages: function () {
-      "use strict";
       if(this.options.id) {
-        var orderBy;
-        if('desc' === this.options.order) {
-          orderBy = "created_at DESC";
-        } else {
-          orderBy = "created_at ASC";
-        }
-        return this.api(this.options.id + '/messages', {order_by: orderBy});
+        return this.api(this.options.id + '/messages', this.getMessagesParams());
       }
       else {
         return null;
@@ -71,8 +66,15 @@ Hull.define({
     }
   },
 
+  getMessagesParams: function() {
+    var params = {  };
+    if (this.options.limit) {
+      params.per_page = this.options.limit;
+    }
+    return params;
+  },
+
   initialize: function() {
-    "use strict";
     this.sandbox.on('hull.conversation.select', function(id) {
       this.options.id = id;
       this.render();
@@ -80,56 +82,63 @@ Hull.define({
   },
 
   beforeRender: function(data, errors) {
-    "use strict";
-    if(data.conversation) {
-      data.conversation.isDeletable = data.conversation.actor.id == data.me.id;
-      data.messages = data.messages;
+    var _ = this.sandbox.util._;
+    data.isAscending = this.options.order != 'desc';
+    if (data.conversation) {
+      window._messages = data.messages;
       data.participants = data.conversation.participants;
-      this.sandbox.util._.each(data.messages, function(m) {
-        m.isDeletable = (m.actor.id === this.data.me.id);
+      if (this.loggedIn()) {
+        data.conversation.isDeletable = (data.conversation.actor && data.conversation.actor.id == data.me.id);
+        _.each(data.messages, function(m) {
+          m.isDeletable = m.actor && (m.actor.id === this.data.me.id);
 
-        var last_read = data.conversation.last_read;
-        if(last_read instanceof Object){
-          last_read = last_read[this.data.me.id];
-        }
-        m.isNew = !m.isMe && (last_read ? m.id > last_read : true);
+          var last_read = data.conversation.last_read;
+          if(last_read instanceof Object){
+            last_read = last_read[this.data.me.id];
+          }
+          m.isNew = !m.isMe && (last_read ? m.id > last_read : true);
+          m.isMe = m.actor && (m.actor.id === data.me.id);
+          return m;
+        }, this);
 
-        return m;
-      }, this);
-      data.isFollowing = this.sandbox.util._.find(data.participants, function(p) {
-        return p.id == data.me.id;
-      }, this)
-      data.isAscending = this.options.order != 'desc';
-      data.isNew = !(data.messages && data.messages.length > 0);
-      this.sandbox.util._.each(data.messages, function(m){
-        m.isMe = (m.actor.id===data.me.id);
-      });
+        data.isFollowing = _.find(data.participants, function(p) {
+          return p.id == data.me.id;
+        }, this)
+
+        data.isNew = !(data.messages && data.messages.length > 0);
+      }
     }
     else {
       data.newConvo = true;
       data.errors = errors;
     }
+    if('desc' !== this.options.order) {
+      data.messages = data.messages.reverse();
+    }
     return data;
   },
 
-  afterRender: function() {
-    "use strict";
+  afterRender: function(data) {
+    var self = this;
     if(this.options.focus || this.focusAfterRender) {
       this.$el.find('input,textarea').focus();
       this.focusAfterRender = false;
     }
-    // Mark msgs as read
-    setTimeout(this.sandbox.util._.bind(function() {
-      var li = $('.hull-messages__list li:first-child');
-      var cid = $('.hull-conversation__form').find('.media').data('hull-conversation-id');
 
-      if(li && cid) {
-        this.api(cid + '/messages', 'put', {});
+    var tips = this.$el.find('[data-toggle="tooltip"]');
+    if (tips && tips.tooltip) {
+      tips.tooltip();
+    }
+
+    // Mark msgs as read
+    setTimeout(function() {
+      if (self.options.id && data.messages) {
+        self.api(self.options.id + '/messages', 'put');
       }
-    }, this), 2000);
+    }, 2000);
   },
+
   toggleLoading: function ($el) {
-    "use strict";
     var $form = $el.toggleClass('is-loading');
     var $btn = $form.find('.btn');
     $btn.attr('disabled', !$btn.attr('disabled'));
@@ -138,37 +147,34 @@ Hull.define({
   },
 
   message: function (e, data) {
-    "use strict";
     e.preventDefault();
+    var self = this;
     var $form = this.$el.find("[data-hull-item='form']");
     var formData = this.sandbox.dom.getFormData($form);
-    var description = formData.description;
-
+    var body = formData.body;
     this.toggleLoading($form);
-    if (description && description.length > 0) {
+    if (body && body.length > 0) {
       var cid = data.data.id;
-      var attributes = { body: description };
-      this.api(cid + '/messages', 'post', attributes).then(this.sandbox.util._.bind(function() {
-        this.toggleLoading($form);
-        this.render();
-      }, this));
+      var attributes = { body: body };
+      this.api(cid + '/messages', 'post', attributes).then(function() {
+        self.toggleLoading($form);
+        self.render();
+      });
     } else {
       this.toggleLoading($form);
     }
   },
 
   deleteMsg: function(e, data) {
-    "use strict";
-    event.preventDefault();
+    e.preventDefault();
     var id = data.data.id;
     var $parent = data.el
       .addClass('is-removing')
       .parents('[data-hull-message-id="'+ id +'"]');
-    this.api.delete(id).then(function () {$parent.remove();});
+    this.api.delete(id).then(function () { $parent.remove(); });
   },
 
   delete: function(e, data) {
-    "use strict";
     event.preventDefault();
     var id = data.data.id;
     var self = this;
@@ -177,9 +183,17 @@ Hull.define({
     });
   },
 
-  notification: function(e, data) {
-    "use strict";
-    var $notification = this.$el.find('input');
-    this.api(this.options.id + '/participants', 'put', {notification: $notification.prop('checked')});
+  disableNotifications: function(e, data) {
+    var self = this;
+    this.api(this.options.id + '/notifications', 'delete').then(function() {
+      self.render();
+    });
+  },
+
+  enableNotifications: function(e, data) {
+    var self = this;
+    this.api(this.options.id + '/notifications', 'put').then(function() {
+      self.render();
+    });
   }
 });

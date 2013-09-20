@@ -4,23 +4,18 @@
   {{#if conversation}}
     <div class="hull-conversation">
       <div class="hull-conversation__header">
-        <h3>{{conversation.name}}</h3>
+        <h2>
+          <span class="pull-right muted"><small>started {{fromNow conversation.created_at}}</small></span>
+          {{conversation.name}}
+        </h2>
         {{#if conversation.isDeleteable}}
-          <button data-hull-action="deleteConvo" data-hull-id="{{conversation.id}}" class="btn pull-right">Delete conversation</button>
+          <button data-hull-action="deleteConvo" data-hull-id="{{conversation.id}}" class="btn btn-link text-error pull-right">Delete conversation</button>
         {{/if}}
-      </div>
-
-      {{#if conversation.notification_enabled}}
-      <form class="hull-conversation__notifications">
-        <input type="checkbox" data-hull-action="notification" name="user_notification" {{#if conversation.notification_enabled_user}}checked{{/if}}> Allow email notifications for this conversation
-      </form>
-      {{/if}}
-  
-      <div class="row-fluid">
-        <div class="hull-conversation__participants">
+        <div class="hull-conversation__participants text-right">
           {{> conversations.thread.participants}}
         </div>
       </div>
+      <hr />
       <div class="row-fluid">
           {{^isAscending}}
             {{> conversations.thread.form}}
@@ -28,36 +23,32 @@
 
           {{#if messages}}
             <ul class="media-list hull-messages__list">
-              <div>You have {{conversation.messages_count_unread}} NEW messages and {{conversation.messages_count}} total messages.</div>
               {{#messages}}
-                <li class="media" data-hull-message-id="{{id}}">
-                  <div class="span2">
-                    <span class="pull-right">{{actor.name}}</span>
+              <li class="media" data-hull-message-id="{{id}}">
+                <div class="pull-left">
+                  <img class="media-object img-rounded" src="{{actor.picture}}" alt="{{actor.name}}" width="50" height="50">
+                </div>
+                <div class="media-body">
+                  <div class="pull-right text-right">
+                    <small class="muted">{{fromNow updated_at}}</small>
+                    {{#if isNew}}
+                    <br>
+                    <small class="text-success">NEW</small>
+                    {{/if}}
                   </div>
-                  <div class="pull-left">
-                    <img class="media-object img-rounded" src="{{actor.picture}}" alt="{{actor.name}}">
+                  <h5 class="media-heading">{{actor.name}}</h5>
+                  <div class="hull-messages__body">
+                    {{{autoLink body}}}
                   </div>
-                  <div class="media-body">
-                    <div class="pull-right">
-                      <small class="muted">{{formatTime updated_at "h:mm A"}}</small>
-                    </div>
-                    <h4 class="media-heading">
-                      {{#if isNew}}
-                        <small class="text-success">NEW!</small>
+                  <div class="hull-messages__actions">
+                      {{#if isDeletable}}
+                        <small>
+                          <a href="#" class='link' data-hull-action="deleteMsg" data-hull-id="{{id}}">Delete</a>
+                        </small>
                       {{/if}}
-                    </h4>
-                    <div class="hull-messages__description">
-                      {{{autoLink body}}}
-                    </div>
-                    <div class="hull-messages__actions">
-                        {{#if isDeletable}}
-                          <small>
-                            <a href="#" class='link' data-hull-action="deleteMsg" data-hull-id="{{id}}">Delete</a>
-                          </small>
-                        {{/if}}
-                    </div>
                   </div>
-                </li>
+                </div>
+              </li>
               {{/messages}}
             </ul>
           {{/if}}

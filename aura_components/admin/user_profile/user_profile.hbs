@@ -1,33 +1,85 @@
-{{#user}}
-  <div class="page-header media">
-    <div class="pull-left">
-      <img src="{{picture}}" width="50" height="50"/>
-    </div>
-    <h4>{{name}}</h4>
-  </div>
-  <div class="admin-infos">
-    <dl>
-      <dt>Email:</dt>
-      <dd>{{email}}</dd>
+{{#if user}}
+  <div class="media user-header">
+    {{#if user.picture}}
+      <div class="pull-left">
+        <img src="{{user.picture}}" width="50" height="50"/>
+      </div>
+    {{/if}}
 
-      <dt>Signed up:</dt>
-      <dd>{{fromNow created_at}}</dd>
-    </dl>
-    <hr/>
-    <h4>Identities</h4>
-    <ul class="unstyled">
-      {{#identities}}
-      <li> <i class="icon-{{type}}"></i> {{name}} <small>{{fromNow created_at}}</small>
-      </li>
-      {{/identities}}
-    </ul>
+    <div>
+      <h4>{{user.name}}</h4>
+      <p class="muted">{{user.email}}</p>
+    </div>
   </div>
-{{/user}}
-{{^user}}
+
+  {{#unless org.public}}
+    <div class="admin-infos admin-infos-approve">
+      {{#if user.approved}}
+        <button class="btn btn-block" data-hull-action="unapprove">Unapprove</button>
+      {{else}}
+        <button class="btn btn-block" data-hull-action="approve">Approve</button>
+      {{/if}}
+    </div>
+  {{/unless}}
+
+  <div class="admin-infos admin-infos-permissions">
+    <header>
+      <h5>Permissions</h5>
+    </header>
+    <dl>
+      <dt>Role:</dt>
+      <dd>
+        <div class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            {{#if user.is_admin}}
+              Admin
+            {{else}}
+              User
+            {{/if}}
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="#" data-hull-action="promote" data-hull-role="normal">User</a></li>
+            <li><a href="#" data-hull-action="promote" data-hull-role="admin">Admin</a></li>
+          </ul>
+        </div>
+      </dd>
+    </dl>
+  </div>
+
+  <div class="admin-infos">
+    <header>
+      <h5>Identities</h5>
+    </header>
+    <dl>
+      {{#each user.identities}}
+        <dt>{{humanize provider}}:</dt>
+        <dd>Created {{fromNow created_at}}</dd>
+      {{/each}}
+    </dl>
+  </div>
+
+  {{#if userHasProfiles}}
+    <div class="admin-infos">
+      <header>
+        <h5>Profiles</h5>
+      </header>
+      {{#each user.profiles}}
+        <h6>{{@key}}:</h6>
+        <dl>
+          {{#each this}}
+            <dt>{{@key}}:</dt>
+            <dd>{{this}}</dd>
+          {{/each}}
+        </dl>
+      {{/each}}
+    </div>
+  {{/if}}
+{{else}}
   <div class="admin-empty text-center">
     <div class="admin-empty-wrapper">
       <span class="admin-empty-icon">&#9785;</span>
       <h4>User not found</h4>
     </div>
   </div>
-{{/user}}
+{{/if}}
