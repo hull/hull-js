@@ -1,5 +1,5 @@
 /**
- * ## Manages the lists in which an item belongs to
+ * ## lists/bind
  *
  * Allows to link/unlink an item to any list, and create some lists also.
  *
