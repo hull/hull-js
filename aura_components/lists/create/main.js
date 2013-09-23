@@ -21,7 +21,7 @@ Hull.define({
       "use strict";
       e.preventDefault();
       var self = this, inputs = {};
-      this.sandbox.dom.find('input', this.$el).each(function(c, input) {
+      this.$find('input', this.$el).each(function(c, input) {
         if (input.getAttribute('type') === 'text') {
           inputs[input.getAttribute('name')] = input.value;
         }
