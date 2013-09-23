@@ -87,6 +87,7 @@ Hull.define({
    */
   afterRender: function () {
     "use strict";
+    var _ = this.sandbox.util._;
     var btn = this.$el.find('.btn-mini');
     btn.popover({
       title: 'Add to List',
@@ -95,6 +96,11 @@ Hull.define({
       content: ''
     });
     this.$el.on('shown', this.sandbox.util._.bind(this.renderPopover, this));
+    this.sandbox.dom.find(document.body).on('click', _.bind(function (evt) {
+      if (this.$el.find('.popover').find(evt.target).length === 0 && btn.index(evt.target) === -1) {
+        btn.popover('hide');
+      }
+    }, this));
   },
   /*
    * Creates a new list for the user
