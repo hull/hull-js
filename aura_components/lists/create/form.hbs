@@ -1,18 +1,21 @@
-<div class="hull-lists">
+<div>
 {{#if loggedIn}}
-  <h1 class="hull-lists__form__title">Create a new List</h1>
-  <form data-hull-action="createList">
+  <h1>Create a new List</h1>
+  <form>
+    {{#if errorNoName}}
+    <div class="alert alert-error">You must provide a name to the list</div>
+    {{/if}}
     <ul class='unstyled'>
       <li>
         <label for="name">Name:</label>
-        <input type="text" name="name">
+        <input type="text" name="name" value="{{name}}">
       </li>
       <li>
         <label class="" for="description">Description:</label>
-        <input type="text" name="description">
+        <input type="text" name="description" value="{{description}}">
       </li>
       <li>
-        <input type="submit" class="btn">
+        <input type="submit" class="btn" data-hull-action="createList">
       </li>
     </ul>
   </form>
