@@ -1,0 +1,9 @@
+{{#if loggedIn}}
+<ul>
+{{#each lists}}
+  <li>{{> lists.all.element}}</li>
+{{/each}}
+</ul>
+{{else}}
+<div data-hull-component="login_button@hull"></div>
+{{/if}}
