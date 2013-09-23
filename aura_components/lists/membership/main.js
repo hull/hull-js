@@ -169,7 +169,7 @@ Hull.define({
       $popoverContent.html(contents);
       this.refreshElements();
     }
-    Hull.parse($popoverContent);
+    this.sandbox.start($popoverContent, { reset: true  });
   },
   /*
    * Renders the lists in the popover
