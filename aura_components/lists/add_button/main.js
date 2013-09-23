@@ -1,14 +1,14 @@
 /**
- * ## Like button
+ * ## Add to list button
  *
- * Allow users to add and remove objects from lists.
- * Lists are created on the fly, with the `list-name` you specify.
+ * Allow users to add and remove an object from a list.
+ * Non existing ists are created on the fly, with the `list-name` you specify.
  *
  * ### Examples
  *
- *     <div data-hull-component="list_button@hull" data-hull-id="app" data-hull-list-name="favorites"></div>
- *     <div data-hull-component="list_button@hull" data-hull-id="HULL_ID" data-hull-list-name="favorites"></div>
- *     <div data-hull-component="list_button@hull" data-hull-uid="ANY_UNIQUE_ID" data-hull-list-name="favorites"></div>
+ *     <div data-hull-component="lists/add_button@hull" data-hull-id="app" data-hull-list-name="favorites"></div>
+ *     <div data-hull-component="lists/add_button@hull" data-hull-id="HULL_ID" data-hull-list-name="favorites"></div>
+ *     <div data-hull-component="lists/add_button@hull" data-hull-uid="ANY_UNIQUE_ID" data-hull-list-name="favorites"></div>
  *
  * ### Options
  *
