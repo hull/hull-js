@@ -1,6 +1,10 @@
 /**
+<<<<<<< HEAD:aura_components/lists/membership/main.js
  * 
  * Shows and Manages the lists an object belongs to.
+=======
+ * ## lists/bind
+>>>>>>> Completes the documentation:aura_components/lists/bindings/main.js
  *
  * Allows to link/unlink an item to any list, and create some lists also.
  *
