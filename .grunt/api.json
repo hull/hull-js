@@ -20,7 +20,7 @@
       "cookie",
       "lib/api"
       ],
-    "out": "dist/<%= PKG_VERSION %>/hull-api.js"
+    "out": "dist/<%= PKG_VERSION %>/hull.api.js"
   }
 }
 
