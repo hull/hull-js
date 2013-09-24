@@ -3,9 +3,11 @@
   [data-hull-component^="lists/bindings"] .popover-content {
     padding: 0;
   }
+  [data-hull-component^="lists/bindings"] .popover,
   [data-hull-component^="lists/bindings"] ul {
     margin: 0;
-    min-width: 200px;
+    /* this sucks, yet it works */
+    width: 276px;
   }
 
   [data-hull-component^="lists/bindings"] ul li.new form {
