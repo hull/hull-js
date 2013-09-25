@@ -12,12 +12,16 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
     compiled
 
   # Handles the various priorities and locations of templates
-  _getTemplateDefinition = (name, ref, componentName, dom)->
+  _getTemplateDefinition = (name, ref, el, componentName, dom)->
     path = "#{ref}/#{name}"
     tplName = [componentName, name.replace(/^_/, '')].join("/")
-    localTpl = dom("script[data-hull-template='#{tplName}']")
-    if localTpl.length
-      parsed = setupTemplate(localTpl.text(), tplName)
+    selector = "script[data-hull-template='#{tplName}']"
+    componentTpl = dom(selector, el)
+    localTpl = dom(selector)
+    if componentTpl.length
+      parsed = setupTemplate(dom(componentTpl.get(0)).text(), tplName)
+    else if localTpl.length
+      parsed = setupTemplate(dom(localTpl.get(0)).text(), tplName)
     else if module.global.Hull.templates[tplName]
       parsed = setupTemplate(module.global.Hull.templates["#{tplName}"],  tplName)
     # Meteor
@@ -40,14 +44,14 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
     templateEngine: Handlebars
     getTemplateDefinition: _getTemplateDefinition
     initialize: (app) ->
-      app.core.template.load = (names=[], ref, format="hbs") ->
+      app.core.template.load = (names=[], ref, el, format="hbs") ->
         undefinedTemplates = []
         names = [names] if _.isString(names)
         dfd   = app.core.data.deferred()
         ret = {}
         componentName = ref.replace('__component__$', '').split('@')[0]
         for name in names
-          tplDef = _getTemplateDefinition name, ref, componentName, app.core.dom.find
+          tplDef = _getTemplateDefinition name, ref, el, componentName, app.core.dom.find
           if tplDef
             ret[name] = tplDef
           else
