@@ -1,8 +1,9 @@
 define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
 
-  appStrategies = ['hullGlobal', 'meteor', 'sprockets', 'hullDefault']
-  domStrategies = ['inner', 'global']
-  serverStrategies = ['require']
+  strategies = 
+    app: ['hullGlobal', 'meteor', 'sprockets', 'hullDefault']
+    dom: ['inner', 'global']
+    server: ['require']
 
   #Compiles the template depending on its definition
   setupTemplate = (tplSrc, tplName) ->
@@ -50,24 +51,21 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
           dfd.reject err 
         dfd
 
+  _execute = (type, args...)->
+    for stratName in strategies[type]
+      strategyResult = strategyHandlers[type][stratName](args...)
+      return strategyResult if strategyResult
+
   applyDomStrategies = (tplName, el)->
     selector = "script[data-hull-template='#{tplName}']"
-    for stratName in domStrategies
-      handler = strategyHandlers.dom[stratName]
-      tpl = handler selector, tplName, el
-      return setupTemplate(tpl, tplName) if tpl
+    tpl = _execute('dom', selector, tplName, el)
+    setupTemplate(tpl, tplName) if tpl
 
   applyAppStrategies = (tplName)->
-    for stratName in appStrategies
-      handler = strategyHandlers.app[stratName]
-      tpl = handler tplName
-      return tpl if tpl
+    _execute('app', tplName)
 
   applyServerStrategies = (tplName, path, format)->
-    for stratName in serverStrategies
-      handler = strategyHandlers.server[stratName]
-      tpl = handler tplName, path, format
-      return tpl if tpl
+    _execute('server', tplName, path, format)
 
 
   lookupTemplate = (componentName, el, ref, format, name)->
@@ -88,17 +86,18 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
     define: define
     templateEngine: Handlebars
     domFind: undefined
+    deferred: undefined
     initialize: (app) ->
       module.domFind = app.core.dom.find
       module.deferred = app.core.data.deferred
       app.core.template.load = (names=[], ref, el, format="hbs") ->
         names = [names] if _.isString(names)
         componentName = ref.replace('__component__$', '').split('@')[0]
-        dfd   = app.core.data.deferred()
+        dfd = app.core.data.deferred()
         tpls = _.map names, _.bind(lookupTemplate, undefined, componentName, el, ref, format)
-        app.core.data.when.apply(undefined, tpls).then ->
-          dfd.resolve _.object names, [].slice.apply(arguments)
+        app.core.data.when(tpls...).then ->
+          dfd.resolve _.object(names, [].slice.apply(arguments))
         , (err)->
-          dfd.reject(err)
+          dfd.reject err
         dfd.promise()
   module
