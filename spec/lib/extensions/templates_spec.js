@@ -5,18 +5,21 @@ define(['spec/support/spec_helper', 'jquery', 'lib/client/templates'], function(
   /*jshint browser: true */
   /*global describe:true, it:true, before: true, sinon: true */
 
+  function createTemplate (name, contents) {
+    var elt = document.createElement('script');
+    elt.id = "test_template";
+    elt.type = "text/whatever";
+    elt.setAttribute("data-hull-template", name);
+    elt.innerHTML = contents;
+    return elt;
+  }
 
   /**
    * Writes a template into the DOM
    */
   function insertTemplateHelper (name, contents) {
     return function () {
-      var elt = document.createElement('script');
-      elt.id = "test_template";
-      elt.type = "text/whatever";
-      elt.setAttribute("data-hull-template", name);
-      elt.innerHTML = contents;
-      document.body.appendChild(elt);
+      document.body.appendChild(createTemplate(name, contents));
     };
   }
 
@@ -30,7 +33,10 @@ define(['spec/support/spec_helper', 'jquery', 'lib/client/templates'], function(
             deferred: jquery.Deferred
           },
           dom: {
-            find: jquery
+            find: function (sel, ctx) {
+              ctx = ctx || document; //TODO fix in Aura
+              return jquery(ctx).find(sel);
+            }
           },
           template: {}
         }
@@ -65,26 +71,24 @@ define(['spec/support/spec_helper', 'jquery', 'lib/client/templates'], function(
 
       it("should contain the template as the return value of the promise", function (done) {
         var ret = app.core.template.load(tplName, prefix);
-        var spy = sinon.spy(function (ret) {
+        ret.done(function (ret) {
           ret.should.contain.keys('tpl1');
           ret.tpl1.should.be.a('function');
           ret.tpl1().should.equal(templateContents);
           done();
         });
-        ret.done(spy);
       });
     });
 
     describe("Server loading", function () {
       it("should use require to fetch the necessary templates", function (done) {
         var ret = app.core.template.load('test', 'fixtures');
-        var spy = sinon.spy(done.bind(null, null));
-        ret.done(spy);
         ret.done(function (tpls) {
           arguments.should.have.length(1);
           tpls.should.be.a('object');
           tpls.should.have.key('test');
           tpls.test.should.be.a('function');
+          done();
         });
       });
     });
@@ -93,12 +97,28 @@ define(['spec/support/spec_helper', 'jquery', 'lib/client/templates'], function(
       var tplContents = "That's a DOM template!";
       before(insertTemplateHelper('fixtures/test1', tplContents));
 
-      it("should prefer DOM over server-template", function () {
+      it("should prefer DOM over server-template", function (done) {
         var ret = app.core.template.load('test1', 'fixtures');
         ret.done(function (tpls) {
           tpls.should.have.keys('test1');
           tpls.test1.should.be.a('function');
           tpls.test1().should.equal(tplContents);
+          done();
+        });
+      });
+
+      it("should prefer inner-templates over DOM", function (done) {
+        var innerTpl = "I'm in!";
+        var $elt = jquery('<div>');
+        $elt.appendTo('body');
+        $elt.append(createTemplate('fixtures/test2', innerTpl));
+
+        var ret = app.core.template.load('test2', 'fixtures', $elt.get(0));
+        ret.done(function (tpls) {
+          tpls.should.have.keys('test2');
+          tpls.test2.should.be.a('function');
+          tpls.test2().should.equal(innerTpl);
+          done();
         });
       });
     });
@@ -107,11 +127,12 @@ define(['spec/support/spec_helper', 'jquery', 'lib/client/templates'], function(
       before(insertTemplateHelper("multiple/tpl1", "First template"));
       before(insertTemplateHelper("multiple/tpl2", "Second template"));
 
-      it("should load an array of templates", function () {
+      it("should load an array of templates", function (done) {
         var ret = app.core.template.load(["tpl1", "tpl2"], "multiple");
         ret.done(function (tpls) {
           tpls.should.contain.keys("tpl1");
           tpls.should.contain.keys("tpl2");
+          done();
         });
       });
     });
