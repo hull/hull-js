@@ -30,7 +30,8 @@ define(['spec/support/spec_helper', 'jquery', 'lib/client/templates'], function(
       app = {
         core: {
           data: {
-            deferred: jquery.Deferred
+            deferred: jquery.Deferred,
+            when: jquery.when
           },
           dom: {
             find: function (sel, ctx) {
