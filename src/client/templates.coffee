@@ -16,8 +16,7 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
     compiled
 
   _domTemplate = ($el)->
-    if $el.length
-      module.domFind($el.get(0)).text()
+    module.domFind($el.get(0)).text() if $el.length
 
   strategyHandlers =
     dom:
@@ -41,8 +40,15 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
         if module.global.Hull.templates._default?[tplName]
           setupTemplate(module.global.Hull.templates._default[tplName],  tplName)
     server:
-      require: (tplName)->
-
+      require: (tplName, path, format)->
+        path = "text!#{path}.#{format}"
+        dfd = module.deferred()
+        module.require [path], (tpl)->
+          dfd.resolve setupTemplate(tpl, tplName) 
+        , (err)->
+          console.error "Error loading template", tplName, err.message 
+          dfd.reject err 
+        dfd
 
   applyDomStrategies = (tplName, el)->
     selector = "script[data-hull-template='#{tplName}']"
@@ -57,23 +63,12 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
       tpl = handler tplName
       return tpl if tpl
 
-  applyServerStrategies = (tplName)->
-    for stratName in appStrategies
+  applyServerStrategies = (tplName, path, format)->
+    for stratName in serverStrategies
       handler = strategyHandlers.server[stratName]
-      tpl = handler tplName
+      tpl = handler tplName, path, format
       return tpl if tpl
 
-  applyServerStrategies = (tplName, el)->
-    # module.require(_.map(undefinedTemplates, (p) -> p[1]), ->
-    #   res = Array.prototype.slice.call(arguments)
-    #   for t,i in res
-    #     name = undefinedTemplates[i][0]
-    #     tplName = [componentName, name].join("/")
-    #     ret[name] = setupTemplate(t, tplName)
-    #   dfd.resolve(ret)
-    # , (err)->
-    #   console.error("Error loading templates", undefinedTemplates, err)
-    #   dfd.reject(err))
 
   lookupTemplate = (componentName, el, ref, format, name)->
     path = "#{ref}/#{name}"
@@ -82,12 +77,10 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
     tpl = applyDomStrategies tplName, el if module.domFind
     tpl = applyAppStrategies tplName unless tpl
 
-    module.define path, tpl
+    module.define path, tpl if tpl
+
+    tpl = applyServerStrategies tplName, path, format unless tpl
     tpl
-
-    # tpl = serverStrategies tplName, path, format unless tpl
-
-    # tpl
 
   module =
     global: window
@@ -96,17 +89,16 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
     templateEngine: Handlebars
     domFind: undefined
     initialize: (app) ->
-      module.domFind = app.core.dom?.find
+      module.domFind = app.core.dom.find
+      module.deferred = app.core.data.deferred
       app.core.template.load = (names=[], ref, el, format="hbs") ->
-        undefinedTemplates = []
         names = [names] if _.isString(names)
-        dfd   = app.core.data.deferred()
-        ret = {}
         componentName = ref.replace('__component__$', '').split('@')[0]
+        dfd   = app.core.data.deferred()
         tpls = _.map names, _.bind(lookupTemplate, undefined, componentName, el, ref, format)
-        ret = _.object names, tpls
-        if undefinedTemplates.length > 0
-        else
-          dfd.resolve(ret)
+        app.core.data.when.apply(undefined, tpls).then ->
+          dfd.resolve _.object names, [].slice.apply(arguments)
+        , (err)->
+          dfd.reject(err)
         dfd.promise()
   module
