@@ -1,6 +1,6 @@
 define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
 
-  strategies = 
+  strategies =
     app: ['hullGlobal', 'meteor', 'sprockets', 'hullDefault']
     dom: ['inner', 'global']
     server: ['require']
@@ -45,10 +45,10 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
         path = "text!#{path}.#{format}"
         dfd = module.deferred()
         module.require [path], (tpl)->
-          dfd.resolve setupTemplate(tpl, tplName) 
+          dfd.resolve setupTemplate(tpl, tplName)
         , (err)->
-          console.error "Error loading template", tplName, err.message 
-          dfd.reject err 
+          console.error "Error loading template", tplName, err.message
+          dfd.reject err
         dfd
 
   _execute = (type, args...)->
@@ -68,16 +68,16 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
     _execute('server', tplName, path, format)
 
 
-  lookupTemplate = (componentName, el, ref, format, name)->
-    path = "#{ref}/#{name}"
-    tplName = [componentName, name.replace(/^_/, '')].join("/")
+  lookupTemplate = (options, name)->
+    path = "#{options.ref}/#{name}"
+    tplName = [options.componentName, name.replace(/^_/, '')].join("/")
 
-    tpl = applyDomStrategies tplName, el if module.domFind
+    tpl = applyDomStrategies tplName, options.rootEl if module.domFind
     tpl = applyAppStrategies tplName unless tpl
 
     module.define path, tpl if tpl
 
-    tpl = applyServerStrategies tplName, path, format unless tpl
+    tpl = applyServerStrategies tplName, path, options.templateFormat unless tpl
     tpl
 
   module =
@@ -91,10 +91,15 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
       module.domFind = app.core.dom.find
       module.deferred = app.core.data.deferred
       app.core.template.load = (names=[], ref, el, format="hbs") ->
-        names = [names] if _.isString(names)
-        componentName = ref.replace('__component__$', '').split('@')[0]
         dfd = app.core.data.deferred()
-        tpls = _.map names, _.bind(lookupTemplate, undefined, componentName, el, ref, format)
+        names = [names] if _.isString(names)
+        componentProps =
+          componentName: ref.replace('__component__$', '').split('@')[0]
+          templateFormat: format
+          rootEl: el
+          ref: ref
+
+        tpls = _.map names, _.bind(lookupTemplate, undefined, componentProps)
         app.core.data.when(tpls...).then ->
           dfd.resolve _.object(names, [].slice.apply(arguments))
         , (err)->
