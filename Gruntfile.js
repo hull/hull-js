@@ -256,7 +256,7 @@ module.exports = function (grunt) {
     dist: {
       "remote": ['clean:remote', 'coffee:remote', 'wrap', 'version', 'requirejs:remote'],
       "client": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client'],
-      "api": ['clean:client', 'coffee:api', 'version', 'requirejs:api'],
+      "api": ['clean:client', 'coffee:api', 'wrap', 'version', 'requirejs:api'],
       "client-no-underscore": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
       "client-no-backbone": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
       "widgets": ["hull_widgets"],

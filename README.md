@@ -1,4 +1,4 @@
-# Hull.js [ ![Codeship Status for hull/hull-js](https://www.codeship.io/projects/caa4ef70-af23-0130-003e-2acfafa7a2f4/status?branch=develop) ](https://www.codeship.io/projects/4004)
+# Hull.js [ ![Codeship Status for hull/hull-js](https://circleci.com/gh/hull/hull-js/tree/develop.png?circle-token=26a17dad6ac378f6028a460a5857d5ca15a8aa13) ](https://circleci.com/gh/hull/hull-js)
 
 # Building the library
 

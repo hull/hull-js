@@ -138,7 +138,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
             ctx.addDatasource(k, ds.fetch(), handler).then (res)=>
               @data[k] = res
           componentDeferred = @sandbox.data.when.apply(undefined, promiseArray)
-          templateDeferred = @sandbox.template.load(@templates, @ref)
+          templateDeferred = @sandbox.template.load(@templates, @ref, @el)
           templateDeferred.done (tpls)=>
             @_templates     = tpls
           readyDfd = promises.when(componentDeferred, templateDeferred)
