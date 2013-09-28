@@ -1,16 +1,16 @@
 /**
- * ## Identity
+ * ## Login button
  *
  * Allow users to log in with auth services that you have hooked on your app.
- * When logged in, show a micro-profile card.
+ * For a more complete component, look at the Identity component.
  *
  * ### Examples
  *
- *     <div data-hull-component="identity@hull"></div>
- *     <div data-hull-component="identity@hull" data-hull-provider="instagram"></div>
- *     <div data-hull-component="identity@hull" data-hull-provider="facebook"></div>
- *     <div data-hull-component="identity@hull" data-hull-provider="github"></div>
- *     <div data-hull-component="identity@hull" data-hull-provider="github,facebook"></div>
+ *     <div data-hull-component="login/button@hull"></div>
+ *     <div data-hull-component="login/button@hull" data-hull-provider="instagram"></div>
+ *     <div data-hull-component="login/button@hull" data-hull-provider="facebook"></div>
+ *     <div data-hull-component="login/button@hull" data-hull-provider="github"></div>
+ *     <div data-hull-component="login/button@hull" data-hull-provider="github,facebook"></div>
  *
  * ### Options
  *
@@ -19,14 +19,14 @@
  *
  * ### Template
  *
- * - `identity`: Show login buttons if the user isn't logged, display a micro profile card if he is.
+ * - `login/button`: Show login buttons if the user isn't logged, logout button if he is.
  *
  */
 Hull.define({
   type: 'Hull',
 
   templates: [
-    'identity'
+    'button'
   ],
 
   options:{
@@ -36,14 +36,6 @@ Hull.define({
   refreshEvents: ['model.hull.me.change'],
 
   initialize: function() {
-    "use strict";
-    this.authHasFailed = false;
-
-    this.sandbox.on('hull.auth.failure', this.sandbox.util._.bind(function() {
-      this.authHasFailed = true;
-      this.render();
-    }, this));
-
     this.authServices = this.sandbox.util._.map(this.sandbox.config.services.types.auth, function(s) {
       return s.replace(/_app$/, '');
     });
@@ -54,8 +46,6 @@ Hull.define({
   },
 
   beforeRender: function(data) {
-    "use strict";
-    data.authHasFailed = this.authHasFailed;
 
     // If providers are specified, then use only those. else use all configuredauthServices
     if(this.options.provider){
@@ -71,15 +61,12 @@ Hull.define({
       data.loggedInProviders = [];
     }
 
+
     // Create an array of logged out providers.
     data.loggedOut = this.sandbox.util._.difference(data.providers, data.loggedInProviders);
-    data.matchingProviders = this.sandbox.util._.intersection(data.providers.concat('email'), data.loggedInProviders);
+    data.matchingProviders = this.sandbox.util._.intersection(data.providers, data.loggedInProviders);
     data.authServices = this.authServices;
 
     return data;
-  },
-
-  afterRender: function() {
-    this.authHasFailed = false;
   }
 });

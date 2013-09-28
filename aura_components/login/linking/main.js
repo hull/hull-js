@@ -1,6 +1,6 @@
 Hull.define({
   type: 'Hull',
-  templates: ['identities'],
+  templates: ['linking'],
   refreshEvents: ['model.hull.me.change'],
 
   initialize: function() {
