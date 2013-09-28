@@ -33,7 +33,7 @@ Hull.define({
   type: 'Hull',
   requiredOptions: ['id', 'secret'],
 
-  templates: ['achieve_button', 'achieve_error'],
+  templates: ['button', 'error'],
 
   actions: {
     achieve: function() {
