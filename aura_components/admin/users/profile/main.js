@@ -20,7 +20,7 @@ Hull.define({
   type: 'Hull',
 
   templates: [
-    'user_profile'
+    'profile'
   ],
 
   datasources: {
