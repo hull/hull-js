@@ -6,7 +6,7 @@
  * ### Examples
  *
  *     <div
- *          data-hull-component="property@hull"
+ *          data-hull-component="object/property@hull"
  *          data-hull-id="me"
  *          data-hull-property="name"
  *          data-hull-default-text="Not found"
