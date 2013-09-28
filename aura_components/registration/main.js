@@ -2,7 +2,7 @@ Hull.define(['underscore', 'h5f'], function(_, H5F) {
   return {
     type: 'Hull',
 
-    templates: ['registration_form', 'registration_complete'],
+    templates: ['form', 'complete'],
 
     refreshEvents: ['model.hull.me.change'],
 
@@ -90,13 +90,13 @@ Hull.define(['underscore', 'h5f'], function(_, H5F) {
         }
       });
 
-      this.template = isComplete ? 'registration_complete' : 'registration_form';
+      this.template = isComplete ? 'complete' : 'form';
 
       this.fields = fields;
     },
 
     afterRender: function() {
-      if (this.template === 'registration_form') {
+      if (this.template === 'form') {
         this._ensureFormEl();
         H5F.setup(this.formEl, {
           validClass: "hull-form__input--valid",
@@ -111,7 +111,7 @@ Hull.define(['underscore', 'h5f'], function(_, H5F) {
       edit: function(e) {
         e.preventDefault();
         e.stopPropagation();
-        this.render("registration_form");
+        this.render("form");
         return false;
       },
 
