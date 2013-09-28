@@ -33,7 +33,7 @@
 Hull.define({
   type: 'Hull',
 
-  templates: ['comments'],
+  templates: ['list'],
 
   refreshEvents: ['model.hull.me.change'],
 
