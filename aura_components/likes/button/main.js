@@ -24,7 +24,7 @@
 Hull.define({
   type: "Hull",
 
-  templates: ["like_button"],
+  templates: ["button"],
   refreshEvents: ['model.hull.me.change'],
 
   working: false,

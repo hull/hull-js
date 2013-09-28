@@ -6,20 +6,20 @@
  *
  * ### Examples
  *
- *     <div data-hull-component="likes@hull" data-hull-id="HULL_ID"></div>
- *     <div data-hull-component="likes@hull" data-hull-id="YOUR_UNIQUE_ID"></div>
- *     <div data-hull-component="likes@hull" data-hull-id="ANY_URL"></div>
+ *     <div data-hull-component="likes/list@hull" data-hull-id="HULL_ID"></div>
+ *     <div data-hull-component="likes/list@hull" data-hull-id="YOUR_UNIQUE_ID"></div>
+ *     <div data-hull-component="likes/list@hull" data-hull-id="ANY_URL"></div>
  *
  * ### Template
  *
- * - `likes`: Shows the faces of all users who liked the object
+ * - `list`: Shows the faces of all users who liked the object
  *
  */
 
 Hull.define({
   type: "Hull",
 
-  templates: ["likes"],
+  templates: ["list"],
   refreshEvents: ['hull.like.**'],
 
   datasources: {
