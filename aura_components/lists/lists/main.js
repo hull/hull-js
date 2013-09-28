@@ -19,7 +19,7 @@
  *
  * `form submit`: When the user submits the form included in the template, a list is created with the properties defined in the forms
  *
- * @TODO Don't use DOM events, use component acions instead
+ * @TODO Don't use DOM events, use component actions instead
  */
 Hull.define({
   type: "Hull",
