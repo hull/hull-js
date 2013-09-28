@@ -8,7 +8,7 @@
  *
  * ### Example
  *
- *     <div data-hull-component="admin/users/list@hull" app-id="app"></div>
+ *     <div data-hull-component="admin/users_list@hull" app-id="app"></div>
  *
  * ### Options
  *
@@ -24,7 +24,7 @@
 Hull.define({
   type: 'Hull',
 
-  templates: ['list'],
+  templates: ['users_list'],
 
   renderError: function(err) {
     if (err.message.status === 401) {
