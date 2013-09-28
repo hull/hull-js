@@ -62,3 +62,19 @@ Create a `grunt-aws.json` file at the root, with the following content :
         jsUrl: 'http://js.hull.dev/dist'
       });
     </script>
+
+
+# Component Description Template:
+
+```
+/**
+ * Description
+ *
+ * ### Examples
+ *
+ *     <div data-hull-component="example_usage@hull" data-hull-option-name="option_value"></div>
+ *
+ * @name Component Name
+ * @param {String} option-name Optional/Required. Option description
+ */
+```
