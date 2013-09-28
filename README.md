@@ -68,13 +68,12 @@ Create a `grunt-aws.json` file at the root, with the following content :
 
 ```
 /**
+ * 
  * Description
  *
- * ### Examples
- *
- *     <div data-hull-component="example_usage@hull" data-hull-option-name="option_value"></div>
- *
  * @name Component Name
- * @param {String} option-name Optional/Required. Option description
+ * @param {String} optionName Optional/Required. Option description
+ * @action {achieve} Achieve the achievement with the entered secret
+ * @example <div data-hull-component="login/button@hull"></div>>
  */
 ```

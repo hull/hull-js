@@ -1,27 +1,16 @@
 /**
- * ## Login button
- *
  * Allow users to log in with auth services that you have hooked on your app.
  * For a more complete component, look at the Identity component.
  *
- * ### Examples
- *
- *     <div data-hull-component="login/button@hull"></div>
- *     <div data-hull-component="login/button@hull" data-hull-provider="instagram"></div>
- *     <div data-hull-component="login/button@hull" data-hull-provider="facebook"></div>
- *     <div data-hull-component="login/button@hull" data-hull-provider="github"></div>
- *     <div data-hull-component="login/button@hull" data-hull-provider="github,facebook"></div>
- *
- * ### Options
- *
- * - `provider`: Optional, One or more providers to log users in.
- *   If none specified, will show all configured providers for the app.
- *
- * ### Template
- *
- * - `login/button`: Show login buttons if the user isn't logged, logout button if he is.
- *
+ * @name Login button
+ * @param {String} provider Optional. One or more providers to log users in. If none specified, will show all configured providers for the app.
+ * @example <div data-hull-component="login/button@hull"></div>
+ * @example <div data-hull-component="login/button@hull" data-hull-provider="instagram"></div>
+ * @example <div data-hull-component="login/button@hull" data-hull-provider="facebook"></div>
+ * @example <div data-hull-component="login/button@hull" data-hull-provider="github"></div>
+ * @example <div data-hull-component="login/button@hull" data-hull-provider="github,facebook"></div>
  */
+
 Hull.define({
   type: 'Hull',
 

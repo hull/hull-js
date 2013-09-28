@@ -1,5 +1,4 @@
 /**
- * ## Achievement button
  *
  * A button that lets your users win a badge for an achievement you've previously defined.
  *
@@ -7,27 +6,11 @@
  *
  * Using server-side hooks, you can also build personal and restricted badges, like badges that require a certain action to be won. See the [hooks documentation]() to discover how they work.
  *
- * ### Example
- *
- *     <div data-hull-component="achieve_button@hull" data-hull-id="ACHIEVEMENT_ID"></div>
- *
- * ### Options
- *
- * - `id`: Required, the achievement to unlock
- * - `secret`: Optional, the secret code to the achievement.
- *
- * ### Template
- *
- * - `achieve_button`: Displays the status of the achievement as well as a button so the user can unlock himself the achievement.
- *
- * ### Action
- *
- * - `achieve`: Achieve the achievement
- *
- * ### Related
- *
- * - Component `admin/achievements` to create achievements
- * - Achievements/Badges API
+ * @name Achievement button
+ * @param {String} id     Required, the achievement to unlock
+ * @param {String} secret Optional, the secret code to the achievement.
+ * @action {achieve} Achieve the achievement with the entered secret
+ * @example <div data-hull-component="achieve_button@hull" data-hull-id="ACHIEVEMENT_ID" data-hull-secret="component-secret"></div>
 */
 Hull.define({
   type: 'Hull',
@@ -51,7 +34,7 @@ Hull.define({
   },
 
   renderError: function (errorMessage) {
-    this.$el.html(this.renderTemplate('achieve_error', {message: errorMessage}));
+    this.$el.html(this.renderTemplate('error', {message: errorMessage}));
   },
 
   datasources: {

@@ -1,33 +1,14 @@
 /**
- * ## Comments list
- *
- * Allow to list and add comments on an object of the current application.
- *
- * ### Example
- *
- *     <div data-hull-component="comments@hull" data-hull-id="HULL_OBJECT_ID"></div>
- *
- * or if you want to reference any other Entity (for example the url of the current page)
- *
- *     <div data-hull-component="comments@hull" data-hull-uid="http://path.to/my/url"></div>
- *
- * ### Option:
- *
- * - `id` or `uid`: Required, The object you want to comment on.
- * - `focus`: Optional, Auto-Focus on the input field. default: false.
- *
- * ### Template:
- *
- * - `comments`: Display a list of comments and a form that allows logged users
- *   to post new comments.
- *
- * ### Datasource:
- *
- * - `comments`: Collection of all the comments made on the object.
- *
- * ### Action:
- *
- * - `comment`: Submits a new comment.
+ * Displays comments on an object, that can be an internal Hull object (when you specify data-hull-id) or an external UID, (with data-hull-uid)
+ * If using data-hull-uid, any unique string you can generate can be used to attach comments
+ * 
+ * @name Comments list
+ * @param {String} id/uid Required The object you want to comment on.
+ * @param {String} focus  Optional Auto-Focus on the input field. default: false.
+ * @datasource {comments} Collection of all the comments made on the object.
+ * @action {comment} Submits a new comment.
+ * @example <div data-hull-component="comments@hull" data-hull-id="HULL_OBJECT_ID"></div> // Allow to list and add comments on an object of the current application.
+ * @example <div data-hull-component="comments@hull" data-hull-uid="http://path.to/my/url"></div> // If you want to reference any other Entity (for example the url of the current page)
  */
 
 Hull.define({
