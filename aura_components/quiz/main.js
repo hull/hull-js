@@ -44,11 +44,11 @@ Hull.define({
   },
 
   templates: [
-    'quiz_intro',
-    'quiz_question',
-    'quiz_answer',
-    'quiz_finished',
-    'quiz_result'
+    'intro',
+    'question',
+    'answer',
+    'finished',
+    'result'
   ],
 
   answers: {},
@@ -95,7 +95,7 @@ Hull.define({
     this.reset();
     this.startedAt = new Date();
     this.started = true;
-    this.render('quiz_question');
+    this.render('question');
   },
 
   reset: function() {
@@ -112,19 +112,19 @@ Hull.define({
       return tpl;
     }
     if (!this.loggedIn()) {
-      return "quiz_intro";
+      return "intro";
     } else if (this.submitted && data.result) {
-      return "quiz_result";
+      return "result";
     } else if (data.current) {
       if (data.current.question) {
-        return "quiz_question";
+        return "question";
       } else {
-        return "quiz_finished";
+        return "finished";
       }
     } else if (data.result) {
-      return "quiz_result";
+      return "result";
     }
-    return "quiz_intro";
+    return "intro";
   },
 
 
@@ -186,7 +186,7 @@ Hull.define({
     previous: function() {
       if (this.currentQuestionIndex > 0) {
         this.currentQuestionIndex -= 1;
-        this.render('quiz_question');
+        this.render('question');
       }
       return false;
     },
@@ -208,7 +208,7 @@ Hull.define({
         if (badge) {
           self.submitted = true;
           self.data.quiz.set('badge', badge);
-          self.render('quiz_result');
+          self.render('result');
           self.track('finish', { score: badge.data.score, timing: badge.data.timing });
         } else {
           console.warn("Bah alors ? mon badge ?", badge);
