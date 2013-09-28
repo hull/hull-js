@@ -5,7 +5,7 @@
  *
  * ### Example
  *
- *     <div data-hull-component="images@hull"></div>
+ *     <div data-hull-component="images/list@hull"></div>
  *
  * ### Options
  *
@@ -34,9 +34,7 @@
 Hull.define(['underscore'], {
   type: 'Hull',
 
-  templates: [
-    'images'
-  ],
+  templates: ['list'],
 
   options: {
     id:'me',
