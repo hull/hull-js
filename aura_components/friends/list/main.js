@@ -6,7 +6,7 @@
  *
  * ### Example
  *
- *     <div data-hull-component="friends@hull"></div>
+ *     <div data-hull-component="friends/list@hull"></div>
  *
  * ### Options
  *
@@ -35,9 +35,7 @@
 Hull.define(['underscore'], {
   type: 'Hull',
 
-  templates: [
-    'friends'
-  ],
+  templates: ['list'],
 
   options: {
     id:'me',
