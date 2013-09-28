@@ -7,7 +7,7 @@ Hull.define({
   type: "Hull",
 
   refreshEvents: ['model.hull.me.change'],
-  templates: ['reviews'],
+  templates: ['review'],
   datasources: {
     review: function() { return this.api(this.options.id + "/reviews/me"); },
     reviews: function() { return this.api(this.options.id + "/reviews"); }
