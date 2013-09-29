@@ -1,6 +1,6 @@
 /**
  * 
- * Shows a star review system with a stars and a text entry [Not production ready]
+ * Shows a star review system with a stars and a text entry [Beta]
  *
  * @name Reviews
  * @example <div data-hull-component="ratings/review@hull"></div>

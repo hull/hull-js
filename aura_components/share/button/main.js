@@ -1,7 +1,11 @@
 /**
- * ## Share
+ * 
+ * Opens a share dialog [Beta]
+ *
+ * @name Button
+ * @example <div data-hull-component="share/button@hull"></div>>
  */
-Hull.define({
+ Hull.define({
   type: 'Hull',
 
   templates: ['twitter'],
