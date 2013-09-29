@@ -71,14 +71,17 @@ Create a `grunt-aws.json` file at the root, with the following content :
  * 
  * Description
  *
+ * # MANDATORY
  * @name Component Name
  * @param {String} optionName Optional/Required. Option description
- * @action {achieve} Achieve the achievement with the entered secret
- * @datasource {activities} The activity stream that will be displayed.
+ * @example <div data-hull-component="login/button@hull"></div>>
+ * # OPTIONAL
  * @template {template_name} template_description
+ * @datasource {activities} The activity stream that will be displayed.
+ * @action {achieve} Achieve the achievement with the entered secret
  * @your_custom_tag {name} value
  * @your_custom_tag value
- * @example <div data-hull-component="login/button@hull"></div>>
+ */
  */
 ```
 
