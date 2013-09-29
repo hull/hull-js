@@ -2,7 +2,7 @@
  * Shows the lists of all users who `liked` an object. Likes are not connected to facebook or any other network
  * You can use this as "favorite", "starred", "want"... or of course "like".
  *
- * @name Likes List
+ * @name List
  * @param {String} id/uid   Required The id/uid of the object on which you wants likes listed. Default value will be 'me'
  * @datasource {target}     The object.
  * @datasource {likes}      The likers for the object
