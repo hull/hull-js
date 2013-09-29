@@ -24,6 +24,7 @@
  * @param {String} verb         Optional limit activities to a specific verb
  * @datasource {activities} The activity stream that will be displayed.
  * @example <div data-hull-component="activity@hull" data-hull-per-page="10"></div>
+ * @example <div data-hull-component="activity@hull" data-hull-where='{"actor_id":"515d76f4d8ea9cd21c000022"}'></div>
  */
 
 Hull.define({
