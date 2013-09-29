@@ -1,36 +1,18 @@
 /**
- * ## Image list
- *
  * Displays images belonging to a given user on a given service
  *
- * ### Example
- *
- *     <div data-hull-component="images/list@hull"></div>
- *
- * ### Options
- *
- * - `id`: Optional, the id of the user whose images we want to list. By default, it will list the images of the current user.
- * - `format`: Optional, the format of the thumbnail you wish to get. Can be `thumb`, `square`, `small`, `medium`, `large`, `original`. Will map to the closest existing preset when used on external networks. Default:  `small`
- * - `provider`: Optional, service from which we will fetch images. Can be `hull`, `instagram`, or `facebook`, by default it will list images from `hull`.
- * - `limit`: Optional, the number of images to display. Be default it will display 10 images.
- * - `scope` : Optional, a Facebook permission you need to ask the user before being able to show data. - If this permission is not given, a button will be shown to ask for it.
- *
- * ### Template
- *
- * - `images`: Displays the list of the user's images.
- *
- * ### Actions
- *
- * - `authorize`: Pops up a permissions dialog or a login dialog.
- *
- * ### Datasource
- *
- * - `images`: The user's images.
- * - `authorized` : A hash of permissions showing if the user can view the images.
- * Contains `provider`, `permissions` : Booleans showing if the provider and permissions are right,
- * and `provider_name` containing the name of the asked provider
- *
+ * @name Images List
+ * @param {String} id       Optional The id of the user whose images we want to list. By default, it will list the images of the current user.
+ * @param {String} format   Optional The format of the thumbnail you wish to get. Can be `thumb`, `square`, `small`, `medium`, `large`, `original`. Will map to the closest existing preset when used on external networks. Default:  `small`
+ * @param {String} provider Optional Service from which we will fetch images. Can be `hull`, `instagram`, or `facebook`, by default it will list images from `hull`.
+ * @param {String} limit    Optional The number of images to display. Be default it will display 10 images.
+ * @param {String} scope    Optional A Facebook permission you need to ask the user before being able to show data. - If this permission is not given, a button will be shown to ask for it.
+ * @datasource {images}     The user's images.
+ * @datasource {authorized} A hash of permissions showing if the user can view the images. Contains `provider`, `permissions` : Booleans showing if the provider and permissions are right, and `provider_name` containing the name of the asked provider
+ * @template {images} Displays the list of the user's images.
+ * @example <div data-hull-component="images/list@hull"></div>
  */
+
 Hull.define(['underscore'], {
   type: 'Hull',
 
