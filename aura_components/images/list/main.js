@@ -11,6 +11,8 @@
  * @datasource {authorized} A hash of permissions showing if the user can view the images. Contains `provider`, `permissions` : Booleans showing if the provider and permissions are right, and `provider_name` containing the name of the asked provider
  * @template {images} Displays the list of the user's images.
  * @example <div data-hull-component="images/list@hull"></div>
+ * @example <div data-hull-component="images/list@hull" data-hull-provider="instagram"></div>
+ * @example <div data-hull-component="images/list@hull" data-hull-provider="hull"></div>
  */
 
 Hull.define(['underscore'], {
