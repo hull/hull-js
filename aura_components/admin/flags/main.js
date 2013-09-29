@@ -1,37 +1,23 @@
 /**
- * ## Flags review
- *
+ * 
  * Allows an administrator to review all the flags on objects considered as inappropriate
  *
- * ### Example
- *
- *     <div data-hull-component="admin/flags@hull"></div>
- *
- * ### Options:
- *
- * - `scope`: Defaults to "app", can be "app" or "org"
- *
- * ### Template:
- *
- * - `main`: Displays the flags' review table if the user is an admin
- *
- * ### Datasource:
- *
- * - `flags`: The list of flags for the current app
- *
- * ### Action:
- *
- * - `markReviewed`: Marks a flag as reviewed
+ * @name Admin: Flags
+ * @param {String} id Defaults to "app", can be "app" or "org"
+ * @template {main} Displays the flags' review table if the user is an admin
+ * @datasource {flags} The list of flags for the current app
+ * @example <div data-hull-component="admin/flags@hull"></div>
  */
+
 Hull.define({
   type: "Hull",
   templates: ['main'],
   refreshEvents: ['model.hull.me.change'],
   datasources: {
-    'flags': ':scope/flagged'
+    'flags': ':id/flagged'
   },
   options: {
-    scope: 'app'
+    id: 'app'
   },
   onFlagsError: function (err) {
     return [];
