@@ -78,3 +78,33 @@ Create a `grunt-aws.json` file at the root, with the following content :
  * @example <div data-hull-component="login/button@hull"></div>>
  */
 ```
+
+```
+/**
+ * 
+ * Description
+ *
+ * @name 
+ * @param {String} optionName 
+ * @action {achieve} 
+ * @datasource {activities} 
+ * @example 
+ */
+```
+
+Example
+
+```
+/**
+ * View a conversation's messages and allow users to reply to the thread.
+ *
+ * @name NAME
+ * @param {String} id Required The conversation object - This must a conversation ID. Use the '/UID/conversations' api call to get conversation IDs for an entity or hull object.
+ * @param {Boolean} focus Optional Focus after render
+ * @datasource {conversations} A conversation
+ * @template {thread} The main template, that show conversation's messages, participants and form
+ * @template {form} A form that allow logged user to add messages to the conversation
+ * @template {participants} List of the conversation's participants
+ * @example <div data-hull-component="conversations/thread@hull" data-hull-id="OBJECT_ID"></div>
+ */
+```
