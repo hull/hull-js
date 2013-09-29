@@ -4,7 +4,7 @@
  *
  * @name Button
  * @param {String} provider Provider to use (facebook/twitter...)
- * @example <div data-hull-component="share/button@hull"></div>>
+ * @example <div data-hull-component="share/button@hull"></div>
  */
  Hull.define({
   type: 'Hull',

@@ -74,7 +74,7 @@ Create a `grunt-aws.json` file at the root, with the following content :
  * # MANDATORY
  * @name Component Name
  * @param {String} optionName Optional/Required. Option description
- * @example <div data-hull-component="login/button@hull"></div>>
+ * @example <div data-hull-component="login/button@hull"></div>
  * # OPTIONAL
  * @template {template_name} template_description
  * @datasource {activities} The activity stream that will be displayed.
