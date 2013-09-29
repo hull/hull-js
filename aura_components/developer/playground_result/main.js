@@ -1,3 +1,10 @@
+/**
+ * 
+ * Renders content into itself, gets it from events.
+ *
+ * @name Playground Result
+ * @example <div data-hull-component="developer/playground_result@hull"></div>
+ */
 Hull.define({
   type: 'Hull',
 

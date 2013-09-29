@@ -1,9 +1,14 @@
+/**
+ * 
+ * Lets you write html, emits an event with it's content when you click the button
+ *
+ * @name Playground Editor
+ * @example <div data-hull-component="developer/playground_editor@hull"></div>
+ */
 Hull.define({
   type: 'Hull',
 
-  templates: [
-    'editor'
-  ],
+  templates: ['editor'],
 
   initialize: function() {
     if (typeof CodeMirror === 'undefined') {
