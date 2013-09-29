@@ -1,33 +1,22 @@
 /**
- * ## Upload
- *
- * Thes components allows the user of your applications to attach documents and files to the application.
- *
- * ### Dependencies
- *
- * - `jquery.fileupload`: This plugin uses [jQuery File upload plugin](https://github.com/blueimp/jQuery-File-Upload) to handle the file upload gracefully. Please note that the plugin is packaged within the component so you don't have to struggle against the dependencies.
- * - ` storage`: This plugin requires that you have attahed an S3 storage to your Hull application in the admin.
- *
- * ### Templates
- *
- * - `upload`: The main template. Because the jQuery plugin has some requirements, the template makes sure everything is set up as needed.
- * - `upload_file_multiple`: Partial used to upload multiple files at once. Override this partial to ustomize the file upload to your needs.
- * - `upload_file_single`: Partial used to upload a single file. Override this partial to ustomize the file upload to your needs.
- *
- * ### Options
- *
- * - `storage`: Specifies the storage engine to be used. If a single engine is known to the app, it will be automatically used. If there are many engines available, it must correspond to a value in `sandbox.config.services.types.storage`.
- *
- * ### Events
- *
- * - `hull.upload.send`: Triggered when an upload has started.
- * - `hull.upload.progress`: Triggered when an upload is in progress. The total amount of data as well as the current amount of data transfered are available as a listener parameter.
- * - `hull.upload.done`: Triggered when an upload has finished. References to the uploadded files are available in an Array as the first parameter to the listeners.
+ * Allows the user of your applications to attach documents and files to the application.
+ * 
+ * @name Upload file
+ * @dependency {jquery.fileupload} This plugin uses [jQuery File upload plugin](https://github.com/blueimp/jQuery-File-Upload) to handle the file upload gracefully. Please note that the plugin is packaged within the component so you don't have to struggle against the dependencies.
+ * @dependency {storage} This plugin requires that you have attahed an S3 storage to your Hull application in the admin.
+ * @param {String} {storage} optional Specifies the storage engine to be used. If a single engine is known to the app, it will be automatically used. If there are many engines available, it must correspond to a value in `sandbox.config.services.types.storage`.
+ * @template {upload}               The main template. Because the jQuery plugin has some requirements, the template makes sure everything is set up as needed.
+ * @template {upload_file_multiple} Partial used to upload multiple files at once. Override this partial to ustomize the file upload to your needs.
+ * @template {upload_file_single}   Partial used to upload a single file. Override this partial to ustomize the file upload to your needs.
+ * @event {hull.upload.send}     Triggered when an upload has started.
+ * @event {hull.upload.progress} Triggered when an upload is in progress. The total amount of data as well as the current amount of data transfered are available as a listener parameter.
+ * @event {hull.upload.done}     Triggered when an upload has finished. References to the uploadded files are available in an Array as the first parameter to the listeners.
  */
+
 Hull.define(['jquery.fileupload'], {
   type: 'Hull',
 
-  templates: [ 'upload', 'file_single' ],
+  templates: [ 'upload', 'file' ],
 
   fileTypes: {
     images :  /(\.|\/)(gif|jpe?g|png)$/i,
