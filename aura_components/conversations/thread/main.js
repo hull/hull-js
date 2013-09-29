@@ -1,33 +1,14 @@
 /**
- * ## Conversation
  * View a conversation's messages and allow users to reply to the thread.
  *
- * ## Example
- *
- *     <div data-hull-component="conversations/thread@hull" data-hull-id="OBJECT_ID"></div>
- *
- * ## Options:
- *
- * - `id`: Required, The id of the specific conversation object
- *
- * ## Templates:
- *
- * - `conversation`: The main template, that show conversation's messages,
- *   participants and form
- * - `participants`: List of the conversation's participants
- * - `form`: A form that allow logged user to add messages to the conversation
- * - `conversation_button`: "Start a Conversation" button
- *
- * ## Datasource:
- *
- * - `conversation`: The conversation
- *
- * ## Actions:
- *
- * - `create`: Creates a conversation
- * - `message`: Submits a new message.
- * - `deleteMsg`: destroys a message
- * - `notification`: Enable/disable email notifications for user
+ * @name Conversation Thread
+ * @param {String} id Required The conversation object - This must a conversation ID. Use the '/UID/conversations' api call to get conversation IDs for an entity or hull object.
+ * @param {Boolean} focus Optional Focus after render
+ * @datasource {conversations} A conversation
+ * @template {thread} The main template, that show conversation's messages, participants and form
+ * @template {form} A form that allow logged user to add messages to the conversation
+ * @template {participants} List of the conversation's participants
+ * @example <div data-hull-component="conversations/thread@hull" data-hull-id="OBJECT_ID"></div>
  */
 
 Hull.define({

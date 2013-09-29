@@ -1,24 +1,10 @@
 /**
- * ## Conversation Default
- * This component will default to load the first conversation that comes back for the subject. 
- * If none returns, it will create a default conversation for you.
+ * Loads the first conversation available for the subject. If none returns, will create one for for you.
  *
- * ## Example
- *
- *     <div data-hull-component="conversations/default@hull" data-hull-id="OBJECT_ID"></div>
- *
- * ## Option:
- *
- * - `id` or `uid`: Required, The converation subject identifier
- *
- * ## Template:
- *
- * - `default`: Renders a conversation component
- *
- * ## Datasource:
- *
- * - `conversations`: List of conversations
- *
+ * @name Conversation Default
+ * @param {String} id/uid Required Converation subject identifier
+ * @datasource {conversations} List of conversations
+ * @example <div data-hull-component="conversations/default@hull" data-hull-id="OBJECT_ID"></div>
  */
 
 /*global define:true, _:true */
