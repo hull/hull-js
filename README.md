@@ -74,6 +74,7 @@ Create a `grunt-aws.json` file at the root, with the following content :
  * @name Component Name
  * @param {String} optionName Optional/Required. Option description
  * @action {achieve} Achieve the achievement with the entered secret
+ * @datasource {activities} The activity stream that will be displayed.
  * @example <div data-hull-component="login/button@hull"></div>>
  */
 ```
