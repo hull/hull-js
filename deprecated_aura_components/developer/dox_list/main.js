@@ -1,3 +1,10 @@
+/**
+ * 
+ * Fetches and format the list of all available components [Obsolete]
+ *
+ * @name Component List
+ * @example <div data-hull-component="developer/dox_list@hull"></div>
+ */
 Hull.define({
   type: "Hull",
   templates: ["dox_list"],

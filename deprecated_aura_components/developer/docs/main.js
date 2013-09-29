@@ -1,3 +1,11 @@
+/**
+ * 
+ * Fetches and format an API documentation
+ *
+ * @name API Doc
+ * @param {String} api The endpoint you want to fetch
+ * @example 
+ */
 Hull.define({
   type: "Hull",
 

@@ -1,3 +1,12 @@
+/**
+ * 
+ * Fetches and format a Component Documentation [Obsolete]
+ *
+ * @name Component Documentation
+ * @param {String} inspect The name of the component to inspect
+ * @datasource {dox} Component Documentation
+ * @example <div data-hull-component="developer/dox@hull" data-hull-inspect='login/button'></div>
+ */
 Hull.define(['prism'], function(){
   return {
     type: 'Hull',
