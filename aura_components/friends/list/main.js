@@ -1,37 +1,17 @@
 /**
- *
- * ## friends list
- *
  * Displays friends for a given user and a given service.
  *
- * ### Example
- *
- *     <div data-hull-component="friends/list@hull"></div>
- *
- * ### Options
- *
- * - `id`: Optional, the id of the user whose friends we want to list. By default, it will list the friends of the current user.
- * - `provider`: Optional, service from which we will fetch friends. Can be `hull`, `instagram`, `twitter`, `facebook` or `github`, by default it will list friends from `hull`.
- *   `hull` will show the user's friends who have used the app.
- * - `limit`: Optional, the number of friends to display. Be default it will display 10 friends.
- * - `scope` : Optional, a Facebook permission you need to ask the user before being able to show data. - If this permission is not given, a button will be shown to ask for it.
- *
- * ### Template
- *
- * - `friends`: Displays the list of the user's friends.
- *
- * ### Actions
- *
- * - `authorize`: Pops up a permissions dialog or a login dialog.
- *
- * ### Datasource
- *
- * - `friends`: The user's friends.
- * - `authorized` : A hash of permissions showing if the user can view the images.
- * Contains `provider`, `permissions` : Booleans showing if the provider and permissions are right,
- * and `provider_name` containing the name of the asked provider
- *
+ * @name Friends List
+ * @param {String} id       Optional The id of the user whose friends we want to list. By default, it will list the friends of the current user.
+ * @param {String} provider Optional Service from which we will fetch friends. Can be `hull`, `instagram`, `twitter`, `facebook` or `github`, by default it will list friends from `hull`. `hull` will show the user's friends who have used the app.
+ * @param {String} limit    Optional The number of friends to display. Be default it will display 10 friends.
+ * @param {String} scope    Optional A Facebook permission you need to ask the user before being able to show data. - If this permission is not given, a button will be shown to ask for it.
+ * @datasource {friends}    The user's friends.
+ * @datasource {authorized} A hash of permissions showing if the user can view the images. Contains `provider`, `permissions` : Booleans showing if the provider and permissions are right, and `provider_name` containing the name of the asked provider
+ * @template {friends} Displays the list of the user's friends.
+ * @example <div data-hull-component="friends/list@hull"></div>
  */
+
 Hull.define(['underscore'], {
   type: 'Hull',
 
