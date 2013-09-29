@@ -1,7 +1,8 @@
 /**
- * Show a 'built with hull' element
+ * Shows a 'built with hull' element
  *
- * @name Hull Footer
+ * @name Footer
+ * @example <div data-hull-component="footer@hull"></div>
  */
 Hull.define({
 
