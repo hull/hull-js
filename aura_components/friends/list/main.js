@@ -1,7 +1,7 @@
 /**
  * Displays friends for a given user and a given service.
  *
- * @name Friends List
+ * @name List
  * @param {String} id       Optional The id of the user whose friends we want to list. By default, it will list the friends of the current user.
  * @param {String} provider Optional Service from which we will fetch friends. Can be `hull`, `instagram`, `twitter`, `facebook` or `github`, by default it will list friends from `hull`. `hull` will show the user's friends who have used the app.
  * @param {String} limit    Optional The number of friends to display. Be default it will display 10 friends.
@@ -10,6 +10,8 @@
  * @datasource {authorized} A hash of permissions showing if the user can view the images. Contains `provider`, `permissions` : Booleans showing if the provider and permissions are right, and `provider_name` containing the name of the asked provider
  * @template {friends} Displays the list of the user's friends.
  * @example <div data-hull-component="friends/list@hull"></div>
+ * @example <div data-hull-component="friends/list@hull" data-hull-provider="facebook"></div>
+ * @example <div data-hull-component="friends/list@hull" data-hull-provider="hull"></div>
  */
 
 Hull.define(['underscore'], {
