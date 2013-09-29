@@ -2,7 +2,7 @@
  * 
  * List registration form entries.
  *
- * @name Admin: Registration form
+ * @name Registration
  * @template {admin} The main template. It shows the list of your quizzes or the form to edit a quiz.
  * @template {list}  Show the list of your quizzes and a form to add new quizzes.
  * @template {form}  Show the form to edit a quiz.

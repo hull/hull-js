@@ -1,25 +1,16 @@
 /**
+ * 
+ * Displays the list of users of your app.
+ * 
+ * Access to this component is limited to the administrators, you will need to be logged in to your admin on hullapp.io to access data.
  *
- * ## User list
- *
- * Displays the list of the users of your app.
- * The access to this component is limited to the administrators, you will need the Spplication Secret
- * to have access to the data.
- *
- * ### Example
- *
- *     <div data-hull-component="admin/users_list@hull" app-id="app"></div>
- *
- * ### Options
- *
- * - `app-id`: The id of the app you want to see the users. Defaults to `app`, which is the current app
- *
- * ### Template
- *
- * - `users`: Displays the list of the users.
- * - `forbidden`: A message to be displayed when the credentials don't allow access to the data
- *
-*/
+ * @name User List
+ * @param {String} id The id of the app you want to see the users. Defaults to `app`, which is the current app
+ * @template {users}     Displays the list of the users.
+ * @template {forbidden} A message to be displayed when the credentials don't allow access to the data
+ * @datasource {users} The list of users (Only readable by admins)
+ * @example <div data-hull-component="admin/users_list@hull" app-id="app"></div>
+ */
 
 Hull.define({
   type: 'Hull',

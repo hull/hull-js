@@ -1,21 +1,13 @@
 /**
- * ## User profile
+ * 
+ * Displays the profile of any user of your app.
  *
- * Displays the profile of an user of your app.
+ * @name User profile
+ * @example <div data-hull-component="admin/user_profile@hull"></div>
+ * @template {user_profile} Displays detailed informations about the selected user.
+ * @param {String} id The id of the user you want to display
  *
- * ### Example
- *
- *     <div data-hull-component="admin/user_profile@hull"></div>
- *
- * ### Options
- *
- * - `id`: The is of the user you want to display
- *
- * ### Template
- *
- * - `user_profile`: Displays detailed informations about the selected user.
- *
-*/
+ */
 Hull.define({
   type: 'Hull',
 

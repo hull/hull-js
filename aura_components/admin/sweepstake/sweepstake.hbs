@@ -3,18 +3,8 @@
     <h1>Sweepstake Admin</h1>
   </div>
 
-  <div class="control-group">
-    <div class="input-prepend input-append">
-      <span class="add-on">App Secret:</span>
-      <input id="hull-app-secret" name="hull-app-secret" type="text"/>
-      <button class="btn" data-hull-action="sign">Save</button>
-    </div>
-  </div>
-
-  <br>
-
   <div class="hull-instant-admin__section">
-    <legend class="hull-instant-admin__section-title">Create an Sweepstake</legend>
+    <legend class="hull-instant-admin__section-title">Create a Sweepstake</legend>
 
     <div class="control-group">
       <label for="hull-instant-name">Name: </label>
@@ -42,7 +32,7 @@
     <legend class="hull-instant-admin__section-title">Update Achievement</legend>
 
     <div class="control-group">
-      <label for="hull-achievement-id">Select an Sweepstake to Edit: </label>
+      <label for="hull-achievement-id">Select a Sweepstake to Edit: </label>
       <select id="hull-achievement-id" name="hull-achievement-id">
         {{#each achievements}}
           <option value="{{this.id}}">{{this.name}} - {{this.id}}</option>

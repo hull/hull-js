@@ -2,7 +2,7 @@
  * 
  * Allows an administrator to review all the flags on objects considered as inappropriate
  *
- * @name Admin: Flags
+ * @name Flags
  * @param {String} id Defaults to "app", can be "app" or "org"
  * @template {main} Displays the flags' review table if the user is an admin
  * @datasource {flags} The list of flags for the current app

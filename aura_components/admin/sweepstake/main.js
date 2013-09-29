@@ -1,12 +1,16 @@
 /**
+ * 
+ * Edit and create Sweepstakes [Deprecated]
  *
- * ## Sweepstake admin panel
- *
+ * @name Sweepstake 
+ * @datasource {achievements} Fetches Achievements of type="InstantWin" 
+ * @template {sweepstake} Main template
+ * @example <div data-hull-component="admin/sweepstake@hull"></div>
  */
 Hull.define({
   type: 'Hull',
 
-  templates: ['intro'],
+  templates: ['sweepstake'],
 
   datasources: {
     achievements: function() {
