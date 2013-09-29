@@ -10,7 +10,7 @@
  * For now, you have to copy the code for this component and change it to fit it to your application.
  * We will make this easier in the future.
  *
- * @name Activity feed
+ * @name Feed
  * @param {String} navigation   Optional Choose between `infinite` or `paged` navigation. `infinite` by default.
  * @param {String} per-page     Optional number of item to display per page. 10 by default.
  * @param {String} start-page   Optional the first page that will be displayed. By default the first page will be retrieved. If you use `infinite` navigation and set `startPage` to another page, your user will not be able to see all items.
