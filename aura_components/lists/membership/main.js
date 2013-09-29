@@ -1,41 +1,25 @@
 /**
- * ## Manages the lists in which an item belongs to
+ * 
+ * Shows and Manages the lists an object belongs to.
  *
  * Allows to link/unlink an item to any list, and create some lists also.
  *
- * ### Example
- *
- *     <div data-hull-component="lists/bindings@hull" data-hull-id="HULL_OBJECT_ID"></div>
- *
- * or if you want to reference any other Entity (for example the url of the current page)
- *
- *     <div data-hull-component="lists/bindings@hull" data-hull-uid="http://path.to/my/url"></div>
- *
- * ### Option:
- *
- * - `id` or `uid`: Required, The object you want to comment on.
- *
- * ### Template:
- *
- * - `main`: Displays the basic markup information necessary to display the popover containng the list of lists
- * _ `elements`: Displays the form to create a new list and all the lists that belong to the current user
- *
- * ### Datasource:
- *
- * - `lists`: Collection of all the lists the user has access to
- * _ `listedIn`: Collection of lists in which the current item is listed into
- *
- * ### Action:
- *
- * - `toggleListed`: Toggles the presence of the current item in the selected list
+ * @name Membership
+ * @param {String} id/uid Required, The object you want to comment on.
+ * @template {main} Displays the basic markup information necessary to display the popover containg the list of lists
+ * @template {elements} Displays the form to create a new list and all the lists that belong to the current user
+ * @datasource {lists}    Collection of all the lists the user has access to
+ * @datasource {listedIn} Collection of lists in which the current item is listed into
+ * @action {toggle} Toggles the presence of the current item in the selected list
+ * @example <div data-hull-component="lists/membership@hull" data-hull-id="HULL_OBJECT_ID"></div>
+ * @example <div data-hull-component="lists/membership@hull" data-hull-uid="http://path.to/my/url"></div>
  */
-
 
 /*jshint jquery:true */
 /*global Hull:true */
 Hull.define({
   type: 'Hull',
-  templates: ['main', 'elements', 'loggedOut', 'header'],
+  templates: ['main', 'elements', 'logged_out', 'header'],
   refreshEvents: ['model.hull.me.change'],
   requiredOptions: ['id'],
 
@@ -79,7 +63,7 @@ Hull.define({
     /*
      * Inserts or Removes the current item from the selected list
      */
-    'toggleListed': function (evt, ctx) {
+    'toggle': function (evt, ctx) {
       "use strict";
       var _ = this.sandbox.util._;
       var listId = ctx.data.listId;
@@ -132,7 +116,7 @@ Hull.define({
   removeFromList: function (listId) {
     "use strict";
     var _ = this.sandbox.util._;
-    return this.toggleListedIn(listId, 'del').then(_.bind(function () {
+    return this.toggleIn(listId, 'del').then(_.bind(function () {
       this.data.listedIn = _.filter(this.data.listedIn, function (_listId) {
         return listId !== _listId;
       });
@@ -144,7 +128,7 @@ Hull.define({
   addToList: function (listId) {
     "use strict";
     var _ = this.sandbox.util._;
-    return this.toggleListedIn(listId, 'add').then(_.bind(function () {
+    return this.toggleIn(listId, 'add').then(_.bind(function () {
       this.data.listedIn.unshift(listId);
       this.data.listedIn = _.uniq(this.data.listedIn);
     }, this));
@@ -152,7 +136,7 @@ Hull.define({
   /*
    * Generic API call to add/remove the current item to/from a list
    */
-  toggleListedIn: function (listId, action) {
+  toggleIn: function (listId, action) {
     "use strict";
     var methods = {
       add: 'post',
