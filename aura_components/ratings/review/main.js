@@ -1,7 +1,9 @@
 /**
- * ## Reviews
+ * 
+ * Shows a star review system with a stars and a text entry [Not production ready]
  *
- * Not ready yet
+ * @name Reviews
+ * @example <div data-hull-component="ratings/review@hull"></div>
  */
 Hull.define({
   type: "Hull",

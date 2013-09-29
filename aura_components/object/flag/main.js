@@ -1,33 +1,16 @@
 /**
- * ## Flagging component
- *
+ * 
  * Allows a user to flag an object considered as inappropriate
  *
- * ### Example
- *
- *     <div data-hull-component="flag@hull" data-hull-id="HULL_OBJECT_ID"></div>
- *
- * or if you want to reference any other Entity (for example the id of a product)
- *
- *     <div data-hull-component="flag@hull" data-hull-uid="YOUR_OBJECT_ID"></div>
- *
- * ### Option:
- *
- * - `id` or `uid`: Required, The object you want to comment on.
- * - `text`: optional, allows to customize the message displayed as a confirmation for flagging
- *
- * ### Template:
- *
- * - `main`: Displays the flag button if the user os logged in
- *
- * ### Datasource:
- *
- * - `flaggedByMe`: Indicates whether the object has been flagged by the current user ("me")
- *
- * ### Action:
- *
- * - `flag`: Submits a new flag.
+ * @name Flag
+ * @param {String} id/uid Required, The object you want to comment on.
+ * @param {String} text Optional, allows to customize the message displayed as a confirmation for flagging
+ * @example <div data-hull-component="object/flag@hull" data-hull-id="HULL_OBJECT_ID"></div>
+ * @datasource {flaggedByMe} Indicates whether the object has been flagged by the current user ("me")
+ * @template {main} Displays the flag button if the user os logged in
+ * @example <div data-hull-component="object/flag@hull" data-hull-uid="YOUR_OBJECT_ID"></div>
  */
+
 Hull.define({
   type: "Hull",
   templates: ['main'],

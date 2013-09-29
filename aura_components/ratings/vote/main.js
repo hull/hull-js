@@ -1,24 +1,16 @@
 /**
- * ## Vote Buttons
- *
- * Allow users to vote for or against an object.
+ * 
+ * Allow users to up and down-vote an object.
  * It also shows the number of votes the object has.
  *
- * ### Examples
- *
- *     <div data-hull-component="vote_buttons@hull" data-hull-id="HULL_ID"></div>
- *     <div data-hull-component="vote_buttons@hull" data-hull-id="YOUR_UNIQUE_ID"></div>
- *     <div data-hull-component="vote_buttons@hull" data-hull-uid="ANY_URL"></div>
- *
- * ### Options
- *
- * - `id`: Target object to show vote buttons for
- *
- * ### Template
- *
- * - `vote_buttons`: Main template. Has 3 states: Upvote, Downvote, Blank
- *
+ * @name Vote
+ * @param {String} id/uid Target object to show vote buttons for
+ * @template {vote} Main template. Has 3 states: Upvote, Downvote, Blank
+ * @example <div data-hull-component="ratings/vote@hull" data-hull-id="HULL_ID"></div>
+ * @example <div data-hull-component="ratings/vote@hull" data-hull-uid="YOUR_UNIQUE_ID"></div>
+ * @example <div data-hull-component="ratings/vote@hull" data-hull-uid="ANY_URL"></div>
  */
+
 Hull.define({
   type: "Hull",
 

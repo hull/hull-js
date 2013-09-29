@@ -1,3 +1,12 @@
+/**
+ * 
+ * Allows a user to link secondary accounts to his primary account
+ *
+ * @name Linking
+ * @template {linking} The main template, shows buttons for other providers configured for the app and lets users link/unlink them 
+ * @example <div data-hull-component="login/linking@hull"></div>
+ */
+
 Hull.define({
   type: 'Hull',
   templates: ['linking'],

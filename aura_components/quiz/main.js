@@ -1,38 +1,23 @@
 /**
- * ## Quiz
  *
+ * A complete Quiz engine.
+ * 
  * A quiz is a game in which the player attempts to find the answer to questions from multiple possible answers.
- *
- * To create a quiz, use the `quiz_admin` component in an admin page, which will let you create a new Quiz (which is a particular type of achievement).
+ * To create a quiz, use the `admin/quiz` component in an admin page, which will let you create a new Quiz (which is a particular type of achievement).
  *
  * Then use this quiz's ID as a parameter for your component.
  *
- * ### Example
- *
- *     <div data-hull-component="quiz@hull"  data-hull-id="QUIZ_ID"></div>
- *
- * ### Options
- *
- * - `id`: The id of the quiz you want to display
- *
- * ### Templates
- *
- * - `quiz_intro`: Show the title and the description of the quiz. And secondarily the identity component if the user is not connected..
- * - `quiz_question`: Show a question and its answers.
- * - `quiz_answer`: A partial template used in the `quiz_question` template. It shows the name and the description of the answer.
- * - `quiz_finished`: Say to the user that the quiz is finish.
- * - `quiz_result`: Show to the user his score.
- *
- * ### Datasources
- *
- * - `quiz`: A collection of all the questions and their possible answers.
- *
- * ### Actions
- *
- * - `login`: Triggered when the user logs in and call the `startQuiz` method.
- * - `submit`: Triggered when the user click on the submit button and push his score to the api.
- *
+ * @name Quiz
+ * @param {String} id The id of the quiz you want to display
+ * @template {intro}    Show the title and the description of the quiz. And secondarily the identity component if the user is not connected..
+ * @template {question} Show a question and its answers.
+ * @template {answer}   A partial template used in the `quiz_question` template. It shows the name and the description of the answer.
+ * @template {finished} Say to the user that the quiz is finish.
+ * @template {result}   Show to the user his score.
+ * @datasource {quiz} A collection of all the questions and their possible answers.
+ * @example <div data-hull-component="quiz@hull"  data-hull-id="QUIZ_ID"></div>
  */
+
 Hull.define({
   type: "Hull",
 

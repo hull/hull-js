@@ -1,3 +1,108 @@
+/**
+ * 
+ * Shows a form so the user can fill any kind of data.
+ * 
+ * Define the fields using the `admin/registration` component.
+ * Client-side validation is handled automatically and forms are build using a form builder with support for several field types.
+ * Look at the JSON samples below to get a feel on what field types are supported.
+ * 
+ * ## Supported field types
+ *
+ * ### Text
+ * ```js
+ * {
+ *   type : 'text',
+ *   name : 'unique_name',
+ *   label : 'Name',
+ *   pattern : 'Regex/HTML5 Standard',
+ *   value : 'Default Value',
+ *   autocomplete: false, 
+ *   required: true,
+ *   error : 'Error message',
+ *   placeholder : 'bob',
+ * }
+ * ```
+ * 
+ * ### Email
+ * ```js
+ * {
+ *   type : 'email',
+ *   name : 'unique_name',
+ *   label : 'Email',
+ *   pattern : 'Regex/HTML5 Standard',
+ *   value : '',
+ *   required: true,
+ *   error : 'Invalid Email',
+ *   placeholder : 'you@awesome.com'
+ * }
+ * ```
+ * ### Url
+ * ```js
+ * {
+ *   type : 'url',
+ *   name : 'unique_name',
+ *   label : 'Name',
+ *   pattern : 'Regex/HTML5 Standard',
+ *   value : '',
+ *   required: true,
+ *   error : 'You made an error',
+ *   placeholder : 'placeholder content'
+ * }
+ * ```
+ * 
+ * ### Telephone
+ * ```js
+ * {
+ *   type : 'tel',
+ *   name : 'unique_name',
+ *   label : 'Name',
+ *   pattern : 'Regex/HTML5 Standard',
+ *   value : '',
+ *   required: true,
+ *   error : 'You made an error',
+ *   placeholder : 'placeholder content'
+ * }
+ * ```
+ * 
+ * ### Select
+ * ```js
+ * {
+ *   type : 'select',
+ *   name : 'unique_name',
+ *   label : 'Name',
+ *   value : '',
+ *   required: true,
+ *   options:[
+ *     {label:"Label", value: "value"},
+ *     {label:"Label", value: "value"},
+ *     {label:"Label", value: "value"}
+ *   ],
+ *   error : 'You made an error',
+ *   placeholder : 'placeholder content'
+ * }
+ * ```
+ * 
+ * ### Checkbox
+ * ```js
+ * {
+ *   type : 'checkbox',
+ *   name : 'unique_name',
+ *   label : 'Name',
+ *   value : '',
+ *   required: true,
+ *   error : 'You made an error'
+ * },
+ * ```
+ * 
+ * @name Form
+ * @param {Boolean} editable Wether to offer the user to modify his form again once he submitted it.
+ * @action {achieve} 
+ * @datasource {activities} 
+ * @template {template_name} 
+ * @your_custom_tag {name} value
+ * @your_custom_tag value
+ * @example 
+ */
 Hull.define(['underscore', 'h5f'], function(_, H5F) {
   return {
     type: 'Hull',
