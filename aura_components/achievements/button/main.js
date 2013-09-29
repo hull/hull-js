@@ -6,11 +6,11 @@
  *
  * Using server-side hooks, you can also build personal and restricted badges, like badges that require a certain action to be won. See the [hooks documentation]() to discover how they work.
  *
- * @name Achievement button
+ * @name Button
  * @param {String} id     Required, the achievement to unlock
  * @param {String} secret Optional, the secret code to the achievement.
  * @action {achieve} Achieve the achievement with the entered secret
- * @example <div data-hull-component="achieve_button@hull" data-hull-id="ACHIEVEMENT_ID" data-hull-secret="component-secret"></div>
+ * @example <div data-hull-component="achievements/button@hull" data-hull-id="ACHIEVEMENT_ID" data-hull-secret="component-secret"></div>
 */
 Hull.define({
   type: 'Hull',
