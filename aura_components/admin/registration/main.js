@@ -7,7 +7,7 @@
  * @template {list}  Show the list of your quizzes and a form to add new quizzes.
  * @template {form}  Show the form to edit a quiz.
  * @datasource {quizzes} The collection of all the quizzes available in the application.
- * @example <div data-hull-component="admin/quiz@hull"></div>>
+ * @example <div data-hull-component="admin/registration@hull"></div>
  */
 Hull.define({
   type: 'Hull',
