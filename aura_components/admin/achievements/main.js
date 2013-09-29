@@ -2,7 +2,7 @@
  * 
  * Displays the list of all the achievements in your app, and allows you to add/remove achievements.
  *
- * @name Admin: Achievements
+ * @name Achievements
  * @datasource {achievements} Achievements for the current app 
  * @template {main} Displays a form to create achievements and a table to list (and delete) all the achievements available in the app.
  * @action {remove} Removes an achievement
