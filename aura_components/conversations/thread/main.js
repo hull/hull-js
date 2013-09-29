@@ -1,7 +1,7 @@
 /**
  * View a conversation's messages and allow users to reply to the thread.
  *
- * @name Conversation Thread
+ * @name Thread
  * @param {String} id Required The conversation object - This must a conversation ID. Use the '/UID/conversations' api call to get conversation IDs for an entity or hull object.
  * @param {Boolean} focus Optional Focus after render
  * @datasource {conversations} A conversation

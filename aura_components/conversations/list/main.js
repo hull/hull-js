@@ -1,7 +1,7 @@
 /**
  * List all conversations within the current app
  *
- * @name Conversations List
+ * @name List
  * @param {String} visibility Optional Visibility level (public/private/all)
  * @param {String} id/uid     Optional Display list of conversations on this specific id/uid
  * @datasource {conversations} List of conversations

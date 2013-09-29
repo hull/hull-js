@@ -1,13 +1,11 @@
 /**
  * Loads the first conversation available for the subject. If none returns, will create one for for you.
  *
- * @name Conversation Default
+ * @name Default
  * @param {String} id/uid Required Converation subject identifier
  * @datasource {conversations} List of conversations
  * @example <div data-hull-component="conversations/default@hull" data-hull-id="OBJECT_ID"></div>
  */
-
-/*global define:true, _:true */
 Hull.component('default', {
   templates: ['default'],
 
