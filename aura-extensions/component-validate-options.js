@@ -1,3 +1,4 @@
+/*global define:true*/
 define(['underscore', 'jquery'], function(_, $) {
   "use strict";
   var extension = {
