@@ -88,23 +88,15 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
           @options = _.extend(@options, options)
         # Copy/Paste + adaptation of the Backbone.View constructor
         # TODO remove it whenever possible
-        if @validateOptions(options)
-          @cid = _.uniqueId('view')
-          @_configure(options || {})
-          @_ensureElement()
-          @invokeWithCallbacks('initialize', @, options)
+        @cid = _.uniqueId('view')
+        @_configure(options || {})
+        @_ensureElement()
+        @invokeWithCallbacks('initialize', options).then _.bind(->
           @delegateEvents()
           @render()
           @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
-
-      validateOptions: (options)->
-        valid = true
-        optionKeys = _.keys options
-        _.each @requiredOptions, (name)=>
-          if !_.contains(optionKeys, name)
-            valid = valid && false
-            console.error "Missing parameter to component #{@componentName}: data-hull-#{name}"
-        valid
+        , @), (err)->
+          throw new Error 'unable to load template:' + err
 
       renderTemplate: (tpl, data)=>
         _tpl = @_templates?[tpl]

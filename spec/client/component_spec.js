@@ -55,7 +55,8 @@ define(['aura/aura'], function(aura) {
       });
     });
 
-    describe('Required options', function () {
+    //TODO Move the specs into those of the aura extension
+    xdescribe('Required options', function () {
       it('should render if no required options are specified', function () {
         var spy = sinon.spy();
         var component = createComponentInstance({render: spy});
