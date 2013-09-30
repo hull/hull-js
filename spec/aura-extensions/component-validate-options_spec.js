@@ -4,7 +4,7 @@ define(['aura-extensions/component-validate-options'], function (extension) {
   var checkOptions = extension.checkOptions;
   describe('Required options', function () {
     it('should resolve if no required options are specified', function (done) {
-      var promise = checkOptions.call(undefined, {});
+      var promise = checkOptions.call(Object.create(null), {});
       promise.then(function () {
         done();
       }, function () {
