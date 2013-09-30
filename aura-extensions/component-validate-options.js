@@ -1,4 +1,5 @@
 define(['underscore', 'jquery'], function(_, $) {
+  "use strict";
   var extension = {
     initialize: function (app) {
       app.components.before('initialize', extension.checkOptions);
