@@ -78,17 +78,24 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
 
         catch e
           console.error("Error loading HullComponent", e.message)
-        sb = @sandbox
-        getId = ()->
-          return @id if @id
-          return sb.util.entity.encode(@uid) if @uid
-          sb.config.entity_id
-        id = getId.call(options)
-        options.id = id if id
+        app.components.before 'initialize', (options={})=>
+          sb = @sandbox
+          getId = ()->
+            return @id if @id
+            return sb.util.entity.encode(@uid) if @uid
+            sb.config.entity_id
+          options.id = getId.call(options)
+          @options = _.extend(@options, options)
+        # Copy/Paste + adaptation of the Backbone.View constructor
+        # TODO remove it whenever possible
         if @validateOptions(options)
-          app.core.mvc.View.prototype.constructor.apply(@, arguments)
-          @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
+          @cid = _.uniqueId('view')
+          @_configure(options || {})
+          @_ensureElement()
+          @invokeWithCallbacks('initialize', @, options)
+          @delegateEvents()
           @render()
+          @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
 
       validateOptions: (options)->
         valid = true
