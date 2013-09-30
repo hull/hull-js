@@ -15,7 +15,7 @@ define(['underscore', 'jquery'], function(_, $) {
           dfd.reject(err);
         });
         this.require = localRequire;
-        return dfd;
+        return dfd.promise();
       }
     });
   };
