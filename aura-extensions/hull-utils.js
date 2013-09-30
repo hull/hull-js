@@ -1,3 +1,4 @@
+/*global define:true */
 define({
   require: {
     paths: {
@@ -13,17 +14,18 @@ define({
     }
   },
   initialize: function(app) {
+    "use strict";
     app.core.util.base64 = {
       decode: function(input, urlsafe) {
         if (urlsafe) {
-          input = input.replace(/\+/g, '-').replace(/\//g, '_')
+          input = input.replace(/\+/g, '-').replace(/\//g, '_');
         }
         return window.atob(input);
       },
       encode: function(input, urlsafe) {
         var ret = window.btoa(input);
         if (urlsafe) {
-          ret = ret.replace(/\+/g, '-').replace(/\//g, '_')
+          ret = ret.replace(/\+/g, '-').replace(/\//g, '_');
         }
         return ret;
       }
@@ -31,10 +33,10 @@ define({
 
     app.core.dom.getFormData = function(form) {
       var formData = {};
-      app.sandbox.util._.each($(form).serializeArray(), function(field) {
+      app.sandbox.util._.each(app.sandbox.dom.find(form).serializeArray(), function(field) {
         formData[field.name] = field.value;
       });
       return formData;
-    }
+    };
   }
 });

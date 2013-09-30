@@ -36,15 +36,25 @@ Hull.define({
     users: 'users'
   },
 
+  initialize: function() {
+    this.query = {};
+    this.currentQuery = {};
+  },
+
   beforeRender: function(data){
     var datasource = this.datasources.users;
+
     data.showPagination = datasource.isPaginable();
     data.showNextButton = !datasource.isLast();
     data.showPreviousButton = !datasource.isFirst();
 
     data.currentQuery = this.currentQuery;
 
-    return data;
+    data.filters = {
+      All: { action: 'resetFilter', isActive: this.query.approved == null },
+      Approved: { action: 'filterApproved', isActive: this.query.approved === true },
+      Unapproved: { action: 'filterUnapproved', isActive: this.query.approved === false }
+    };
   },
 
   afterRender: function() {
@@ -81,7 +91,23 @@ Hull.define({
     },
 
     resetSearch: function() {
-      this.search();
+      delete this.query.email;
+      this.filter();
+    },
+
+    resetFilter: function() {
+      delete this.query.approved;
+      this.filter();
+    },
+
+    filterApproved: function() {
+      this.query.approved = true;
+      this.filter();
+    },
+
+    filterUnapproved: function() {
+      this.query.approved = false;
+      this.filter();
     }
   },
 
@@ -90,19 +116,34 @@ Hull.define({
     this.render();
   },
 
+  filter: function() {
+    if(this.queryHasChanged()) {
+      this.datasources.users.where(this.query);
+      this.render();
+
+      this.currentQuery = this.sandbox.util._.clone(this.query);
+    }
+  },
+
+  queryHasChanged: function() {
+    var _ = this.sandbox.util._;
+
+    if (_.isEmpty(this.query) && _.isEmpty(this.currentQuery)) { return false; }
+    if (_.size(this.query) !== _.size(this.currentQuery)) { return true; }
+
+    return !this.sandbox.util._.every(this.query, function(v, k) {
+      return this.currentQuery[k] === v;
+    }, this);
+  },
+
   search: function(email) {
     var query;
     if (!this.sandbox.util._.string.isBlank(email)) {
-      this.datasources.users.where({ email: email });
-      query = email;
+      this.query.email = email;
     } else {
-      this.datasources.users.where({});
-      query = null;
+      delete this.query.email;
     }
 
-    if (this.currentQuery !== email) {
-      this.currentQuery = query;
-      this.render();
-    }
+    this.filter();
   }
 });

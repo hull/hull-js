@@ -133,14 +133,14 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
     # Change datasource path to the path of the previous page.
     previous: ->
       unless @isFirst()
-        @def.path = @paginationLinks.prev
+        _.extend(@def.params, parseQueryString(@paginationLinks.prev))
 
     # Go to next page.
     #
     # Change datasource path to the path of the next page.
     next: ->
       unless @isLast()
-        @def.path = @paginationLinks.next
+        _.extend(@def.params, parseQueryString(@paginationLinks.next))
 
     # Sort the datasource by a given field in a given direction.
     #
@@ -154,5 +154,6 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
         query = _.extend(@def.params.where, query)
 
       @def.params.where = query
+      @def.params.page = 1
 
   Datasource

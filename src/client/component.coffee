@@ -41,6 +41,10 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
 
       isInitialized: false
 
+      requiredOptions: []
+
+      options: {}
+
       constructor: (options)->
         @ref = options.ref
         @api = @sandbox.data.api
@@ -72,10 +76,9 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
             ds = _.bind ds, @ if _.isFunction ds
             @datasources[i] = new Datasource(ds, @api) unless ds instanceof Datasource
 
-          @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
         catch e
           console.error("Error loading HullComponent", e.message)
-        app.components.before 'initialize', (options)=>
+        app.components.before 'initialize', (options={})=>
           sb = @sandbox
           getId = ()->
             return @id if @id
@@ -85,12 +88,23 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
           @options = _.extend(@options, options)
         # Copy/Paste + adaptation of the Backbone.View constructor
         # TODO remove it whenever possible
-        @cid = _.uniqueId('view')
-        @_configure(options || {})
-        @_ensureElement()
-        @invokeWithCallbacks('initialize', @, options)
-        @delegateEvents()
-        @render()
+        if @validateOptions(options)
+          @cid = _.uniqueId('view')
+          @_configure(options || {})
+          @_ensureElement()
+          @invokeWithCallbacks('initialize', @, options)
+          @delegateEvents()
+          @render()
+          @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
+
+      validateOptions: (options)->
+        valid = true
+        optionKeys = _.keys options
+        _.each @requiredOptions, (name)=>
+          if !_.contains(optionKeys, name)
+            valid = valid && false
+            console.error "Missing parameter to component #{@componentName}: data-hull-#{name}"
+        valid
 
       renderTemplate: (tpl, data)=>
         _tpl = @_templates?[tpl]
@@ -131,7 +145,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
             ctx.addDatasource(k, ds.fetch(), handler).then (res)=>
               @data[k] = res
           componentDeferred = @sandbox.data.when.apply(undefined, promiseArray)
-          templateDeferred = @sandbox.template.load(@templates, @ref)
+          templateDeferred = @sandbox.template.load(@templates, @ref, @el)
           templateDeferred.done (tpls)=>
             @_templates     = tpls
           readyDfd = promises.when(componentDeferred, templateDeferred)
@@ -184,7 +198,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
               data = _.extend(dataAfterBefore || ctx.build(), data)
               @doRender(tpl, data)
               _.defer(@afterRender.bind(@, data))
-              _.defer((-> @sandbox.start(@$el)).bind(@))
+              _.defer((-> @sandbox.start(@$el, { reset: true })).bind(@))
               @isInitialized = true;
               # debugger
               @emitLifecycleEvent('render')

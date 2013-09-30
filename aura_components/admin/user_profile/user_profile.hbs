@@ -5,11 +5,22 @@
         <img src="{{user.picture}}" width="50" height="50"/>
       </div>
     {{/if}}
+
     <div>
       <h4>{{user.name}}</h4>
       <p class="muted">{{user.email}}</p>
     </div>
   </div>
+
+  {{#unless org.public}}
+    <div class="admin-infos admin-infos-approve">
+      {{#if user.approved}}
+        <button class="btn btn-block" data-hull-action="unapprove">Unapprove</button>
+      {{else}}
+        <button class="btn btn-block" data-hull-action="approve">Approve</button>
+      {{/if}}
+    </div>
+  {{/unless}}
 
   <div class="admin-infos admin-infos-permissions">
     <header>

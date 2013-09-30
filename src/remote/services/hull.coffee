@@ -9,6 +9,9 @@ define ['jquery', 'underscore'], ($, _)->
 
     identified = false
 
+    accessToken     = app.config.access_token
+    originalUserId  = app.config.data?.me?.id
+
     identify = (me) ->
       return unless me
 
@@ -41,8 +44,8 @@ define ['jquery', 'underscore'], ($, _)->
         req_data = req.params
 
       request_headers = { 'Hull-App-Id': config.appId }
-      if config.access_token
-        request_headers['Hull-Access-Token'] = config.access_token
+      if accessToken
+        request_headers['Hull-Access-Token'] = accessToken
 
       request = $.ajax
         url: url
@@ -60,6 +63,10 @@ define ['jquery', 'underscore'], ($, _)->
           memo[name] = value if value?
           memo
         , {}
+
+        if accessToken && originalUserId && originalUserId != headers['Hull-User-Id']
+          # Reset token if the user has changed...
+          accessToken = false
 
         callback({ response: response, headers: headers, provider: 'hull' })
 
