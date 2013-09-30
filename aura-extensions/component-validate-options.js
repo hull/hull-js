@@ -9,7 +9,7 @@ define(['underscore', 'jquery'], function(_, $) {
       var dfd = $.Deferred();
       var optionKeys = _.keys(options);
       _.each(this.requiredOptions || [], function (name) {
-        if (!_.contains(optionKeys, name)) {
+        if (!_.contains(optionKeys, name) || options[name] === undefined) {
           dfd.reject('Missing option to component ' + this.componentName + ': ' + name);
         }
       });

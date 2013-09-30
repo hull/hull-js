@@ -35,5 +35,13 @@ define(['aura-extensions/component-validate-options'], function (extension) {
         done();
       });
     });
+    it('should reject if the required options are undefined', function (done) {
+      var promise = checkOptions.call({requiredOptions: ['yep']}, {yep: undefined});
+      promise.then(function () {
+        done('should not have been rejected');
+      }, function () {
+        done();
+      });
+    });
   });
 });
