@@ -101,7 +101,7 @@
  * @template {template_name} 
  * @your_custom_tag {name} value
  * @your_custom_tag value
- * @example 
+ * @example <div data-hull-component='registration/form'></div>
  */
 Hull.define(['underscore', 'h5f'], function(_, H5F) {
   return {
