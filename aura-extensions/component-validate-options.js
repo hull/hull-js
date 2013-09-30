@@ -1,6 +1,9 @@
 define(['underscore', 'jquery'], function(_, $) {
-  return function(app) {
-    app.components.before('initialize', function(options) {
+  var extension = {
+    initialize: function (app) {
+      app.components.before('initialize', extension.checkOptions);
+    },
+    checkOptions: function(options) {
       var dfd = $.Deferred();
       var optionKeys = _.keys(options);
       _.each(this.requiredOptions || [], function (name) {
@@ -10,6 +13,7 @@ define(['underscore', 'jquery'], function(_, $) {
       });
       dfd.resolve();
       return dfd.promise();
-    });
+    }
   };
+  return extension;
 });
