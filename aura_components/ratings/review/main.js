@@ -3,7 +3,9 @@
  * Shows a star review system with a stars and a text entry [Beta]
  *
  * @name Reviews
- * @example <div data-hull-component="ratings/review@hull"></div>
+ * @param {String} id/uid The object on which to do the review
+ * @example <div data-hull-component="ratings/review@hull" data-hull-id='app'></div>
+ * @example <div data-hull-component="ratings/review@hull" data-hull-uid='http://hull.io'></div>
  */
 Hull.define({
   type: "Hull",
