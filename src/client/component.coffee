@@ -78,14 +78,6 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
 
         catch e
           console.error("Error loading HullComponent", e.message)
-        app.components.before 'initialize', (options={})=>
-          sb = @sandbox
-          getId = ()->
-            return @id if @id
-            return sb.util.entity.encode(@uid) if @uid
-            sb.config.entity_id
-          options.id = getId.call(options)
-          @options = _.extend(@options, options)
         # Copy/Paste + adaptation of the Backbone.View constructor
         # TODO remove it whenever possible
         @cid = _.uniqueId('view')
