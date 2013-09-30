@@ -88,7 +88,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
           @render()
           @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
         , @), (err)->
-          throw new Error 'unable to load template:' + err
+          # Already displays a log in Aura and is caught above
 
       renderTemplate: (tpl, data)=>
         _tpl = @_templates?[tpl]
