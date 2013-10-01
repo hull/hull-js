@@ -4,19 +4,32 @@
  * @name Upload file
  * @dependency {jquery.fileupload} This plugin uses [jQuery File upload plugin](https://github.com/blueimp/jQuery-File-Upload) to handle the file upload gracefully. Please note that the plugin is packaged within the component so you don't have to struggle against the dependencies.
  * @dependency {storage} This plugin requires that you have attached an S3 storage to your Hull application in the admin.
- * @param {String} {storage} optional Specifies the storage engine to be used. If a single engine is known to the app, it will be automatically used. If there are many engines available, it must correspond to a value in `sandbox.config.services.types.storage`.
+ * @param {String} {storage} optional Specifies the storage engine to be used. If a single engine is known to the app, it will be automatically used. If there are many engines available, it must correspond to a value in `sandbox.config.services.types.storage`. Default: 'hull'
  * @template {upload}               The main template. Because the jQuery plugin has some requirements, the template makes sure everything is set up as needed.
  * @template {file}   used to upload a single file. Override this partial to Customize the file upload to your needs.
  * @event {hull.upload.send}     Triggered when an upload has started.
  * @event {hull.upload.progress} Triggered when an upload is in progress. The total amount of data as well as the current amount of data transfered are available as a listener parameter.
  * @event {hull.upload.done}     Triggered when an upload has finished. References to the uploadded files are available in an Array as the first parameter to the listeners.
  * @example <div data-hull-component="uploads/button"></div>
+ * @example <div data-hull-component="uploads/button" data-hull-storage='hull'></div>
  */
 
-Hull.define(['jquery.fileupload'], {
+Hull.define({
   type: 'Hull',
 
   templates: [ 'upload', 'file' ],
+
+  require:{
+    paths:{
+      'jquery.fileupload':'jquery.fileupload'
+    }
+  },
+
+  requiredOptions:['storage'],
+
+  options:{
+    storage:'hull'
+  },
 
   fileTypes: {
     images :  /(\.|\/)(gif|jpe?g|png)$/i,
@@ -97,6 +110,7 @@ Hull.define(['jquery.fileupload'], {
 
   beforeRender: function (data) {
     data.upload_policy = this.selectStoragePolicy();
+    console.log('Upload policy', this.sandbox.config.services.storage)
     return data;
   },
 
