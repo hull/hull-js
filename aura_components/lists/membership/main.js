@@ -1,12 +1,5 @@
 /**
-<<<<<<< HEAD:aura_components/lists/membership/main.js
- * 
  * Shows and Manages the lists an object belongs to.
-=======
- * ## lists/bind
->>>>>>> Completes the documentation:aura_components/lists/bindings/main.js
- *
- * Allows to link/unlink an item to any list, and create some lists also.
  *
  * @name Membership
  * @param {String} id/uid Required, The object you want to comment on.
@@ -15,17 +8,24 @@
  * @datasource {lists}    Collection of all the lists the user has access to
  * @datasource {listedIn} Collection of lists in which the current item is listed into
  * @action {toggle} Toggles the presence of the current item in the selected list
- * @example <div data-hull-component="lists/membership@hull" data-hull-id="HULL_OBJECT_ID"></div>
  * @example <div data-hull-component="lists/membership@hull" data-hull-uid="http://path.to/my/url"></div>
+ * @example <div data-hull-component="lists/membership@hull" data-hull-id="HULL_OBJECT_ID"></div>
  */
 
 /*jshint jquery:true */
 /*global Hull:true */
 Hull.define({
   type: 'Hull',
-  templates: ['main', 'elements', 'logged_out', 'header'],
+  templates: ['main', 'items', 'loggedOut', 'header'],
   refreshEvents: ['model.hull.me.change'],
   requiredOptions: ['id'],
+
+  require:{
+    paths:{
+      tooltip: 'bootstrap-tooltip',
+      popover: 'bootstrap-popover',
+    }
+  },
 
   datasources: {
     /*
@@ -182,7 +182,7 @@ Hull.define({
     _.each(this.data.lists, _.bind(function (list) {
       list.cssClass = this.isItemInList(list.id) ? '' : 'hidden';
     }, this));
-    $elts.html(this.renderTemplate('elements', {
+    $elts.html(this.renderTemplate('items', {
       elements: this.data.lists
     }));
   }

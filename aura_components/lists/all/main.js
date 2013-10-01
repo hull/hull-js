@@ -1,31 +1,23 @@
 /**
- * ##Lists/all
+ * Shows all lists attached to an object
+ * 
+ * This component shows all the lists for which `id/uid` is the owner
  *
- * In Hull, a list can contain any number of objects of any type.
- * Lists can be heterogeneous, that is to say a list can contain achievements, people or comments altogether.
- *
- * This component shows all the lists which owner is the `id` passed in parameter
- *
- * ### Options
- *
- * `id`: The id of the owner which lists you want to display
- *
- * ### Templates
- *
- * * `main`: A wrapper around the collection of lists to display
- * * `list`: How to display a list as an item
- *
- * ### Datasources
- *
- * `lists`: Describes all the lists that belong to the `id` in parameter
- *
+ * @name All
+ * @param {String} id/uid The id of the owner which lists you want to display
+ * @template {all} Shows lists
+ * @datasource {lists} Describes all the lists that belong to the `id` in parameter
+ * @example <div data-hull-component="lists/all@hull" data-hull-id="app"></div>
+ * @example <div data-hull-component="lists/all@hull" data-hull-id="HULL_ID"></div>
+ * @example <div data-hull-component="lists/all@hull" data-hull-uid="ANY_UNIQUE_ID"></div>
  */
+
 Hull.define({
   type: 'Hull',
+  templates: ['all'],
   requiredOptions: ['id'],
+  refreshEvents: ['model.hull.me.change'],
   datasources: {
     lists: ':id/lists'
-  },
-  refreshEvents: ['model.hull.me.change'],
-  templates: ['main', 'element']
+  }
 });

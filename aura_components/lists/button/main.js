@@ -1,15 +1,14 @@
 /**
  * 
  * Allow users to add and remove objects from lists.
- * Lists are created on the fly, with the `list-name` you specify.
+ * Lists are created on the fly, with the `list` you specify.
  *
  * @name Button
- * @param {String} list-name The name of the list you want to show. List will automatically be created if it does not exist yet.
- * @param {String} id/uid The ID of the object you want to add / remove to the list. UIDs will be created as external entities
+ * @param {String} list The name of the list you want to show. List will automatically be created if it does not exist yet.
  * @template {button} Shows the button with the right state
- * @example <div data-hull-component="list_button@hull" data-hull-id="app" data-hull-list-name="favorites"></div>
- * @example <div data-hull-component="list_button@hull" data-hull-id="HULL_ID" data-hull-list-name="favorites"></div>
- * @example <div data-hull-component="list_button@hull" data-hull-uid="ANY_UNIQUE_ID" data-hull-list-name="favorites"></div>
+ * @example <div data-hull-component="lists/button@hull" data-hull-id="app" data-hull-list="favorites"></div>
+ * @example <div data-hull-component="lists/button@hull" data-hull-id="HULL_ID" data-hull-list="favorites"></div>
+ * @example <div data-hull-component="lists/button@hull" data-hull-uid="ANY_UNIQUE_ID" data-hull-list="favorites"></div>
  */
 
 Hull.define({
@@ -20,14 +19,14 @@ Hull.define({
   templates: ["button"],
 
   options: {
-    listName: 'likes'
+    list: 'likes'
   },
 
-  requiredOptions: ['listName'],
+  requiredOptions: ['list'],
 
   datasources: {
     list: function() {
-      return this.api.model("me/lists/" + this.options.listName).fetch();
+      return this.api.model("me/lists/" + this.options.list).fetch();
     },
     target: ":id"
   },
@@ -51,17 +50,17 @@ Hull.define({
     this.api(this.itemPath, method).then(function() {
       this.track("list:" + verb, {
         itemId: self.id,
-        listName: list.name
+        list: list.name
       });
       this.render();
     }.bind(this));
   },
 
   actions: {
-    addToList: function() {
+    add: function() {
       this.toggle('add');
     },
-    removeFromList: function() {
+    remove: function() {
       this.toggle('remove');
     }
   }

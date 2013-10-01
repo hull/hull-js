@@ -1,15 +1,9 @@
 /**
- * ##Lists/create
- *
- * Allows to create a list. The list will be owned by the current user.
- *
- * ### Templates
- *
- * * `form`: How the contents of the list should be displayed
- *
- * ### Events:
- *
- * `form submit`: When the user submits the form included in the template, a list is created with the properties defined in the forms
+ * Create a list owned by the current user.
+ * 
+ * @name Create
+ * @template {form} How the contents of the list should be displayed
+ * @example <div data-hull-component="lists/create@hull"></div>
  */
 
 /*global Hull:true */
@@ -18,7 +12,7 @@ Hull.define({
   templates: ['form'],
   refreshEvents: ['model.hull.me.change'],
   actions: {
-    createList: function (e) {
+    create: function (e) {
       "use strict";
       e.preventDefault();
       var self = this, inputs = {};
