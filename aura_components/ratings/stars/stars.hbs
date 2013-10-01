@@ -1,4 +1,4 @@
-<div class="ratings ratings-{{average}}">
+<span class="ratings ratings-{{average}}">
   {{#each ratings}}
     {{#if ../loggedIn}}
       <a href="#" class="rating {{outputIf active false 'muted' ''}} rating-{{value}}" data-hull-action="rate" data-hull-rating="{{value}}">&#9733;</a>
@@ -6,4 +6,4 @@
       <span class="rating {{outputIf active false 'muted'}} rating-{{value}}">&#9733;</span>
     {{/if}}
   {{/each}}
-</div>
+</span>

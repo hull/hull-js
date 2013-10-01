@@ -1,7 +1,6 @@
 {{#if loggedIn}}
   <form>
     <fieldset>
-      <legend>Review {{review.object.name}}</legend>
       <label for="reviewsSelect">Rating:</label>
       <select id="reviewsSelect" data-hull-rating value="{{review.rating}}">
         <option {{outputIf rating 1 'selected'}}>1</option>
