@@ -25,6 +25,10 @@ Hull.define({
     }
   },
 
+  initialize: function(){
+    debugger
+  },
+
   requiredOptions:['storage'],
 
   options:{
@@ -44,31 +48,31 @@ Hull.define({
     ]
   },
 
-  uploader_events: [
-    'fileuploadadd',
-    'fileuploadadded',
-    'fileuploadalways',
-    'fileuploadchange',
-    'fileuploadcompleted',
-    'fileuploaddestroy',
-    'fileuploaddestroyed',
-    'fileuploaddone',
-    'fileuploaddragover',
-    'fileuploaddrop',
-    'fileuploadfail',
-    'fileuploadfailed',
-    'fileuploadfinished',
-    'fileuploadpaste',
-    'fileuploadprogress',
-    'fileuploadprogressall',
-    'fileuploadsend',
-    'fileuploadsent',
-    'fileuploadstart',
-    'fileuploadstarted',
-    'fileuploadstop',
-    'fileuploadstopped',
-    'fileuploadsubmit'
-  ],
+  uploader_events: {
+    'fileuploadadd'        : 'onAdd',
+    'fileuploadadded'      : 'onAdded', 
+    'fileuploadalways'     : 'onAlways',
+    'fileuploadchange'     : 'onChange',
+    'fileuploadcompleted'  : 'onCompleted',
+    'fileuploaddestroy'    : 'onDestroy',
+    'fileuploaddestroyed'  : 'onDestroyed',
+    'fileuploaddone'       : 'onDone',
+    'fileuploaddragover'   : 'onDragover',
+    'fileuploaddrop'       : 'onDrop',
+    'fileuploadfail'       : 'onFail',
+    'fileuploadfailed'     : 'onFailed',
+    'fileuploadfinished'   : 'onFinished',
+    'fileuploadpaste'      : 'onPaste',
+    'fileuploadprogress'   : 'onProgress',
+    'fileuploadprogressall': 'onProgressAll',
+    'fileuploadsend'       : 'onSend',
+    'fileuploadsent'       : 'onSent',
+    'fileuploadstart'      : 'onStart',
+    'fileuploadstarted'    : 'onStarted',
+    'fileuploadstop'       : 'onStop',
+    'fileuploadstopped'    : 'onStopped',
+    'fileuploadsubmit'     : 'onSubmit'
+  },
 
   uploader_options: {
     autoUpload : true,
@@ -110,13 +114,14 @@ Hull.define({
 
   beforeRender: function (data) {
     data.upload_policy = this.selectStoragePolicy();
-    console.log('Upload policy', this.sandbox.config.services.storage)
     return data;
   },
 
   afterRender: function () {
+    var _ = this.sandbox.util._;
     this.form = this.$el.find('form');
-    var opts = this.sandbox.util._.defaults(this.uploader_options, {
+
+    var opts = _.defaults(this.uploader_options, {
       dataType:         'xml',
       url:              this.form.attr('action'),
       dropZone:         this.$el.find(this.uploader_options.dropZone),
@@ -129,21 +134,16 @@ Hull.define({
 
     var emit = this.sandbox.emit, form = this.form;
 
-    this.sandbox.util._.each(this.uploader_events, function(evt) {
+    _.each(this.uploader_events, function(evt) {
       var n = evt.replace(/^fileupload/, '');
       form.on(evt, function(e,d) { emit('hull.upload.' + n, { event: e, data: d }); });
     });
 
-    this.form.on('fileuploadadd',       this.onAdd);
-    this.form.on('fileuploaddragover',  this.onDragOver);
-    this.form.on('fileuploaddrop',      this.onDrop);
-    this.form.on('fileuploadsend',      this.onSend);
-    this.form.on('fileuploadsubmit',    this.onSubmit);
-    this.form.on('fileuploadprogress',  this.onProgress);
-    this.form.on('fileuploadfail',      this.onFail);
-    this.form.on('fileuploadsuccess',   this.onSuccess);
-    this.form.on('fileuploaddone',      this.onDone);
-
+    _.each(this.uploader_events,function(value, key){
+      if(this[value]){
+        this.form.on(key, _.bind(this[value],this));
+      }
+    },this);
   },
 
   start: function () {
@@ -153,6 +153,11 @@ Hull.define({
   cancel: function () {},
 
   delete: function () {},
+
+  onSuccess: function () {
+    this.dropzone.find('b').text('Thanks !');
+    this.dropzone.removeClass('dropzone');
+  },
 
   onDrop: function () {
     this.dropzone.find('b').text('Thanks !');
@@ -204,25 +209,36 @@ Hull.define({
   },
 
   onDone: function (e, data) {
-    this.$el.find('.progress').fadeOut(300, function () {});
-    this.$el.find('.bar').css('width', 0);
+    console.log('onDone')
+    this.$el.find('[data-hull-progress]').fadeOut(300, function () {});
+    this.$el.find('[data-hull-progress-bar]').css('width', 0);
     this.onUploadDone(data);
   },
 
   onUploadDone: function (data) {
-    // var location = $(data.result).find('Location').text();
-    // Context.app.addImage(filename: data.files[0].name)
-    this.sandbox.util._.map(data.files, this.sandbox.util._.bind(function (file) {
+    var _ = this.sandbox.util._;
+
+    _.map(data.files, _.bind(function (file) {
+
       file.url = this.fileUrl(file.name);
       file.description = this.description;
+      this.api.post('/me/images', {
+        description: file.description,
+        source_url: file.url,
+        name: file.name
+      }).then(function (image) {
+        this.sandbox.emit('hull.uploads.uploaded', image);
+      }.bind(this));
+
     }, this));
+
     this.toggleDescription();
     this.uploader.options.maxNumberOfFiles++;
   },
 
   multipleUpload: function () {
-    return false;
     // return (this.uploader.options.maxNumberOfFiles > 1);
+    return false;
   },
 
   fileUrl: function (filename) {
@@ -231,7 +247,6 @@ Hull.define({
   },
 
   initialize: function () {
-    var _ = this.sandbox.util._;
-    _.bindAll.apply(undefined, [this].concat(_.functions(this)));
+    // _.bindAll.apply(undefined, [this].concat(_.functions(this)));
   }
 });
