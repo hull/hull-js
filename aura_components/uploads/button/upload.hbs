@@ -1,4 +1,3 @@
-
 {{#upload_policy}}
   <form action="{{url}}" method="post" enctype="multipart/form-data" class="hull-upload">
 
@@ -15,7 +14,7 @@
     <input type="hidden" name="name" value=""/>
 
     <div class="hull-upload__filebutton fileupload-buttonbar">
-        {{> upload.file_single}}
+        {{> uploads/button/file}}
     </div>
 
     <div class="fileupload-progress fade">
@@ -29,4 +28,7 @@
     <div class='error'></div>
     <div class='filescontainer'></div>
   </form>
+{{/upload_policy}}
+{{^upload_policy}}
+  No storage backend configured. As an admin, please configure one.
 {{/upload_policy}}
