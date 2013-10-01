@@ -6,4 +6,5 @@
       <span class="rating {{outputIf active false 'muted'}} rating-{{value}}">&#9733;</span>
     {{/if}}
   {{/each}}
+  ({{fallback target.stats.reviews.count 0}})
 </span>
