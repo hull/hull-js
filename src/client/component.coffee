@@ -78,26 +78,17 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
 
         catch e
           console.error("Error loading HullComponent", e.message)
-        sb = @sandbox
-        getId = ()->
-          return @id if @id
-          return sb.util.entity.encode(@uid) if @uid
-          sb.config.entity_id
-        id = getId.call(options)
-        options.id = id if id
-        if @validateOptions(options)
-          app.core.mvc.View.prototype.constructor.apply(@, arguments)
-          @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
+        # Copy/Paste + adaptation of the Backbone.View constructor
+        # TODO remove it whenever possible
+        @cid = _.uniqueId('view')
+        @_configure(options || {})
+        @_ensureElement()
+        @invokeWithCallbacks('initialize', options).then _.bind(->
+          @delegateEvents()
           @render()
-
-      validateOptions: (options)->
-        valid = true
-        optionKeys = _.keys options
-        _.each @requiredOptions, (name)=>
-          if !_.contains(optionKeys, name)
-            valid = valid && false
-            console.error "Missing parameter to component #{@componentName}: data-hull-#{name}"
-        valid
+          @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
+        , @), (err)->
+          # Already displays a log in Aura and is caught above
 
       renderTemplate: (tpl, data)=>
         _tpl = @_templates?[tpl]

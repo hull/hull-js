@@ -55,29 +55,6 @@ define(['aura/aura'], function(aura) {
       });
     });
 
-    describe('Required options', function () {
-      it('should render if no required options are specified', function () {
-        var spy = sinon.spy();
-        var component = createComponentInstance({render: spy});
-        spy.should.have.been.called;
-      });
-      it('should render if required options are empty', function () {
-        var spy = sinon.spy();
-        var component = createComponentInstance({render: spy, requiredOptions: []});
-        spy.should.have.been.called;
-      });
-      it('should render if the required options are present', function () {
-        var spy = sinon.spy();
-        var component = createComponentInstance({render: spy, requiredOptions: ['YEAH_BABY'], options: {YEAH_BABY: "!"}});
-        spy.should.have.been.called;
-      });
-      it('should not render if the required options are not present', function () {
-        var spy = sinon.spy();
-        var component = createComponentInstance({render: spy, requiredOptions: ['YEAH_BABY']});
-        spy.should.not.have.been.called;
-      });
-    });
-
     describe('#track', function() {
       var spy;
       beforeEach(function() {

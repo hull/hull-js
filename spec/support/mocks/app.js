@@ -19,6 +19,7 @@ define(function () {
       return stub;
     });
 
+    Hull.noConflict();
     require.undef('aura/aura');
     require.undef('lib/hull');
     define('aura/aura', function () {
@@ -43,6 +44,7 @@ define(function () {
     },
     initDeferred: null,
     resetApp: function () {
+      Hull.noConflict();
       module.initDeferred = $.Deferred();
       delete module.hullInit({}).app;
     }
