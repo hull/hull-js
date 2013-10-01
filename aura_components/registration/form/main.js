@@ -101,7 +101,7 @@
  * @template {template_name} 
  * @your_custom_tag {name} value
  * @your_custom_tag value
- * @example <div data-hull-component='registration/form'></div>
+ * @example <div data-hull-component='registration/form@hull'></div>
  */
 Hull.define(['underscore', 'h5f'], function(_, H5F) {
   return {
@@ -115,7 +115,7 @@ Hull.define(['underscore', 'h5f'], function(_, H5F) {
       paths:{
         h5f:'h5f'
       }
-    }
+    },
 
     complete: false,
 
