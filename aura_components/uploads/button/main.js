@@ -10,8 +10,8 @@
  * @event {hull.upload.send}     Triggered when an upload has started.
  * @event {hull.upload.progress} Triggered when an upload is in progress. The total amount of data as well as the current amount of data transfered are available as a listener parameter.
  * @event {hull.upload.done}     Triggered when an upload has finished. References to the uploadded files are available in an Array as the first parameter to the listeners.
- * @example <div data-hull-component="uploads/button"></div>
- * @example <div data-hull-component="uploads/button" data-hull-storage='hull'></div>
+ * @example <div data-hull-component="uploads/button@hull"></div>
+ * @example <div data-hull-component="uploads/button@hull" data-hull-storage='hull'></div>
  */
 
 Hull.define({
