@@ -1,12 +1,13 @@
 /**
  * 
- * Allow users to up and down-vote an object.
+ * Shows a up/down-vote system.
  * It also shows the number of votes the object has.
  *
  * @name Vote
  * @param {String} id/uid Target object to show vote buttons for
  * @template {vote} Main template. Has 3 states: Upvote, Downvote, Blank
- * @example <div data-hull-component="ratings/vote@hull" data-hull-id="HULL_ID"></div>
+ * @example <div data-hull-component="ratings/vote@hull" data-hull-id="app"></div>
+ * @example <div data-hull-component="ratings/vote@hull" data-hull-id="ANY_HULL_ID"></div>
  * @example <div data-hull-component="ratings/vote@hull" data-hull-uid="YOUR_UNIQUE_ID"></div>
  * @example <div data-hull-component="ratings/vote@hull" data-hull-uid="ANY_URL"></div>
  */

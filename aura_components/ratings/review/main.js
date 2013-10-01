@@ -1,11 +1,16 @@
 /**
  * 
- * Shows a star review system with a stars and a text entry [Beta]
+ * Shows a review system with ratings from 1-5 and a text entry
+ *
+ * You can use this to swap the dropdown for a starring system easily with
+ * jQuery plugins such as [raty](http://wbotelhos.com/raty)
  *
  * @name Reviews
  * @param {String} id/uid The object on which to do the review
- * @example <div data-hull-component="ratings/review@hull" data-hull-id='app'></div>
- * @example <div data-hull-component="ratings/review@hull" data-hull-uid='http://hull.io'></div>
+ * @example <div data-hull-component="ratings/review@hull" data-hull-id="app"></div>
+ * @example <div data-hull-component="ratings/review@hull" data-hull-id="ANY_HULL_ID"></div>
+ * @example <div data-hull-component="ratings/review@hull" data-hull-uid="YOUR_UNIQUE_ID"></div>
+ * @example <div data-hull-component="ratings/review@hull" data-hull-uid="ANY_URL"></div>
  */
 Hull.define({
   type: "Hull",
