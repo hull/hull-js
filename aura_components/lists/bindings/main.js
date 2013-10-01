@@ -1,5 +1,5 @@
 /**
- * ## Manages the lists in which an item belongs to
+ * ## lists/bind
  *
  * Allows to link/unlink an item to any list, and create some lists also.
  *
@@ -99,6 +99,7 @@ Hull.define({
    */
   afterRender: function () {
     "use strict";
+    var _ = this.sandbox.util._;
     var btn = this.$el.find('.btn-mini');
     btn.popover({
       title: 'Add to List',
@@ -107,6 +108,11 @@ Hull.define({
       content: ''
     });
     this.$el.on('shown', this.sandbox.util._.bind(this.renderPopover, this));
+    this.sandbox.dom.find(document.body).on('click', _.bind(function (evt) {
+      if (this.$el.find('.popover').find(evt.target).length === 0 && btn.index(evt.target) === -1) {
+        btn.popover('hide');
+      }
+    }, this));
   },
   /*
    * Creates a new list for the user
@@ -175,7 +181,7 @@ Hull.define({
       $popoverContent.html(contents);
       this.refreshElements();
     }
-    Hull.parse($popoverContent);
+    this.sandbox.start($popoverContent, { reset: true  });
   },
   /*
    * Renders the lists in the popover
