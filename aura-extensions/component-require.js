@@ -6,7 +6,7 @@ define(['underscore', 'jquery'], function(_, $) {
         var dfd = $.Deferred();
         var requireConfig = this.require;
         var localRequire = require.config(_.extend(requireConfig, {
-          context: 'context-' + this.ref,
+          // context: 'context-' + this.ref,
           baseUrl: this.options.require.packages[0].location
         }));
         localRequire(_.keys(this.require.paths), function(deps) {
