@@ -68,9 +68,10 @@ define ['jquery', 'underscore'], ($, _)->
           # Reset token if the user has changed...
           accessToken = false
 
-        callback({ response: response, headers: headers, provider: 'hull' })
+        callback({ response: response, headers: headers, provider: 'hull' }) if _.isFunction(callback)
 
       request.fail(errback)
+      trackHandler({path: req.method, params: req}) unless req.path == 't' or ['get'].indexOf(req.method?.toLowerCase()) != -1
 
       return
 
@@ -83,6 +84,7 @@ define ['jquery', 'underscore'], ($, _)->
       req.path = "t"
       req.params.event ?= eventName
       req.params = { t: btoa(JSON.stringify(req.params)) }
+      req.method ?= 'post'
       handler(req, callback, errback)
 
     require:
