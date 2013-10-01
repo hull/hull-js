@@ -67,7 +67,7 @@ Hull.define({
     /*
      * Inserts or Removes the current item from the selected list
      */
-    'toggle': function (evt, ctx) {
+    toggle: function (evt, ctx) {
       "use strict";
       var _ = this.sandbox.util._;
       var listId = ctx.data.listId;
@@ -76,19 +76,22 @@ Hull.define({
       promise.then(_.bind(this.refreshElements, this));
     }
   },
+
+
   initialize: function () {
     "use strict";
     if (!this.sandbox.util._.isFunction(this.$el.popover)) {
       throw new Error('The component ' + this.componentName + ' requires jQuery.popover.');
     }
   },
+
   /*
    * Creates the popover in which the user will perform the actions
    */
   afterRender: function () {
     "use strict";
     var _ = this.sandbox.util._;
-    var btn = this.$el.find('.btn-mini');
+    var btn = this.$el.find('[data-hull-toggle]');
     btn.popover({
       title: 'Add to List',
       html: true,
