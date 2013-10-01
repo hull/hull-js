@@ -19,6 +19,8 @@ define(['chai', 'sinonChai'], function(chai, sinonChai) {
   window.notrack = true;
 
   var specs = [
+    'spec/aura-extensions/component-validate-options_spec',
+    'spec/aura-extensions/component-normalize-id_spec',
     'spec/lib/extensions/templates_spec',
     'spec/client/api_spec',
     'spec/lib/hullbase_spec',
