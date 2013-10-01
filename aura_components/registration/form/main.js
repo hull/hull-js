@@ -111,6 +111,12 @@ Hull.define(['underscore', 'h5f'], function(_, H5F) {
 
     refreshEvents: ['model.hull.me.change'],
 
+    require:{
+      paths:{
+        h5f:'h5f'
+      }
+    }
+
     complete: false,
 
     options:{
