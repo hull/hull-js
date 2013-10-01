@@ -122,7 +122,6 @@ Hull.define({
 
   initialize: function() {
     var query = {};
-
     if (this.options.startPage) {
       query.page = this.options.startPage;
     } else {

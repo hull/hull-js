@@ -12,13 +12,13 @@
           <button data-hull-action="deleteConvo" data-hull-id="{{conversation.id}}" class="btn btn-link text-error pull-right">Delete conversation</button>
         {{/if}}
         <div class="hull-conversation__participants text-right">
-          {{> conversations/thread/participants}}}}
+          {{> conversations/thread/participants}}
         </div>
       </div>
       <hr />
       <div class="row-fluid">
           {{^isAscending}}
-            {{> conversations/thread/form}}}}
+            {{> conversations/thread/form}}
           {{/isAscending}}
 
           {{#if messages}}
@@ -60,7 +60,7 @@
           {{/messages}}
 
           {{#if isAscending}}
-            {{> conversations/thread/form}}}}
+            {{> conversations/thread/form}}
           {{/if}}
       </div>
     </div>
