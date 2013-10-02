@@ -9,7 +9,7 @@
  */
 
 /*global define:true */
-Hull.define({
+Hull.component({
   type: 'Hull',
 
   templates: ['list'],

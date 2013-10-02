@@ -7,7 +7,7 @@
  * @datasource {dox} Component Documentation
  * @example <div data-hull-component="developer/dox@hull" data-hull-inspect='login/button'></div>
  */
-Hull.define(['prism'], function(){
+Hull.component(['prism'], function(){
   return {
     type: 'Hull',
 

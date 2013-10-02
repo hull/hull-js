@@ -9,7 +9,7 @@
  * @example <div data-hull-component="admin/achievements@hull"></div>
  */
 
-Hull.define({
+Hull.component({
   type: 'Hull',
   templates: ['main'],
   datasources: {

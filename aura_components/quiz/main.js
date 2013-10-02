@@ -18,7 +18,7 @@
  * @example <div data-hull-component="quiz@hull"  data-hull-id="QUIZ_ID"></div>
  */
 
-Hull.define({
+Hull.component({
   type: "Hull",
 
   trackingData: function() {

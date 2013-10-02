@@ -4,7 +4,7 @@
  * @name Footer
  * @example <div data-hull-component="footer@hull"></div>
  */
-Hull.define({
+Hull.component({
 
   type: "Hull",
   datasources: {},

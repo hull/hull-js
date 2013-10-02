@@ -11,7 +11,7 @@
  * @example <div data-hull-component="object/flag@hull" data-hull-uid="YOUR_OBJECT_ID"></div>
  */
 
-Hull.define({
+Hull.component({
   type: "Hull",
   templates: ['main'],
   refreshEvents: ['model.hull.me.change'],

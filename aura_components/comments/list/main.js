@@ -11,7 +11,7 @@
  * @example <div data-hull-component="comments@hull" data-hull-uid="http://path.to/my/url"></div>
  */
 
-Hull.define({
+Hull.component({
   type: 'Hull',
 
   templates: ['list'],

@@ -12,7 +12,7 @@
  * @example <div data-hull-component="likes/list@hull" data-hull-id="ANY_URL"></div>
  */
 
-Hull.define({
+Hull.component({
   type: "Hull",
 
   templates: ["list"],

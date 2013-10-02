@@ -1,4 +1,4 @@
-Hull.define(['./prism'], {
+Hull.component(['./prism'], {
   type: "Hull",
   templates: ["explorer"],
   actions: {

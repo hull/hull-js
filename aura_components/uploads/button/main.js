@@ -14,16 +14,12 @@
  * @example <div data-hull-component="uploads/button@hull" data-hull-storage='hull'></div>
  */
 
-Hull.define({
+Hull.component({
   type: 'Hull',
 
   templates: [ 'upload', 'file' ],
 
-  require:{
-    paths:{
-      'jquery.fileupload':'jquery.fileupload'
-    }
-  },
+  require:['jquery.fileupload'],
 
   requiredOptions:['storage'],
 

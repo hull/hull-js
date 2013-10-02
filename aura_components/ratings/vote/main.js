@@ -12,7 +12,7 @@
  * @example <div data-hull-component="ratings/vote@hull" data-hull-uid="ANY_URL"></div>
  */
 
-Hull.define({
+Hull.component({
   type: "Hull",
 
   refreshEvents: ['model.hull.me.change'],

@@ -27,7 +27,7 @@
  * @example <div data-hull-component="activity@hull" data-hull-where='{"actor_id":"515d76f4d8ea9cd21c000022"}'></div>
  */
 
-Hull.define({
+Hull.component({
   type: 'Hull',
 
   templates: [

@@ -8,7 +8,7 @@
  * @example <div data-hull-component="conversation/participants@hull" data-hull-id="OBJECT_ID"></div>
  */
 
-Hull.define({
+Hull.component({
   type: 'Hull',
 
   templates: ['participants'],

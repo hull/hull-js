@@ -7,7 +7,7 @@
  * @template {sweepstake} Main template
  * @example <div data-hull-component="admin/sweepstake@hull"></div>
  */
-Hull.define({
+Hull.component({
   type: 'Hull',
 
   templates: ['sweepstake'],

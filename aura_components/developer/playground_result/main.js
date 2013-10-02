@@ -5,7 +5,7 @@
  * @name Playground Result
  * @example <div data-hull-component="developer/playground_result@hull"></div>
  */
-Hull.define({
+Hull.component({
   type: 'Hull',
 
   templates: [

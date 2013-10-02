@@ -9,7 +9,7 @@
  * @example <div data-hull-component="admin/flags@hull"></div>
  */
 
-Hull.define({
+Hull.component({
   type: "Hull",
   templates: ['main'],
   refreshEvents: ['model.hull.me.change'],

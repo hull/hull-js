@@ -11,7 +11,7 @@
  * @example <div data-hull-component="lists/button@hull" data-hull-uid="ANY_UNIQUE_ID" data-hull-list="favorites"></div>
  */
 
-Hull.define({
+Hull.component({
   type: "Hull",
 
   refreshEvents: ['model.hull.me.change'],

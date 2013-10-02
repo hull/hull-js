@@ -12,7 +12,7 @@
  * @action {achieve} Achieve the achievement with the entered secret
  * @example <div data-hull-component="achievements/button@hull" data-hull-id="ACHIEVEMENT_ID" data-hull-secret="component-secret"></div>
 */
-Hull.define({
+Hull.component({
   type: 'Hull',
   requiredOptions: ['id', 'secret'],
 

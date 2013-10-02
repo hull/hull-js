@@ -12,7 +12,7 @@
  * @example <div data-hull-component="admin/users_list@hull" app-id="app"></div>
  */
 
-Hull.define({
+Hull.component({
   type: 'Hull',
 
   templates: ['users_list'],

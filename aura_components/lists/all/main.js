@@ -12,7 +12,7 @@
  * @example <div data-hull-component="lists/all@hull" data-hull-uid="ANY_UNIQUE_ID"></div>
  */
 
-Hull.define({
+Hull.component({
   type: 'Hull',
   templates: ['all'],
   requiredOptions: ['id'],
