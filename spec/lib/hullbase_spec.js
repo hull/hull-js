@@ -28,27 +28,11 @@ define(function () {
     });
 
     describe("Creating component", function () {
-      describe("the component name", function () {
-        it("should be truthy", function () {
-          ['', false, null, undefined].forEach(function (v) {
-            hullbase.component.bind(undefined, v).should.throw('A component must have a identifier');
-          });
-        });
-
-        it("should be a String", function () {
-          [true, [], new Date(), {}].forEach(function (v) {
-            hullbase.component.bind(undefined, v).should.throw('The component identifier must be a String');
-          });
-
-          hullbase.component.bind(undefined, "component_name", {}).should.not.throw('A component must have a identifier');
-          hullbase.component.bind(undefined, String("component_name"), {}).should.not.throw('A component must have a identifier');
-        });
-      });
 
       describe("the component definition", function () {
         it("should be an Object literal or a function returning an Object literal", function () {
-          hullbase.component.bind(undefined, "component_name").should.throw('The component component_name must have a definition');
-          hullbase.component.bind(undefined, "component_name", function () {}).should.throw('The component component_name must have a definition');
+          hullbase.component.bind(undefined, "component_name").should.throw('A component must have a definition');
+          hullbase.component.bind(undefined, "component_name", function () {}).should.throw('A component must have a definition');
 
           hullbase.component.bind(undefined, "component_name", {}).should.not.throw('The component component_name must have a definition');
           hullbase.component.bind(undefined, "component_name", function () { return {}; }).should.not.throw('The component component_name must have a definition');
