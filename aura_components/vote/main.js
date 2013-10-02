@@ -66,7 +66,7 @@ Hull.define({
         rating: rating,
         description: description
       };
-      this.api(this.id + '/reviews', 'post', d).then(function(res) {
+      this.api(this.options.id + '/reviews', 'post', d).then(function(res) {
         self.updateVotesFromStats(res);
         self.render();
       });
