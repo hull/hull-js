@@ -25,10 +25,6 @@ Hull.define({
     }
   },
 
-  initialize: function(){
-    debugger
-  },
-
   requiredOptions:['storage'],
 
   options:{
