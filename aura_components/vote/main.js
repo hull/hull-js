@@ -27,31 +27,34 @@ Hull.define({
   templates: ['vote'],
 
   datasources: {
-    vote: ':id/reviews/me',
-    target: ':id'
+    myVote: function() {
+      return this.myInitialVote || this.api(this.options.id + "/reviews/me");
+    }
   },
 
-  onTargetError: function () {
-    "use strict";
-    return {};
-  },
+
   beforeRender: function(data){
     "use strict";
-    if (this.sandbox.util._.isArray(data.vote)) {
-      data.vote = data.vote[0];
+    this.myInitialVote = data.myVote;
+    if (!this.votes) {
+      this.updateVotesFromStats(data.myVote);
     }
-    data.split = {
-      blank:0,
-      yes:0,
-      no:0
-    };
-    if(!data.target.stats || !data.target.stats.reviews){
-      return data;
-    }
-    data.split.blank = data.target.stats.reviews.distribution['0']||0;
-    data.split.yes = data.target.stats.reviews.distribution['1']||0;
-    data.split.no = data.target.stats.reviews.distribution['-1']||0;
+    data.myVote   = this.myVote;
+    data.votes    = this.votes;
     return data;
+  },
+
+  updateVotesFromStats: function(stats) {
+    this.myVote = stats.rating || 0;
+    if (stats && stats.ratings && stats.ratings.distribution) {
+      var distribution = stats.ratings.distribution
+      this.votes = {
+        down: distribution['-1'] || 0,
+        up:   distribution['1'] || 0
+      }
+    } else {
+      this.votes = { down: 0, up: 0 };
+    }
   },
 
   update_vote: function(evt, rating){
@@ -63,7 +66,8 @@ Hull.define({
         rating: rating,
         description: description
       };
-      this.api(this.id + '/reviews', 'post', d).then(function() {
+      this.api(this.id + '/reviews', 'post', d).then(function(res) {
+        self.updateVotesFromStats(res);
         self.render();
       });
     }
