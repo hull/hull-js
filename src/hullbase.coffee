@@ -28,7 +28,7 @@ Hull.require = require
 
 Hull.component = Hull.widget = (componentName, componentDef) ->
   unless componentDef
-    componentDef = componentName 
+    componentDef = componentName
     componentName = null
   #Validates the name
   if componentName and not Object.prototype.toString.apply(componentName) == '[object String]'
@@ -39,12 +39,14 @@ Hull.component = Hull.widget = (componentName, componentDef) ->
   throw "A component must have a definition" unless Object.prototype.toString.apply(componentDef) == '[object Object]'
 
   componentDef.type ?= "Hull"
-  if componentName
-    [name, source] = componentName.split('@')
-    source ?= 'default'
-    Hull.define("__component__$#{name}@#{source}", componentDef)
-  else
-    Hull.define componentDef unless componentName
+  Hull.define ['module'], (module)->
+    if componentName
+      [name, source] = componentName.split('@')
+      source ?= 'default'
+      computedName = "__component__$#{name}@#{source}"
+      throw "Mismatch in the names of the module" if computedName != module.id
+    Hull.define(module.id, componentDef)
+    componentDef
   return componentDef
 
 define ['lib/utils/version', 'underscore'], (version, _) ->
