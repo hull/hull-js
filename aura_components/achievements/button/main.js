@@ -10,7 +10,7 @@
  * @param {String} id     Required, the achievement to unlock
  * @param {String} secret Optional, the secret code to the achievement.
  * @action {achieve} Achieve the achievement with the entered secret
- * @example <div data-hull-component="achievements/button@hull" data-hull-id="ACHIEVEMENT_ID" data-hull-secret="component-secret"></div>
+ * @example <div data-hull-component="achievements/button@hull" data-hull-id="51a8a8a1aaf8a39ab6000686" data-hull-secret="achievement_secret"></div>
 */
 Hull.component({
   type: 'Hull',
@@ -24,7 +24,7 @@ Hull.component({
       this.api(this.id + '/achieve', 'post', { secret: this.options.secret }).then(function () {
         self.refresh();
       }, function (err) {
-        self.renderError(err.statusText);
+        self.renderError(err.responseJSON.message);
       });
     }
   },
@@ -44,6 +44,7 @@ Hull.component({
   },
 
   beforeRender: function(data) {
+    console.log(data)
     if (data.achievement && data.achievement.badge) {
       data.isAchieved = true;
     } else {
