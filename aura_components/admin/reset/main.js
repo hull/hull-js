@@ -13,7 +13,7 @@
 
 Hull.component({
 
-  type: "Hull",
+  type: 'Hull',
 
   datasources: {
     entities: 'app/entities',

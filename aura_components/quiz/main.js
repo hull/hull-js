@@ -19,7 +19,7 @@
  */
 
 Hull.component({
-  type: "Hull",
+  type: 'Hull',
 
   trackingData: function() {
     var data = { type: 'quiz' };

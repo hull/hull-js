@@ -7,7 +7,7 @@
  * @example 
  */
 Hull.component({
-  type: "Hull",
+  type: 'Hull',
 
   templates: ['docs'],
 

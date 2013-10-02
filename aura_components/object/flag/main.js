@@ -12,7 +12,7 @@
  */
 
 Hull.component({
-  type: "Hull",
+  type: 'Hull',
   templates: ['main'],
   refreshEvents: ['model.hull.me.change'],
   datasources: {

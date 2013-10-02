@@ -13,7 +13,7 @@
  */
 
 Hull.component({
-  type: "Hull",
+  type: 'Hull',
 
   templates: ["list"],
   refreshEvents: ['hull.like.**'],

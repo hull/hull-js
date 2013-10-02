@@ -17,7 +17,7 @@
  */
 
 Hull.component({
-  type: "Hull",
+  type: 'Hull',
 
   templates: ["button"],
   refreshEvents: ['model.hull.me.change'],

@@ -13,7 +13,7 @@
  * @example <div data-hull-component="ratings/review@hull" data-hull-uid="ANY_URL"></div>
  */
 Hull.component({
-  type: "Hull",
+  type: 'Hull',
 
   refreshEvents: ['model.hull.me.change'],
   templates: ['review'],

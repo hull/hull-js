@@ -1,5 +1,5 @@
 Hull.component(['./prism'], {
-  type: "Hull",
+  type: 'Hull',
   templates: ["explorer"],
   actions: {
     get: function() {

@@ -6,7 +6,7 @@
  */
 Hull.component({
 
-  type: "Hull",
+  type: 'Hull',
   datasources: {},
   templates: ['footer'],
   actions: {}
