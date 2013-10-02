@@ -1,7 +1,7 @@
   /*global describe:true, it:true, before: true, sinon: true, define: true */
 
 define(['aura/aura'], function(aura) {
-  describe('Component', function() {
+  xdescribe('Component', function() {
     var app;
     var Component;
     var component;
