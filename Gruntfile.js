@@ -203,6 +203,10 @@ module.exports = function (grunt) {
       spec: {
         files: ['spec/**/*.js'],
         tasks: ['mocha']
+      },
+      extensions: {
+        files: ['aura-extensions/**/*.js'],
+        tasks: ['dist:client', 'do_test']
       }
     },
     version: {
