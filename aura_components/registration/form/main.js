@@ -103,18 +103,14 @@
  * @your_custom_tag value
  * @example <div data-hull-component='registration/form@hull'></div>
  */
-Hull.define({
+Hull.component({
   type: 'Hull',
 
   templates: ['form', 'complete'],
 
   refreshEvents: ['model.hull.me.change'],
 
-  require:{
-    paths:{
-      H5F:'h5f'
-    }
-  },
+  require:['h5f'],
 
   complete: false,
 

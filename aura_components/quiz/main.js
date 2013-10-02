@@ -18,8 +18,8 @@
  * @example <div data-hull-component="quiz@hull"  data-hull-id="QUIZ_ID"></div>
  */
 
-Hull.define({
-  type: "Hull",
+Hull.component({
+  type: 'Hull',
 
   trackingData: function() {
     var data = { type: 'quiz' };

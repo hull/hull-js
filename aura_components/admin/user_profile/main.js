@@ -8,7 +8,7 @@
  * @param {String} id The id of the user you want to display
  *
  */
-Hull.define({
+Hull.component({
   type: 'Hull',
 
   templates: [

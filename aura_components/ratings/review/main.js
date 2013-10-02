@@ -12,8 +12,8 @@
  * @example <div data-hull-component="ratings/review@hull" data-hull-uid="YOUR_UNIQUE_ID"></div>
  * @example <div data-hull-component="ratings/review@hull" data-hull-uid="ANY_URL"></div>
  */
-Hull.define({
-  type: "Hull",
+Hull.component({
+  type: 'Hull',
 
   refreshEvents: ['model.hull.me.change'],
   templates: ['review'],

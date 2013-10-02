@@ -26,7 +26,7 @@
  * @example <div data-hull-component="sweepstake@hull"  data-hull-id="SWEEPSTAKE_ID"></div>
  */
 
-Hull.define({
+Hull.component({
   type: 'Hull',
 
   templates: [

@@ -6,8 +6,8 @@
  * @param {String} api The endpoint you want to fetch
  * @example 
  */
-Hull.define({
-  type: "Hull",
+Hull.component({
+  type: 'Hull',
 
   templates: ['docs'],
 

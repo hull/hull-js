@@ -13,10 +13,14 @@
     {{/if}}
     <div class="media-body">
       <h4 class="media-heading">{{me.name}}</h4>
-      Via {{#each loggedInProviders}}
-        <span class='provider'><i class="icon icon-{{this}}"></i>{{capitalize this}}</span>
-      {{/each}}
-      <a data-hull-action="logout" class="btn-link">
+      <div>
+        logged in with {{#each loggedInProviders}}
+          <span class='provider'><i class="icon-{{this}}">
+            </i> {{capitalize this}}
+          </span>
+        {{/each}}
+      </div>      
+      <a data-hull-action="logout" class="btn">
         Sign Out
       </a>
     </div>

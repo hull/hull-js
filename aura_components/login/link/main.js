@@ -7,7 +7,7 @@
  * @example <div data-hull-component="login/linking@hull"></div>
  */
 
-Hull.define({
+Hull.component({
   type: 'Hull',
   templates: ['linking'],
   refreshEvents: ['model.hull.me.change'],

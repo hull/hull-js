@@ -10,7 +10,7 @@
  */
 
 /*global Hull:true */
-Hull.define({
+Hull.component({
   type: 'Hull',
   templates: ['content', 'item'],
   datasources: {

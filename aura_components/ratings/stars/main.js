@@ -9,7 +9,7 @@
  * @example <div data-hull-component="ratings/stars@hull" data-hull-uid="YOUR_UNIQUE_ID"></div>
  * @example <div data-hull-component="ratings/stars@hull" data-hull-uid="ANY_URL"></div>
  */
-Hull.define({
+Hull.component({
   type: 'Hull',
 
   templates: ['stars'],

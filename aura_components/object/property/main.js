@@ -14,7 +14,7 @@
  * @example <div data-hull-component="object/property@hull" data-hull-id="me" data-hull-property="name" data-hull-default-text="Not found"></div>
  */
 
-Hull.define({
+Hull.component({
   type: 'Hull',
 
   templates: ['property'],

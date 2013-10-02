@@ -9,9 +9,9 @@
  * @datasource {quizzes} The collection of all the quizzes available in the application.
  * @example <div data-hull-component="admin/quiz@hull"></div>
  */
-Hull.define({
+Hull.component({
 
-  type: "Hull",
+  type: 'Hull',
 
   refreshEvents: ['model.hull.me.change'],
 

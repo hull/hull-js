@@ -5,7 +5,7 @@
  * @name Playground Editor
  * @example <div data-hull-component="developer/playground_editor@hull"></div>
  */
-Hull.define({
+Hull.component('playground_editor',{
   type: 'Hull',
 
   templates: ['editor'],

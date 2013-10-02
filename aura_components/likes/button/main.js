@@ -16,8 +16,8 @@
  * @example <div data-hull-component="like_button@hull" data-hull-id="ANY_URL"></div>
  */
 
-Hull.define({
-  type: "Hull",
+Hull.component({
+  type: 'Hull',
 
   templates: ["button"],
   refreshEvents: ['model.hull.me.change'],

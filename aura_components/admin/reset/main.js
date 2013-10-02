@@ -11,9 +11,9 @@
  * @example <div data-hull-component="admin/entities@hull"></div>
  */
 
-Hull.define({
+Hull.component({
 
-  type: "Hull",
+  type: 'Hull',
 
   datasources: {
     entities: 'app/entities',

@@ -14,7 +14,7 @@
 
 /*jshint jquery:true */
 /*global Hull:true */
-Hull.define({
+Hull.component({
   type: 'Hull',
   templates: ['main', 'items', 'loggedOut', 'header'],
   refreshEvents: ['model.hull.me.change'],

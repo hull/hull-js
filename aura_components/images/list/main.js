@@ -15,7 +15,7 @@
  * @example <div data-hull-component="images/list@hull" data-hull-provider="hull"></div>
  */
 
-Hull.define(['underscore'], {
+Hull.component({
   type: 'Hull',
 
   templates: ['list'],

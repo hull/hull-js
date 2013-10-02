@@ -13,7 +13,7 @@
  * @example <div data-hull-component="login/profile@hull" data-hull-provider="github,facebook"></div>
  */
 
-Hull.define({
+Hull.component({
   type: 'Hull',
 
   templates: [
