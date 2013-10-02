@@ -1,63 +1,80 @@
-<h2>Achievements</h2>
+{{#isAdmin}}
+  <div class="well">
+    <h2>Achievements for <strong>{{app.name}}</strong></h2>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <td><strong>Name</strong></td>
+          <td><strong>Details</strong></td>
+          <td><strong></strong></td>
+        </tr>
+      </thead>
+      <tbody>
+        {{#achievements}}
+        <tr>
+          <td>{{name}}</td>
+          <td>
+            <small>
+              <ul>
+                <li> <strong>ID</strong>: <code>{{id}}</code> </li>
+                <li> <strong>Description</strong>: {{description}} </li>
+                <li> <strong>Secret</strong>: {{secret}} </li>
+              </ul>
+            </small>
+          </td>
+          <td>
+            <a class='btn' data-hull-action="remove" data-hull-achievement-id="{{id}}" class="pull-right">Delete</a>
+          </td>
+        </tr>
+        {{/achievements}}
+        {{^achievements}}
+        <tr>
+          <td colspan=5>
+            <div class="text-center muted">
+              None
+            </div>
+          </td>
+        </tr>
+        {{/achievements}}
+      </tbody>
+    </table>
+  </div>
 
-<form action="#">
-  <legend>Create an achievement</legend>
-  {{#if error}}
-    <div class="alert">
-      An error occured.
-    </div>
-  {{/if}}
-  <div class="control-group">
-    <label class="control-label" for="name">Name</label>
-    <div class="controls">
-      <input id="name" type="text" name="name" class="input-block-level" />
-    </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="description">Description</label>
-    <div class="controls">
-      <textarea id="description" name="description" class="input-block-level" rows="5"></textarea>
-    </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="secret">Secret</label>
-    <div class="controls">
-      <input id="type" type="text" name="secret" class="input-block-level" />
-    </div>
-  </div>
-  <div class="form-actions">
-    <button class="btn btn-primary" type="submit">Create</button>
-  </div>
-</form>
+  <hr/>
 
-<legend>Achievements for <strong>{{app.name}}</strong></legend>
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <td><strong>id</strong></td>
-      <td><strong>secret</strong></td>
-      <td><strong>name</strong></td>
-      <td><strong>description</strong></td>
-    </tr>
-  </thead>
-  <tbody>
-    {{#achievements}}
-    <tr>
-      <td><code>{{id}}</code></td>
-      <td><code>{{secret}}</code></td>
-      <td>{{name}}</td>
-      <td>{{description}}</td>
-      <td><i data-hull-action="remove" data-hull-achievement-id="{{id}}" class="pull-right icon icon-remove"></i></td>
-    </tr>
-    {{/achievements}}
-    {{^achievements}}
-    <tr>
-      <td colspan=5>
-        <div class="text-center muted">
-          None
+
+  <div class="well">
+    <h2>Create an achievement</h2>
+    <form action="#">
+      {{#if error}}
+        <div class="alert">
+          An error occured.
         </div>
-      </td>
-    </tr>
-    {{/achievements}}
-  </tbody>
-</table>
+      {{/if}}
+      <div class="control-group">
+        <label class="control-label" for="name">Name</label>
+        <div class="controls">
+          <input id="name" type="text" name="name" class="input-block-level" />
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="description">Description</label>
+        <div class="controls">
+          <textarea id="description" name="description" class="input-block-level" rows="5"></textarea>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="secret">Secret</label>
+        <div class="controls">
+          <input id="type" type="text" name="secret" class="input-block-level" />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Create</button>
+      </div>
+    </form>
+  </div>
+{{/isAdmin}}
+{{^isAdmin}}
+  You need to be an administrator of the current app to view this component
+{{/isAdmin}}

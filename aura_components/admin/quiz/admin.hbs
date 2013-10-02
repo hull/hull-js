@@ -1,9 +1,14 @@
-<div class="hull-quiz_admin">
-  {{#if quiz}}
-    {{> admin/quiz/form}}
-  {{/if}}
+{{#isAdmin}}
+  <div class="hull-quiz_admin">
+    {{#if quiz}}
+      {{> admin/quiz/form}}
+    {{/if}}
 
-  {{#unless quiz}}
-    {{> admin/quiz/list}}
-  {{/unless}}
-</div>
+    {{#unless quiz}}
+      {{> admin/quiz/list}}
+    {{/unless}}
+  </div>
+{{/isAdmin}}
+{{^isAdmin}}
+  You need to be an administrator of the current app to view this component
+{{/isAdmin}}

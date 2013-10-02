@@ -1,8 +1,5 @@
-<div class='quizzes_list'>
-  <div class="page-header">
-    <h3>Quizzes for app {{app.name}}</h3>
-  </div>
-
+<div class="well">
+  <h2>Quizzes for <strong>{{app.name}}</strong></h2>
   <ul>
     {{#quizzes}}
       <li>
@@ -12,16 +9,20 @@
         </a>
       </li>
     {{/quizzes}}
+    {{^quizzes}}
+      <li>No quizzes defined</li>
+    {{/quizzes}}
   </ul>
 </div>
-
-<form>
-  <fieldset>
-    <legend>Create a new quiz</legend>
-
-    <label>Quiz JSON data:</label>
-    <textarea data-hull-item="quiz-json" rows="5" placeholder="Enter your JSON here"></textarea>
-
-    <button data-hull-action="create" class="btn hull-btn">Import</button>
-  </fieldset>
-</form>
+<div class="well">
+  <h2>Create a new quiz</h2>
+  <form>
+    <fieldset>
+      <label>Quiz JSON data:</label>
+      <textarea data-hull-item="quiz-json" class='input-block-level' rows="5" placeholder="Enter your JSON here"></textarea>
+      <div class="form-actions">
+        <button data-hull-action="create" class="btn btn-primary">Create</button>
+      </div>
+    </fieldset>
+  </form>
+</div>

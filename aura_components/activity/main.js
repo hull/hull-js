@@ -165,6 +165,7 @@ Hull.component({
     data.map = this.map;
     data.isPaged = (this.options.navigation === 'paged');
     data.query = this.query;
+    console.log(data);
     return data;
   }
 });
