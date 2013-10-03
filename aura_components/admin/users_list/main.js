@@ -4,7 +4,7 @@
  * 
  * Access to this component is limited to the administrators, you will need to be logged in to your admin on hullapp.io to access data.
  *
- * @name User List
+ * @name Users List
  * @template {users}     Displays the list of the users.
  * @template {forbidden} A message to be displayed when the credentials don't allow access to the data
  * @datasource {users} The list of users (Only readable by admins)
