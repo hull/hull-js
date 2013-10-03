@@ -1,0 +1,9 @@
+{{#if conversation.participants}}
+  <ul class="unstyled">
+    {{#conversation.participants}}
+    <li>
+      <img data-toggle="tooltip" title="{{name}}" class="img-rounded" src="{{picture}}" alt="{{name}}" width="36" height="36">
+    </li>
+    {{/conversation.participants}}
+  </ul>
+{{/if}}

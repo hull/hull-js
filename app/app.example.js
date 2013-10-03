@@ -5,8 +5,8 @@ Hull.init({
   jsUrl: 'http://your.local.dev/'
   name: "name your app",
   debug: true,
-  widgets: {
-    sources: { 'default' : 'widgets/' }
+  components: {
+    sources: { 'default' : 'components/' }
   }
   */
 });

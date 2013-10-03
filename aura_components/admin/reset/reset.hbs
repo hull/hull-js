@@ -1,0 +1,61 @@
+{{#isAdmin}}
+  <div class="well">
+    <h2>Reset Entities</h2>
+    <ul class="nav nav-tabs nav-stacked list list-user">
+      {{#entities}}
+        <li data-hull-id="{{id}}">
+          <a>
+            <div class="media-body">
+              <div class="pull-right">
+                <button class="btn btn-mini" data-hull-action="delete" data-hull-id="{{id}}"><i class='icon-trash'></i> Entity</button>
+                {{#relations}}
+                  {{#if count}}
+                  <button class="btn btn-mini" data-hull-action="delete" data-hull-id="{{../id}}" data-hull-target="{{name}}"><i class='icon-trash'></i> {{count}} {{humanize name}}</button>
+                  {{/if}}
+                {{/relations}}
+              </div>
+              {{#if name}}
+                <h5 class='media-heading'>
+                  {{name}}
+                </h5>
+              {{/if}}
+              {{#if description}}<small> {{description}}</small>{{/if}}
+              <p><strong>UID: </strong>{{uid}}</p>
+            </div>
+          </a>
+        </li>
+      {{/entities}}
+    </ul>
+  </div>
+
+  <div class="well">
+    <h2>Activities</h2>
+    <ul class="nav nav-tabs nav-stacked list list-user">
+      {{#activities}}
+        <li data-hull-id="{{id}}">
+          <a>
+            <div class="media">
+               {{#if actor.picture}}
+                <div class="pull-left">
+                  <img src="{{actor.picture}}" width="50" height="50"/>
+                </div>
+              {{/if}}
+              <div class="pull-right">
+                <button class="btn btn-mini" data-hull-action="delete" data-hull-id="{{id}}"><i class='icon-trash'></i> Activity</button>
+              </div>
+              <div class="media-body">
+                <h5 class="media-heading">
+                  {{content}}
+                  <small> by {{actor.name}}</small>
+                </h5>
+              </div>
+            </div>
+          </a>
+        </li>
+      {{/activities}}
+    </ul>
+  </div>
+{{/isAdmin}}
+{{^isAdmin}}
+  You need to be an administrator of the current app to view this component
+{{/isAdmin}}

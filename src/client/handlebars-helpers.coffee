@@ -1,7 +1,6 @@
 define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars'], (moment, _,utils, Handlebars)->
 
   (app)->
-
     __seq = new Date().getTime()
 
     HandlebarsHelpers = {}
@@ -48,6 +47,23 @@ define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars'], (mo
     HandlebarsHelpers.fromNow = (date)->
       return unless date?
       moment(date).fromNow()
+
+    ###*
+     * Auto-links URLs in text.
+     * Uses [twitter-text.js](https://github.com/twitter/twitter-text-js) behind the scenes.
+     * 
+     *     snippet="You have to try http://hull.io/try"
+     *
+     * 
+     *     <p class='content'>{{autoLink snippet}}</p>
+     *     => <p class='content'>You have to try <a href="http://hull.io/try">http://hull.io/try</a></p>
+     *
+     * @param  {String} date The content
+     * @return {String}      The content with clickable URLs
+    ###
+    HandlebarsHelpers.autoLink = (content)->
+      return unless content?
+      twttr.txt.autoLink(content)
 
     ###*
      * Return a formatted date
@@ -340,6 +356,22 @@ define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars'], (mo
     HandlebarsHelpers.outputIf = (obj, compare, output='', fallback='')->
         if obj == compare then output else fallback;
 
+    ###*
+     * write a value or a fallback if the value is falsy
+     *
+     *      foo='bar'
+     *
+     *      1. {{outputIf foo 'bar'}}
+     *      2. {{outputIf foo 'baz' 'checked'}}
+     *
+     *      =>
+     *      1.
+     *      2. 'checked'
+    ###
+
+    HandlebarsHelpers.fallback = (obj, fb)->
+      if (obj) then obj else fb
+
 
     ###*
      * Maps an activity stream to english actions, with fallbacks from a hash
@@ -385,5 +417,24 @@ define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars'], (mo
     HandlebarsHelpers.to_s = (object)->
         return '' unless object?
         object.name||object.title||object.uid||object.description||object
+
+    ###*
+     * prune {{ prune string 140 "more..." }}
+     * Elegant version of truncate. Makes sure the pruned string
+     * does not exceed the original length.
+     * Avoid half-chopped words when truncating.
+    ###
+    HandlebarsHelpers.prune = (string, length, pruneString)->
+      _.str.prune string, length, pruneString
+
+
+    ###*
+     * truncate {{ truncate string 140 "more..." }}
+     * truncate string to a max number of character
+     * optional truncateString argument
+    ###
+    HandlebarsHelpers.truncate = (string, length, truncateString)->
+      _.str.truncate string, length, truncateString
+
 
     Handlebars.registerHelper(k, v) for k,v of HandlebarsHelpers

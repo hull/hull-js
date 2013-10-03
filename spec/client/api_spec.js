@@ -46,7 +46,7 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
 
   define('easyXDM', function () { return easyXDMMock; });
 
-  describe("API specs", function () {
+  xdescribe("API specs", function () {
     var env, api, batch, app = aura(config);
 
     var extension = {
@@ -61,11 +61,10 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
       .use(extension)
       .use('lib/client/api');
 
-    var initStatus = app.start();
-    before(function (done) {
-      initStatus.then(function () {
-        api = env.createSandbox().data.api;
-        batch = env.createSandbox().data.api.batch;
+    before(function(done) {
+      app.start().then(function () {
+        api = app.sandboxes.create().data.api;
+        batch = api.batch;
         done();
       });
     });
