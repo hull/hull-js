@@ -53,7 +53,7 @@ define(function () {
         hullbase.component('c2', definition).should.equal(definition);
       });
 
-      describe('the associated module', function () {
+      xdescribe('the associated module', function () {
         it("should be defined in the default component source", function (done) {
           var definedModule = hullbase.component("w2", {});
           require(['__component__$w2@default'], function (mod) {
@@ -75,7 +75,7 @@ define(function () {
     // When the errback is not provided, an exception is thrown, supposed to be uncaught.
     // But as we are backed by requireJS, it catches it and redisplays it nicely
     // That's not a bad situation after all
-    describe("Initializing the application", function () {
+    xdescribe("Initializing the application", function () {
 
       var spy = sinon.spy();
       var libHullMock = function (conf, cb, errb) {
