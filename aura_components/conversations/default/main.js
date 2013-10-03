@@ -4,7 +4,7 @@
  * @name Default
  * @param {String} id/uid Required Converation subject identifier
  * @datasource {conversations} List of conversations
- * @example <div data-hull-component="conversations/default@hull" data-hull-id="OBJECT_ID"></div>
+ * @example <div data-hull-component="conversations/default@hull" data-hull-id="app"></div>
  */
 Hull.component({
   templates: ['default'],
@@ -33,7 +33,7 @@ Hull.component({
         name: this.options.conversationName,
         description: this.options.description
       }
-      this.api(this.id + '/conversations', 'post', attrs).then(_.bind(function(convo) {
+      this.api(this.id + '/conversations', 'post', attrs).then(this.sandbox.util_.bind(function(convo) {
         self.conversationId = convo.id;
         this.render();
       }, this));
