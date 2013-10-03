@@ -11,9 +11,17 @@
         <h5 class="media-heading">
           {{to_s actor}} {{activity ../map this}} {{to_s target}}
         </h5>
-        {{#ifEqual object.type "image"}}
-          <img src="{{imageUrl object.id "original"}}"/>
-        {{/ifEqual}}
+        {{#object}}
+          {{#ifEqual type "image"}}
+            <img src="{{imageUrl id "original"}}"/>
+          {{/ifEqual}}
+          {{#ifEqual type "comment"}}
+            <p>{{description}}</p>
+          {{/ifEqual}}
+          {{#ifEqual type "review"}}
+            <p> <span class="label">{{rating}}</span> {{description}}</p>
+          {{/ifEqual}}
+        {{/object}}
         <p class="muted">{{fromNow published}}</p>
       </div>
       </div>

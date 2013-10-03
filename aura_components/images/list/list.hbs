@@ -1,0 +1,31 @@
+{{#unless authorized.provider}}
+    <small>You need to sign in.</small>
+    <div data-hull-component="login/button@hull" data-hull-provider="{{authorized.provider_name}}"></div>
+{{else}}
+  {{#unless authorized.permissions}}
+    You need to give permissions to show these images.
+    <a class='btn' data-hull-action="authorize">Authorize</a>
+  {{else}}
+    <div class="hull-images">
+      {{#if images}}
+        <ul class="media-list">
+          {{#each images}}
+            <li class="media">
+              <a class="pull-left" href="#">
+                <img src="{{picture}}" alt="{{name}}" class='media-object'>
+              </a>
+              <div class="media-body">
+                <h4 class="media-heading">{{name}}</h4>
+              </div>
+            </li>
+          {{/each}}
+        </ul>
+      {{else}}
+        <div class="alert">
+          <p>No images for the moment.</p>
+        </div>
+      {{/if}}
+    </div>
+  {{/unless}}
+{{/unless}}
+

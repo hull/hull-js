@@ -1,29 +1,15 @@
 /**
- * ## Conversation Participants
  * List the current participants of a conversation, and allow users to follow/unfollow it
  *
- * ## Example
- *
- *     <div data-hull-component="conversation/participants@hull" data-hull-id="OBJECT_ID"></div>
- *
- * ## Option:
- *
- * - `id`: Required, The id of the conversation object
- *
- * ## Template:
- *
- * - `participants`: List of current participants a given conversation
- *
- * ## Datasource:
- *
- * - `conversation`: The conversation
- *
- * ## Action:
- *
- * - `follow`: Join/follow the current conversation
+ * @name Participants
+ * @param {String} id Required The conversation object - This must a conversation ID. Use the '/UID/conversations' api call to get conversation IDs for an entity or hull object.
+ * @param {Boolean} focus Optional Focus after render
+ * @datasource {conversations} A conversation
+ * @example <div data-hull-component="conversations/participants@hull" data-hull-id="5244ae9448e9c141de000015"></div>
+ * @example <div data-hull-component="conversations/participants@hull" data-hull-id="OBJECT_ID"></div>
  */
 
-Hull.define({
+Hull.component({
   type: 'Hull',
 
   templates: ['participants'],
@@ -55,10 +41,21 @@ Hull.define({
   follow: function (e/*, data*/) {
     "use strict";
     e.preventDefault();
+    this.update('put');
+  },
 
-    this.api(this.options.id + '/participants', 'put').then(this.sandbox.util._.bind(function() {
+  unfollow: function (e/*, data*/) {
+    "use strict";
+    e.preventDefault();
+    this.update('delete');
+  },
+
+  update: function(method){
+    this.api(this.options.id + '/participants', method).then(this.sandbox.util._.bind(function() {
       this.focusAfterRender = true;
       this.render();
     }, this));
+
   }
+
 });

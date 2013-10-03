@@ -1,5 +1,3 @@
-<div class="hull-conversation-default">
-  {{#if conversationId}}
-    <div class="span10" data-hull-component="conversation/thread@hull" data-hull-provider="hull" data-hull-id="{{conversationId}}" data-hull-order="desc"></div>
-  {{/if}}
-</div>
+{{#if conversationId}}
+  <div data-hull-component="conversations/thread@hull" data-hull-provider="hull" data-hull-id="{{conversationId}}" data-hull-order="desc"></div>
+{{/if}}

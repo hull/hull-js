@@ -8,7 +8,7 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
   #Compiles the template depending on its definition
   setupTemplate = (tplSrc, tplName) ->
     engine = module.templateEngine
-    tplName = tplName.replace(/\//g,'.',)
+    # tplName = tplName.replace(/\//g,'.',)
     if (_.isFunction(tplSrc))
       compiled = engine.template tplSrc
     else

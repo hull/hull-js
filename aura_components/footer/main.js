@@ -1,25 +1,14 @@
 /**
- * ## Hull Footer
+ * Shows a 'built with hull' element
  *
- * Shows a footer at the bottom of your page.
- *
- * ### Templates
- *
- * - `footer`: The main template.
- *
- *
+ * @name Footer
+ * @example <div data-hull-component="footer@hull"></div>
  */
-Hull.define({
+Hull.component({
 
-  type: "Hull",
-
-  datasources: {
-  },
-
+  type: 'Hull',
+  datasources: {},
   templates: ['footer'],
-
-
-  actions: {
-  }
+  actions: {}
 
 });

@@ -1,29 +1,15 @@
 /**
- * ## Conversations
- * List all conversations within this app
+ * List all conversations within the current app
  *
- * ## Examples
- *
- *     <div data-hull-component="conversations/list@hull"></div>
- *
- * ## Option:
- * - `visibility`: Optional, the visibility level
- *
- * ## Template:
- *
- * - `conversations`: Table of conversations
- *
- * ## Datasource:
- *
- * - `conversations`: List of all conversations
- *
- * ## Action:
- *
- * - `pickConvo`: Select a conversation.
+ * @name List
+ * @param {String} visibility Optional Visibility level (public/private/all)
+ * @param {String} id/uid     Optional Display list of conversations on this specific id/uid
+ * @datasource {conversations} List of conversations
+ * @example <div data-hull-component="conversations/list@hull"></div>
  */
 
 /*global define:true */
-Hull.define({
+Hull.component({
   type: 'Hull',
 
   templates: ['list'],

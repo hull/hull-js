@@ -23,17 +23,30 @@ Hull.noConflict = ->
   for name of _conflicts
     window[name] = _conflicts[name]
 
+Hull.define = define
+Hull.require = require
+
 Hull.component = Hull.widget = (componentName, componentDef) ->
+  unless componentDef
+    componentDef = componentName
+    componentName = null
   #Validates the name
-  throw 'A component must have a identifier' unless componentName
-  throw 'The component identifier must be a String' unless Object.prototype.toString.apply(componentName) == '[object String]'
+  if componentName and not Object.prototype.toString.apply(componentName) == '[object String]'
+    throw 'The component identifier must be a String'
 
   #Fetch the definition
   componentDef = componentDef() if Object.prototype.toString.apply(componentDef) == '[object Function]'
-  throw "The component #{componentName} must have a definition" unless Object.prototype.toString.apply(componentDef) == '[object Object]'
+  throw "A component must have a definition" unless Object.prototype.toString.apply(componentDef) == '[object Object]'
 
   componentDef.type ?= "Hull"
-  define("__component__$#{componentName}@default", componentDef)
+  Hull.define ['module'], (module)->
+    if componentName
+      [name, source] = componentName.split('@')
+      source ?= 'default'
+      computedName = "__component__$#{name}@#{source}"
+      throw "Mismatch in the names of the module" if computedName != module.id
+    Hull.define(module.id, componentDef)
+    componentDef
   return componentDef
 
 define ['lib/utils/version', 'underscore'], (version, _) ->

@@ -1,5 +1,4 @@
 /**
- * ## Activity feed
  *
  * Activity streams from the actions on your app.
  *
@@ -11,33 +10,24 @@
  * For now, you have to copy the code for this component and change it to fit it to your application.
  * We will make this easier in the future.
  *
- * ### Example
- *
- *     <div data-hull-component="activity@hull" data-hull-per-page="10"></div>
- *
- * ### Options
- *
- * - `navigation`: Optional, Choose between `infinite` or `paged` navigation. `infinite` by default.
- * - `per-page`: Optional, number of item to display per page. 10 by default.
- * - `start-page`: Optional, the first page that will be displayed. By default the first page will be retrieved. If you use `infinite` navigation and set `startPage` to another page, your user will not be able to see all items.
- * - `where`: Optional, a mongodb-formatted query. See the docs for more details
- * - `friends-only`: Optional, only show the activities for the user's friends
- * - `skip`: Optional, skip the n first results
- * - `limit`: Optional, only return n results
- * - `before`: Optional
- * - `object-type`: Optional, limit to a specific object type
- * - `where`: Optional, pipe in a mongo query
- * - `verb`: Optional, limit activities to a specific verb
- *
- * ### Template
- *
- * - `activity`: Display items or a message that say that there is no activity.
- *
- * ### Datasource
- *
- * - `activities`: The activity stream that will be displayed.
+ * @name Feed
+ * @param {String} navigation   Optional Choose between `infinite` or `paged` navigation. `infinite` by default.
+ * @param {String} per-page     Optional number of item to display per page. 10 by default.
+ * @param {String} start-page   Optional the first page that will be displayed. By default the first page will be retrieved. If you use `infinite` navigation and set `startPage` to another page, your user will not be able to see all items.
+ * @param {String} where        Optional a mongodb-formatted query. See the docs for more details
+ * @param {String} friends-only Optional only show the activities for the user's friends
+ * @param {String} skip         Optional skip the n first results
+ * @param {String} limit        Optional only return n results
+ * @param {String} before       Optional
+ * @param {String} object-type  Optional limit to a specific object type
+ * @param {Object} where        Optional pipe in a mongo query
+ * @param {String} verb         Optional limit activities to a specific verb
+ * @datasource {activities} The activity stream that will be displayed.
+ * @example <div data-hull-component="activity@hull" data-hull-per-page="10"></div>
+ * @example <div data-hull-component="activity@hull" data-hull-where='{"actor_id":"515d76f4d8ea9cd21c000022"}'></div>
  */
-Hull.define({
+
+Hull.component({
   type: 'Hull',
 
   templates: [
@@ -132,7 +122,6 @@ Hull.define({
 
   initialize: function() {
     var query = {};
-
     if (this.options.startPage) {
       query.page = this.options.startPage;
     } else {
@@ -176,6 +165,7 @@ Hull.define({
     data.map = this.map;
     data.isPaged = (this.options.navigation === 'paged');
     data.query = this.query;
+    console.log(data);
     return data;
   }
 });
