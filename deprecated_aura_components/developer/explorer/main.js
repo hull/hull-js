@@ -1,6 +1,7 @@
-Hull.component(['./prism'], {
+Hull.component({
   type: 'Hull',
   templates: ["explorer"],
+  require:['prism'],
   actions: {
     get: function() {
       var self = this;

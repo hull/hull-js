@@ -5,16 +5,12 @@
  * @name Playground Editor
  * @example <div data-hull-component="developer/playground_editor@hull"></div>
  */
-Hull.component('playground_editor',{
+Hull.component({
   type: 'Hull',
 
   templates: ['editor'],
 
-  require:{
-    paths:{
-      CodeMirror : 'codemirror-compressed'
-    }
-  },
+  require:['codemirror-compressed'],
 
   initialize: function() {
     if (typeof CodeMirror === 'undefined') {

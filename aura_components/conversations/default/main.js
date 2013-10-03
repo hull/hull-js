@@ -6,13 +6,10 @@
  * @datasource {conversations} List of conversations
  * @example <div data-hull-component="conversations/default@hull" data-hull-id="OBJECT_ID"></div>
  */
-Hull.component('default', {
+Hull.component({
   templates: ['default'],
 
   refreshEvents: ['model.hull.me.change'],
-
-  actions: {
-  },
 
   options: {
     focus: false
