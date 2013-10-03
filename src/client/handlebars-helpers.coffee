@@ -360,13 +360,14 @@ define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars'], (mo
      * write a value or a fallback if the value is falsy
      *
      *      foo='bar'
+     *      baz=0
      *
-     *      1. {{outputIf foo 'bar'}}
-     *      2. {{outputIf foo 'baz' 'checked'}}
+     *      1. {{fallback foo 'default_value'}}
+     *      2. {{fallback baz 'default_value'}}
      *
      *      =>
-     *      1.
-     *      2. 'checked'
+     *      1. 'bar'
+     *      2. 'default_value'
     ###
 
     HandlebarsHelpers.fallback = (obj, fb)->
