@@ -8,7 +8,7 @@
  * @datasource {entities}   Entities for the current App
  * @datasource {activities} Activity feed entries for the current App 
  * @template {reset} List the entities and shows delete buttons 
- * @example <div data-hull-component="admin/entities@hull"></div>
+ * @example <div data-hull-component="admin/reset@hull"></div>
  */
 
 Hull.component({
