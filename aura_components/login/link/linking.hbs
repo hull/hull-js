@@ -30,7 +30,6 @@
   {{#authServices}}
   {{#if availableAction}}
   <li>
-    <p>
     <button data-hull-action="{{availableAction}}" data-hull-provider="{{name}}" class="btn btn-small {{#if identity}}btn-success{{/if}}">
       <i class="icon-{{name}}"></i>
       {{classify actionName}}
@@ -38,7 +37,6 @@
       {{classify name}}
       account
     </button>
-    </p>
   </li>
   {{/if}}
   {{/authServices}}
