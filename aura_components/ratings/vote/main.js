@@ -1,5 +1,5 @@
 /**
- * 
+ *
  * Shows a up/down-vote system.
  * It also shows the number of votes the object has.
  *
@@ -21,7 +21,9 @@ Hull.component({
 
   datasources: {
     myVote: function() {
-      return this.myInitialVote || this.api(this.options.id + "/reviews/me");
+      if (this.loggedIn()) {
+        return this.myInitialVote || this.api(this.options.id + "/reviews/me");
+      }
     }
   },
 
