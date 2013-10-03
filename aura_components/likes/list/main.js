@@ -7,8 +7,10 @@
  * @datasource {target}     The object.
  * @datasource {likes}      The likers for the object
  * @template {list} Shows the faces of all users who liked the object
+ * @example <div data-hull-component="likes/list@hull" data-hull-uid="http://hull.io"></div>
+ * @example <div data-hull-component="likes/list@hull" data-hull-id="app"></div>
  * @example <div data-hull-component="likes/list@hull" data-hull-id="HULL_ID"></div>
- * @example <div data-hull-component="likes/list@hull" data-hull-id="YOUR_UNIQUE_ID"></div>
+ * @example <div data-hull-component="likes/list@hull" data-hull-uid="YOUR_UNIQUE_ID"></div>
  * @example <div data-hull-component="likes/list@hull" data-hull-id="ANY_URL"></div>
  */
 
@@ -16,16 +18,10 @@ Hull.component({
   type: 'Hull',
 
   templates: ["list"],
-  refreshEvents: ['hull.like.**'],
+  refreshEvents: ['hull.likes.change.**'],
 
   datasources: {
     target: ':id',
     likes: ':id/likes'
-  },
-  options: {
-    id: 'me'
-  },
-  initialize: function () {
-    this.actions.do();
   }
 });

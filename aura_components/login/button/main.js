@@ -2,7 +2,7 @@
  * Allow users to log in with auth services that you have hooked on your app.
  * For a more complete component, look at the Identity component.
  *
- * @name Login button
+ * @name Button
  * @param {String} provider Optional. One or more providers to log users in. If none specified, will show all configured providers for the app.
  * @example <div data-hull-component="login/button@hull"></div>
  * @example <div data-hull-component="login/button@hull" data-hull-provider="instagram"></div>

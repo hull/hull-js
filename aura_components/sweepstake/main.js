@@ -23,7 +23,7 @@
  * @datasource {achievement} The sweepstake achievement.
  * @datasource {badge}       The user's badge for the sweepstake.
  * @tracking {start} Sweepstake Started
- * @example <div data-hull-component="sweepstake@hull"  data-hull-id="SWEEPSTAKE_ID"></div>
+ * @example <div data-hull-component="sweepstake@hull"  data-hull-id="5134cd06c4748aba2400003c"></div>
  */
 
 Hull.component({

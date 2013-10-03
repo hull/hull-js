@@ -11,11 +11,11 @@
  * @param {String} id The id of the quiz you want to display
  * @template {intro}    Show the title and the description of the quiz. And secondarily the identity component if the user is not connected..
  * @template {question} Show a question and its answers.
- * @template {answer}   A partial template used in the `quiz_question` template. It shows the name and the description of the answer.
+ * @template {answer}   A partial template used in the `question` template. It shows the name and the description of the answer.
  * @template {finished} Say to the user that the quiz is finish.
  * @template {result}   Show to the user his score.
  * @datasource {quiz} A collection of all the questions and their possible answers.
- * @example <div data-hull-component="quiz@hull"  data-hull-id="QUIZ_ID"></div>
+ * @example <div data-hull-component="quiz@hull"  data-hull-id="5130a76ed4384e508f000009"></div>
  */
 
 Hull.component({
@@ -57,7 +57,7 @@ Hull.component({
     if (!this.isInitialized) { this.track('init'); }
 
     if (data.me.id != this.currentUserId) {
-      this.template = "quiz_intro";
+      this.template = "intro";
       this.reset();
       return data;
     }

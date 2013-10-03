@@ -11,9 +11,10 @@
  * @datasource {target} Info on the object
  * @datasource {liked} Has the current user liked the object 
  * @template {button} The main template. Has 3 states: Unliked, Liked and Working
- * @example <div data-hull-component="like_button@hull" data-hull-id="HULL_ID"></div>
- * @example <div data-hull-component="like_button@hull" data-hull-id="YOUR_UNIQUE_ID"></div>
- * @example <div data-hull-component="like_button@hull" data-hull-id="ANY_URL"></div>
+ * @example <div data-hull-component="likes/button@hull" data-hull-uid="http://hull.io"></div>
+ * @example <div data-hull-component="likes/button@hull" data-hull-id="app"></div>
+ * @example <div data-hull-component="likes/button@hull" data-hull-id="YOUR_UNIQUE_ID"></div>
+ * @example <div data-hull-component="likes/button@hull" data-hull-id="ANY_URL"></div>
  */
 
 Hull.component({
@@ -25,7 +26,6 @@ Hull.component({
   working: false,
 
   datasources: {
-    // target: ':id',
     target: ":id",
     liked: function(){
       return this.api("me/liked/"+this.options.id);
@@ -49,7 +49,7 @@ Hull.component({
     return data;
   },
 
-  act: function(verb) {
+  act: function(verb,id) {
     if (this.working) {
       return;
     }
@@ -65,9 +65,9 @@ Hull.component({
 
     //Events should be emitted automatically here so the likes@hull component
     //can subscribe and refresh itself.
-    this.api(this.id + '/likes', method)
+    this.api(id + '/likes', method)
     .done(function(likes) {
-      self.sandbox.emit('hull.like.' + self.id);
+      self.sandbox.emit('hull.likes.change.'+verb+'.'+ id);
     }).fail(function(){
       (self.liked)? self.likes-- : self.likes++;
       self.liked=!self.liked;
@@ -79,11 +79,11 @@ Hull.component({
   },
 
   actions: {
-    like: function() {
-      this.act('like');
+    like: function(e,data) {
+      this.act('like',data.data.id);
     },
-    unlike: function() {
-      this.act('unlike');
+    unlike: function(e,data) {
+      this.act('unlike',data.data.id);
     }
   }
 

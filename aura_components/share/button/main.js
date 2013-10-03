@@ -4,7 +4,7 @@
  *
  * @name Button
  * @param {String} provider Provider to use (facebook/twitter...)
- * @example <div data-hull-component="share/button@hull"></div>
+ * @example <div data-hull-component="share/button@hull" data-hull-label='Share hull' data-hull-text="Hull.io, an open platform for social apps" data-hull-url="http://hull.io"></div>
  */
 Hull.component({
   type: 'Hull',

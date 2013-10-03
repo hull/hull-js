@@ -30,7 +30,7 @@
   {{#if loggedOut}}
     <div class="hull-identity__signin">
       {{#loggedOut}}
-        <button data-hull-action="login" data-hull-provider="{{.}}" class="btn btn-{{.}}">
+        <button data-hull-action="login" data-hull-provider="{{.}}" class="btn btn-small btn-{{.}}">
           <i class="icon-{{.}}"></i>
           Sign In with {{classify .}}
         </button>

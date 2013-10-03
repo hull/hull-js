@@ -1,7 +1,7 @@
 /**
  * Displays images belonging to a given user on a given service
  *
- * @name Images List
+ * @name List
  * @param {String} id       Optional The id of the user whose images we want to list. By default, it will list the images of the current user.
  * @param {String} format   Optional The format of the thumbnail you wish to get. Can be `thumb`, `square`, `small`, `medium`, `large`, `original`. Will map to the closest existing preset when used on external networks. Default:  `small`
  * @param {String} provider Optional Service from which we will fetch images. Can be `hull`, `instagram`, or `facebook`, by default it will list images from `hull`.
