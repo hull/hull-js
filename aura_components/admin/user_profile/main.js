@@ -3,9 +3,9 @@
  * Displays the profile of any user of your app.
  *
  * @name User profile
- * @example <div data-hull-component="admin/user_profile@hull"></div>
  * @template {user_profile} Displays detailed informations about the selected user.
  * @param {String} id The id of the user you want to display
+ * @example <div data-hull-component="admin/user_profile@hull"></div>
  *
  */
 Hull.component({
@@ -15,9 +15,14 @@ Hull.component({
     'user_profile'
   ],
 
+  options:{
+    id:'me'
+  },
+
   datasources: {
     user: function() {
-      if (this.user) { return this.api(this.user, { fields: 'user.profiles' }); }
+      var user = this.user || this.options.id;
+      if (user) { return this.api(user, { fields: 'user.profiles' }); }
     }
   },
 
