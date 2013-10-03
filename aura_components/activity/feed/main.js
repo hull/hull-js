@@ -30,9 +30,7 @@
 Hull.component({
   type: 'Hull',
 
-  templates: [
-    'activity'
-  ],
+  templates: ['feed'],
 
   options: {
     perPage: 10,
