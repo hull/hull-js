@@ -1,12 +1,19 @@
 /**
- * ## Reset component
+ * 
+ * 
+ * List and delete entities, their associated comments, likes, reviews, and activity feed entries.
  *
- * This component lets you delete entities, their associated comments, likes, reviews, and activity feed entries.
- *
+ * @name Reset
+ * @param {String} relations Optional, Type of objects to fetch for the listed entities (default: comments, likes, reviews)
+ * @datasource {entities}   Entities for the current App
+ * @datasource {activities} Activity feed entries for the current App 
+ * @template {reset} List the entities and shows delete buttons 
+ * @example <div data-hull-component="admin/reset@hull"></div>
  */
-Hull.define({
 
-  type: "Hull",
+Hull.component({
+
+  type: 'Hull',
 
   datasources: {
     entities: 'app/entities',

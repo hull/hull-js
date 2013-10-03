@@ -1,22 +1,17 @@
 /**
- * ## Quiz Admin
+ * 
+ * Create and edit quizzes.
  *
- * This component allows you to edit and add quizzes in your application.
- *
- * ### Templates
- *
- * - `admin`: The main template. It shows the list of your quizzes or the form to edit a quiz.
- * - `list'`: Show the list of your quizzes and a form to add new quizzes.
- * - `form'`: Show the form to edit a quiz.
- *
- * ### Datasources
- *
- * - `quiz`: The collection of all the quizzes available in the application.
- *
+ * @name Quiz
+ * @template {admin} The main template. It shows the list of your quizzes or the form to edit a quiz.
+ * @template {list}  Show the list of your quizzes and a form to add new quizzes.
+ * @template {form}  Show the form to edit a quiz.
+ * @datasource {quizzes} The collection of all the quizzes available in the application.
+ * @example <div data-hull-component="admin/quiz@hull"></div>
  */
-Hull.define({
+Hull.component({
 
-  type: "Hull",
+  type: 'Hull',
 
   refreshEvents: ['model.hull.me.change'],
 

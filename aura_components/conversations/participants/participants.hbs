@@ -1,24 +1,22 @@
 {{#if errors.conversation}}
-<div class="alert alert-error">
-  Unable to retrieve the participants for this conversation
-</div>
+  <div class="alert alert-error">
+    Unable to retrieve the participants for this conversation
+  </div>
 {{else}}
-<div class="span4 offset1">
-  <div class="hull-participants__header">
-    <div class="row">
-      <h2 class="pull-left">Participants</h1>
-      {{#if conversation.public}}
-        {{#if isFollowing}}
-          <div class="btn btn-info pull-right">Following</div>
-        {{else}}
-          <div class="btn btn-info pull-right" data-hull-action="follow">Follow</div>
-        {{/if}}
+  
+  <div class="page-header">
+    {{#if conversation.public}}
+      {{#if isFollowing}}
+        <a href="#" class="link pull-right" data-hull-action="unfollow">Following</a>
+      {{else}}
+        <a href="#" class="link pull-right" data-hull-action="follow">Follow</a>
       {{/if}}
-    </div>
+    {{/if}}
+    <h2>{{conversation.name}}</h2>
   </div>
 
   {{#if conversation.participants}}
-    <ul class="media-list hull-participants__list">
+    <ul class="media-list">
       {{#conversation.participants}}
         <li class="media">
           <div class="pull-left">
@@ -31,5 +29,5 @@
       {{/conversation.participants}}
     </ul>
   {{/if}}
-</div>
+
 {{/if}}

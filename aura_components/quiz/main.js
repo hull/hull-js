@@ -1,40 +1,25 @@
 /**
- * ## Quiz
  *
+ * A complete Quiz engine.
+ * 
  * A quiz is a game in which the player attempts to find the answer to questions from multiple possible answers.
- *
- * To create a quiz, use the `quiz_admin` component in an admin page, which will let you create a new Quiz (which is a particular type of achievement).
+ * To create a quiz, use the `admin/quiz` component in an admin page, which will let you create a new Quiz (which is a particular type of achievement).
  *
  * Then use this quiz's ID as a parameter for your component.
  *
- * ### Example
- *
- *     <div data-hull-component="quiz@hull"  data-hull-id="QUIZ_ID"></div>
- *
- * ### Options
- *
- * - `id`: The id of the quiz you want to display
- *
- * ### Templates
- *
- * - `quiz_intro`: Show the title and the description of the quiz. And secondarily the identity component if the user is not connected..
- * - `quiz_question`: Show a question and its answers.
- * - `quiz_answer`: A partial template used in the `quiz_question` template. It shows the name and the description of the answer.
- * - `quiz_finished`: Say to the user that the quiz is finish.
- * - `quiz_result`: Show to the user his score.
- *
- * ### Datasources
- *
- * - `quiz`: A collection of all the questions and their possible answers.
- *
- * ### Actions
- *
- * - `login`: Triggered when the user logs in and call the `startQuiz` method.
- * - `submit`: Triggered when the user click on the submit button and push his score to the api.
- *
+ * @name Quiz
+ * @param {String} id The id of the quiz you want to display
+ * @template {intro}    Show the title and the description of the quiz. And secondarily the identity component if the user is not connected..
+ * @template {question} Show a question and its answers.
+ * @template {answer}   A partial template used in the `question` template. It shows the name and the description of the answer.
+ * @template {finished} Say to the user that the quiz is finish.
+ * @template {result}   Show to the user his score.
+ * @datasource {quiz} A collection of all the questions and their possible answers.
+ * @example <div data-hull-component="quiz@hull"  data-hull-id="5130a76ed4384e508f000009"></div>
  */
-Hull.define({
-  type: "Hull",
+
+Hull.component({
+  type: 'Hull',
 
   trackingData: function() {
     var data = { type: 'quiz' };
@@ -44,11 +29,11 @@ Hull.define({
   },
 
   templates: [
-    'quiz_intro',
-    'quiz_question',
-    'quiz_answer',
-    'quiz_finished',
-    'quiz_result'
+    'intro',
+    'question',
+    'answer',
+    'finished',
+    'result'
   ],
 
   answers: {},
@@ -72,7 +57,7 @@ Hull.define({
     if (!this.isInitialized) { this.track('init'); }
 
     if (data.me.id != this.currentUserId) {
-      this.template = "quiz_intro";
+      this.template = "intro";
       this.reset();
       return data;
     }
@@ -95,7 +80,7 @@ Hull.define({
     this.reset();
     this.startedAt = new Date();
     this.started = true;
-    this.render('quiz_question');
+    this.render('question');
   },
 
   reset: function() {
@@ -112,19 +97,19 @@ Hull.define({
       return tpl;
     }
     if (!this.loggedIn()) {
-      return "quiz_intro";
+      return "intro";
     } else if (this.submitted && data.result) {
-      return "quiz_result";
+      return "result";
     } else if (data.current) {
       if (data.current.question) {
-        return "quiz_question";
+        return "question";
       } else {
-        return "quiz_finished";
+        return "finished";
       }
     } else if (data.result) {
-      return "quiz_result";
+      return "result";
     }
-    return "quiz_intro";
+    return "intro";
   },
 
 
@@ -186,7 +171,7 @@ Hull.define({
     previous: function() {
       if (this.currentQuestionIndex > 0) {
         this.currentQuestionIndex -= 1;
-        this.render('quiz_question');
+        this.render('question');
       }
       return false;
     },
@@ -208,7 +193,7 @@ Hull.define({
         if (badge) {
           self.submitted = true;
           self.data.quiz.set('badge', badge);
-          self.render('quiz_result');
+          self.render('result');
           self.track('finish', { score: badge.data.score, timing: badge.data.timing });
         } else {
           console.warn("Bah alors ? mon badge ?", badge);
