@@ -7,8 +7,9 @@
  * @param {String} focus  Optional Auto-Focus on the input field. default: false.
  * @datasource {comments} Collection of all the comments made on the object.
  * @action {comment} Submits a new comment.
- * @example <div data-hull-component="comments@hull" data-hull-id="HULL_OBJECT_ID"></div>
- * @example <div data-hull-component="comments@hull" data-hull-uid="http://path.to/my/url"></div>
+ * @example <div data-hull-component="comments/list@hull" data-hull-uid="http://hull.io"></div>
+ * @example <div data-hull-component="comments/list@hull" data-hull-id="510fa2394875372516000009"></div>
+ * @example <div data-hull-component="comments/list@hull" data-hull-id="app"></div>
  */
 
 Hull.component({

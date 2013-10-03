@@ -1,60 +1,37 @@
-<div class="hull-comments">
-  <div class="well hull-comments__form">
-    {{#if loggedIn}}
-      <form>
-        <div class='media'>
-          <div class="pull-left">
-            <img class="media-object img-rounded" src="{{me.picture}}" alt="{{me.name}}" width="70" height="70">
+<div data-hull-component="comments/box@hull" data-hull-id="{{options.id}}"></div>
+{{#if comments}}
+  <ul class="media-list hull-comments__list">
+    {{#comments}}
+      <li class="media" data-hull-comment-id="{{id}}">
+        <div class="pull-left">
+          <img class="media-object img-rounded" src="{{user.picture}}" alt="{{user.name}}" width="50" height="50">
+        </div>
+        <div class="media-body">
+          <div class="pull-right">
+            
           </div>
-          <div class="media-body">
-            <textarea name='description' class="input-block-level" rows="3" placeholder="Write something..."></textarea>
-            <button data-hull-action="comment" class="btn btn-primary">Post</button> as {{me.name}}
-            <div class='pull-right'>
-              <a href="#" data-hull-action="logout" class="link">Logout</a>
-            </div>
+          <h4 class="media-heading">{{user.name}} <small class="muted"> • {{fromNow updated_at}}</small></h4>
+          <div class="hull-comments__description">
+            {{description}}
+          </div>
+          <div class="hull-comments__actions">
+              {{#if isDeletable}}
+                <small>
+                  <a href="#" class='link' data-hull-action="delete" data-hull-id="{{id}}">Delete</a>
+                </small>
+              {{/if}}
+              <small>
+                <a href="#" class='link text-error' data-hull-action="flag" data-hull-id="{{id}}">Inappropriate?</a>
+              </small>
           </div>
         </div>
-      </form>
-    {{else}}
-      <div data-hull-component="login/button@hull"></div>
-    {{/if}}
+      </li>
+    {{/comments}}
+  </ul>
+{{/if}}
+
+{{^comments}}
+  <div class="alert alert-info">
+    No comments for the moment
   </div>
-
-
-  {{#if comments}}
-    <ul class="media-list hull-comments__list">
-      {{#comments}}
-        <li class="media" data-hull-comment-id="{{id}}">
-          <div class="pull-left">
-            <img class="media-object img-rounded" src="{{user.picture}}" alt="{{user.name}}" width="50" height="50">
-          </div>
-          <div class="media-body">
-            <div class="pull-right">
-              <small class="muted">{{fromNow updated_at}}</small>
-            </div>
-            <h4 class="media-heading">{{user.name}}</h4>
-            <div class="hull-comments__description">
-              {{description}}
-            </div>
-            <div class="hull-comments__actions">
-                {{#if isDeletable}}
-                  <small>
-                    <a href="#" class='link' data-hull-action="delete" data-hull-id="{{id}}">Delete</a>
-                  </small>
-                {{/if}}
-                <small>
-                  <a href="#" class='link text-error' data-hull-action="flag" data-hull-id="{{id}}">Inappropriate?</a>
-                </small>
-            </div>
-          </div>
-        </li>
-      {{/comments}}
-    </ul>
-  {{/if}}
-
-  {{^comments}}
-    <div class="alert alert-info">
-      oops... no comments for the moment
-    </div>
-  {{/comments}}
-</div>
+{{/comments}}
