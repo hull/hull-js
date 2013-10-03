@@ -5,11 +5,10 @@
  * Access to this component is limited to the administrators, you will need to be logged in to your admin on hullapp.io to access data.
  *
  * @name User List
- * @param {String} id The id of the app you want to see the users. Defaults to `app`, which is the current app
  * @template {users}     Displays the list of the users.
  * @template {forbidden} A message to be displayed when the credentials don't allow access to the data
  * @datasource {users} The list of users (Only readable by admins)
- * @example <div data-hull-component="admin/users_list@hull" app-id="app"></div>
+ * @example <div data-hull-component="admin/users_list@hull"></div>
  */
 
 Hull.component({
