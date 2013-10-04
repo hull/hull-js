@@ -16,13 +16,11 @@
     </div>
     <div class="media-body">
       <h4 class="media-heading">{{me.name}}</h4>
-      <div>
-        Logged in with {{#each loggedInProviders}}
-          <span class='provider'><i class="icon-{{this}}">
-            </i> {{capitalize this}}
-          </span>
-        {{/each}}
-      </div>
+      Logged in with {{#each loggedInProviders}}
+        <span class='provider'><i class="icon-{{this}}">
+          </i> {{capitalize this}}
+        </span>
+      {{/each}}
     </div>
   </div>
 
