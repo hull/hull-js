@@ -46,7 +46,7 @@ Hull.component({
 
   rate: function(rating) {
     rating = this.normalizeRating(rating);
-    this.api.post(this.id + '/reviews', { rating: rating }).done(this._.bind(function(res) {
+    this.api.post(this.options.id + '/reviews', { rating: rating }).done(this._.bind(function(res) {
       this.sandbox.emit('hull.ratings.rate.complete', res);
       this.render();
     }, this));
