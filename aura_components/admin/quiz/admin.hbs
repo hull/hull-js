@@ -1,14 +1,14 @@
-{{#isAdmin}}
-  <div class="hull-quiz_admin">
+<div class="row">
+  <ul class="span4">
+    {{#quizzes}}
+    <li data-hull-action="selectQuiz" data-hull-quiz-id="{{id}}"><a href="#">{{name}}</a></li>
+    {{/quizzes}}
+  </ul>
+  <div class="span8">
     {{#if quiz}}
       {{> admin/quiz/form}}
+    {{else}}
+      <h2 class="well">Select a quiz to start playing...</h2>
     {{/if}}
-
-    {{#unless quiz}}
-      {{> admin/quiz/list}}
-    {{/unless}}
   </div>
-{{/isAdmin}}
-{{^isAdmin}}
-  You need to be an administrator of the current app to view this component
-{{/isAdmin}}
+</div>

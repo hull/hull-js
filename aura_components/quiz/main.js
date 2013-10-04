@@ -1,7 +1,7 @@
 /**
  *
  * A complete Quiz engine.
- * 
+ *
  * A quiz is a game in which the player attempts to find the answer to questions from multiple possible answers.
  * To create a quiz, use the `admin/quiz` component in an admin page, which will let you create a new Quiz (which is a particular type of achievement).
  *
@@ -39,7 +39,8 @@ Hull.component({
   answers: {},
 
   datasources: {
-    quiz: ':id'
+    quiz: ':id',
+    badge: 'me/badges/:id'
   },
 
   initialize: function() {
@@ -68,7 +69,6 @@ Hull.component({
       data.questions        = this.getQuestions(data);
       data.current          = this.getCurrent(data);
     }
-
     return data;
   },
 
@@ -195,8 +195,6 @@ Hull.component({
           self.data.quiz.set('badge', badge);
           self.render('result');
           self.track('finish', { score: badge.data.score, timing: badge.data.timing });
-        } else {
-          console.warn("Bah alors ? mon badge ?", badge);
         }
       });
       return false;

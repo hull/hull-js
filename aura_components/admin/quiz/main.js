@@ -1,5 +1,5 @@
 /**
- * 
+ *
  * Create and edit quizzes.
  *
  * @name Quiz
@@ -12,86 +12,98 @@
 Hull.component({
 
   type: 'Hull',
+  templates : [ 'admin', 'form' ],
 
-  refreshEvents: ['model.hull.me.change'],
+  datasources : {
+    achievements : 'app/achievements'
+  },
 
-  datasources: {
-    quizzes: function() {
-      return this.api('app/achievements', {
-        where: {
-          _type: 'Quiz'
-        }
+  events: {
+    'submit form': 'submitQuiz'
+  },
+
+  actions : {
+    selectQuiz : function(event, action) {
+      var self = this,
+          quizId = action.data.quizId,
+          quiz = this.data.achievements.get(quizId);
+
+      if (this.currentQuiz) {
+        this.stopListening(this.currentQuiz);
+      }
+
+      if (quiz) {
+        this.options.quizId = quiz.id;
+        this.currentQuiz = quiz;
+        quiz.url = quiz.id;
+        this.listenTo(this.currentQuiz, 'change', function() {
+          console.warn("quiz changed ! --- re-rendering...", arguments);
+          self.render()
+        });
+        window.currentQuiz = this.currentQuiz;
+        this.render();
+      }
+    },
+
+    deleteQuestion: function(event, action) {
+      var self = this;
+      this.api(this.currentQuiz.id + "/questions/" + action.data.id, 'delete', function() {
+        self.render();
       });
+    },
+
+    addQuestion: function(event) {
+      event.preventDefault();
+      var questions = this.currentQuiz.get('questions') || [];
+      questions.push({ answers: [ {} ] });
+      this.currentQuiz.set({ questions: questions });
+    },
+
+    addAnswer: function(event, action) {
+      event.preventDefault();
+      var questions = this.currentQuiz.get('questions') || [];
+      questions.push({ answers: [ {} ] });
+      this.currentQuiz.set({ questions: questions });
     }
+
   },
 
-  templates: [
-    'admin',
-    'list',
-    'form'
-  ],
-
-  beforeRender: function(data) {
-    data.quiz = this.quiz;
-    if(this.quiz) {
-      data.quiz['json'] = JSON.stringify(this.quiz, null, 4);
-    }
+  submitQuiz: function(e) {
+    var self = this, _ = this.sandbox.util._;
+    e.preventDefault();
+    e.stopPropagation();
+    $form = $(e.target);
+    console.warn("Submit Form: ", $form.serializeArray());
+    var attrs = this.sandbox.dom.getFormData($form);
+    attrs.id = this.currentQuiz.id;
+    console.warn("A=====> ", attrs);
+    attrs.questions = _.map(attrs.questions, function(question, quid) {
+      question.answers = _.values(question.answers);
+      return question;
+    });
+    console.warn("Submit Quiz with: ", attrs);
+    this.currentQuiz.set(attrs);
+    // this.api(attrs.id, attrs, 'put', function() {
+    //   self.render();
+    // });
   },
 
-  actions: {
+  beforeRender : function(data) {
+    var filter = this.sandbox.util._.filter;
+    data.quizzes = filter(data.achievements, function(a) {
+      return a.type === 'quiz';
+    });
+    if (this.currentQuiz){
+      data.quiz = this.currentQuiz.toJSON();
+    }
 
-    edit: function(e, params) {
-      this.api(params.data.id, {}, function(data){
-        this.quiz = data;
-        this.render();
-      }.bind(this));
-      return false;
-    },
+  },
 
-    create: function(e) {
-      e.preventDefault();
-      var val = $('[data-hull-item="quiz-json"]').val().trim();
-      try {
-        var json = jQuery.parseJSON(val);
-        this.api('app/achievements', 'post', json, function(data){
-          this.quiz = data;
-          this.render();
-        }.bind(this));
-      } catch(e) {
-         alert('invalid json');
-      }
-    },
-
-    delete: function(e) {
-      if(window.confirm("Are you sure you want to delete this quiz?")) {
-        this.api(this.quiz.id, 'delete', {}, function(){
-          this.quiz = null;
-          this.render();
-        }.bind(this));
-      }
-      return false;
-    },
-
-    cancel: function() {
-      this.quiz = null;
-      this.render();
-      return false;
-    },
-
-    submit: function(e) {
-      // TODO
-      e.preventDefault();
-      var val = $('[data-hull-item="quiz-json"]').val().trim();
-      try {
-        var json = jQuery.parseJSON(val);
-        this.api(json.id, 'put', json, function(data){
-          this.quiz = null;
-        this.render();
-        }.bind(this));
-      } catch(e) {
-         alert('invalid json');
-      }
+  afterRender : function() {
+    if (this.options.quizId) {
+      this.$find('[data-hull-quiz-id="' + this.options.quizId + '"]').addClass('active');
     }
   }
-
 });
+
+

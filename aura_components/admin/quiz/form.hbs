@@ -1,32 +1,52 @@
-<form id="hull-quiz_admin__form" class="hull-form hull-quiz_admin__form">
+<h1>{{quiz.name}}</h1>
+<p>{{quiz.description}}</p>
 
-  <div class="hull-quiz_admin__header">
-    <h1 class="hull-quiz_admin__title">
-      {{quiz.name}}
-    </h1>
-    <p class="hull-quiz_admin__description">
-      {{quiz.description}}
-    </p>
-    <div class="hull-quiz_admin__help">
-      <h3 class="hull-quiz_admin__title">Paste this in your page to instantiate your quiz.</h3>
-      <pre class="hull-quiz_admin__code">&lt;!-- Quiz:  {{quiz.name}} --&gt;
-    &lt;div data-hull-component=&quot;quiz@hull&quot; data-hull-id=&quot;{{quiz.id}}&quot;&gt;&lt;/div&gt;</pre>
-    </div>
-  </div>
+{{#quiz}}
+<form class="form">
+  <fieldset>
+    <input type="text" class="input-block-level" name="name" value="{{name}}" placeholder="Name" />
+    <textarea class="input-block-level" placeholder="Description">{{description}}</textarea>
+  </fieldset>
 
-
-  <form>
-    <fieldset>
-      <legend>Edit your quiz</legend>
-      <label for="hull-quiz-json" class="hull-form__label">JSON data:</label>
-      <textarea data-hull-item="quiz-json" rows="20" placeholder="Enter your JSON here">{{quiz.json}}</textarea>
-
-      <button data-hull-action="submit" class="btn btn-primary hull-btn">Save</button>
-      <button data-hull-action="cancel" class="btn hull-btn">Cancel</button>
-      <button data-hull-action="delete" class="btn btn-danger hull-btn">Delete quiz</button>
-    </fieldset>
-
-  </form>
-
+  <ul class="unstyled">
+  {{#each questions}}
+  <li>
+    <h3>
+      <span class="pull-right">
+        <a class="btn btn-danger" data-hull-action="deleteQuestion" data-hull-id="{{id}}">
+          <i class="icon-trash"></i>
+          Delete
+        </a>
+      </span>
+      Question {{@index}}
+    </h3>
+    <input type="text" class="input-block-level" name="questions[{{../id}}-{{@index}}][name]" value="{{name}}" placeholder="Type a Question...">
+    <textarea class="input-block-level" name="questions[{{../id}}-{{@index}}][description]" placeholder="A Description for your Question">{{description}}</textarea>
+    <h5>Answers</h5>
+    <hr>
+    <ul class="unstyled">
+    {{#each answers}}
+      <li>
+        <input type="text" class="input-large" name="questions[{{@index}}][answers][{{@index}}][name]" value="{{name}}" placeholder="Type an Answer...">
+        <input type="text" class="input-small" name="questions[{{@index}}][answers][{{@index}}][weight]" value="{{weight}}" placeholder="Weight">
+      </li>
+    {{/each}}
+      <li>
+        <a data-hull-action="addAnswer" data-hull-question-id="{{../id}}" class="btn">
+          <i class="icon-plus"></i>
+          Add a Answer
+        </a>
+      </li>
+    </ul>
+  </li>
+  {{/each}}
+  <li>
+    <a data-hull-action="addQuestion" class="btn">
+      <i class="icon-plus"></i>
+      Add a Question
+    </a>
+  </li>
+</ul>
+<input type="submit" value="Submit" class="btn btn-primary btn-block" />
 </form>
-
+{{/quiz}}

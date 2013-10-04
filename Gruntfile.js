@@ -197,7 +197,7 @@ module.exports = function (grunt) {
         tasks: ['dist:api', 'do_test']
       },
       client: {
-        files: clientConfig.srcFiles,
+        files: [clientConfig.srcFiles, "aura-extensions/**/*.js"],
         tasks: ['dist:client', 'do_test']
       },
       spec: {
