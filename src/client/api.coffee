@@ -23,10 +23,6 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
         apiModule = apiModule(app.config)
         apiModule.then (obj)->
           core.data.api = api = obj.api
-          core.track = sandbox.track = (eventName, params)->
-            core.data.api({provider:"track", path: eventName}, 'post', params)
-          core.flag = sandbox.flag = (id)->
-            core.data.api({provider:"hull", path:[id, 'flag'].join('/')}, 'post')
 
           #
           #
