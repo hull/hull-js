@@ -15,7 +15,7 @@
  * @template {finished} Say to the user that the quiz is finish.
  * @template {result}   Show to the user his score.
  * @datasource {quiz} A collection of all the questions and their possible answers.
- * @example <div data-hull-component="quiz@hull"  data-hull-id="5130a76ed4384e508f000009"></div>
+ * @example <div data-hull-component="games/quiz@hull"  data-hull-id="5130a76ed4384e508f000009"></div>
  */
 
 Hull.component({
