@@ -1,6 +1,4 @@
 define ['underscore', 'lib/utils/promises'], (_, promises)->
-  onDataError = (datasourceName, err)->
-    console.log "An error occurred with datasource #{datasourceName}", err
   _dfd = promises.deferred
 
   class Context
@@ -11,7 +9,7 @@ define ['underscore', 'lib/utils/promises'], (_, promises)->
     add: (name, value)->
       @_context[name] = value
     addDatasource: (name, dsPromise, fallback)->
-      fallback = onDataError.bind(undefined, name) unless _.isFunction(fallback)
+      fallback = (->).bind(undefined, name) unless _.isFunction(fallback)
       dfd = _dfd()
       dsPromise.then (res)=>
         if _.isFunction res?.toJSON

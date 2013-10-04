@@ -1,4 +1,4 @@
-define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/context', 'lib/utils/promises'], ($, _, Datasource, Context, promises)->
+define ['jquery', 'underscore', 'lib/client/component/context', 'lib/utils/promises'], ($, _, Context, promises)->
 
   (app)->
     debug = false
@@ -7,8 +7,6 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
 
     decamelize = (camelCase)->
       camelCase.replace(/([A-Z])/g, '_' + '$1').toLowerCase()
-
-    default_datasources = {}
 
     actionHandler = (e)->
       try
@@ -48,8 +46,9 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
       constructor: (options)->
         @ref = options.ref
         @api = @sandbox.data.api
-        @datasources = _.extend {}, default_datasources, @datasources, options.datasources
-        @refresh ?= _.throttle(@render, 200)
+        @refresh ?= _.throttle ->
+          @invokeWithCallbacks 'render'
+        , 200
         @componentName = options.name
 
         for k, v of @options
@@ -72,10 +71,6 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
             @className = "hull-component"
             @className += " hull-#{@namespace}" if @namespace?
 
-          _.each @datasources, (ds, i)=>
-            ds = _.bind ds, @ if _.isFunction ds
-            @datasources[i] = new Datasource(ds, @api) unless ds instanceof Datasource
-
         catch e
           console.error("Error loading HullComponent", e.message)
         # Copy/Paste + adaptation of the Backbone.View constructor
@@ -85,7 +80,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
         @_ensureElement()
         @invokeWithCallbacks('initialize', options).then _.bind(->
           @delegateEvents()
-          @render()
+          @invokeWithCallbacks 'render'
           @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
         , @), (err)->
           # Already displays a log in Aura and is caught above
@@ -117,27 +112,15 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
         ctx.add 'renderCount', ++@_renderCount
 
         dfd = @sandbox.data.deferred()
-        datasourceErrors = {}
-        @data = {}
         try
-          keys = _.keys(@datasources)
-          promiseArray  = _.map keys, (k)=>
-            ds = @datasources[k]
-            ds.parse(_.extend({}, @, @options || {}))
-            handler = @["on#{_.string.capitalize(_.string.camelize(k))}Error"]
-            handler = _.bind(handler, @) if _.isFunction(handler)
-            ctx.addDatasource(k, ds.fetch(), handler).then (res)=>
-              @data[k] = res
-          componentDeferred = @sandbox.data.when.apply(undefined, promiseArray)
           templateDeferred = @sandbox.template.load(@templates, @ref, @el)
           templateDeferred.done (tpls)=>
             @_templates     = tpls
-          readyDfd = promises.when(componentDeferred, templateDeferred)
-          readyDfd.fail (err)=>
+          templateDeferred.fail (err)=>
             console.error("Error in Building Render Context", err.message, err)
             @renderError.call(@, err.message, err)
             dfd.reject err
-          readyDfd.done ()->
+          templateDeferred.done ()->
             dfd.resolve ctx
 
         catch e
@@ -164,7 +147,6 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
 
       afterRender: (data)=> data
 
-      # Build render context from datasources
       # Call beforeRender
       # doRender
       # afterRender
@@ -178,8 +160,9 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
             beforeCtx = @beforeRender.call(@, ctx.build(), ctx.errors())
             beforeRendering = promises.when(beforeCtx)
             beforeRendering.done (dataAfterBefore)=>
+              debugger
               #FIXME SRSLY need some clarification
-              data = _.extend(dataAfterBefore || ctx.build(), data)
+              data = _.extend(dataAfterBefore || ctx.build(), @data, data)
               @doRender(tpl, data)
               _.defer(@afterRender.bind(@, data))
               _.defer((-> @sandbox.start(@$el, { reset: true })).bind(@))
@@ -197,9 +180,5 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
         @sandbox.emit("hull.#{@componentName.replace('/','.')}.#{name}",{cid:@cid})
 
     (app)->
-      default_datasources =
-        me: new Datasource app.core.data.api.model('me')
-        app: new Datasource app.core.data.api.model('app')
-        org: new Datasource app.core.data.api.model('org')
       debug = app.config.debug
       app.components.addType("Hull", HullComponent.prototype)
