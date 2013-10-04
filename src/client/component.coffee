@@ -193,16 +193,8 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
             console.error("Error in beforeRender on ", this.options.name,  err.message, err)
             @renderError.call(@, err)
 
-      trackingData: {}
-
       emitLifecycleEvent: (name)->
         @sandbox.emit("hull.#{@componentName.replace('/','.')}.#{name}",{cid:@cid})
-
-      track: (name, data = {}) ->
-        defaultData = _.result(this, 'trackingData')
-        defaultData = if _.isObject(defaultData) then defaultData else {}
-        data = _.extend { id: @id, component: @options.name }, defaultData, data
-        @sandbox.track(name, data)
 
     (app)->
       default_datasources =
