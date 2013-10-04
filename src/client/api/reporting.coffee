@@ -1,4 +1,4 @@
-define ()->
+define ['underscore'], (_)->
   module = 
     track: ()->
       @track = (name, data = {}) ->
