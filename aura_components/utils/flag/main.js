@@ -5,10 +5,10 @@
  * @name Flag
  * @param {String} id/uid Required, The object you want to comment on.
  * @param {String} text Optional, allows to customize the message displayed as a confirmation for flagging
- * @example <div data-hull-component="object/flag@hull" data-hull-id="HULL_OBJECT_ID"></div>
  * @datasource {flaggedByMe} Indicates whether the object has been flagged by the current user ("me")
  * @template {main} Displays the flag button if the user os logged in
- * @example <div data-hull-component="object/flag@hull" data-hull-uid="YOUR_OBJECT_ID"></div>
+ * @example <div data-hull-component="utils/flag@hull" data-hull-id="app"></div>
+ * @example <div data-hull-component="utils/flag@hull" data-hull-uid="http://hull.io"></div>
  */
 
 Hull.component({
