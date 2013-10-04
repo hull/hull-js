@@ -11,18 +11,18 @@
       <img class="media-object img-rounded" src="{{me.picture}}" alt="{{me.name}}" width="70px" height="70px">
     </div>
     {{/if}}
+    <div class="pull-right">
+      <a data-hull-action="logout" class="btn"> Sign Out </a>
+    </div>
     <div class="media-body">
       <h4 class="media-heading">{{me.name}}</h4>
       <div>
-        logged in with {{#each loggedInProviders}}
+        Logged in with {{#each loggedInProviders}}
           <span class='provider'><i class="icon-{{this}}">
             </i> {{capitalize this}}
           </span>
         {{/each}}
-      </div>      
-      <a data-hull-action="logout" class="btn">
-        Sign Out
-      </a>
+      </div>
     </div>
   </div>
 
