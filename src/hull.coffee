@@ -50,7 +50,7 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
         .use('lib/client/api')
         .use('lib/client/templates')
         .use('lib/client/component')
-        .use('lib/api/reporting')
+        .use('lib/client/api/reporting')
         .use (app)->
           afterAppStart: (app)->
             window.Hull.parse = (el, options={})->
