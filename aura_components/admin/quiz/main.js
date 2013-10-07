@@ -89,13 +89,17 @@ Hull.component({
   },
 
   beforeRender : function(data) {
-    var filter = this.sandbox.util._.filter;
-    data.quizzes = filter(data.achievements, function(a) {
+    var _ = this.sandbox.util._;
+
+    data.quizzes = _.filter(data.achievements, function(a) {
       return a.type === 'quiz';
     });
 
     if (this.currentQuiz){
       data.quiz = this.currentQuiz.toJSON();
+      _.each(data.quiz.questions, function(q, i) {
+        _.each(q.answers, function(a) { a.questionIndex = i; });
+      });
     }
   },
 
