@@ -92,7 +92,8 @@ Hull.component({
 
     if (description && description.length > 0) {
       var attributes = { description: description };
-      this.api(this.options.id + '/comments', 'post', attributes).then(function() {
+      this.api(this.options.id + '/comments', 'post', attributes).then(function(comment) {
+        self.sandbox.emit('hull.comments.' + self.options.id + '.added', comment);
         self.toggleLoading();
         self.focusAfterRender = true;
         self.render();

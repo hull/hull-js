@@ -22,11 +22,19 @@ Hull.component({
   datasources: {
     myVote: function() {
       if (this.loggedIn()) {
+        console.warn("Fetching my Vote !");
         return this.myInitialVote || this.api(this.options.id + "/reviews/me");
       }
     }
   },
 
+
+  initialize: function() {
+    this.sandbox.on('hull.reviews.' + this.options.id + '.**', function() {
+      this.myInitialVote = null;
+      this.render();
+    }, this);
+  },
 
   beforeRender: function(data){
     "use strict";
@@ -62,6 +70,7 @@ Hull.component({
         description: description
       };
       this.api(this.options.id + '/reviews', 'post', d).then(function(res) {
+        self.sandbox.emit('hull.reviews.' + self.options.id + '.updated', res);
         self.updateVotesFromStats(res);
         self.render();
       });

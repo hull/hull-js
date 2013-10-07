@@ -1,35 +1,40 @@
-{{> comments/list/form}}
+{{> ratings/review/form}}
 
-{{#if comments}}
-  <ul class="media-list hull-comments__list">
-    {{#comments}}
+{{#if reviews}}
+  <ul class="media-list hull-reviews__list">
+    {{#reviews}}
       <li class="media" data-hull-comment-id="{{id}}">
         <div class="pull-left">
           <img class="media-object img-rounded" src="{{user.picture}}" alt="{{user.name}}" width="50" height="50">
         </div>
         <div class="media-body">
-          <h4 class="media-heading">{{user.name}} <small class="muted"> • {{fromNow updated_at}}</small></h4>
-          <div class="hull-comments__description">
+          <div class="pull-right">
+
+          </div>
+          <h4 class="media-heading">
+            <span class="pull-right badge">{{rating}}</span>
+            {{user.name}}
+            •
+            <small class="muted">{{fromNow updated_at}}</small>
+          </h4>
+          <div class="hull-reviews__description">
             {{description}}
           </div>
-          <div class="hull-comments__actions">
+          <div class="hull-reviews__actions">
               {{#if isDeletable}}
                 <small>
                   <a href="#" class='link' data-hull-action="delete" data-hull-id="{{id}}">Delete</a>
                 </small>
               {{/if}}
-              <small>
-                <a href="#" class='link text-error' data-hull-action="flag" data-hull-id="{{id}}">Inappropriate?</a>
-              </small>
           </div>
         </div>
       </li>
-    {{/comments}}
+    {{/reviews}}
   </ul>
 {{/if}}
 
-{{^comments}}
+{{^reviews}}
   <div class="alert alert-info">
-    No comments for the moment
+    No reviews for the moment
   </div>
-{{/comments}}
+{{/reviews}}
