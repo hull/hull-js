@@ -19,6 +19,8 @@ define(['chai', 'sinonChai'], function(chai, sinonChai) {
   window.notrack = true;
 
   var specs = [
+    'spec/aura-extensions/component-validate-options_spec',
+    'spec/aura-extensions/component-normalize-id_spec',
     'spec/lib/extensions/templates_spec',
     'spec/client/api_spec',
     'spec/lib/hullbase_spec',
@@ -27,7 +29,8 @@ define(['chai', 'sinonChai'], function(chai, sinonChai) {
     'spec/client/component_spec',
     'spec/client/component/context_spec',
     'spec/lib/extensions/auth_spec',
-    'spec/client/api/params_spec'
+    'spec/client/api/params_spec',
+    'spec/client/api/reporting_spec'
   ];
   require(specs, runMocha);
 

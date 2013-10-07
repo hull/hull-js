@@ -356,6 +356,23 @@ define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars'], (mo
     HandlebarsHelpers.outputIf = (obj, compare, output='', fallback='')->
         if obj == compare then output else fallback;
 
+    ###*
+     * write a value or a fallback if the value is falsy
+     *
+     *      foo='bar'
+     *      baz=0
+     *
+     *      1. {{fallback foo 'default_value'}}
+     *      2. {{fallback baz 'default_value'}}
+     *
+     *      =>
+     *      1. 'bar'
+     *      2. 'default_value'
+    ###
+
+    HandlebarsHelpers.fallback = (obj, fb)->
+      if (obj) then obj else fb
+
 
     ###*
      * Maps an activity stream to english actions, with fallbacks from a hash

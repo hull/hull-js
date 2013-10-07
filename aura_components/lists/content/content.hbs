@@ -1,0 +1,9 @@
+{{#if loggedIn}}
+  <ul class="nav nav-tabs nav-stacked">
+    {{#each items}}
+      <li>{{> lists/contents/item}}</li>
+    {{/each}}
+  </ul>
+{{else}}
+  <div data-hull-component="login/button@hull"></div>
+{{/if}}
