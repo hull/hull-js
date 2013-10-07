@@ -10,8 +10,6 @@
  * @example <div data-hull-component="admin/quiz@hull"></div>
  */
 Hull.component({
-
-  type: 'Hull',
   templates : [ 'admin', 'form' ],
 
   datasources : {
@@ -37,55 +35,57 @@ Hull.component({
         this.currentQuiz = quiz;
         quiz.url = quiz.id;
         this.listenTo(this.currentQuiz, 'change', function() {
-          console.warn("quiz changed ! --- re-rendering...", arguments);
-          self.render()
+          self.render();
         });
-        window.currentQuiz = this.currentQuiz;
+
         this.render();
       }
     },
 
-    deleteQuestion: function(event, action) {
-      var self = this;
-      this.api(this.currentQuiz.id + "/questions/" + action.data.id, 'delete', function() {
-        self.render();
-      });
-    },
+    addQuestion: function() {
+      this.changeForm();
 
-    addQuestion: function(event) {
-      event.preventDefault();
       var questions = this.currentQuiz.get('questions') || [];
-      questions.push({ answers: [ {} ] });
-      this.currentQuiz.set({ questions: questions });
+      questions.push(this.generateQuestion());
+      this.currentQuiz.set('questions', questions);
+
+      this.currentQuiz.trigger('change');
     },
 
     addAnswer: function(event, action) {
-      event.preventDefault();
-      var questions = this.currentQuiz.get('questions') || [];
-      questions.push({ answers: [ {} ] });
-      this.currentQuiz.set({ questions: questions });
-    }
+      this.changeForm();
 
+      var question = this.currentQuiz.get('questions')[action.data.questionIndex];
+      question.answers = question.answers || [];
+      question.answers.push(this.generateAnswer(action.data.questionIndex));
+
+      this.currentQuiz.trigger('change');
+    },
+
+    deleteQuestion: function(event, action) {
+      var questions = this.sandbox.util._.reject(this.currentQuiz.get('questions'), function(q, i) {
+        return i == action.data.questionIndex;
+      });
+
+      this.currentQuiz.set('questions', questions);
+    }
+  },
+
+  changeForm: function() {
+    var params = this.sandbox.dom.getFormData(this.$form);
+    this.currentQuiz.set(params);
+
+    return params;
   },
 
   submitQuiz: function(e) {
-    var self = this, _ = this.sandbox.util._;
     e.preventDefault();
-    e.stopPropagation();
-    $form = $(e.target);
-    console.warn("Submit Form: ", $form.serializeArray());
-    var attrs = this.sandbox.dom.getFormData($form);
-    attrs.id = this.currentQuiz.id;
-    console.warn("A=====> ", attrs);
-    attrs.questions = _.map(attrs.questions, function(question, quid) {
-      question.answers = _.values(question.answers);
-      return question;
-    });
-    console.warn("Submit Quiz with: ", attrs);
-    this.currentQuiz.set(attrs);
-    // this.api(attrs.id, attrs, 'put', function() {
-    //   self.render();
-    // });
+
+    var params = this.changeForm();
+
+    this.api(this.currentQuiz.id, params, 'put').then(this.sandbox.util._.bind(function() {
+      this.render();
+    }, this));
   },
 
   beforeRender : function(data) {
@@ -93,17 +93,25 @@ Hull.component({
     data.quizzes = filter(data.achievements, function(a) {
       return a.type === 'quiz';
     });
+
     if (this.currentQuiz){
       data.quiz = this.currentQuiz.toJSON();
     }
-
   },
 
   afterRender : function() {
     if (this.options.quizId) {
       this.$find('[data-hull-quiz-id="' + this.options.quizId + '"]').addClass('active');
     }
+
+    this.$form = this.$('.js-hull-quiz-form');
+  },
+
+  generateQuestion: function() {
+    return { answers: [] };
+  },
+
+  generateAnswer: function(index) {
+    return { questionIndex: index };
   }
 });
-
-

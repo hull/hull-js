@@ -2,7 +2,7 @@
 <p>{{quiz.description}}</p>
 
 {{#quiz}}
-<form class="form">
+<form class="form js-hull-quiz-form">
   <fieldset>
     <input type="text" class="input-block-level" name="name" value="{{name}}" placeholder="Name" />
     <textarea class="input-block-level" placeholder="Description">{{description}}</textarea>
@@ -13,26 +13,35 @@
   <li>
     <h3>
       <span class="pull-right">
-        <a class="btn btn-danger" data-hull-action="deleteQuestion" data-hull-id="{{id}}">
+        <a class="btn btn-danger" data-hull-action="deleteQuestion" data-hull-question-index="{{@index}}">
           <i class="icon-trash"></i>
           Delete
         </a>
       </span>
+
       Question {{@index}}
     </h3>
-    <input type="text" class="input-block-level" name="questions[{{../id}}-{{@index}}][name]" value="{{name}}" placeholder="Type a Question...">
-    <textarea class="input-block-level" name="questions[{{../id}}-{{@index}}][description]" placeholder="A Description for your Question">{{description}}</textarea>
+
+    <input type="text" class="input-block-level" name="questions[{{@index}}][ref]" value="{{ref}}" placeholder="Ref">
+    <input type="text" class="input-block-level" name="questions[{{@index}}][name]" value="{{name}}" placeholder="Type a Question...">
+
     <h5>Answers</h5>
+
     <hr>
+
     <ul class="unstyled">
     {{#each answers}}
       <li>
-        <input type="text" class="input-large" name="questions[{{@index}}][answers][{{@index}}][name]" value="{{name}}" placeholder="Type an Answer...">
-        <input type="text" class="input-small" name="questions[{{@index}}][answers][{{@index}}][weight]" value="{{weight}}" placeholder="Weight">
+        <input type="hidden" name="questions[{{questionIndex}}][answers][{{@index}}][questionIndex]" value="{{questionIndex}}">
+
+        <input type="text" class="input-large"
+        name="questions[{{questionIndex}}][answers][{{@index}}][ref]" value="{{ref}}" placeholder="Ref">
+        <input type="text" class="input-large" name="questions[{{questionIndex}}][answers][{{@index}}][name]" value="{{name}}" placeholder="Type an Answer...">
+        <input type="text" class="input-small" name="questions[{{questionIndex}}][answers][{{@index}}][weight]" value="{{weight}}" placeholder="Weight">
       </li>
     {{/each}}
       <li>
-        <a data-hull-action="addAnswer" data-hull-question-id="{{../id}}" class="btn">
+        <a data-hull-action="addAnswer" data-hull-question-index="{{@index}}" class="btn">
           <i class="icon-plus"></i>
           Add a Answer
         </a>
