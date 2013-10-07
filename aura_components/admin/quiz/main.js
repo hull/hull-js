@@ -22,18 +22,23 @@ Hull.component({
 
   actions : {
     selectQuiz : function(event, action) {
-      var self = this,
-          quizId = action.data.quizId,
-          quiz = this.data.achievements.get(quizId);
+      var Model = require('backbone').Model;
+
+      var quiz;
+      if (action.data.quizId != null) {
+        quiz = this.data.achievements.get(action.data.quizId);
+      } else {
+        quiz = new Model();
+      }
 
       if (this.currentQuiz) {
         this.stopListening(this.currentQuiz);
       }
 
       if (quiz) {
-        this.options.quizId = quiz.id;
         this.currentQuiz = quiz;
-        quiz.url = quiz.id;
+
+        var self = this;
         this.listenTo(this.currentQuiz, 'change', function() {
           self.render();
         });
@@ -82,8 +87,15 @@ Hull.component({
     e.preventDefault();
 
     var params = this.changeForm();
+    var request;
+    if (this.currentQuiz.isNew()) {
+      params.type = 'quiz';
+      request = this.api('app/achievements', params, 'post');
+    } else {
+      request = this.api(this.currentQuiz.id, params, 'put');
+    }
 
-    this.api(this.currentQuiz.id, params, 'put').then(this.sandbox.util._.bind(function() {
+    request.then(this.sandbox.util._.bind(function() {
       this.render();
       alert('Your quiz has been updated.');
     }, this));
@@ -101,6 +113,8 @@ Hull.component({
       _.each(data.quiz.questions, function(q, i) {
         _.each(q.answers, function(a) { a.questionIndex = i; });
       });
+
+      data.newQuiz = this.currentQuiz.isNew();
     }
   },
 

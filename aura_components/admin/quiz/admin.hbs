@@ -1,9 +1,14 @@
 <div class="row">
-  <ul class="span4">
-    {{#quizzes}}
-    <li data-hull-action="selectQuiz" data-hull-quiz-id="{{id}}"><a href="#">{{name}}</a></li>
-    {{/quizzes}}
-  </ul>
+  <div class="span4">
+    <ul>
+      {{#quizzes}}
+        <li data-hull-action="selectQuiz" data-hull-quiz-id="{{id}}"><a href="#">{{name}}</a></li>
+      {{/quizzes}}
+    </ul>
+
+    <button data-hull-action="selectQuiz" class="btn">Create a new Quiz</button>
+  </div>
+
   <div class="span8">
     {{#if quiz}}
       {{> admin/quiz/form}}
