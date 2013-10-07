@@ -217,19 +217,6 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
       });
     });
 
-    describe('Tracking API', function () {
-      it('proxies to the `track` provider', function () {
-        var orig = env.core.data.api;
-        var spy = env.core.data.api = sinon.spy();
-        env.core.track('test');
-        spy.should.have.been.called;
-        spy.args[0][0].should.have.keys(['provider', 'path']);
-        spy.args[0][0].provider.should.equal('track');
-        spy.args[0][0].path.should.equal('test');
-        spy.args[0][1].should.equal('post');
-        env.core.data.api = orig;
-      });
-    });
   });
 });
 

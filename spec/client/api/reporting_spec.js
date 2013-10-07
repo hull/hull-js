@@ -56,6 +56,15 @@ define(['lib/client/api/reporting'], function (module) {
         this.appMock.core.track();
         this.spy.should.have.been.called;
       });
+      it('proxies to the `track` provider', function () {
+        module.initialize(this.appMock);
+        this.appMock.core.track('test');
+        this.spy.should.have.been.called;
+        this.spy.args[0][0].should.have.keys(['provider', 'path']);
+        this.spy.args[0][0].provider.should.equal('track');
+        this.spy.args[0][0].path.should.equal('test');
+        this.spy.args[0][1].should.equal('post');
+      });
       it('should provide specific parameters', function () {
         module.initialize(this.appMock);
         var params = {'lots': 'of', 'great': 'stuff'};
