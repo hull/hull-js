@@ -114,7 +114,7 @@ Hull.component({
         _.each(q.answers, function(a) { a.questionIndex = i; });
       });
 
-      data.newQuiz = this.currentQuiz.isNew();
+      data.quiz.isNew = this.currentQuiz.isNew();
     }
   },
 
