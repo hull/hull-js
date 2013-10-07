@@ -11,6 +11,8 @@
   <ul class="unstyled">
   {{#each questions}}
   <li>
+    <hr />
+
     <h3>
       <span class="pull-right">
         <a class="btn btn-danger" data-hull-action="deleteQuestion" data-hull-question-index="{{@index}}">
@@ -22,22 +24,19 @@
       Question {{@index}}
     </h3>
 
-    <input type="text" class="input-block-level" name="questions[{{@index}}][ref]" value="{{ref}}" placeholder="Ref">
-    <input type="text" class="input-block-level" name="questions[{{@index}}][name]" value="{{name}}" placeholder="Type a Question...">
+    <input type="text" class="input-block-level" name="questions[{{@index}}][ref]" value="{{ref}}" placeholder="Ref" required="true">
+    <input type="text" class="input-block-level" name="questions[{{@index}}][name]" value="{{name}}" placeholder="Type a Question..." required="true">
 
     <h5>Answers</h5>
-
-    <hr>
 
     <ul class="unstyled">
     {{#each answers}}
       <li>
         <input type="hidden" name="questions[{{questionIndex}}][answers][{{@index}}][questionIndex]" value="{{questionIndex}}">
 
-        <input type="text" class="input-large"
-        name="questions[{{questionIndex}}][answers][{{@index}}][ref]" value="{{ref}}" placeholder="Ref">
-        <input type="text" class="input-large" name="questions[{{questionIndex}}][answers][{{@index}}][name]" value="{{name}}" placeholder="Type an Answer...">
-        <input type="text" class="input-small" name="questions[{{questionIndex}}][answers][{{@index}}][weight]" value="{{weight}}" placeholder="Weight">
+        <input type="text" class="input-small" name="questions[{{questionIndex}}][answers][{{@index}}][ref]" value="{{ref}}" placeholder="Ref" required="true">
+        <input type="text" class="input-large" name="questions[{{questionIndex}}][answers][{{@index}}][name]" value="{{name}}" placeholder="Type an Answer..." required="true">
+        <input type="text" class="input-small" name="questions[{{questionIndex}}][answers][{{@index}}][weight]" value="{{weight}}" placeholder="Weight" required="true" pattern="\d*">
       </li>
     {{/each}}
       <li>
@@ -49,13 +48,18 @@
     </ul>
   </li>
   {{/each}}
-  <li>
-    <a data-hull-action="addQuestion" class="btn">
-      <i class="icon-plus"></i>
-      Add a Question
-    </a>
-  </li>
 </ul>
+
+<hr />
+
+<a data-hull-action="addQuestion" class="btn">
+  <i class="icon-plus"></i>
+  Add a Question
+</a>
+
+<hr />
+
 <input type="submit" value="Submit" class="btn btn-primary btn-block" />
+
 </form>
 {{/quiz}}

@@ -85,6 +85,7 @@ Hull.component({
 
     this.api(this.currentQuiz.id, params, 'put').then(this.sandbox.util._.bind(function() {
       this.render();
+      alert('Your quiz has been updated.');
     }, this));
   },
 
