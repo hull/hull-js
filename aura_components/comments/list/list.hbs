@@ -1,4 +1,4 @@
-<div data-hull-component="comments/box@hull" data-hull-id="{{options.id}}"></div>
+{{> comments/list/form}}
 
 {{#if comments}}
   <ul class="media-list hull-comments__list">
@@ -9,7 +9,7 @@
         </div>
         <div class="media-body">
           <div class="pull-right">
-            
+
           </div>
           <h4 class="media-heading">{{user.name}} <small class="muted"> • {{fromNow updated_at}}</small></h4>
           <div class="hull-comments__description">
