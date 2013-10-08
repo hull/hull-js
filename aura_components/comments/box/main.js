@@ -60,8 +60,10 @@ Hull.component({
       this.api(this.options.id + '/comments', 'post', formData).then(function(comment) {
         self.sandbox.emit('hull.comments.' + self.options.id + '.added', comment);
         self.toggleLoading();
-        self.focusAfterRender = true;
         $form[0].reset && $form[0].reset();
+        self.focusAfterRender = true;
+        self.$el.find('input,textarea').focus()
+        self.checkButtonStatus();
       });
     }
   }
