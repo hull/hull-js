@@ -1,5 +1,9 @@
-<h1>{{quiz.name}}</h1>
-<p>{{quiz.description}}</p>
+<h2>{{quiz.name}}</h2>
+
+{{#if embedCode}}
+<h6>Embed code</h6>
+<pre class="code">{{embedCode}}</pre>
+{{/if}}
 
 {{#quiz}}
 <form class="form js-hull-quiz-form">

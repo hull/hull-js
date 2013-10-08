@@ -13,7 +13,10 @@ Hull.component({
   templates : [ 'admin', 'form' ],
 
   datasources : {
-    achievements : 'app/achievements'
+    achievements : {
+      path: 'app/achievements',
+      params: { where: { _type: 'Quiz'} }
+    }
   },
 
   events: {
@@ -86,7 +89,7 @@ Hull.component({
   submitQuiz: function(e) {
     e.preventDefault();
 
-    var params = this.changeForm();
+    var self = this, params = this.changeForm();
     var request;
     if (this.currentQuiz.isNew()) {
       params.type = 'quiz';
@@ -95,18 +98,14 @@ Hull.component({
       request = this.api(this.currentQuiz.id, params, 'put');
     }
 
-    request.then(this.sandbox.util._.bind(function() {
-      this.render();
+    request.then(function() {
+      self.render();
       alert('Your quiz has been updated.');
-    }, this));
+    });
   },
 
   beforeRender : function(data) {
     var _ = this.sandbox.util._;
-
-    data.quizzes = _.filter(data.achievements, function(a) {
-      return a.type === 'quiz';
-    });
 
     if (this.currentQuiz){
       data.quiz = this.currentQuiz.toJSON();
@@ -115,12 +114,15 @@ Hull.component({
       });
 
       data.quiz.isNew = this.currentQuiz.isNew();
+      if (!data.quiz.isNew) {
+        data.embedCode = '<div data-hull-component="games/quiz@hull" data-hull-id="' + data.quiz.id +  '"></div>';
+      }
     }
   },
 
-  afterRender : function() {
-    if (this.options.quizId) {
-      this.$find('[data-hull-quiz-id="' + this.options.quizId + '"]').addClass('active');
+  afterRender : function(data) {
+    if (data.quiz.id) {
+      this.$find('[data-hull-quiz-id="' + data.quiz.id + '"]').addClass('active');
     }
 
     this.$form = this.$('.js-hull-quiz-form');
