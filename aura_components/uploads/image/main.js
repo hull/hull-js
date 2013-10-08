@@ -1,7 +1,7 @@
 /**
  * Allows the user of your applications to attach documents and files to the application.
  * 
- * @name Upload file
+ * @name Upload Image
  * @dependency {jquery.fileupload} This plugin uses [jQuery File upload plugin](https://github.com/blueimp/jQuery-File-Upload) to handle the file upload gracefully. Please note that the plugin is packaged within the component so you don't have to struggle against the dependencies.
  * @dependency {storage} This plugin requires that you have attached an S3 storage to your Hull application in the admin.
  * @param {String} {storage} optional Specifies the storage engine to be used. If a single engine is known to the app, it will be automatically used. If there are many engines available, it must correspond to a value in `sandbox.config.services.types.storage`. Default: 'hull'
