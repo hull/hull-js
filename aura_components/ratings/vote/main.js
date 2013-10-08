@@ -22,7 +22,6 @@ Hull.component({
   datasources: {
     myVote: function() {
       if (this.loggedIn()) {
-        console.warn("Fetching my Vote !");
         return this.myInitialVote || this.api(this.options.id + "/reviews/me");
       }
     }
