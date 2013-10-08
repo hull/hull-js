@@ -8,18 +8,17 @@
         <div class="media-body">
           <div>
             <select name="rating">
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
+              <option></option>
+              {{#range}}
+              <option value="{{.}}">{{.}}</option>
+              {{/range}}
             </select>
           </div>
           <div>
-            <textarea name='description' class="input-block-level" rows="3" placeholder="Leave a review...">{{review.description}}</textarea>
+            <textarea name='description' class="input-block-level" rows="3" placeholder="Write a review...">{{review.description}}</textarea>
           </div>
           <div>
-            <button data-hull-action="review" class="btn btn-small btn-primary">Review as {{me.name}}</button>
+            <button data-hull-action="review" disabled class="btn btn-small btn-primary">Review as {{me.name}}</button>
             <div class='pull-right'>
               <small>
                 <a href="#" data-hull-action="logout" class="link">Logout</a>

@@ -7,6 +7,8 @@
  * @param {String} focus  Optional Auto-Focus on the input field. default: false.
  * @datasource {comments} Collection of all the comments made on the object.
  * @action {comment} Submits a new comment.
+ * @action {delete} Deletes a comment.
+ * @action {flag} Flags a  comment.
  * @example <div data-hull-component="comments/list@hull" data-hull-uid="http://hull.io"></div>
  * @example <div data-hull-component="comments/list@hull" data-hull-id="510fa2394875372516000009"></div>
  * @example <div data-hull-component="comments/list@hull" data-hull-id="app"></div>
@@ -20,6 +22,11 @@ Hull.component({
   refreshEvents: ['model.hull.me.change'],
 
   requiredOptions: ['id'],
+
+  events: {
+    'keyup [name="description"]' : 'checkButtonStatus'
+  },
+
 
   actions: {
     comment: 'postComment',
@@ -54,6 +61,11 @@ Hull.component({
     this.query = query;
   },
 
+  checkButtonStatus: function() {
+    var disabled = !this.$find('[name="description"]').val();
+    this.$find('[data-hull-action="comment"]').attr('disabled', disabled);
+  },
+
   beforeRender: function(data) {
     this.sandbox.util._.each(data.comments, function(c) {
       c.isDeletable = (c.user.id === data.me.id);
@@ -67,6 +79,7 @@ Hull.component({
       this.$el.find('input,textarea').focus();
       this.focusAfterRender = false;
     }
+    this.checkButtonStatus();
   },
 
   deleteComment: function(event, action) {
@@ -86,13 +99,11 @@ Hull.component({
   postComment: function (e) {
     e.preventDefault();
     var self = this, $form = this.$find('form'),
-        formData = this.sandbox.dom.getFormData($form),
-        description = formData.description;
-    this.toggleLoading();
+        formData = this.sandbox.dom.getFormData($form);
 
-    if (description && description.length > 0) {
-      var attributes = { description: description };
-      this.api(this.options.id + '/comments', 'post', attributes).then(function(comment) {
+    if (formData.description && formData.description.length > 0) {
+      this.toggleLoading();
+      this.api(this.options.id + '/comments', 'post', formData).then(function(comment) {
         self.sandbox.emit('hull.comments.' + self.options.id + '.added', comment);
         self.toggleLoading();
         self.focusAfterRender = true;

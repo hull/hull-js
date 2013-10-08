@@ -3,7 +3,7 @@
 {{#if reviews}}
   <ul class="media-list hull-reviews__list">
     {{#reviews}}
-      <li class="media" data-hull-comment-id="{{id}}">
+      <li class="media" data-hull-review-id="{{id}}">
         <div class="pull-left">
           <img class="media-object img-rounded" src="{{user.picture}}" alt="{{user.name}}" width="50" height="50">
         </div>
@@ -21,11 +21,11 @@
             {{description}}
           </div>
           <div class="hull-reviews__actions">
-              {{#if isDeletable}}
+              {{#ifEqual ../me.id user.id}}
                 <small>
                   <a href="#" class='link' data-hull-action="delete" data-hull-id="{{id}}">Delete</a>
                 </small>
-              {{/if}}
+              {{/ifEqual}}
           </div>
         </div>
       </li>

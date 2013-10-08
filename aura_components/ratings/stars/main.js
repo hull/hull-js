@@ -16,6 +16,8 @@ Hull.component({
 
   refreshEvents: ['model.hull.me.change'],
 
+  requiredOptions: ['id'],
+
   datasources: {
     target: ':id'
   },
