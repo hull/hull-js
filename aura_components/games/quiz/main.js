@@ -19,14 +19,8 @@
  */
 
 Hull.component({
-  type: 'Hull',
 
-  trackingData: function() {
-    var data = { type: 'quiz' };
-    var quiz = this.data.quiz;
-    if (quiz && quiz.get) { data.name = quiz.get('name'); }
-    return data;
-  },
+  requiredOptions: ['id'],
 
   templates: [
     'intro',
@@ -39,8 +33,19 @@ Hull.component({
   answers: {},
 
   datasources: {
-    quiz: ':id',
-    badge: 'me/badges/:id'
+    quiz: function() {
+      return this.quiz || this.sandbox.data.api.model(this.id);
+    },
+    badge: function() {
+      return this.badge || this.api('me/badges/' + this.id);
+    }
+  },
+
+  trackingData: function() {
+    var data = { type: 'quiz' };
+    var quiz = this.data.quiz;
+    if (quiz && quiz.get) { data.name = quiz.get('name'); }
+    return data;
   },
 
   initialize: function() {
@@ -55,6 +60,8 @@ Hull.component({
   },
 
   beforeRender: function(data) {
+    this.quiz   = data.quiz;
+    this.badge  = data.badge || {};
     if (!this.isInitialized) { this.track('init'); }
 
     if (data.me.id != this.currentUserId) {
@@ -84,6 +91,8 @@ Hull.component({
   },
 
   reset: function() {
+    this.quiz = null;
+    this.badge = null;
     this.started = false;
     this.submitted = false;
     this.answers = {};
@@ -129,7 +138,7 @@ Hull.component({
   },
 
   getResult: function(data) {
-    return data.quiz.badge;
+    return data.badge;
   },
 
 
@@ -141,12 +150,12 @@ Hull.component({
 
     answer: function(e, params) {
       var opts = params.data;
-      this.answers[opts.questionId] = opts.answerId;
+      this.answers[opts.questionRef] = opts.answerRef;
       this.data.quiz.set('answers', this.answers);
 
       this.track('progress', {
-        questionId: opts.questionId,
-        answerId: opts.answerId,
+        questionRef: opts.questionRef,
+        answerRef: opts.answerRef,
         questionIndex: this.currentQuestionIndex,
         questionsCount: this.data.quiz.get('questions').length
       });
@@ -192,7 +201,7 @@ Hull.component({
       res.done(function(badge) {
         if (badge) {
           self.submitted = true;
-          self.data.quiz.set('badge', badge);
+          self.badge = badge;
           self.render('result');
           self.track('finish', { score: badge.data.score, timing: badge.data.timing });
         }

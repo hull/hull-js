@@ -121,7 +121,7 @@ Hull.component({
   },
 
   afterRender : function(data) {
-    if (data.quiz.id) {
+    if (data.quiz && data.quiz.id) {
       this.$find('[data-hull-quiz-id="' + data.quiz.id + '"]').addClass('active');
     }
 
