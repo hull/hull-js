@@ -6,9 +6,20 @@
           <img class="media-object img-rounded" src="{{me.picture}}" alt="{{me.name}}" width="50" height="50">
         </div>
         <div class="media-body">
-          <textarea name='description' class="input-block-level" rows="3" placeholder="Leave a comment..."></textarea>
           <div>
-            <button data-hull-action="comment" class="btn btn-small btn-primary">Post as {{me.name}}</button>
+            <select name="rating">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+          </div>
+          <div>
+            <textarea name='description' class="input-block-level" rows="3" placeholder="Leave a review...">{{review.description}}</textarea>
+          </div>
+          <div>
+            <button data-hull-action="review" class="btn btn-small btn-primary">Review as {{me.name}}</button>
             <div class='pull-right'>
               <small>
                 <a href="#" data-hull-action="logout" class="link">Logout</a>

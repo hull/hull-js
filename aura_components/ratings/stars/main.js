@@ -1,5 +1,5 @@
 /**
- * 
+ *
  * Shows a star review system
  *
  * @name Stars
@@ -16,19 +16,26 @@ Hull.component({
 
   refreshEvents: ['model.hull.me.change'],
 
+  datasources: {
+    target: ':id'
+  },
+
   options: {
     max: 5,
     actionable : 'true'
   },
 
-  initialize: function(){
-    this._ = this.sandbox.util._;
+  actions: {
+    rate: function(e, options) {
+      this.rate(options.data.rating);
+      e.preventDefault();
+    }
   },
 
-  datasources: {
-    target: function() {
-      return this.api(this.options.id);
-    }
+  initialize: function() {
+    this.sandbox.on('hull.reviews.' + this.options.id + '.**', function() {
+      this.render();
+    }, this);
   },
 
   beforeRender: function(data) {
@@ -45,15 +52,16 @@ Hull.component({
   },
 
   rate: function(rating) {
-    rating = this.normalizeRating(rating);
-    this.api.post(this.options.id + '/reviews', { rating: rating }).done(this._.bind(function(res) {
-      this.sandbox.emit('hull.ratings.rate.complete', res);
-      this.render();
-    }, this));
+    var self = this, rating = this.normalizeRating(rating);
+    this.api.post(this.options.id + '/reviews', { rating: rating }).done(function(res) {
+      self.sandbox.emit('hull.reviews.' + self.options.id + '.updated', res);
+      self.sandbox.emit('hull.ratings.rate.complete', res);
+      self.render();
+    });
   },
 
   normalizeRating: function(rating) {
-    rating = parseInt(rating, 10);
+    var rating = parseInt(rating, 10);
 
     if (isNaN(rating) || rating < 0) {
       return 0;
@@ -62,12 +70,6 @@ Hull.component({
     } else {
       return rating;
     }
-  },
-
-  actions: {
-    rate: function(e, options) {
-      this.rate(options.data.rating);
-      e.preventDefault();
-    }
   }
+
 });

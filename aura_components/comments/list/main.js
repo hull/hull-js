@@ -1,7 +1,7 @@
 /**
  * Displays comments on an object, that can be an internal Hull object (when you specify data-hull-id) or an external UID, (with data-hull-uid)
  * If using data-hull-uid, any unique string you can generate can be used to attach comments
- * 
+ *
  * @name List
  * @param {String} id/uid Required The object you want to comment on.
  * @param {String} focus  Optional Auto-Focus on the input field. default: false.
@@ -15,7 +15,7 @@
 Hull.component({
   type: 'Hull',
 
-  templates: ['list'],
+  templates: ['list', 'form'],
 
   refreshEvents: ['model.hull.me.change'],
 
@@ -45,6 +45,10 @@ Hull.component({
     } else {
       query.skip = this.options.skip || 0;
     }
+
+    this.sandbox.on('hull.comments.' + this.options.id + ".**", function() {
+      this.render()
+    }, this);
 
     query.limit = this.options.limit || this.options.perPage;
     this.query = query;
@@ -88,7 +92,8 @@ Hull.component({
 
     if (description && description.length > 0) {
       var attributes = { description: description };
-      this.api(this.id + '/comments', 'post', attributes).then(function() {
+      this.api(this.options.id + '/comments', 'post', attributes).then(function(comment) {
+        self.sandbox.emit('hull.comments.' + self.options.id + '.added', comment);
         self.toggleLoading();
         self.focusAfterRender = true;
         self.render();
