@@ -9,13 +9,14 @@
  * @action {comment} Submits a new comment.
  * @action {delete} Deletes a comment.
  * @action {flag} Flags a  comment.
+ * @template {list} The main templates. Displays this list of comments.
+ * @template {form} The form to enter a new comment.
  * @example <div data-hull-component="comments/list@hull" data-hull-uid="http://hull.io"></div>
  * @example <div data-hull-component="comments/list@hull" data-hull-id="510fa2394875372516000009"></div>
  * @example <div data-hull-component="comments/list@hull" data-hull-id="app"></div>
  */
 
 Hull.component({
-  type: 'Hull',
 
   templates: ['list', 'form'],
 
@@ -108,6 +109,9 @@ Hull.component({
         self.toggleLoading();
         self.focusAfterRender = true;
         self.render();
+      }, function() {
+        this.$el.find('input,textarea').focus();
+        self.toggleLoading();
       });
     }
   },
