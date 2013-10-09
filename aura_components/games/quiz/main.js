@@ -107,7 +107,7 @@ Hull.component({
     }
     if (!this.loggedIn()) {
       return "intro";
-    } else if (this.submitted && data.result) {
+    } else if (this.submitted && data.badge && data.badge.id) {
       return "result";
     } else if (data.current) {
       if (data.current.question) {
@@ -115,7 +115,7 @@ Hull.component({
       } else {
         return "finished";
       }
-    } else if (data.result) {
+    } else if (data.badge) {
       return "result";
     }
     return "intro";
