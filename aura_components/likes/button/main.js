@@ -38,8 +38,6 @@ Hull.component({
   beforeRender:function(data) {
     this.target     = data.target;
     data.likesCount = data.target.stats.likes || 0;
-    // data.liked      = this.liked || data.liked;
-    console.warn("Data: ", data);
     return data;
   },
 
