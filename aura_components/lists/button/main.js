@@ -1,5 +1,5 @@
 /**
- * 
+ *
  * Allow users to add and remove objects from lists.
  * Lists are created on the fly, with the `list` you specify.
  *
@@ -48,10 +48,6 @@ Hull.component({
     var self = this;
     var _ = this.sandbox.util._;
     this.api(this.itemPath, method).then(function() {
-      this.track("list:" + verb, {
-        itemId: self.id,
-        list: list.name
-      });
       this.render();
     }.bind(this));
   },
