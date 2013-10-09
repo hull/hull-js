@@ -7,14 +7,14 @@
  * It also shows the number of likes the object has.
  *
  * @name Button
- * @param {String} id/uid The object on which to fetch likes
- * @datasource {target} Info on the object
- * @datasource {liked} Has the current user liked the object
- * @template {button} The main template. Has 3 states: Unliked, Liked and Working
+ * @param {String} id/uid The object on which to fetch likes.
+ * @datasource {target} Info on the object.
+ * @datasource {liked} Has the current user liked the object.
+ * @template {button} The main template. Has 3 states: Unliked, Liked.
  * @example <div data-hull-component="likes/button@hull" data-hull-uid="http://hull.io"></div>
  * @example <div data-hull-component="likes/button@hull" data-hull-id="app"></div>
- * @example <div data-hull-component="likes/button@hull" data-hull-id="YOUR_UNIQUE_ID"></div>
- * @example <div data-hull-component="likes/button@hull" data-hull-id="ANY_URL"></div>
+ * @example <div data-hull-component="likes/button@hull" data-hull-uid="YOUR_UNIQUE_ID"></div>
+ * @example <div data-hull-component="likes/button@hull" data-hull-uid="ANY_URL"></div>
  */
 
 Hull.component({
