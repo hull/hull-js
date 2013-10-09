@@ -1,14 +1,20 @@
-{{#isAdmin}}
-  <div class="hull-quiz_admin">
+<div class="row">
+  <div class="span4">
+    <h4>Available Quizzes</h4>
+    <ul class="nav nav-pills nav-stacked">
+      {{#achievements}}
+        <li data-hull-action="selectQuiz" data-hull-quiz-id="{{id}}"><a href="#">{{name}}</a></li>
+      {{/achievements}}
+    </ul>
+
+    <button data-hull-action="selectQuiz" class="btn">Create a new Quiz</button>
+  </div>
+
+  <div class="span8">
     {{#if quiz}}
       {{> admin/quiz/form}}
+    {{else}}
+      <h2 class="well">Select a quiz to start playing...</h2>
     {{/if}}
-
-    {{#unless quiz}}
-      {{> admin/quiz/list}}
-    {{/unless}}
   </div>
-{{/isAdmin}}
-{{^isAdmin}}
-  You need to be an administrator of the current app to view this component
-{{/isAdmin}}
+</div>
