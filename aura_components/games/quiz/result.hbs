@@ -3,10 +3,10 @@
     <h1>Congratulations</h1>
   </div>
 
-  {{#result.data}}
+  {{#badge.data}}
     <h4>You Have <strong>{{score}}</strong> points !</h4>
     <p>It took <strong>{{timing}}</strong> seconds to answer !</p>
-  {{/result.data}}
+  {{/badge.data}}
 
   <button class="btn" data-hull-action="share" data-hull-provider="twitter" data-hull-text="I just scored {{result.data.score}} in {{result.data.timing}} sec on Quiz: {{result.name}}. Can you beat me?">Share your score on Twitter</button>
   &nbsp;&nbsp;&nbsp;<small>or</small>
