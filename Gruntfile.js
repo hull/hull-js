@@ -271,15 +271,6 @@ module.exports = function (grunt) {
   helpers.appendAWSConfig(gruntConfig);
   grunt.initConfig(gruntConfig);
 
-  grunt.registerTask('target','Set current target', function(){
-    var done = this.async();
-    git.branch(function(branch){
-      grunt.config.set("PKG_VERSION",branch);
-      grunt.config.set("GIT_BRANCH",branch);
-      done();
-    });
-
-  });
   grunt.registerTask('do_test', ['cover', 'plato', 'mocha']);
   grunt.registerTask('test', ['dist:api', 'dist:client', 'dist:remote', 'do_test']);
   grunt.registerTask('default', ['connect', 'test', 'dist:widgets', 'watch']);
@@ -288,8 +279,6 @@ module.exports = function (grunt) {
   grunt.registerTask('deploy', ['dist', 'describe', 's3:prod']);
 
   grunt.registerTask('staging', ['target','dist', 'describe', 's3:staging']);
-
-  var git = require('git-rev');
 
   require('./.grunt/customTasks')(grunt);
 
