@@ -8,42 +8,42 @@ Checkout
 
 First, install grunt and bower
 
-    sudo npm install -g grunt-cli bower
+    sudo npm install -g grunt-cli
 
 Then switch to hull-js dir
 
     cd hull-js
-    npm install; bower install
-    # First install : Build Aura
-    cd components/aura ; npm install ; bower install ; grunt build
-    cd ../..
-    grunt build
-
-
-Serve it to js.hull.dev via pow
-
-    echo 3001 > ~/.pow/js.hull
-
-
-Configure ```app/app.js``` with the correct settings
-
-
-# Using locally
-
-Start grunt
-
+    npm install
     grunt
 
-Open in your browser
+The last command will start a static HTTP server (port `3001`) that serves the files located in
+the root folder.
 
-    open http://js.hull.dev
+## Using the boilerplate app
 
-Drink your coffee.
+A boilerplate app is located in the `app` folder. Here's how to use it:
 
+```
+cp app/app.example.js app/app.js
+grunt
+open http://localhost:3001/app
+```
+
+__Note__: You must configure `app/app.js` with the settings of your app,
+as found in your account at [https://accounts.hullapp.io](https://accounts.hullapp.io).
+
+# Main `grunt` tasks
+
+* `dist`: Builds and executes the tests
+* `server` (default task): `dist` + starts a static HTTP server for local use
+* `deploy`: `dist` + [Additional flavors](http://hull.io/docs/hull_js/#flavors) + S3 upload (see below)
 
 # Deploying to S3 :
 
-Create a `grunt-aws.json` file at the root, with the following content :
+We use S3 internally. A grunt task to deploy in S3 is provided.
+If you want to deploy to S3 too, follow these instructions:
+
+Create the file `.grunt/grunt-aws.json`, with the following content :
 
     {
       "key":"YOUR_AWS_KEY",
@@ -52,23 +52,43 @@ Create a `grunt-aws.json` file at the root, with the following content :
     }
 
 
-# Developing locally (force @hull to fetch from js.hull.dev)
+# Developing locally (force @hull components to be fetched locally)
 
-    <script src="//hull-js.s3.amazonaws.com/develop/hull.js"></script>
+    <script src="http://localhost/dist/%%CURRENT_VERSION%%/hull.js"></script>
     <script>
       Hull.init({
         appId: 'YOUR_APP_ID',
         orgUrl: 'YOUR_APP_ID',
-        jsUrl: 'http://js.hull.dev/dist'
+        jsUrl: 'http://localhost/dist'
       });
     </script>
 
 
-# Component Description Template:
+# Contributing
 
-```
+You're encouraged to submit pull requests,
+propose features and [discuss issues](http://github.com/hull/hull.js/issues).
+
+If you want to submit code:
+
+* Fork the project
+* Write tests for your new feature or a test that reproduces a bug
+* Implement your feature or make a bug fix
+* Commit, push and make a pull request. Bonus points for topic branches.
+
+
+##Components
+
+If you want to contribute components to hull in [the marketplace](http://hull.io/marketplace),
+please provide documentation for you components with the following syntax.
+The human-readable version of the documentation will be auto-generated
+when your coponent is integrated in the marketplace.
+
+### Component Description Template:
+
+```javascript
 /**
- * 
+ *
  * Description
  *
  * # MANDATORY
@@ -85,7 +105,7 @@ Create a `grunt-aws.json` file at the root, with the following content :
  */
 ```
 
-Example
+As an example
 
 ```
 /**
@@ -101,3 +121,12 @@ Example
  * @example <div data-hull-component="conversations/thread@hull" data-hull-id="OBJECT_ID"></div>
  */
 ```
+
+
+# License
+
+MIT License. See LICENSE for details.
+
+# Copyright
+
+Copyright (c) 2013 Hull, Inc.
