@@ -21,7 +21,7 @@ module.exports = function (grunt) {
           aws = {
             key: aws_key,
             secret: aws_secret,
-            bucket: aws_buckt
+            bucket: aws_bucket
           };
         }
       }
