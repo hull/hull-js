@@ -18,7 +18,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-plato');
   grunt.loadNpmTasks('grunt-wrap');
 
-  var pkg = grunt.file.readJSON('bower.json');
   var clientConfig = grunt.file.readJSON('.grunt/client.json');
   var remoteConfig = grunt.file.readJSON('.grunt/remote.json');
   var apiConfig = grunt.file.readJSON('.grunt/api.json');
@@ -63,7 +62,6 @@ module.exports = function (grunt) {
 
 
   var gruntConfig = {
-    PKG_VERSION: pkg.version,
     clean: {
       client: {
         src: 'lib/client/**/*'
@@ -264,32 +262,22 @@ module.exports = function (grunt) {
       "client-no-underscore": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
       "client-no-backbone": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
       "widgets": ["hull_widgets"],
-      "docs": ['dox']
+      "docs": ['dox'],
+      "describe": ['describe']
     }
   };
 
   helpers.appendAWSConfig(gruntConfig);
   grunt.initConfig(gruntConfig);
 
-  grunt.registerTask('target','Set current target', function(){
-    var done = this.async();
-    git.branch(function(branch){
-      grunt.config.set("PKG_VERSION",branch);
-      grunt.config.set("GIT_BRANCH",branch);
-      done();
-    });
-
-  });
   grunt.registerTask('do_test', ['cover', 'plato', 'mocha']);
   grunt.registerTask('test', ['dist:api', 'dist:client', 'dist:remote', 'do_test']);
-  grunt.registerTask('default', ['connect', 'test', 'dist:widgets', 'watch']);
   grunt.registerTask('reset', ['clean:reset']);
 
-  grunt.registerTask('deploy', ['dist', 'describe', 's3:prod']);
-
-  grunt.registerTask('staging', ['target','dist', 'describe', 's3:staging']);
-
-  var git = require('git-rev');
+  //These tasks are the only ones needed to be used
+  grunt.registerTask('default', 'server');
+  grunt.registerTask('server', ['connect', 'test', 'dist:widgets', 'watch']);
+  grunt.registerTask('deploy', ['version', 'dist', 's3:prod']);
 
   require('./.grunt/customTasks')(grunt);
 

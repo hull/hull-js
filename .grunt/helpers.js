@@ -25,34 +25,18 @@ module.exports = function (grunt) {
               encodePaths: true,
               maxOperations: 20
             },
-            prod: {
-              upload: [
-                {
-                  gzip:  true,
-                  src: 'dist/<%= PKG_VERSION %>/**/*',
-                  dest: '',
-                  rel: 'dist/'
-                },
-                {
-                  gzip:  false,
-                  src: 'dist/<%= PKG_VERSION %>/**/*',
-                  dest: '',
-                  rel: 'dist/'
-                }
-              ]
-            },
-            staging:{
+            prod:{
               upload:[
                 {
                   gzip:  true,
                   src: 'dist/<%= PKG_VERSION %>/**/*',
-                  dest: '<%= GIT_BRANCH %>',
+                  dest: '<%= PKG_VERSION %>',
                   rel: 'dist/<%= PKG_VERSION %>'
                 },
                 {
                   gzip:  false,
                   src: 'dist/<%= PKG_VERSION %>/**/*',
-                  dest: '<%= GIT_BRANCH %>',
+                  dest: '<%= PKG_VERSION %>',
                   rel: 'dist/<%= PKG_VERSION %>'
                 }
               ]
