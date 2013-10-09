@@ -18,12 +18,20 @@ Then switch to hull-js dir
 
 The last command will start a static HTTP server (port `3001`) that serves the files located in
 the root folder.
-A boilerplate app is located in the `app` folder.
 
-Copy `app/app.example.js` to `app/app.js`
+## Using the boilerplate app
 
-Configure `app/app.js` with the settings of your app,
+A boilerplate app is located in the `app` folder. Here's how to use it:
+
+```
+cp app/app.example.js app/app.js
+grunt
+open http://localhost:3001/app
+```
+
+__Note__: You must configure `app/app.js` with the settings of your app,
 as found in your account at `https://hullapp.io`.
+
 
 # Main `grunt` tasks
 
