@@ -270,12 +270,13 @@ module.exports = function (grunt) {
   helpers.appendAWSConfig(gruntConfig);
   grunt.initConfig(gruntConfig);
 
-  grunt.registerTask('default', 'server');
   grunt.registerTask('do_test', ['cover', 'plato', 'mocha']);
   grunt.registerTask('test', ['dist:api', 'dist:client', 'dist:remote', 'do_test']);
-  grunt.registerTask('server', ['connect', 'test', 'dist:widgets', 'watch']);
   grunt.registerTask('reset', ['clean:reset']);
 
+  //These tasks are the only ones needed to be used
+  grunt.registerTask('default', 'server');
+  grunt.registerTask('server', ['connect', 'test', 'dist:widgets', 'watch']);
   grunt.registerTask('deploy', ['version', 'dist', 's3:prod']);
 
   require('./.grunt/customTasks')(grunt);
