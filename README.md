@@ -30,7 +30,7 @@ open http://localhost:3001/app
 ```
 
 __Note__: You must configure `app/app.js` with the settings of your app,
-as found in your account at [https://hullapp.io](https://hullapp.io).
+as found in your account at [https://accounts.hullapp.io](https://accounts.hullapp.io).
 
 # Main `grunt` tasks
 
