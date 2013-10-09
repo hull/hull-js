@@ -14,8 +14,8 @@ module.exports = function (grunt) {
       grunt.log.writeln('Generated version description for \'' + conf.dest + '\' successfully.');
       done();
     }
-    git.branch(function(branch){
-      if (branch === 'HEAD') {
+    git.branch(function(branch) {
+      if (['HEAD', 'master'].indexOf(branch) !== -1) {
         git.tag(write);
       } else {
         write(branch);
