@@ -81,7 +81,7 @@ define(['spec/support/spec_helper', 'jquery', 'lib/client/templates'], function(
       });
     });
 
-    describe("Server loading", function () {
+    xdescribe("Server loading", function () {
       it("should use require to fetch the necessary templates", function (done) {
         var ret = app.core.template.load('test', 'fixtures');
         ret.done(function (tpls) {

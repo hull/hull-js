@@ -120,13 +120,13 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
     #
     # @returns {Boolean}
     isFirst: ->
-      !@paginationLinks.first
+      !@paginationLinks?.first
 
     # Is datasource on the last page?
     #
     # @returns {Boolean}
     isLast: ->
-      !@paginationLinks.last
+      !@paginationLinks?.last
 
     # Go to previous page.
     #

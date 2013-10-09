@@ -12,7 +12,7 @@ define(['underscore', 'jquery'], function(_, $) {
         if (!_.contains(optionKeys, name) || options[name] === undefined) {
           dfd.reject('Missing option to component ' + this.componentName + ': ' + name);
         }
-      });
+      }, this);
       dfd.resolve();
       return dfd.promise();
     }

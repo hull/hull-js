@@ -1,102 +1,138 @@
 /**
- * ## Quiz Admin
  *
- * This component allows you to edit and add quizzes in your application.
+ * Create and edit quizzes.
  *
- * ### Templates
- *
- * - `admin`: The main template. It shows the list of your quizzes or the form to edit a quiz.
- * - `list'`: Show the list of your quizzes and a form to add new quizzes.
- * - `form'`: Show the form to edit a quiz.
- *
- * ### Datasources
- *
- * - `quiz`: The collection of all the quizzes available in the application.
- *
+ * @name Quiz
+ * @template {admin} The main template. It shows the list of your quizzes or the form to edit a quiz.
+ * @template {list}  Show the list of your quizzes and a form to add new quizzes.
+ * @template {form}  Show the form to edit a quiz.
+ * @datasource {quizzes} The collection of all the quizzes available in the application.
+ * @example <div data-hull-component="admin/quiz@hull"></div>
  */
-Hull.define({
+Hull.component({
+  templates : [ 'admin', 'form' ],
 
-  type: "Hull",
+  datasources : {
+    achievements : {
+      path: 'app/achievements',
+      params: { where: { _type: 'Quiz'} }
+    }
+  },
 
-  refreshEvents: ['model.hull.me.change'],
+  events: {
+    'submit form': 'submitQuiz'
+  },
 
-  datasources: {
-    quizzes: function() {
-      return this.api('app/achievements', {
-        where: {
-          _type: 'Quiz'
-        }
+  actions : {
+    selectQuiz : function(event, action) {
+      var Model = require('backbone').Model;
+
+      var quiz;
+      if (action.data.quizId != null) {
+        quiz = this.data.achievements.get(action.data.quizId);
+      } else {
+        quiz = new Model();
+      }
+
+      if (this.currentQuiz) {
+        this.stopListening(this.currentQuiz);
+      }
+
+      if (quiz) {
+        this.currentQuiz = quiz;
+
+        var self = this;
+        this.listenTo(this.currentQuiz, 'change', function() {
+          self.render();
+        });
+
+        this.render();
+      }
+    },
+
+    addQuestion: function() {
+      this.changeForm();
+
+      var questions = this.currentQuiz.get('questions') || [];
+      questions.push(this.generateQuestion());
+      this.currentQuiz.set('questions', questions);
+
+      this.currentQuiz.trigger('change');
+    },
+
+    addAnswer: function(event, action) {
+      this.changeForm();
+
+      var question = this.currentQuiz.get('questions')[action.data.questionIndex];
+      question.answers = question.answers || [];
+      question.answers.push(this.generateAnswer(action.data.questionIndex));
+
+      this.currentQuiz.trigger('change');
+    },
+
+    deleteQuestion: function(event, action) {
+      var questions = this.sandbox.util._.reject(this.currentQuiz.get('questions'), function(q, i) {
+        return i == action.data.questionIndex;
       });
+
+      this.currentQuiz.set('questions', questions);
     }
   },
 
-  templates: [
-    'admin',
-    'list',
-    'form'
-  ],
+  changeForm: function() {
+    var params = this.sandbox.dom.getFormData(this.$form);
+    this.currentQuiz.set(params);
 
-  beforeRender: function(data) {
-    data.quiz = this.quiz;
-    if(this.quiz) {
-      data.quiz['json'] = JSON.stringify(this.quiz, null, 4);
+    return params;
+  },
+
+  submitQuiz: function(e) {
+    e.preventDefault();
+
+    var self = this, params = this.changeForm();
+    var request;
+    if (this.currentQuiz.isNew()) {
+      params.type = 'quiz';
+      request = this.api('app/achievements', params, 'post');
+    } else {
+      request = this.api(this.currentQuiz.id, params, 'put');
+    }
+
+    request.then(function() {
+      self.render();
+      alert('Your quiz has been updated.');
+    });
+  },
+
+  beforeRender : function(data) {
+    var _ = this.sandbox.util._;
+
+    if (this.currentQuiz){
+      data.quiz = this.currentQuiz.toJSON();
+      _.each(data.quiz.questions, function(q, i) {
+        _.each(q.answers, function(a) { a.questionIndex = i; });
+      });
+
+      data.quiz.isNew = this.currentQuiz.isNew();
+      if (!data.quiz.isNew) {
+        data.embedCode = '<div data-hull-component="games/quiz@hull" data-hull-id="' + data.quiz.id +  '"></div>';
+      }
     }
   },
 
-  actions: {
-
-    edit: function(e, params) {
-      this.api(params.data.id, {}, function(data){
-        this.quiz = data;
-        this.render();
-      }.bind(this));
-      return false;
-    },
-
-    create: function(e) {
-      e.preventDefault();
-      var val = $('[data-hull-item="quiz-json"]').val().trim();
-      try {
-        var json = jQuery.parseJSON(val);
-        this.api('app/achievements', 'post', json, function(data){
-          this.quiz = data;
-          this.render();
-        }.bind(this));
-      } catch(e) {
-         alert('invalid json');
-      }
-    },
-
-    delete: function(e) {
-      if(window.confirm("Are you sure you want to delete this quiz?")) {
-        this.api(this.quiz.id, 'delete', {}, function(){
-          this.quiz = null;
-          this.render();
-        }.bind(this));
-      }
-      return false;
-    },
-
-    cancel: function() {
-      this.quiz = null;
-      this.render();
-      return false;
-    },
-
-    submit: function(e) {
-      // TODO
-      e.preventDefault();
-      var val = $('[data-hull-item="quiz-json"]').val().trim();
-      try {
-        var json = jQuery.parseJSON(val);
-        this.api(json.id, 'put', json, function(data){
-          this.quiz = null;
-        this.render();
-        }.bind(this));
-      } catch(e) {
-         alert('invalid json');
-      }
+  afterRender : function(data) {
+    if (data.quiz && data.quiz.id) {
+      this.$find('[data-hull-quiz-id="' + data.quiz.id + '"]').addClass('active');
     }
+
+    this.$form = this.$('.js-hull-quiz-form');
+  },
+
+  generateQuestion: function() {
+    return { answers: [] };
+  },
+
+  generateAnswer: function(index) {
+    return { questionIndex: index };
   }
-
 });

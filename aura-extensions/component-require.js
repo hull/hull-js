@@ -1,20 +1,39 @@
+/*global define:true */
 define(['underscore', 'jquery'], function(_, $) {
+  "use strict";
+  function nameToComponentPath (name, component) {
+    return component.ref + '/' + name;
+  }
   return function(app) {
     app.components.before('initialize', function() {
-      "use strict";
-      if (this.require && this.require.paths) {
-        var dfd = $.Deferred();
-        var requireConfig = this.require;
-        var localRequire = require.config(_.extend(requireConfig, {
-          context: 'context-' + this.ref,
-          baseUrl: this.options.require.packages[0].location
-        }));
-        localRequire(_.keys(this.require.paths), function(deps) {
-          dfd.resolve();
-        }, function (err) {
-          dfd.reject(err);
+      var dfd = $.Deferred();
+      if (this.require) {
+        var paths = _.map(this.require, function(path) {
+          return nameToComponentPath(path, this);
+        }, this);
+        var config = require.s.contexts._.config;
+        var defined = require.s.contexts._.defined;
+        var localRequire = require.config({
+          context: '__context__' + this.ref,
+          baseUrl: config.pkgs[this.ref].location,
+          shim: config.shim,
+          paths: config.paths
         });
-        this.require = localRequire;
+        var component = this;
+        var componentRequire = this.require;
+        localRequire(['require'], function (require) {
+          _.each(_.keys(defined), function (name) {
+            define(name, [], function () { return defined[name]; });
+          });
+          require(componentRequire, function(deps) {
+            component.require = function (name) {
+              return localRequire(name);
+            };
+            dfd.resolve(deps);
+          }, function (err) {
+            dfd.reject(err);
+          });
+        });
         return dfd.promise();
       }
     });

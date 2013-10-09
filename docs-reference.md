@@ -151,6 +151,17 @@ There are a few things to be noticed here:
 * The user itself is bound to the context of the template, that's what makes {{name}} available.
 * Look at the `data-hull-action` attribute in the login button. `data-hull-action` represent special `click` handlers. Learn more [here]().
 
+#### Meteor
+
+Meteor compiles to a global named `Template`. Populate it with your templates by
+using the `<template>` tag.
+
+```
+<template name="component/template">
+  Hello {{me.name}}
+</template>
+```
+
 ### More about prepackaged components
 
 Now you can already start adding social features in your app or even build a complete 100% social app with Hull!

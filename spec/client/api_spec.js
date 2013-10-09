@@ -46,7 +46,7 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
 
   define('easyXDM', function () { return easyXDMMock; });
 
-  describe("API specs", function () {
+  xdescribe("API specs", function () {
     var env, api, batch, app = aura(config);
 
     var extension = {

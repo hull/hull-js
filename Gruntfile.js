@@ -159,15 +159,15 @@ module.exports = function (grunt) {
           out: 'tmp/aura_components/upload/deps/jquery.fileupload.js'
         }
       },
-      registration: {
-        options: {
-          namespace: 'Hull',
-          paths: { h5f: 'aura_components/registration/h5f' },
-          shim: { h5f: { exports: 'H5F' } },
-          include: ['h5f'],
-          out: 'tmp/aura_components/registration/deps.js'
-        }
-      },
+      // registration: {
+      //   options: {
+      //     namespace: 'Hull',
+      //     paths: { h5f: 'aura_components/registration/h5f' },
+      //     shim: { h5f: { exports: 'H5F' } },
+      //     include: ['h5f'],
+      //     out: 'tmp/aura_components/registration/deps.js'
+      //   }
+      // },
       dox: {
         options: {
           namespace: 'Hull',
@@ -197,12 +197,16 @@ module.exports = function (grunt) {
         tasks: ['dist:api', 'do_test']
       },
       client: {
-        files: clientConfig.srcFiles,
+        files: [clientConfig.srcFiles, "aura-extensions/**/*.js"],
         tasks: ['dist:client', 'do_test']
       },
       spec: {
         files: ['spec/**/*.js'],
         tasks: ['mocha']
+      },
+      extensions: {
+        files: ['aura-extensions/**/*.js'],
+        tasks: ['dist:client', 'do_test']
       }
     },
     version: {
@@ -212,7 +216,7 @@ module.exports = function (grunt) {
     hull_widgets: {
       hull: {
         src: 'aura_components',
-        before: ['requirejs:upload', 'requirejs:registration', 'requirejs:dox'],
+        before: [],
         dest: 'dist/<%= PKG_VERSION%>',
         optimize: !grunt.option('dev')
       }

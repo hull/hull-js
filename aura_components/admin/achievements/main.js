@@ -1,26 +1,15 @@
 /**
- * ## Achievements admin panel
- *
+ * 
  * Displays the list of all the achievements in your app, and allows you to add/remove achievements.
  *
- * ### Example
- *
- *     <div data-hull-component="admin/achievements@hull"></div>
- *
- * ### Template
- *
- * - `main`: Displays a form to create achievements and a table to list (and delete) all the achievements available in the app.
- *
- * ### Action
- *
- * - `remove`: Removes an achievement
- *
- * ### Related
- *
- * - Component `achieve_button` to win a badge from an achievement
- * - Achievements/Badges API
-*/
-Hull.define({
+ * @name Achievements
+ * @datasource {achievements} Achievements for the current app 
+ * @template {main} Displays a form to create achievements and a table to list (and delete) all the achievements available in the app.
+ * @action {remove} Removes an achievement
+ * @example <div data-hull-component="admin/achievements@hull"></div>
+ */
+
+Hull.component({
   type: 'Hull',
   templates: ['main'],
   datasources: {
