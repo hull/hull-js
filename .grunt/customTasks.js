@@ -7,16 +7,13 @@ module.exports = function (grunt) {
 
   grunt.registerTask("version", "generate a file from a template", function () {
     var conf = grunt.config("version");
-    grunt.file.write(conf.dest, grunt.template.process(conf.template));
-    grunt.log.writeln('Generated \'' + conf.dest + '\' successfully.');
-  });
-
-  grunt.registerTask('target','Set current target', function(){
     var done = this.async();
     git.branch(function(branch){
-      grunt.config.set("PKG_VERSION",branch);
-      grunt.config.set("GIT_BRANCH",branch);
+      grunt.config.set("PKG_VERSION", branch);
+      grunt.file.write(conf.dest, grunt.template.process(conf.template));
+      grunt.log.writeln('Generated version description for \'' + conf.dest + '\' successfully.');
       done();
     });
+
   });
 };
