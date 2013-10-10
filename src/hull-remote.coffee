@@ -25,6 +25,9 @@ define ['aura/aura', 'lib/utils/version'], (Aura, version)->
     if config.services.settings.angellist_app
       hull.app.use('lib/remote/services/angellist')
 
+    if config.services.settings.tumblr_app
+      hull.app.use('lib/remote/services/tumblr')
+
     hull.app.start()
 
     return hull
