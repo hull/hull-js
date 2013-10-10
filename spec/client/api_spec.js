@@ -230,6 +230,38 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
         env.core.data.api = orig;
       });
     });
+
+    xdescribe('List of authentication providers', function () {
+      beforeEach(function () {
+        this.module = clientApiModule({});
+      });
+      it('should be accessible through a function', function () {
+        var app = { core: {}, sandbox: {} };
+        this.module.initialize(app);
+        app.sandbox.login.provider.should.be.a('function');
+      });
+      it('should return the list of providers', function () {
+        var app = { core: {}, sandbox: {
+          config: {services: {types: {auth: ['hoola', 'hoop']}}}
+        } };
+        this.module.initialize(app);
+        app.sandbox.login.provider().should.eql(['hoola', 'hoop']);
+      });
+      it('should return true if the provider in param is available', function () {
+        var app = { core: {}, sandbox: {
+          config: {services: {types: {auth: ['hoola', 'hoop']}}}
+        } };
+        this.module.initialize(app);
+        app.sandbox.login.provider('hoola').should.be.true;
+      });
+      it('should return false if the provider in param is not available', function () {
+        var app = { core: {}, sandbox: {
+          config: {services: {types: {auth: ['hoola', 'hoop']}}}
+        } };
+        this.module.initialize(app);
+        app.sandbox.login.provider('nope').should.be.false;
+      });
+    });
   });
 });
 

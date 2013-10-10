@@ -1,5 +1,5 @@
 /**
- * 
+ *
  * Allow users to log in with auth services that you have hooked on your app.
  * When logged in, show a micro-profile card.
  *
@@ -35,18 +35,17 @@ Hull.component({
       this.render();
     }, this));
 
-    this.authServices = this.sandbox.util._.map(this.sandbox.config.services.types.auth, function(s) {
-      return s.replace(/_app$/, '');
-    });
+    this.authServices = this.sandbox.login.has();
 
     if (this.sandbox.util._.isEmpty(this.authServices)) {
-      console.error('No Auth services configured. please add one to be able to authenticate users.');
+      throw new Error('No Auth services configured. please add one to be able to authenticate users.');
     }
   },
 
   beforeRender: function(data) {
     "use strict";
     data.authHasFailed = this.authHasFailed;
+    var _ = this.sandbox.util._;
 
     // If providers are specified, then use only those. else use all configuredauthServices
     if(this.options.provider){
@@ -54,6 +53,14 @@ Hull.component({
     } else {
       data.providers = this.authServices || [];
     }
+
+    data.providers = _.filter(data.providers, function (provider) {
+      if (!this.sandbox.login.has(provider)) {
+        console.error('No auth service configured for ' + provider);
+        return false;
+      }
+      return true;
+    }, this);
 
     // If I'm logged in, then create an array of logged In providers
     if(this.loggedIn()){
