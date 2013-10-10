@@ -2,7 +2,6 @@ define(['lib/client/component/datasource'], function (module) {
   before(function () {
     this.module = module;
     this.dsModelStub = sinon.stub(module, 'datasourceModel');
-    this.dsModelStub.returns(true);
   });
   afterEach(function () {
     this.dsModelStub.reset();
@@ -26,8 +25,10 @@ define(['lib/client/component/datasource'], function (module) {
       //Check that the function wraps the injection method
       var spy = sinon.spy(this.module, 'addDatasources');
       module.addDatasources.should.not.have.been.called;
-      wrapper({});
+      var scope = {}; // We need to ensure the scope is passed from the wrapper to the method of the module
+      wrapper.call(scope, {});
       module.addDatasources.should.have.been.calledOnce;
+      module.addDatasources.should.have.been.calledOn(scope);
       spy.reset();
     });
 
