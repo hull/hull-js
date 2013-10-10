@@ -6,6 +6,7 @@ define ['lib/client/datasource', 'underscore'], (Datasource, _)->
     
     # Adds datasources to the instance of the component
     addDatasources: (datasources)->
+      @datasources ?= {}
       _.each datasources, (ds, i)=>
         ds = _.bind ds, @ if _.isFunction ds
         @datasources[i] = new module.datasourceModel(ds, @api) unless ds instanceof module.datasourceModel
