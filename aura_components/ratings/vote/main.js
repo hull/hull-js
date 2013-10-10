@@ -28,6 +28,13 @@ Hull.component({
   },
 
 
+  initialize: function() {
+    this.sandbox.on('hull.reviews.' + this.options.id + '.**', function() {
+      this.myInitialVote = null;
+      this.render();
+    }, this);
+  },
+
   beforeRender: function(data){
     "use strict";
     this.myInitialVote = data.myVote;
@@ -62,6 +69,7 @@ Hull.component({
         description: description
       };
       this.api(this.options.id + '/reviews', 'post', d).then(function(res) {
+        self.sandbox.emit('hull.reviews.' + self.options.id + '.updated', res);
         self.updateVotesFromStats(res);
         self.render();
       });

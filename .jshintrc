@@ -1,0 +1,7 @@
+{
+  "undef": true,
+  "browser": true,
+  "globals": {
+    "Hull": true
+  }
+}

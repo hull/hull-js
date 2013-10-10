@@ -1,10 +1,10 @@
 {
   "name": "hull-js",
-  "version": "0.7.1",
+  "version": "0.7.3",
   "main": "./lib/hull.js",
   "dependencies": {
     "jquery": "1.10.*",
-    "aura": "~0.9.2",
+    "aura": "0.9.2",
     "backbone": "0.9.9",
     "easyXDM": "2.4.17",
     "require-handlebars-plugin": "0.4.0",
@@ -14,7 +14,8 @@
     "moment": "1.7.2",
     "underscore.string": "2.3.1",
     "jquery.cookie": "latest",
-    "twitter-text": "~1.6.1"
+    "twitter-text": "1.6.1",
+    "jquery.serializeJSON": "1.0.1"
   },
   "devDependencies": {
     "JSCovReporter": "git://github.com/TwoApart/JSCovReporter.git"

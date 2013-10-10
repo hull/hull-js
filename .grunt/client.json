@@ -18,7 +18,8 @@
       "string":         "bower_components/underscore.string/lib/underscore.string",
       "jquery":         "empty:",
       "text":           "bower_components/requirejs-text/text",
-      "base64":         "bower_components/base64/base64"
+      "base64":         "bower_components/base64/base64",
+      "serializeJSON":  "bower_components/jquery.serializeJSON/jquery.serializeJSON"
     },
     "shim": {
       "backbone":   { "exports": "Backbone", "deps": ["underscore", "jquery"] },
@@ -34,6 +35,7 @@
       "base64",
       "backbone",
       "text",
+      "serializeJSON",
       "aura/ext/debug",
       "aura/ext/mediator",
       "aura/ext/components",

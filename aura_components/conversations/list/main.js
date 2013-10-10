@@ -1,5 +1,5 @@
 /**
- * List all conversations within the current app
+ * Display a list of conversations
  *
  * @name List
  * @param {String} visibility Optional Visibility level (public/private/all)
@@ -44,12 +44,12 @@ Hull.component({
      this.sandbox.emit('hull.conversation.select', null);
     }, this);
   },
-  
+
   beforeRender: function(data, errors){
     data.errors = errors;
     return data;
   },
-  
+
   highlight: function(id){
     var selected = this.$el.find('[data-hull-id="'+id+'"]');
     this.$el.find('[data-hull-action="select"]').not(selected).removeClass('selected')
