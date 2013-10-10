@@ -39,14 +39,22 @@ Hull.component = Hull.widget = (componentName, componentDef) ->
   throw "A component must have a definition" unless Object.prototype.toString.apply(componentDef) == '[object Object]'
 
   componentDef.type ?= "Hull"
-  Hull.define ['module'], (module)->
+
+  _normalizeComponentName = (name)->
+    [name, source] = name.split('@')
+    source ?= 'default'
+    "__component__$#{name}@#{source}"
+
+  detectModuleName = (module)->
     if componentName
-      [name, source] = componentName.split('@')
-      source ?= 'default'
-      computedName = "__component__$#{name}@#{source}"
-      throw "Mismatch in the names of the module" if computedName != module.id
+      throw "Mismatch in the names of the module" if _normalizeComponentName(componentName) != module.id
     Hull.define(module.id, componentDef)
     componentDef
+
+  if componentName
+    Hull.define _normalizeComponentName(componentName), componentDef
+  else
+    Hull.define ['module'], detectModuleName
   return componentDef
 
 define ['lib/utils/version', 'underscore'], (version, _) ->
