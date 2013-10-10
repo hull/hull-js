@@ -25,42 +25,44 @@ Hull.component({
   refreshEvents: ['model.hull.me.change'],
 
   initialize: function() {
-    this.authServices = this.sandbox.login.has();
+    var _ = this.sandbox.util._;
+    var configuredProviders = this.sandbox.login.available();
 
-    if (this.sandbox.util._.isEmpty(this.authServices)) {
+    if (_.isEmpty(configuredProviders)) {
       console.error('No Auth services configured. please add one to be able to authenticate users.');
     }
-  },
-
-  beforeRender: function(data) {
-    var _ = this.sandbox.util._;
 
     // If providers are specified, then use only those. else use all configuredauthServices
-    if(this.options.provider){
-      data.providers = this.options.provider.replace(' ','').split(',');
+    if (this.options.provider) {
+      var authServices = this.options.provider.replace(' ','').split(',');
     } else {
-      data.providers = this.authServices || [];
+      var authServices = configuredProviders || [];
     }
 
-    data.providers = _.filter(data.providers, function (provider) {
-      if (!this.sandbox.login.has(provider)) {
+    this.configuredProviders = _.filter(authServices, function (provider) {
+      if (!this.sandbox.login.available(provider)) {
         console.error('No auth service configured for ' + provider);
         return false;
       }
       return true;
     }, this);
 
+  },
+
+  beforeRender: function(data) {
+    var _ = this.sandbox.util._;
+
     // If I'm logged in, then create an array of logged In providers
     if(this.loggedIn()){
-      data.loggedInProviders = this.sandbox.util._.keys(this.loggedIn());
+      data.loggedInProviders = _.keys(this.loggedIn());
     } else {
       data.loggedInProviders = [];
     }
 
     // Create an array of logged out providers.
-    data.loggedOut = this.sandbox.util._.difference(data.providers, data.loggedInProviders);
-    data.matchingProviders = this.sandbox.util._.intersection(data.providers, data.loggedInProviders);
-    data.authServices = this.authServices;
+    data.loggedOut = _.difference(this.configuredProviders, data.loggedInProviders);
+    data.matchingProviders = _.intersection(this.configuredProviders, data.loggedInProviders);
+    data.authServices = this.configuredProviders;
 
     return data;
   }

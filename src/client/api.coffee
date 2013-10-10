@@ -200,13 +200,7 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
             , (err)->
               app.core.mediator.emit 'hull.auth.failure', err
 
-          app.sandbox.login.has = (name)->
-            authServices = app.sandbox.config.services.types.auth
-            authServices = app.sandbox.util._.map authServices, (s)->
-              s.replace(/_app$/, '')
-            return authServices unless name
-            app.sandbox.util._.contains authServices, name
-
+          app.sandbox.login.available = obj.auth.login.has
 
           app.sandbox.logout = (callback=->)->
             obj.auth.logout(callback).then ->
