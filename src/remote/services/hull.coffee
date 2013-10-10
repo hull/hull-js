@@ -14,7 +14,6 @@ define ['jquery', 'underscore'], ($, _)->
 
     identify = (me) ->
       return unless me
-
       analytics = require('analytics')
       signInCount = me.stats?.sign_in_count || 0
 
@@ -68,21 +67,33 @@ define ['jquery', 'underscore'], ($, _)->
           # Reset token if the user has changed...
           accessToken = false
 
-        callback({ response: response, headers: headers, provider: 'hull' })
+        callback({ response: response, headers: headers, provider: 'hull' }) if _.isFunction(callback)
+
+        trackAction(request, response)
+
 
       request.fail(errback)
 
       return
 
+
+    trackAction = (request, response)->
+      return unless track = request.getResponseHeader('Hull-Track')
+      try
+        [eventName, trackParams] = JSON.parse(atob(track))
+        trackParams.hull_app_id    = config?.appId
+        trackParams.hull_app_name  = config?.data?.app?.name
+        require('analytics').track(eventName, trackParams) if eventName
+      catch error
+        "Invalid Tracking header"
+
     trackHandler = (req, callback, errback)->
-      analytics = require('analytics')
       eventName = req.path
-
-      analytics.track(eventName, req.params)
-
+      require('analytics').track(eventName, req.params)
       req.path = "t"
       req.params.event ?= eventName
       req.params = { t: btoa(JSON.stringify(req.params)) }
+      req.method ?= 'post'
       handler(req, callback, errback)
 
     require:
