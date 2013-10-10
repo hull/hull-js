@@ -9,7 +9,8 @@ define ['lib/client/datasource', 'underscore'], (Datasource, _)->
       @datasources ?= {}
       _.each datasources, (ds, i)=>
         ds = _.bind ds, @ if _.isFunction ds
-        @datasources[i] = new module.datasourceModel(ds, @api) unless ds instanceof module.datasourceModel
+        ds = new module.datasourceModel(ds, @api) unless ds instanceof module.datasourceModel
+        @datasources[i] = ds
     
     # Fetches all the datasources for the instance of the component
     fetchDatasources: ()->

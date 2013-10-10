@@ -29,6 +29,10 @@ define(['lib/client/component/datasource'], function (module) {
       wrapper.call(scope, {});
       module.addDatasources.should.have.been.calledOnce;
       module.addDatasources.should.have.been.calledOn(scope);
+      module.addDatasources.args[0][0].should.contain.keys(['me', 'app', 'org']);
+      module.addDatasources.args[0][0].me.should.be.instanceOf(this.dsModelStub);
+      module.addDatasources.args[0][0].app.should.be.instanceOf(this.dsModelStub);
+      module.addDatasources.args[0][0].org.should.be.instanceOf(this.dsModelStub);
       spy.reset();
     });
 
@@ -64,6 +68,45 @@ define(['lib/client/component/datasource'], function (module) {
       this.dsModelStub.withArgs('me').should.have.been.calledOnce;
       this.dsModelStub.withArgs('app').should.have.been.calledOnce;
       this.dsModelStub.withArgs('org').should.have.been.calledOnce;
+    });
+  });
+
+  describe("add datasources to the component instance", function () {
+    it('should add a "datasources property"', function () {
+      var scope = {};
+      this.module.addDatasources.call(scope);
+      scope.should.contain.key('datasources');
+    });
+    it('should populate the `datasources` property with Datasource instances', function () {
+      var props = {
+        a: true,
+        b: true
+      };
+      var scope = {};
+      this.module.addDatasources.call(scope, props);
+      scope.datasources.should.contain.keys(['a', 'b']);
+      scope.datasources.a.should.be.instanceOf(this.dsModelStub);
+      scope.datasources.b.should.be.instanceOf(this.dsModelStub);
+    });
+
+    it('should leave Datasource instances untouched', function () {
+      var props = {
+        a: new this.dsModelStub()
+      };
+      var scope = {};
+      this.module.addDatasources.call(scope, props);
+      scope.datasources.should.contain.keys(['a']);
+      scope.datasources.a.should.be.equal(props.a);
+    });
+
+    it('should bind the component if property is a function', function () {
+      var props = {
+        a: sinon.spy()
+      };
+      var scope = {};
+      this.module.addDatasources.call(scope, props);
+      props.a();
+      props.a.should.have.been.calledOn(props);
     });
   });
 });
