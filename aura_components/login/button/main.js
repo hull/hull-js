@@ -11,6 +11,7 @@
  * @example <div data-hull-component="login/button@hull" data-hull-provider="github,facebook"></div>
  */
 
+/* jshint browser:true, devel:true */
 Hull.component({
   type: 'Hull',
 
@@ -33,10 +34,11 @@ Hull.component({
     }
 
     // If providers are specified, then use only those. else use all configuredauthServices
+    var authServices;
     if (this.options.provider) {
-      var authServices = this.options.provider.replace(' ','').split(',');
+      authServices = this.options.provider.replace(' ','').split(',');
     } else {
-      var authServices = configuredProviders || [];
+      authServices = configuredProviders || [];
     }
 
     this.configuredProviders = _.filter(authServices, function (provider) {
