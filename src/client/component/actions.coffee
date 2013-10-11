@@ -1,13 +1,13 @@
 define ['underscore'], (_)->
   module =
     initialize: (app)->
-      app.components.before 'initialize', module.registerEvents
+      app.components.before 'initialize', module.registerActions
 
     defaultActions: ['login', 'logout', 'linkIdentity', 'unlinkIdentity']
 
     actionHandler: (e)->
       try
-        source  = $(e.currentTarget)
+        source  = @sandbox.dom.find(e.currentTarget)
         action  = source.data("hull-action")
         fn = @actions[action] || @["#{action}Action"]
         fn = @[fn] if _.isString(fn)
