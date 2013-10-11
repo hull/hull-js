@@ -166,6 +166,104 @@ define(['lib/client/component/actions'], function (actionModule) {
         this.fakeEvent.stopPropagation.should.have.been.called;
         this.fakeEvent.stopImmediatePropagation.should.have.been.called;
       });
+
+      it("should call the option formatter with the options of the element", function () {
+        var fakeOptionData = {
+          hullAction: fakeActionName,
+          hullOption1: undefined
+        };
+        var fakeActionName = "test";
+        var stub = sinon.stub(this.componentMock.sandbox.dom, 'find', function () {
+          return {
+            data: function (actionName) {
+              if (actionName === "hull-action") {
+                return fakeActionName;
+              }
+              return fakeOptionData;
+            }
+          };
+        });
+        var formatSpy = sinon.spy(this.module, 'formatActionData');
+        this.module.actionHandler.call(this.componentMock, this.fakeEvent);
+        formatSpy.should.have.been.called;
+        formatSpy.should.have.been.calledWith(fakeOptionData);
+        formatSpy.restore();
+        stub.restore();
+      });
+
+      it("should call the option formatter with the options of the element", function () {
+        var fakeOptionData = {
+          hullAction: fakeActionName,
+          hullOption1: undefined
+        };
+        var fakeActionName = "test";
+        var stub = sinon.stub(this.componentMock.sandbox.dom, 'find', function () {
+          return {
+            data: function (actionName) {
+              if (actionName === "hull-action") {
+                return fakeActionName;
+              }
+              return fakeOptionData;
+            }
+          };
+        });
+        this.componentMock.actions = { test: sinon.spy() };
+        var actionSelectSpy = sinon.spy(this.module, 'selectAction');
+        this.module.actionHandler.call(this.componentMock, this.fakeEvent);
+        actionSelectSpy.should.have.been.called;
+        actionSelectSpy.should.have.been.calledWith(fakeActionName, this.componentMock);
+        stub.restore();
+        actionSelectSpy.restore();
+      });
+
+      it("should call the action method with the component as scope", function () {
+        var fakeOptionData = {
+          hullAction: fakeActionName,
+          hullOption1: undefined
+        };
+        var fakeActionName = "test";
+        var stub = sinon.stub(this.componentMock.sandbox.dom, 'find', function () {
+          return {
+            data: function (actionName) {
+              if (actionName === "hull-action") {
+                return fakeActionName;
+              }
+              return fakeOptionData;
+            }
+          };
+        });
+        this.componentMock.actions = { test: sinon.spy() };
+        this.module.actionHandler.call(this.componentMock, this.fakeEvent);
+        this.componentMock.actions.test.should.have.been.calledOnce;
+        this.componentMock.actions.test.should.have.been.calledWith(this.fakeEvent);
+        stub.restore();
+      });
+
+      it("should call the action method with the component as scope", function () {
+        var fakeOptionData = {
+          hullAction: fakeActionName,
+          hullOption1: undefined
+        };
+        var fakeActionName = "test";
+        var fakeSource = {
+          data: function (actionName) {
+            if (actionName === "hull-action") {
+              return fakeActionName;
+            }
+            return fakeOptionData;
+          }
+        };
+        var stub = sinon.stub(this.componentMock.sandbox.dom, 'find', function () {
+          return fakeSource;
+        });
+        this.componentMock.actions = { test: sinon.spy() };
+        this.module.actionHandler.call(this.componentMock, this.fakeEvent);
+        var secondArg = this.componentMock.actions.test.args[0][1];
+        secondArg.should.have.keys(['el', 'data']);
+        secondArg.el.should.be.eql(fakeSource);
+        secondArg.data.should.be.deep.equal(this.module.formatActionData(fakeOptionData));
+        stub.restore();
+      });
     });
   });
 });
