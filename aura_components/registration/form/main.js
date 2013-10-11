@@ -1,11 +1,11 @@
 /**
- * 
+ *
  * Shows a form so the user can fill any kind of data.
- * 
+ *
  * Define the fields using the `admin/registration` component.
  * Client-side validation is handled automatically and forms are build using a form builder with support for several field types.
  * Look at the JSON samples below to get a feel on what field types are supported.
- * 
+ *
  * ## Supported field types
  *
  * ### Text
@@ -16,13 +16,13 @@
  *   label : 'Name',
  *   pattern : 'Regex/HTML5 Standard',
  *   value : 'Default Value',
- *   autocomplete: false, 
+ *   autocomplete: false,
  *   required: true,
  *   error : 'Error message',
  *   placeholder : 'bob',
  * }
  * ```
- * 
+ *
  * ### Email
  * ```js
  * {
@@ -49,7 +49,7 @@
  *   placeholder : 'placeholder content'
  * }
  * ```
- * 
+ *
  * ### Telephone
  * ```js
  * {
@@ -63,7 +63,7 @@
  *   placeholder : 'placeholder content'
  * }
  * ```
- * 
+ *
  * ### Select
  * ```js
  * {
@@ -81,7 +81,7 @@
  *   placeholder : 'placeholder content'
  * }
  * ```
- * 
+ *
  * ### Checkbox
  * ```js
  * {
@@ -93,12 +93,12 @@
  *   error : 'You made an error'
  * },
  * ```
- * 
+ *
  * @name Form
  * @param {Boolean} editable Wether to offer the user to modify his form again once he submitted it.
- * @action {achieve} 
- * @datasource {activities} 
- * @template {template_name} 
+ * @action {achieve}
+ * @datasource {activities}
+ * @template {template_name}
  * @your_custom_tag {name} value
  * @your_custom_tag value
  * @example <div data-hull-component='registration/form@hull'></div>
@@ -260,8 +260,6 @@ Hull.component({
   },
 
   _ensureFormEl: function() {
-    if (this.formEl == null) {
-      this.formEl = document.getElementById(this.formId);
-    }
+    this.formEl = this.formEl || document.getElementById(this.formId);
   }
 });
