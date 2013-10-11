@@ -109,7 +109,7 @@ define ['jquery', 'underscore', 'lib/client/component/context', 'lib/utils/promi
           console.error("Error fetching Datasources ", err.message, err)
         ctxPromise.then (ctx)=>
           try
-            beforeCtx = @beforeRender.call(@, ctx.build(), ctx.errors())
+            beforeCtx = @invokeWithCallbacks 'beforeRender', ctx.build(), ctx.errors()
             beforeRendering = promises.when(beforeCtx)
             beforeRendering.done (dataAfterBefore)=>
               #FIXME SRSLY need some clarification
