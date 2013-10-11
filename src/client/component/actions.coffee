@@ -5,20 +5,28 @@ define ['underscore'], (_)->
 
     defaultActions: ['login', 'logout', 'linkIdentity', 'unlinkIdentity']
 
+    selectAction: (action, scope)->
+      fn = scope.actions[action] || scope["#{action}Action"]
+      fn = scope[fn] if _.isString(fn)
+      unless _.isFunction(fn)
+        throw new Error("Can't find action #{action} on this component")
+      fn
+
+    formatActionData: (data)->
+      formattedData = {}
+      for k,v of data
+        do ->
+          key = k.replace(/^hull/, "")
+          key = key.charAt(0).toLowerCase() + key.slice(1)
+          formattedData[key] = v
+      formattedData
+
     actionHandler: (e)->
+      source  = @sandbox.dom.find(e.currentTarget)
+      action  = source.data("hull-action")
+      data = module.formatActionData(source.data())
       try
-        source  = @sandbox.dom.find(e.currentTarget)
-        action  = source.data("hull-action")
-        fn = @actions[action] || @["#{action}Action"]
-        fn = @[fn] if _.isString(fn)
-        unless _.isFunction(fn)
-          throw new Error("Can't find action #{action} on this component")
-        data = {}
-        for k,v of source.data()
-          do ->
-            key = k.replace(/^hull/, "")
-            key = key.charAt(0).toLowerCase() + key.slice(1)
-            data[key] = v
+        fn = module.selectAction(action, @)
         fn.call(@, e, { el: source, data: data })
       catch err
         console.error("Error in action handler: ", action, err.message, err)
