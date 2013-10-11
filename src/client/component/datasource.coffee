@@ -15,13 +15,11 @@ define ['lib/client/datasource', 'underscore'], (Datasource, _)->
     # Fetches all the datasources for the instance of the component
     fetchDatasources: ()->
       @data ?= {}
-      keys = _.keys(@datasources)
-      promiseArray  = _.map keys, (k)=>
-        ds = @datasources[k]
+      promiseArray  = _.map @datasources, (k, ds)=>
         ds.parse(_.extend({}, @, @options || {}))
         handler = @["on#{_.string.capitalize(_.string.camelize(k))}Error"]
         handler = onDataError unless _.isFunction(handler)
-        handler = _.bind(handler, @) if _.isFunction(handler)
+        handler = _.bind(handler, @)
         ds.fetch().then (res)=>
           @data[k] = if res.toJSON then res.toJSON() else res
         , (err)->
