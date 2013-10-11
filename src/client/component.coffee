@@ -112,7 +112,6 @@ define ['jquery', 'underscore', 'lib/client/component/context', 'lib/utils/promi
             beforeCtx = @beforeRender.call(@, ctx.build(), ctx.errors())
             beforeRendering = promises.when(beforeCtx)
             beforeRendering.done (dataAfterBefore)=>
-              debugger
               #FIXME SRSLY need some clarification
               data = _.extend(dataAfterBefore || ctx.build(), @data, data)
               @doRender(tpl, data)
