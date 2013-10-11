@@ -1,8 +1,14 @@
-define ['lib/client/datasource', 'underscore'], (Datasource, _)->
-  onDataError = (datasourceName, err)->
-    console.log "An error occurred with datasource #{datasourceName}", err
+define ['lib/client/datasource', 'underscore', 'string'], (Datasource, _)->
   module =
     datasourceModel: Datasource
+
+    getDatasourceErrorHandler: (name, scope)->
+      handler = scope["on#{_.string.capitalize(_.string.camelize(name))}Error"]
+      handler = module.defaultErrorHandler unless _.isFunction(handler)
+      _.bind(handler, scope)
+
+    defaultErrorHandler: (datasourceName, err)->
+      console.log "An error occurred with datasource #{datasourceName}", err
     
     # Adds datasources to the instance of the component
     addDatasources: (datasources)->
@@ -17,12 +23,10 @@ define ['lib/client/datasource', 'underscore'], (Datasource, _)->
       @data ?= {}
       promiseArray  = _.map @datasources, (k, ds)=>
         ds.parse(_.extend({}, @, @options || {}))
-        handler = @["on#{_.string.capitalize(_.string.camelize(k))}Error"]
-        handler = onDataError unless _.isFunction(handler)
-        handler = _.bind(handler, @)
         ds.fetch().then (res)=>
           @data[k] = if res.toJSON then res.toJSON() else res
-        , (err)->
+        , (err)=>
+          handler = module.getDatasourceErrorHandler(k, @)
           handler(k, err)
       @sandbox.data.when(promiseArray...)
 

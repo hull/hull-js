@@ -99,7 +99,7 @@ define(['lib/client/component/datasource'], function (module) {
       scope.datasources.a.should.be.equal(props.a);
     });
 
-    it('should bind the component if property is a function', function () {
+    it('should bind to the component if property is a function', function () {
       var props = {
         a: sinon.spy()
       };
@@ -107,6 +107,51 @@ define(['lib/client/component/datasource'], function (module) {
       this.module.addDatasources.call(scope, props);
       props.a();
       props.a.should.have.been.calledOn(props);
+    });
+  });
+
+  describe("Datasource resolution", function () {
+    describe("Determining the datasource error handler", function () {
+      beforeEach(function () {
+        this.defaultStub = sinon.stub(this.module, 'defaultErrorHandler');
+      });
+      afterEach(function () {
+        this.defaultStub.restore();
+      });
+
+      it("should have a default error handler", function () {
+        this.module.defaultErrorHandler.should.be.a('function');
+      });
+
+      it("should use the default error handler if none specified", function () {
+        var component = {};
+        var handler = this.module.getDatasourceErrorHandler("datasourceName", component);
+        handler();
+        this.defaultStub.should.have.been.calledOnce;
+        this.defaultStub.should.have.been.calledOn(component);
+      });
+
+      it("should use the custom handler provided by the component if available", function () {
+        var spy = sinon.spy();
+        var component = {
+          onDsError: spy
+        };
+        var handler = this.module.getDatasourceErrorHandler('Ds', component);
+        handler();
+        this.defaultStub.should.not.have.been.called;
+        spy.should.have.been.calledOnce;
+        spy.should.have.been.calledOn(component);
+      });
+
+      it("should use the default handler if the component property is not a function", function () {
+        var component = {
+          onDsError: {}
+        };
+        var handler = this.module.getDatasourceErrorHandler('Ds', component);
+        handler();
+        this.defaultStub.should.have.been.calledOnce;
+        this.defaultStub.should.have.been.calledOn(component);
+      });
     });
   });
 });
