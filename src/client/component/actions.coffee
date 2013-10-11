@@ -27,9 +27,7 @@ define ['underscore'], (_)->
         e.stopPropagation()
         e.stopImmediatePropagation()
 
-    defaultActions: ['login', 'logout', 'linkIdentity', 'unlinkIdentity']
-
-    registerEvents: (options)->
+    registerActions: ()->
       @events = if _.isFunction(@events) then @events() else @events
       @events ?= {}
       @events["click [data-hull-action]"] = _.bind module.actionHandler, @
@@ -42,3 +40,4 @@ define ['underscore'], (_)->
         @actions[action] ?= (e, params)=>@sandbox[action](params.data.provider, params.data)
       , @
 
+  module
