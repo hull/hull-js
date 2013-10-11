@@ -64,6 +64,15 @@ Create the file `.grunt/grunt-aws.json`, with the following content :
     </script>
 
 
+# Creating a release
+
+* `git flow release start 0.x.x`
+* Bump versions in `bower.json` and `package.json` files
+* `git flow release finish 0.x.x`
+*
+
+
+
 # Contributing
 
 You're encouraged to submit pull requests,
