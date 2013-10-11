@@ -9,7 +9,7 @@ define ['lib/client/datasource', 'underscore', 'string'], (Datasource, _)->
 
     defaultErrorHandler: (datasourceName, err)->
       console.log "An error occurred with datasource #{datasourceName}", err
-    
+
     # Adds datasources to the instance of the component
     addDatasources: (datasources)->
       @datasources ?= {}
@@ -17,7 +17,7 @@ define ['lib/client/datasource', 'underscore', 'string'], (Datasource, _)->
         ds = _.bind ds, @ if _.isFunction ds
         ds = new module.datasourceModel(ds, @api) unless ds instanceof module.datasourceModel
         @datasources[i] = ds
-    
+
     # Fetches all the datasources for the instance of the component
     fetchDatasources: ()->
       @data ?= {}
@@ -41,6 +41,6 @@ define ['lib/client/datasource', 'underscore', 'string'], (Datasource, _)->
         datasources = _.extend {}, default_datasources, @datasources, options.datasources
         module.addDatasources.call(@, datasources)
 
-      app.components.before 'render', module.fetchDatasources
+      app.components.before 'beforeRender', module.fetchDatasources
 
   module

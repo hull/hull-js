@@ -44,10 +44,10 @@ define(['lib/client/component/datasource'], function (module) {
       spy.reset();
     });
 
-    it("should attach the datasource resolution method before Component::render", function () {
+    it("should attach the datasource resolution method before Component::beforeRender", function () {
       this.module.initialize(this.appMock);
-      this.beforeSpy.withArgs('render').should.have.been.calledOnce;
-      var arg2 = this.beforeSpy.withArgs('render').args[0][1];
+      this.beforeSpy.withArgs('beforeRender').should.have.been.calledOnce;
+      var arg2 = this.beforeSpy.withArgs('beforeRender').args[0][1];
       arg2.should.be.equal(module.fetchDatasources);
     });
   });
