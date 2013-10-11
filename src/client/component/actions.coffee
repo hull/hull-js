@@ -1,7 +1,9 @@
 define ['underscore'], (_)->
   module =
-    initialize:
+    initialize: (app)->
       app.components.before 'initialize', module.registerEvents
+
+    defaultActions: ['login', 'logout', 'linkIdentity', 'unlinkIdentity']
 
     actionHandler: (e)->
       try
