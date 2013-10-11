@@ -1,7 +1,15 @@
 define(['lib/client/component/datasource'], function (module) {
   before(function () {
     this.module = module;
-    this.dsModelStub = sinon.stub(module, 'datasourceModel');
+    this.dsModelStub = sinon.stub(module, 'datasourceModel', function () {
+      this.parse = function () {};
+      this.fetch = function () {
+        return {
+          then: function () {}
+        };
+      }
+      return this;
+    });
   });
   afterEach(function () {
     this.dsModelStub.reset();
@@ -151,6 +159,93 @@ define(['lib/client/component/datasource'], function (module) {
         handler();
         this.defaultStub.should.have.been.calledOnce;
         this.defaultStub.should.have.been.calledOn(component);
+      });
+    });
+    describe("Resolves datasources to actual data", function () {
+      beforeEach(function () {
+        this.whenStub = sinon.stub();
+        var thenStub = this.thenStub = sinon.stub();
+        this.component = {
+          sandbox: { data: { when: this.whenStub } }
+        };
+        this.dsModelStub.restore();
+        this.dsModelStub = sinon.stub(module, 'datasourceModel', function () {
+          this.parse = function () {};
+          this.fetch = function () {
+            return {
+              then: thenStub
+            };
+          };
+          return this;
+        });
+      });
+      afterEach(function () {
+        this.dsModelStub.restore();
+      });
+
+      it("should create a `data` property on component if not available", function () {
+        this.module.fetchDatasources.call(this.component);
+        this.component.data.should.be.a('object');
+      });
+      it("should not overwrite the `data` property of the component", function () {
+        var fakeData = {
+          prop: "value"
+        };
+        this.component.data = fakeData;
+        this.module.fetchDatasources.call(this.component);
+        this.component.data.should.be.equal(fakeData);
+      });
+
+      it("should return a promise", function () {
+        this.whenStub.returns("__promise__");
+        this.module.fetchDatasources.call(this.component).should.be.equal("__promise__");
+        this.whenStub.should.have.been.calledOnce;
+      });
+
+      it("should parse the options", function () {
+        this.component.datasources = {
+          test: new this.dsModelStub()
+        };
+        var spy = sinon.spy(this.component.datasources.test, 'parse');
+        this.module.fetchDatasources.call(this.component);
+        spy.should.have.been.called;
+      });
+
+      it("should fetch the data", function () {
+        this.component.datasources = {
+          test: new this.dsModelStub()
+        };
+        var spy = sinon.spy(this.component.datasources.test, "fetch");
+        this.module.fetchDatasources.call(this.component);
+        spy.should.have.been.called;
+      });
+
+      it("should add a property to the `data` property of the component if the datasource succeeds", function () {
+        this.component.datasources = {
+          test: new this.dsModelStub()
+        };
+        var result = {};
+        this.module.fetchDatasources.call(this.component);
+        this.thenStub.should.have.been.calledOnce;
+        var successFn = this.thenStub.args[0][0];
+        //We simulate a resolution of the promise
+        successFn(result);
+        this.component.data.should.have.key('test');
+        this.component.data.test.should.equal(result);
+      });
+
+      it("should call the handler if the datasource fails", function () {
+        this.component.datasources = {
+          test: new this.dsModelStub()
+        };
+        var spy = sinon.spy(this.module, 'getDatasourceErrorHandler');
+        var error = {};
+        this.module.fetchDatasources.call(this.component);
+        var failureFn = this.thenStub.args[0][1];
+        //We simulate a resolution of the promise
+        failureFn(error);
+        spy.should.have.been.calledOnce;
+        spy.should.have.been.calledWith("test", this.component)
       });
     });
   });

@@ -21,7 +21,7 @@ define ['lib/client/datasource', 'underscore', 'string'], (Datasource, _)->
     # Fetches all the datasources for the instance of the component
     fetchDatasources: ()->
       @data ?= {}
-      promiseArray  = _.map @datasources, (k, ds)=>
+      promiseArray  = _.map @datasources, (ds, k)=>
         ds.parse(_.extend({}, @, @options || {}))
         ds.fetch().then (res)=>
           @data[k] = if res.toJSON then res.toJSON() else res
