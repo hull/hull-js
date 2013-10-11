@@ -10,6 +10,24 @@ define(['lib/client/component/actions'], function (actionModule) {
       };
     });
 
+    beforeEach(function () {
+      this.componentMock = {
+        sandbox: {
+          dom: {
+            find: function () {
+              return {
+                data: function () {}
+              };
+            }
+          }
+        }
+      };
+    });
+
+    afterEach(function () {
+      this.beforeSpy.reset();
+    });
+
     describe("Component bindings", function () {
       it("should register abefore:initialize hook", function () {
         this.module.initialize(this.appMock);
@@ -53,12 +71,11 @@ define(['lib/client/component/actions'], function (actionModule) {
 
       it('should execute the Hull actions handler in the scope of the component', function () {
         var spy = sinon.spy(this.module, 'actionHandler');
-        var component = {};
-        this.module.registerActions.call(component);
-        var fn = component.events['click [data-hull-action]'];
+        this.module.registerActions.call(this.componentMock);
+        var fn = this.componentMock.events['click [data-hull-action]'];
         fn(this.fakeEvent);
         spy.should.have.been.calledOnce;
-        spy.should.have.been.calledOn(component);
+        spy.should.have.been.calledOn(this.componentMock);
         spy.restore();
       });
 
@@ -98,9 +115,45 @@ define(['lib/client/component/actions'], function (actionModule) {
       });
     });
 
+    describe("selecting the right action", function () {
+      it("should prioritize the entries in `actions` hash of the component", function () {
+        var actionFn = function () {};
+        var componentFn = function () {};
+        var fn = this.module.selectAction('test', { actions: {test: actionFn}, testAction: componentFn});
+        fn.should.be.equal(actionFn);
+      });
+
+      it("should should fallback to a component's method named `action`Action", function () {
+        var componentFn = function () {};
+        var fn = this.module.selectAction('test', { actions: {}, testAction: componentFn});
+        fn.should.be.equal(componentFn);
+      });
+
+      it("should delegate to a component method if the value for the existing key is a string", function () {
+        var componentFn = function () {};
+        var fn = this.module.selectAction('test', { actions: {test: "awesomeMethod"}, awesomeMethod: componentFn});
+        fn.should.be.equal(componentFn);
+
+        //Fallback on `action`Name key
+        var fallbackFn = this.module.selectAction('test', { actions: {}, testAction: "awesomeMethod", awesomeMethod: componentFn});
+        fallbackFn.should.be.equal(componentFn);
+      });
+
+      it("should throw if no method is found", function () {
+        this.module.selectAction.bind(undefined, 'nonExisting', {}).should.throw();
+      });
+    });
+
+    describe("getting the action data", function () {
+      it('should return a camelized name without the app prefix', function () {
+        this.module.formatActionData({hullOption1: true, hullOption2: true}).should.have.keys(['option1', 'option2']);
+      });
+    });
+
     describe("Triggering actions", function () {
       beforeEach(function () {
         this.fakeEvent = sinon.stub({
+          currentTarget: "__target__",
           preventDefault: function () {},
           stopPropagation: function () {},
           stopImmediatePropagation: function () {}
@@ -108,7 +161,7 @@ define(['lib/client/component/actions'], function (actionModule) {
       });
 
       it("should not bubble and prevent propagation of the event", function () {
-        this.module.actionHandler(this.fakeEvent);
+        this.module.actionHandler.call(this.componentMock, this.fakeEvent);
         this.fakeEvent.preventDefault.should.have.been.called;
         this.fakeEvent.stopPropagation.should.have.been.called;
         this.fakeEvent.stopImmediatePropagation.should.have.been.called;
