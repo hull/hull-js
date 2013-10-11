@@ -1,31 +1,28 @@
 /**
- * ## User profile
+ * 
+ * Displays the profile of any user of your app.
  *
- * Displays the profile of an user of your app.
+ * @name User Profile
+ * @template {user_profile} Displays detailed informations about the selected user.
+ * @param {String} id The id of the user you want to display
+ * @example <div data-hull-component="admin/user_profile@hull"></div>
  *
- * ### Example
- *
- *     <div data-hull-component="admin/user_profile@hull"></div>
- *
- * ### Options
- *
- * - `id`: The is of the user you want to display
- *
- * ### Template
- *
- * - `user_profile`: Displays detailed informations about the selected user.
- *
-*/
-Hull.define({
+ */
+Hull.component({
   type: 'Hull',
 
   templates: [
     'user_profile'
   ],
 
+  options:{
+    id:'me'
+  },
+
   datasources: {
     user: function() {
-      if (this.user) { return this.api(this.user, { fields: 'user.profiles' }); }
+      var user = this.user || this.options.id;
+      if (user) { return this.api(user, { fields: 'user.profiles' }); }
     }
   },
 
@@ -35,12 +32,27 @@ Hull.define({
 
   beforeRender: function(data){
     if (!data.user) { return; }
+
     data.userHasProfiles = !this.sandbox.util._.isEmpty(data.user.profiles);
   },
 
   actions: {
     promote: function(e, action) {
       this.promoteUser(action.data.role);
+    },
+
+    approve: function() {
+      var self = this;
+      this.api(this.data.user.id + '/approve', 'post').then(function() {
+        self.render();
+      });
+    },
+
+    unapprove: function() {
+      var self = this;
+      this.api(this.data.user.id + '/unapprove', 'post').then(function() {
+        self.render();
+      });
     }
   },
 

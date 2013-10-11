@@ -1,0 +1,8 @@
+{{#if loggedIn}}
+  <div class='btn-group'>
+    <button class="btn btn-small {{outputIf myVote 1 'btn-success'}} dropup" data-hull-action='{{outputIf myVote 1 'unvote' 'upvote'}}'><span class='caret'></span>&nbsp;{{votes.up}}</button>
+    <button class="btn btn-small {{outputIf myVote -1 'btn-success'}} dropdown" data-hull-action='{{outputIf myVote -1 'unvote' 'downvote'}}'><span class='caret'></span>&nbsp;{{votes.down}}</button>
+  </div>
+{{else}}
+  <div data-hull-component="login_button@hull"></div>
+{{/if}}

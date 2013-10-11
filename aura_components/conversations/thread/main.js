@@ -1,48 +1,31 @@
 /**
- * ## Conversation
  * View a conversation's messages and allow users to reply to the thread.
  *
- * ## Example
- *
- *     <div data-hull-component="conversations/thread@hull" data-hull-id="OBJECT_ID"></div>
- *
- * ## Options:
- *
- * - `id`: Required, The id of the specific conversation object
- *
- * ## Templates:
- *
- * - `conversation`: The main template, that show conversation's messages,
- *   participants and form
- * - `participants`: List of the conversation's participants
- * - `form`: A form that allow logged user to add messages to the conversation
- * - `conversation_button`: "Start a Conversation" button
- *
- * ## Datasource:
- *
- * - `conversation`: The conversation
- *
- * ## Actions:
- *
- * - `create`: Creates a conversation
- * - `message`: Submits a new message.
- * - `deleteMsg`: destroys a message
- * - `notification`: Enable/disable email notifications for user
+ * @name Thread
+ * @param {String} id Required The conversation object - This must a conversation ID. Use the '/UID/conversations' api call to get conversation IDs for an entity or hull object.
+ * @param {Boolean} focus Optional Focus after render.
+ * @param {String} order  messages list ordering direction. default: desc. values: ['asc', 'desc']
+ * @datasource {conversation} A conversation.
+ * @datasource {messages} A collection of messages for the conversation.
+ * @template {thread} The main template, that show conversation's messages, participants and form.
+ * @template {participants} List of the conversation's participants.
+ * @template {form} The form to enter a new message.
+ * @example <div data-hull-component="conversations/thread@hull" data-hull-id="5244ae9448e9c141de000015"></div>
+ * @example <div data-hull-component="conversations/thread@hull" data-hull-id="OBJECT_ID"></div>
  */
 
-Hull.define({
-  type: 'Hull',
+Hull.component({
 
-  templates: ['thread','form','participants'],
+  templates: ['thread', 'form', 'participants'],
 
   refreshEvents: ['model.hull.me.change'],
 
   actions: {
-    message:      'message',
-    deleteMsg:    'deleteMsg',
+    message: 'message',
+    deleteMsg: 'deleteMsg',
     enableNotifications: 'enableNotifications',
     disableNotifications: 'disableNotifications',
-    delete:       'delete'
+    delete: 'delete'
   },
 
   options: {
@@ -52,22 +35,19 @@ Hull.define({
 
   datasources: {
     conversation: function() {
-      if(this.options.id) {
+      if (this.options.id) {
         return this.api(this.options.id);
       }
     },
-    messages: function () {
-      if(this.options.id) {
+    messages: function() {
+      if (this.options.id) {
         return this.api(this.options.id + '/messages', this.getMessagesParams());
-      }
-      else {
-        return null;
       }
     }
   },
 
   getMessagesParams: function() {
-    var params = {  };
+    var params = {};
     if (this.options.limit) {
       params.per_page = this.options.limit;
     }
@@ -84,8 +64,8 @@ Hull.define({
   beforeRender: function(data, errors) {
     var _ = this.sandbox.util._;
     data.isAscending = this.options.order != 'desc';
+
     if (data.conversation) {
-      window._messages = data.messages;
       data.participants = data.conversation.participants;
       if (this.loggedIn()) {
         data.conversation.isDeletable = (data.conversation.actor && data.conversation.actor.id == data.me.id);
@@ -93,7 +73,7 @@ Hull.define({
           m.isDeletable = m.actor && (m.actor.id === this.data.me.id);
 
           var last_read = data.conversation.last_read;
-          if(last_read instanceof Object){
+          if (last_read instanceof Object) {
             last_read = last_read[this.data.me.id];
           }
           m.isNew = !m.isMe && (last_read ? m.id > last_read : true);
@@ -107,12 +87,11 @@ Hull.define({
 
         data.isNew = !(data.messages && data.messages.length > 0);
       }
-    }
-    else {
+    } else {
       data.newConvo = true;
       data.errors = errors;
     }
-    if('desc' !== this.options.order) {
+    if ('desc' !== this.options.order) {
       data.messages = data.messages.reverse();
     }
     return data;
@@ -120,7 +99,7 @@ Hull.define({
 
   afterRender: function(data) {
     var self = this;
-    if(this.options.focus || this.focusAfterRender) {
+    if (this.options.focus || this.focusAfterRender) {
       this.$el.find('input,textarea').focus();
       this.focusAfterRender = false;
     }
@@ -138,7 +117,7 @@ Hull.define({
     }, 2000);
   },
 
-  toggleLoading: function ($el) {
+  toggleLoading: function($el) {
     var $form = $el.toggleClass('is-loading');
     var $btn = $form.find('.btn');
     $btn.attr('disabled', !$btn.attr('disabled'));
@@ -146,7 +125,7 @@ Hull.define({
     $textarea.attr('disabled', !$textarea.attr('disabled'));
   },
 
-  message: function (e, data) {
+  message: function(e, data) {
     e.preventDefault();
     var self = this;
     var $form = this.$el.find("[data-hull-item='form']");
@@ -155,7 +134,9 @@ Hull.define({
     this.toggleLoading($form);
     if (body && body.length > 0) {
       var cid = data.data.id;
-      var attributes = { body: body };
+      var attributes = {
+        body: body
+      };
       this.api(cid + '/messages', 'post', attributes).then(function() {
         self.toggleLoading($form);
         self.render();
@@ -168,18 +149,21 @@ Hull.define({
   deleteMsg: function(e, data) {
     e.preventDefault();
     var id = data.data.id;
-    var $parent = data.el
-      .addClass('is-removing')
-      .parents('[data-hull-message-id="'+ id +'"]');
-    this.api.delete(id).then(function () { $parent.remove(); });
+    var $parent = data.el.addClass('is-removing').parents('[data-hull-message-id="' + id + '"]');
+    this.api.delete(id).then(function() {
+      $parent.remove();
+    });
   },
 
   delete: function(e, data) {
     event.preventDefault();
     var id = data.data.id;
     var self = this;
-    this.api.delete(id).then(function () {
-      self.sandbox.emit('hull.conversation.thread.delete', {id:id, cid:self.cid});
+    this.api.delete(id).then(function() {
+      self.sandbox.emit('hull.conversation.thread.delete', {
+        id: id,
+        cid: self.cid
+      });
     });
   },
 

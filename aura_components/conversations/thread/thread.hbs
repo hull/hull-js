@@ -4,21 +4,23 @@
   {{#if conversation}}
     <div class="hull-conversation">
       <div class="hull-conversation__header">
-        <h2>
+        <h3>
           <span class="pull-right muted"><small>started {{fromNow conversation.created_at}}</small></span>
           {{conversation.name}}
-        </h2>
+        </h3>
         {{#if conversation.isDeleteable}}
-          <button data-hull-action="deleteConvo" data-hull-id="{{conversation.id}}" class="btn btn-link text-error pull-right">Delete conversation</button>
+          <button data-hull-action="deleteConvo" data-hull-id="{{conversation.id}}" class="btn btn-link text-error pull-right">
+            Delete conversation
+          </button>
         {{/if}}
         <div class="hull-conversation__participants text-right">
-          {{> conversations.thread.participants}}
+          {{> conversations/thread/participants}}
         </div>
       </div>
       <hr />
       <div class="row-fluid">
           {{^isAscending}}
-            {{> conversations.thread.form}}
+            {{> conversations/thread/form}}
           {{/isAscending}}
 
           {{#if messages}}
@@ -60,7 +62,7 @@
           {{/messages}}
 
           {{#if isAscending}}
-            {{> conversations.thread.form}}
+            {{> conversations/thread/form}}
           {{/if}}
       </div>
     </div>

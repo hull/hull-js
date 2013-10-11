@@ -8,21 +8,53 @@ Hull = window.Hull = window.Hull || {}
 
 Hull.templates ?= {}
 
+_conflicts = {}
+
+
 Hull.init = (config, cb, errcb) ->
   require ['lib/hull'], (app) ->
+    for name in ['require', 'define']
+      _conflicts[name] ||= window[name] if window[name]
+      console.log("Setting window.#{name} to Hull.#{name}. Use Hull.noConflict() to revert to previous values.") if window.console and config.debug
+      window[name] = Hull[name]
     app(config, cb, errcb)
 
+Hull.noConflict = ->
+  for name of _conflicts
+    window[name] = _conflicts[name]
+
+Hull.define = define
+Hull.require = require
+
 Hull.component = Hull.widget = (componentName, componentDef) ->
+  unless componentDef
+    componentDef = componentName
+    componentName = null
   #Validates the name
-  throw 'A component must have a identifier' unless componentName
-  throw 'The component identifier must be a String' unless Object.prototype.toString.apply(componentName) == '[object String]'
+  if componentName and not Object.prototype.toString.apply(componentName) == '[object String]'
+    throw 'The component identifier must be a String'
 
   #Fetch the definition
   componentDef = componentDef() if Object.prototype.toString.apply(componentDef) == '[object Function]'
-  throw "The component #{componentName} must have a definition" unless Object.prototype.toString.apply(componentDef) == '[object Object]'
+  throw "A component must have a definition" unless Object.prototype.toString.apply(componentDef) == '[object Object]'
 
   componentDef.type ?= "Hull"
-  define("__component__$#{componentName}@default", componentDef)
+
+  _normalizeComponentName = (name)->
+    [name, source] = name.split('@')
+    source ?= 'default'
+    "__component__$#{name}@#{source}"
+
+  detectModuleName = (module)->
+    if componentName
+      throw "Mismatch in the names of the module" if _normalizeComponentName(componentName) != module.id
+    Hull.define(module.id, componentDef)
+    componentDef
+
+  if componentName
+    Hull.define _normalizeComponentName(componentName), componentDef
+  else
+    Hull.define ['module'], detectModuleName
   return componentDef
 
 define ['lib/utils/version', 'underscore'], (version, _) ->

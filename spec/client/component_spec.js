@@ -1,7 +1,7 @@
   /*global describe:true, it:true, before: true, sinon: true, define: true */
 
 define(['aura/aura'], function(aura) {
-  describe('Component', function() {
+  xdescribe('Component', function() {
     var app;
     var Component;
     var component;
@@ -47,58 +47,13 @@ define(['aura/aura'], function(aura) {
       component = createComponentInstance();
     });
 
-    describe('#track', function() {
-      var spy;
-      beforeEach(function() {
-        spy = component.sandbox.track = sinon.spy();
-      });
-
-      it('should be defined', function() {
-        component.track.should.be.a('function');
-      });
-
-      it('should call sandbox.track', function() {
-        component.track('test');
-        spy.should.have.been.calledWith('test');
-      });
-
-      describe('when trackingData is an object', function() {
-        it('should extend data with trackingData', function() {
-          var component = createComponentInstance({ trackingData: { foo: 'bar' } });
-          spy = component.sandbox.track = sinon.spy();
-
-          component.track('test');
-          var trackingData = spy.args[0][1];
-
-          trackingData.should.have.property('foo', 'bar');
-        });
-      });
-
-      describe('when trackingData is a function', function() {
-        it('should extend data with object returned by trackingData', function() {
-          var component = createComponentInstance({
-            trackingData: function() {
-              return { foo: 'bar' };
-            }
-          });
-          spy = component.sandbox.track = sinon.spy();
-
-          component.track('test');
-          var trackingData = spy.args[0][1];
-
-          trackingData.should.have.property('foo', 'bar');
-        });
-      });
-
-      it('should extend data with component id and name', function() {
-        component.track('test', { foo: 'bar' });
-        var trackingData = spy.args[0][1];
-        trackingData.should.deep.equal({
-          id: 'fake_id',
-          component: 'fake_name',
-          foo: 'bar'
-        });
+    describe('Rendering the component', function () {
+      it('should render immediately in the nominal scenario', function () {
+        var spy = sinon.spy();
+        var component = createComponentInstance({render: spy});
+        spy.should.have.been.called;
       });
     });
+
   });
 });

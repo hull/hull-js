@@ -1,0 +1,18 @@
+{{#isAdmin}}
+  <div class="well">
+    <h2>Registration form for <strong>{{app.name}}</strong></h2>  
+    <form class="form-inline">
+      <fieldset>
+        <textarea data-hull-field="fields" class="input-block-level" rows="15" placeholder="Enter your JSON here"></textarea>
+        <div class="form-actions">
+          <button data-hull-action="update" class="btn btn-primary">Submit</button>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+{{/isAdmin}}
+{{^isAdmin}}
+  You need to be an administrator of the current app to view this component
+{{/isAdmin}}
+
+

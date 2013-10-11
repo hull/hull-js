@@ -9,7 +9,8 @@
           <textarea name='body' class="input-block-level" rows="3" placeholder="Send a message... "></textarea>
           <button data-hull-action="message" data-hull-id="{{conversation.id}}" class="btn btn-primary">
             {{#if isNew}}Send{{else}}Reply{{/if}}
-          </button> {{#me}}as {{name}}{{/me}}
+            {{#me}}as {{name}}{{/me}}
+          </button>
 
           {{#if conversation.notification_enabled}}
           {{#if conversation.notification_enabled_user}}
@@ -34,6 +35,6 @@
       </div>
     </form>
   {{else}}
-    <div data-hull-component="login_button@hull"></div>
+    <div data-hull-component="login/button@hull"></div>
   {{/if}}
 </div>

@@ -356,6 +356,23 @@ define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars'], (mo
     HandlebarsHelpers.outputIf = (obj, compare, output='', fallback='')->
         if obj == compare then output else fallback;
 
+    ###*
+     * write a value or a fallback if the value is falsy
+     *
+     *      foo='bar'
+     *      baz=0
+     *
+     *      1. {{fallback foo 'default_value'}}
+     *      2. {{fallback baz 'default_value'}}
+     *
+     *      =>
+     *      1. 'bar'
+     *      2. 'default_value'
+    ###
+
+    HandlebarsHelpers.fallback = (obj, fb)->
+      if (obj) then obj else fb
+
 
     ###*
      * Maps an activity stream to english actions, with fallbacks from a hash
@@ -401,5 +418,24 @@ define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars'], (mo
     HandlebarsHelpers.to_s = (object)->
         return '' unless object?
         object.name||object.title||object.uid||object.description||object
+
+    ###*
+     * prune {{ prune string 140 "more..." }}
+     * Elegant version of truncate. Makes sure the pruned string
+     * does not exceed the original length.
+     * Avoid half-chopped words when truncating.
+    ###
+    HandlebarsHelpers.prune = (string, length, pruneString)->
+      _.str.prune string, length, pruneString
+
+
+    ###*
+     * truncate {{ truncate string 140 "more..." }}
+     * truncate string to a max number of character
+     * optional truncateString argument
+    ###
+    HandlebarsHelpers.truncate = (string, length, truncateString)->
+      _.str.truncate string, length, truncateString
+
 
     Handlebars.registerHelper(k, v) for k,v of HandlebarsHelpers

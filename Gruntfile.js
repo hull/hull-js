@@ -18,7 +18,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-plato');
   grunt.loadNpmTasks('grunt-wrap');
 
-  var pkg = grunt.file.readJSON('bower.json');
   var clientConfig = grunt.file.readJSON('.grunt/client.json');
   var remoteConfig = grunt.file.readJSON('.grunt/remote.json');
   var apiConfig = grunt.file.readJSON('.grunt/api.json');
@@ -63,7 +62,6 @@ module.exports = function (grunt) {
 
 
   var gruntConfig = {
-    PKG_VERSION: pkg.version,
     clean: {
       client: {
         src: 'lib/client/**/*'
@@ -159,15 +157,15 @@ module.exports = function (grunt) {
           out: 'tmp/aura_components/upload/deps/jquery.fileupload.js'
         }
       },
-      registration: {
-        options: {
-          namespace: 'Hull',
-          paths: { h5f: 'aura_components/registration/h5f' },
-          shim: { h5f: { exports: 'H5F' } },
-          include: ['h5f'],
-          out: 'tmp/aura_components/registration/deps.js'
-        }
-      },
+      // registration: {
+      //   options: {
+      //     namespace: 'Hull',
+      //     paths: { h5f: 'aura_components/registration/h5f' },
+      //     shim: { h5f: { exports: 'H5F' } },
+      //     include: ['h5f'],
+      //     out: 'tmp/aura_components/registration/deps.js'
+      //   }
+      // },
       dox: {
         options: {
           namespace: 'Hull',
@@ -186,7 +184,7 @@ module.exports = function (grunt) {
     watch: {
       widgets: {
         files: ['aura_components/**/*'],
-        tasks: ['hull_widgets']
+        tasks: ['dist:widgets']
       },
       remote: {
         files: remoteConfig.srcFiles,
@@ -197,12 +195,16 @@ module.exports = function (grunt) {
         tasks: ['dist:api', 'do_test']
       },
       client: {
-        files: clientConfig.srcFiles,
+        files: [clientConfig.srcFiles, "aura-extensions/**/*.js"],
         tasks: ['dist:client', 'do_test']
       },
       spec: {
         files: ['spec/**/*.js'],
         tasks: ['mocha']
+      },
+      extensions: {
+        files: ['aura-extensions/**/*.js'],
+        tasks: ['dist:client', 'do_test']
       }
     },
     version: {
@@ -212,7 +214,7 @@ module.exports = function (grunt) {
     hull_widgets: {
       hull: {
         src: 'aura_components',
-        before: ['requirejs:upload', 'requirejs:registration', 'requirejs:dox'],
+        before: [],
         dest: 'dist/<%= PKG_VERSION%>',
         optimize: !grunt.option('dev')
       }
@@ -254,38 +256,28 @@ module.exports = function (grunt) {
       }
     },
     dist: {
-      "remote": ['clean:remote', 'coffee:remote', 'wrap', 'version', 'requirejs:remote'],
-      "client": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client'],
-      "api": ['clean:client', 'coffee:api', 'version', 'requirejs:api'],
-      "client-no-underscore": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
-      "client-no-backbone": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
-      "widgets": ["hull_widgets"],
-      "docs": ['dox']
+      "remote": ['version', 'clean:remote', 'coffee:remote', 'wrap', 'version', 'requirejs:remote'],
+      "client": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client'],
+      "api": ['version', 'clean:client', 'coffee:api', 'wrap', 'version', 'requirejs:api'],
+      "client-no-underscore": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
+      "client-no-backbone": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
+      "widgets": ["version", "hull_widgets"],
+      "docs": ['dox'],
+      "describe": ['describe']
     }
   };
 
   helpers.appendAWSConfig(gruntConfig);
   grunt.initConfig(gruntConfig);
 
-  grunt.registerTask('target','Set current target', function(){
-    var done = this.async();
-    git.branch(function(branch){
-      grunt.config.set("PKG_VERSION",branch);
-      grunt.config.set("GIT_BRANCH",branch);
-      done();
-    });
-
-  });
   grunt.registerTask('do_test', ['cover', 'plato', 'mocha']);
   grunt.registerTask('test', ['dist:api', 'dist:client', 'dist:remote', 'do_test']);
-  grunt.registerTask('default', ['connect', 'test', 'dist:widgets', 'watch']);
   grunt.registerTask('reset', ['clean:reset']);
 
-  grunt.registerTask('deploy', ['dist', 'describe', 's3:prod']);
-
-  grunt.registerTask('staging', ['target','dist', 'describe', 's3:staging']);
-
-  var git = require('git-rev');
+  //These tasks are the only ones needed to be used
+  grunt.registerTask('default', 'server');
+  grunt.registerTask('server', ['connect', 'test', 'dist:widgets', 'watch']);
+  grunt.registerTask('deploy', ['dist', 's3:prod']);
 
   require('./.grunt/customTasks')(grunt);
 

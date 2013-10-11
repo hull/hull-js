@@ -1,11 +1,13 @@
 {
+  "namespace": "Hull",
   "srcFiles": ["src/utils/promises.coffee", "src/api.coffee", "src/api/**/*.coffee"],
   "requireJS": {
     "baseUrl": ".",
     "preserveLicenseComments": true,
     "paths": {
+      "requireLib":     "bower_components/requirejs/require",
       "underscore":     "bower_components/underscore/underscore",
-      "easyXDM":        "bower_components/easyXDM/easyXDM",
+      "easyXDM":        "lib/shims/bower_components/easyXDM/easyXDM",
       "cookie":         "bower_components/jquery.cookie/jquery.cookie",
       "jquery":         "empty:"
     },
@@ -15,12 +17,17 @@
       "jquery":     { "exports": "jQuery" }
     },
     "include": [
+      "requireLib",
       "underscore",
       "easyXDM",
       "cookie",
       "lib/api"
       ],
-    "out": "dist/<%= PKG_VERSION %>/hull-api.js"
+    "out": "dist/<%= PKG_VERSION %>/hull.api.js",
+    "wrap": {
+      "start": "(function () {_chk = function (n,d) {if(!d){var _msg = n + \" is not defined. It is required to run hull.js\";alert(_msg); throw new Error(_msg);};return true;};_chk('jQuery', window.jQuery);var args; var dfd;;window.Hull=window.Hull||{};Hull.init = function(){args = arguments;dfd = jQuery.Deferred();return dfd.promise();};var require, requirejs, define,root = {jQuery: window.jQuery};(function () {",
+      "end": ";define('jquery', function () {return root.jQuery;});Hull.require(['lib/api'], function (fn){Hull.init = fn; if (args) {return Hull.init.apply(undefined,args).then(function (a) {delete Hull.init;Hull.api=a.api;Hull.login=a.auth.login;Hull.logout=a.auth.logout;dfd.resolve(a);}, function(a){dfd.reject(a);});}});}).call(root);for(var i in root){_chk(i, root[i]) && root.hasOwnProperty(i) && Hull.define(i.toLowerCase(), function (){return root[i];})}})();"
+    }
   }
 }
 

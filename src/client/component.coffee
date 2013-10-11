@@ -41,6 +41,10 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
 
       isInitialized: false
 
+      requiredOptions: []
+
+      options: {}
+
       constructor: (options)->
         @ref = options.ref
         @api = @sandbox.data.api
@@ -72,17 +76,19 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
             ds = _.bind ds, @ if _.isFunction ds
             @datasources[i] = new Datasource(ds, @api) unless ds instanceof Datasource
 
-          @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
         catch e
           console.error("Error loading HullComponent", e.message)
-        sb = @sandbox
-        getId = ()->
-          return @id if @id
-          return sb.util.entity.encode(@uid) if @uid
-          sb.config.entity_id
-        options.id = getId.call(options)
-        app.core.mvc.View.prototype.constructor.apply(@, arguments)
-        @render()
+        # Copy/Paste + adaptation of the Backbone.View constructor
+        # TODO remove it whenever possible
+        @cid = _.uniqueId('view')
+        @_configure(options || {})
+        @_ensureElement()
+        @invokeWithCallbacks('initialize', options).then _.bind(->
+          @delegateEvents()
+          @render()
+          @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
+        , @), (err)->
+          # Already displays a log in Aura and is caught above
 
       renderTemplate: (tpl, data)=>
         _tpl = @_templates?[tpl]
@@ -119,10 +125,11 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
             ds = @datasources[k]
             ds.parse(_.extend({}, @, @options || {}))
             handler = @["on#{_.string.capitalize(_.string.camelize(k))}Error"]
+            handler = _.bind(handler, @) if _.isFunction(handler)
             ctx.addDatasource(k, ds.fetch(), handler).then (res)=>
               @data[k] = res
           componentDeferred = @sandbox.data.when.apply(undefined, promiseArray)
-          templateDeferred = @sandbox.template.load(@templates, @ref)
+          templateDeferred = @sandbox.template.load(@templates, @ref, @el)
           templateDeferred.done (tpls)=>
             @_templates     = tpls
           readyDfd = promises.when(componentDeferred, templateDeferred)
@@ -163,7 +170,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
       # afterRender
       # Start nested components...
       render: (tpl, data)=>
-        ctxPromise = @buildContext.call(@)
+        ctxPromise = @buildContext()
         ctxPromise.fail (err)->
           console.error("Error fetching Datasources ", err.message, err)
         ctxPromise.then (ctx)=>
@@ -175,7 +182,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
               data = _.extend(dataAfterBefore || ctx.build(), data)
               @doRender(tpl, data)
               _.defer(@afterRender.bind(@, data))
-              _.defer((-> @sandbox.start(@$el)).bind(@))
+              _.defer((-> @sandbox.start(@$el, { reset: true })).bind(@))
               @isInitialized = true;
               # debugger
               @emitLifecycleEvent('render')
@@ -186,16 +193,8 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
             console.error("Error in beforeRender on ", this.options.name,  err.message, err)
             @renderError.call(@, err)
 
-      trackingData: {}
-
       emitLifecycleEvent: (name)->
         @sandbox.emit("hull.#{@componentName.replace('/','.')}.#{name}",{cid:@cid})
-
-      track: (name, data = {}) ->
-        defaultData = _.result(this, 'trackingData')
-        defaultData = if _.isObject(defaultData) then defaultData else {}
-        data = _.extend { id: @id, component: @options.name }, defaultData, data
-        @sandbox.track(name, data)
 
     (app)->
       default_datasources =

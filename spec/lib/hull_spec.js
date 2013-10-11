@@ -2,7 +2,7 @@
 define(['../support/mocks/app'], function (appMock) {
   "use strict";
 
-  describe('hull main module', function () {
+  xdescribe('hull main module', function () {
     // Mocking dependencies of  lib/hull
     beforeEach(appMock.createApp);
 

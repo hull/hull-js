@@ -1,0 +1,24 @@
+<div class="well">
+  {{#if loggedIn}}
+    <form>
+      <div class='media'>
+        <div class="pull-left">
+          <img class="media-object img-rounded" src="{{me.picture}}" alt="{{me.name}}" width="50" height="50">
+        </div>
+        <div class="media-body">
+          <textarea name='description' class="input-block-level" rows="3" placeholder="Leave a comment..."></textarea>
+          <div>
+            <button data-hull-action="comment" disabled class="btn btn-small btn-primary">Post as {{me.name}}</button>
+            <div class='pull-right'>
+              <small>
+                <a href="#" data-hull-action="logout" class="link">Logout</a>
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  {{else}}
+    <div data-hull-component="login/button@hull"></div>
+  {{/if}}
+</div>

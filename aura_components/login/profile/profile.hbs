@@ -1,0 +1,46 @@
+{{#if authHasFailed}}
+  <div class="alert alert-error">
+    There was an error signing in your account. Maybe you did not approve the app?
+  </div>
+{{/if}}
+
+{{#if matchingProviders}}
+  <div class='media'>
+    {{#if me.picture}}
+    <div class="pull-left">
+      <img class="media-object img-rounded" src="{{me.picture}}" alt="{{me.name}}" width="70px" height="70px">
+    </div>
+    {{/if}}
+    <div class="pull-right">
+      <a data-hull-action="logout" class="btn"> Sign Out </a>
+    </div>
+    <div class="media-body">
+      <h4 class="media-heading">{{me.name}}</h4>
+      Logged in with {{#each loggedInProviders}}
+        <span class='provider'><i class="icon-{{this}}">
+          </i> {{capitalize this}}
+        </span>
+      {{/each}}
+    </div>
+  </div>
+
+{{else}}
+  {{#if loggedOut}}
+    <div class="hull-identity__signin">
+      {{#loggedOut}}
+        <button data-hull-action="login" data-hull-provider="{{.}}" class="btn btn-small btn-{{.}}">
+          <i class="icon-{{.}}"></i>
+          Sign In with {{classify .}}
+        </button>
+      {{/loggedOut}}
+    </div>
+  {{/if}}
+  {{^authServices}}
+    {{#if debug}}
+      <div class="alert">
+        <h4>Warning!</h4>
+        No Auth Services configured, please add at least one in the admin.
+      </div>
+    {{/if}}
+  {{/authServices}}
+{{/if}}
