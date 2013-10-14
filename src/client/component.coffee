@@ -4,8 +4,6 @@ define ['jquery', 'underscore', 'lib/client/component/context', 'lib/utils/promi
     debug = false
 
     class HullComponent extends app.core.mvc.View
-      templates: []
-
       initialize: ->
 
       isInitialized: false
@@ -72,7 +70,7 @@ define ['jquery', 'underscore', 'lib/client/component/context', 'lib/utils/promi
         identities
 
       getTemplate: (tpl, data)=>
-        tpl || @template || @templates[0]
+        tpl || @template || @templates?[0]
 
       doRender: (tpl, data)=>
         tplName = @getTemplate(tpl, data)
@@ -89,43 +87,18 @@ define ['jquery', 'underscore', 'lib/client/component/context', 'lib/utils/promi
       # afterRender
       # Start nested components...
       render: (tpl, data)=>
-        ctxDfd = @invokeWithCallbacks 'buildContext'
-        tplDeferred = @sandbox.data.deferred()
-        try
-          templateDeferred = @sandbox.template.load(@templates, @ref, @el)
-          templateDeferred.done (tpls)=>
-            @_templates     = tpls
-          templateDeferred.fail (err)=>
-            console.error("Error in Building Render Context", err.message, err)
-            @renderError.call(@, err.message, err)
-            tplDeferred.reject err
-          templateDeferred.done ()->
-            tplDeferred.resolve()
-
-        catch e
-          console.error("Caught error in buildContext", e.message, e)
-          tplDeferred.reject(e)
-        tplDeferred.fail (err)->
-          console.error("Error fetching Datasources ", err.message, err)
-        @sandbox.data.when(ctxDfd, tplDeferred).then (ctx)=>
-          try
-            beforeCtx = @invokeWithCallbacks 'beforeRender', ctx.build(), ctx.errors()
-            beforeRendering = promises.when(beforeCtx)
-            beforeRendering.done (dataAfterBefore)=>
-              #FIXME SRSLY need some clarification
-              data = _.extend(dataAfterBefore || ctx.build(), @data, data)
-              @doRender(tpl, data)
-              _.defer(@afterRender.bind(@, data))
-              _.defer((-> @sandbox.start(@$el, { reset: true })).bind(@))
-              @isInitialized = true;
-              # debugger
-              @emitLifecycleEvent('render')
-            beforeRendering.fail (err)=>
-              console.error("Error in beforeRender on ", this.options.name,  err.message, err)
-              @renderError.call(@, err)
-          catch err
-            console.error("Error in beforeRender on ", this.options.name,  err.message, err)
-            @renderError.call(@, err)
+        @invokeWithCallbacks('buildContext').then((ctx)=>
+          return @invokeWithCallbacks 'beforeRender', ctx.build(), ctx.errors()
+        ).then (dataAfterBefore)=>
+          #FIXME SRSLY need some clarification
+          data = _.extend(dataAfterBefore || ctx.build(), @data, data)
+          @doRender(tpl, data)
+          _.defer(@afterRender.bind(@, data))
+          _.defer((-> @sandbox.start(@$el, { reset: true })).bind(@))
+          @isInitialized = true;
+          # debugger
+          @emitLifecycleEvent('render')
+        , @renderError.bind(@)
 
       emitLifecycleEvent: (name)->
         @sandbox.emit("hull.#{@componentName.replace('/','.')}.#{name}",{cid:@cid})

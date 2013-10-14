@@ -5,10 +5,10 @@ define ['lib/client/datasource', 'underscore', 'string'], (Datasource, _)->
     getDatasourceErrorHandler: (name, scope)->
       handler = scope["on#{_.string.capitalize(_.string.camelize(name))}Error"]
       handler = module.defaultErrorHandler unless _.isFunction(handler)
-      _.bind(handler, scope)
+      _.bind(handler, scope, name)
 
     defaultErrorHandler: (datasourceName, err)->
-      console.log "An error occurred with datasource #{datasourceName}", err
+      console.warn "An error occurred with datasource #{datasourceName}", err.status, err.statusText
 
     # Adds datasources to the instance of the component
     addDatasources: (datasources)->
@@ -26,7 +26,7 @@ define ['lib/client/datasource', 'underscore', 'string'], (Datasource, _)->
         ds.parse(_.extend({}, @, @options || {}))
         handler = module.getDatasourceErrorHandler(k, @)
         context.addDatasource(k, ds.fetch(), handler).then (res)=>
-          @data[k] = if res.toJSON then res.toJSON() else res
+          @data[k] = if res?.toJSON then res.toJSON() else res
       @sandbox.data.when(promiseArray...)
 
     # Registers hooks and creates default datasources
