@@ -1,80 +1,74 @@
 /*global define:true */
-define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/underscore'], function (helper, aura) {
+define(function () {
 
   "use strict";
   /*jshint devel: true, browser: true */
   /*global describe:true, it:true, before: true, sinon: true, define: true */
 
-  var delay = function () {
-    var args = arguments;
-    var slice = Array.prototype.slice;
-    setTimeout(function () {
-      var argsArray = slice.call(args);
-      argsArray.shift().apply(null, argsArray);
-    }, parseInt(Math.random() * 2, 10));
-  };
-
-  var config = {
-    appId: "fakeId",
-    orgUrl: "orgUrl"
-  };
-  var mustFail = false;
-
-  var easyXDMMock = {
-    Rpc: function (a1, a2) {
-      if (mustFail) {
-        delay(a2.local.message.bind(this), {error:"Fail"});
-      } else {
-        delay(a2.local.ready, {services:{types:{auth:[]}},data: {me: {name: "test"}, app: {name: "test", org: {name: "test"}}}});
-      }
-      mustFail = false;
-    }
-  };
-
-  easyXDMMock.Rpc.prototype.message = function (conf, successCb, errorCb) {
-    var cb;
-    if (conf.error) {
-      cb = errorCb;
-      conf = conf.error;
-    } else if (conf.path.indexOf('error') === 0) {
-      cb = errorCb;
-    } else {
-      cb = successCb;
-    }
-    delay(cb, { response: conf, headers: {} }, {});
-  };
-
-  define('easyXDM', function () { return easyXDMMock; });
-
-  xdescribe("API specs", function () {
-    var env, api, batch, app = aura(config);
-
-    var extension = {
-      initialize: function (appEnv) {
-        env = appEnv;
-        app.core = app.core || {};
-        app.core.mvc = window.Backbone;
-      }
-    };
-
-    app
-      .use(extension)
-      .use('lib/client/api');
-
-    before(function(done) {
-      app.start().then(function () {
-        api = app.sandboxes.create().data.api;
-        batch = api.batch;
+  describe("API module", function () {
+    before(function (done) {
+      require.undef('lib/api');
+      define('lib/api', function () { return {};});
+      var self = this;
+      require(['lib/client/api'], function (module) {
+        self.module = module;
         done();
       });
     });
 
-    it('should be available in the environment', function () {
-      env.sandbox.data.should.contain.keys('api');
-      api.should.be.a('function');
+    beforeEach(function () {
+      this.appMock = {
+        core: {
+          data: {
+            deferred: sinon.spy(function () {
+              return {
+                __deferred__: true,
+                resolve: function () {},
+                reject: function () {}
+              };
+            })
+          }
+        },
+        sandbox: { data: {} },
+        config: {}
+      };
     });
 
-    describe("initializing the API client", function () {
+    describe("Initialization", function () {
+      it('should return a promise on init', function () {
+        this.module.api = function () {
+          return {
+            then: function () {},
+            fail: function () {}
+          };
+        };
+
+        var initialized = this.module.initialize(this.appMock);
+        this.appMock.core.data.deferred.should.have.been.calledOnce;
+        initialized.should.contain.key('__deferred__');
+      });
+
+      // it("should reject if no orgUrl is available in config", function () {
+      //
+      // });
+
+    });
+    xit('should be available in the sandbox after init', function () {
+      var resolvedSpy = sinon.spy();
+      var rejectedSpy = sinon.spy();
+      var stub = sinon.stub(this, 'apiMock', function () {
+        return { then: resolvedSpy, fail: rejectedSpy };
+      });
+      this.module.initialize(this.appMock);
+      resolvedSpy.should.have.been.calledOnce;
+      //We simulate the resolution
+      resolvedSpy.args[0][0]();
+
+      this.appMock.sandbox.data.should.contain.key('api');
+      this.appMock.sandbox.data.api.should.be.a('function');
+    });
+
+    xdescribe("initializing the API client", function () {
       it("should reject if there's an error", function (done) {
         require(['lib/api'], function (apiClient) {
           mustFail = true;
@@ -86,7 +80,7 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
       });
     });
 
-    describe("Basic API requests", function () {
+    xdescribe("Basic API requests", function () {
       it("should reject promise and execute failure callback with an invalid request", function (done) {
         var spySuccess = sinon.spy();
         var spyFailure = sinon.spy();
@@ -114,7 +108,7 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
       });
     });
 
-    describe('batching requests', function () {
+    xdescribe('batching requests', function () {
       var spySuccess, spyFailure;
       beforeEach(function () {
         spySuccess = sinon.spy();
@@ -188,7 +182,7 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
       });
     });
 
-    describe('Models', function () {
+    xdescribe('Models', function () {
       it("should be provided an id", function () {
         api.model.bind(api, 'anId').should.not.throw(Error);
         api.model.bind(api, {_id: 'anId'}).should.not.throw(Error);
