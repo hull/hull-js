@@ -20,14 +20,13 @@ define ['lib/client/datasource', 'underscore', 'string'], (Datasource, _)->
 
     # Fetches all the datasources for the instance of the component
     fetchDatasources: ()->
+      context = [].pop.apply(arguments)
       @data ?= {}
       promiseArray  = _.map @datasources, (ds, k)=>
         ds.parse(_.extend({}, @, @options || {}))
-        ds.fetch().then (res)=>
+        handler = module.getDatasourceErrorHandler(k, @)
+        context.addDatasource(k, ds.fetch(), handler).then (res)=>
           @data[k] = if res.toJSON then res.toJSON() else res
-        , (err)=>
-          handler = module.getDatasourceErrorHandler(k, @)
-          handler(k, err)
       @sandbox.data.when(promiseArray...)
 
     # Registers hooks and creates default datasources
@@ -41,6 +40,6 @@ define ['lib/client/datasource', 'underscore', 'string'], (Datasource, _)->
         datasources = _.extend {}, default_datasources, @datasources, options.datasources
         module.addDatasources.call(@, datasources)
 
-      app.components.before 'beforeRender', module.fetchDatasources
+      app.components.after 'buildContext', module.fetchDatasources
 
   module

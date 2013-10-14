@@ -62,23 +62,8 @@ define ['jquery', 'underscore', 'lib/client/component/context', 'lib/utils/promi
         ctx.add 'isAdmin', @sandbox.isAdmin
         ctx.add 'debug', @sandbox.config.debug
         ctx.add 'renderCount', ++@_renderCount
+        ctx
 
-        dfd = @sandbox.data.deferred()
-        try
-          templateDeferred = @sandbox.template.load(@templates, @ref, @el)
-          templateDeferred.done (tpls)=>
-            @_templates     = tpls
-          templateDeferred.fail (err)=>
-            console.error("Error in Building Render Context", err.message, err)
-            @renderError.call(@, err.message, err)
-            dfd.reject err
-          templateDeferred.done ()->
-            dfd.resolve ctx
-
-        catch e
-          console.error("Caught error in buildContext", e.message, e)
-          dfd.reject(e)
-        dfd.promise()
 
       loggedIn: =>
         return false unless @sandbox.data.api.model('me').id?
@@ -104,10 +89,25 @@ define ['jquery', 'underscore', 'lib/client/component/context', 'lib/utils/promi
       # afterRender
       # Start nested components...
       render: (tpl, data)=>
-        ctxPromise = @buildContext()
-        ctxPromise.fail (err)->
+        ctxDfd = @invokeWithCallbacks 'buildContext'
+        tplDeferred = @sandbox.data.deferred()
+        try
+          templateDeferred = @sandbox.template.load(@templates, @ref, @el)
+          templateDeferred.done (tpls)=>
+            @_templates     = tpls
+          templateDeferred.fail (err)=>
+            console.error("Error in Building Render Context", err.message, err)
+            @renderError.call(@, err.message, err)
+            tplDeferred.reject err
+          templateDeferred.done ()->
+            tplDeferred.resolve()
+
+        catch e
+          console.error("Caught error in buildContext", e.message, e)
+          tplDeferred.reject(e)
+        tplDeferred.fail (err)->
           console.error("Error fetching Datasources ", err.message, err)
-        ctxPromise.then (ctx)=>
+        @sandbox.data.when(ctxDfd, tplDeferred).then (ctx)=>
           try
             beforeCtx = @invokeWithCallbacks 'beforeRender', ctx.build(), ctx.errors()
             beforeRendering = promises.when(beforeCtx)

@@ -1,6 +1,15 @@
 define(['lib/client/component/datasource'], function (module) {
   describe("Datasource bindings for components", function () {
     before(function () {
+      this.mockContext = {
+        addDatasource: function () {
+          return {
+            then: function () {
+
+            }
+          };
+        }
+      };
       this.module = module;
       this.dsModelStub = sinon.stub(module, 'datasourceModel', function () {
         this.parse = function () {};
@@ -19,8 +28,9 @@ define(['lib/client/component/datasource'], function (module) {
     describe("Extending components with datasources", function () {
       beforeEach(function () {
         this.beforeSpy = sinon.spy();
+        this.afterSpy = sinon.spy();
         this.appMock = {
-          components: { before:this.beforeSpy },
+          components: { before: this.beforeSpy,  after: this.afterSpy },
           core: {data: {api: {model: function () {}}}}
         };
         this.module = module;
@@ -45,10 +55,10 @@ define(['lib/client/component/datasource'], function (module) {
         spy.reset();
       });
 
-      it("should attach the datasource resolution method before Component::beforeRender", function () {
+      it("should attach the datasource resolution method after Component::buildContext", function () {
         this.module.initialize(this.appMock);
-        this.beforeSpy.withArgs('beforeRender').should.have.been.calledOnce;
-        var arg2 = this.beforeSpy.withArgs('beforeRender').args[0][1];
+        this.afterSpy.withArgs('buildContext').should.have.been.calledOnce;
+        var arg2 = this.afterSpy.withArgs('buildContext').args[0][1];
         arg2.should.be.equal(this.module.fetchDatasources);
       });
     });
@@ -56,7 +66,7 @@ define(['lib/client/component/datasource'], function (module) {
     describe("Default datasources", function () {
       beforeEach(function () {
         this.appMock = {
-          components: { before: function () {} },
+          components: { before: function () {},  after: function () {} },
           core: {data: {api: {model: function () {}}}}
         };
         this.apiStub = sinon.stub(this.appMock.core.data.api, 'model', function (arg) {
@@ -165,18 +175,13 @@ define(['lib/client/component/datasource'], function (module) {
       describe("Resolves datasources to actual data", function () {
         beforeEach(function () {
           this.whenStub = sinon.stub();
-          var thenStub = this.thenStub = sinon.stub();
           this.component = {
             sandbox: { data: { when: this.whenStub } }
           };
           this.dsModelStub.restore();
           this.dsModelStub = sinon.stub(module, 'datasourceModel', function () {
             this.parse = function () {};
-            this.fetch = function () {
-              return {
-                then: thenStub
-              };
-            };
+            this.fetch = function () {};
             return this;
           });
         });
@@ -208,7 +213,7 @@ define(['lib/client/component/datasource'], function (module) {
             test: new this.dsModelStub()
           };
           var spy = sinon.spy(this.component.datasources.test, 'parse');
-          this.module.fetchDatasources.call(this.component);
+          this.module.fetchDatasources.call(this.component, this.mockContext);
           spy.should.have.been.called;
         });
 
@@ -217,8 +222,30 @@ define(['lib/client/component/datasource'], function (module) {
             test: new this.dsModelStub()
           };
           var spy = sinon.spy(this.component.datasources.test, "fetch");
-          this.module.fetchDatasources.call(this.component);
+          this.module.fetchDatasources.call(this.component, this.mockContext);
           spy.should.have.been.called;
+        });
+
+        it("should add a datasource to the context", function () {
+          var contextSpy = sinon.spy(this.mockContext, 'addDatasource');
+
+          var mock = new this.dsModelStub();
+
+          var fetchStub = sinon.stub(mock, 'fetch');
+          fetchStub.returns('__fake_return_value__');
+          this.component.datasources = {
+            test: mock
+          };
+
+          var stubErrorHandler = sinon.stub(this.module, 'getDatasourceErrorHandler')
+          stubErrorHandler.returns('__error_handler__');
+
+          this.module.fetchDatasources.call(this.component, this.mockContext);
+          contextSpy.should.have.been.calledOnce;
+          contextSpy.should.have.been.calledWith('test', '__fake_return_value__', '__error_handler__');
+
+          contextSpy.restore();
+          stubErrorHandler.restore();
         });
 
         it("should add a property to the `data` property of the component if the datasource succeeds", function () {
@@ -226,27 +253,20 @@ define(['lib/client/component/datasource'], function (module) {
             test: new this.dsModelStub()
           };
           var result = {};
-          this.module.fetchDatasources.call(this.component);
-          this.thenStub.should.have.been.calledOnce;
-          var successFn = this.thenStub.args[0][0];
+          var then = sinon.spy();
+          var stub = sinon.stub(this.mockContext, 'addDatasource', function () {
+            return {
+              then: then
+            };
+          });
+          this.module.fetchDatasources.call(this.component, this.mockContext);
+          then.should.have.been.calledOnce;
+          then.args[0][0].should.be.a('function');
+          var successFn = then.args[0][0];
           //We simulate a resolution of the promise
           successFn(result);
           this.component.data.should.have.key('test');
           this.component.data.test.should.equal(result);
-        });
-
-        it("should call the handler if the datasource fails", function () {
-          this.component.datasources = {
-            test: new this.dsModelStub()
-          };
-          var spy = sinon.spy(this.module, 'getDatasourceErrorHandler');
-          var error = {};
-          this.module.fetchDatasources.call(this.component);
-          var failureFn = this.thenStub.args[0][1];
-          //We simulate a resolution of the promise
-          failureFn(error);
-          spy.should.have.been.calledOnce;
-          spy.should.have.been.calledWith("test", this.component)
         });
       });
     });
