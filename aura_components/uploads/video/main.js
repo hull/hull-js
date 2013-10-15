@@ -25,7 +25,8 @@ Hull.component({
       add: function(event, data) {
         var f = _.pick(data.files[0], 'name', 'type', 'size');
         self.api('app/videos/authorize', { file: f }, 'post').then(function(r) {
-          self.postProcessUrl = r.postprocess_url;
+          self.postProcessPath = r.postprocess_path;
+          self.postProcessParams = r.postprocess_params;
 
           self.$upload[0].setAttribute('action', r.credentials.url);
           self.$upload.find('[name="Filename"]').val(f.name);
@@ -57,11 +58,8 @@ Hull.component({
       },
 
       done: function(event, data) {
-        // TODO We should be able to pass an absolute url to api
-        //var url = self.postProcessUrl;
-        var url = self.postProcessUrl.replace('http://hey.hullapp.dev/api/v1', '');
-
-        self.api(url, 'post').then(function(video) {
+        var url = self.postProcessPath, params = self.postProcessParams;
+        self.api(url, params, 'post').then(function(video) {
           self.pollVideo(video.id);
         });
       }
