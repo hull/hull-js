@@ -184,7 +184,7 @@ module.exports = function (grunt) {
     watch: {
       widgets: {
         files: ['aura_components/**/*'],
-        tasks: ['hull_widgets']
+        tasks: ['dist:widgets']
       },
       remote: {
         files: remoteConfig.srcFiles,
@@ -256,12 +256,12 @@ module.exports = function (grunt) {
       }
     },
     dist: {
-      "remote": ['clean:remote', 'coffee:remote', 'wrap', 'version', 'requirejs:remote'],
-      "client": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client'],
-      "api": ['clean:client', 'coffee:api', 'wrap', 'version', 'requirejs:api'],
-      "client-no-underscore": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
-      "client-no-backbone": ['clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
-      "widgets": ["hull_widgets"],
+      "remote": ['version', 'clean:remote', 'coffee:remote', 'wrap', 'version', 'requirejs:remote'],
+      "client": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client'],
+      "api": ['version', 'clean:client', 'coffee:api', 'wrap', 'version', 'requirejs:api'],
+      "client-no-underscore": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
+      "client-no-backbone": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
+      "widgets": ["version", "hull_widgets"],
       "docs": ['dox'],
       "describe": ['describe']
     }
@@ -277,7 +277,7 @@ module.exports = function (grunt) {
   //These tasks are the only ones needed to be used
   grunt.registerTask('default', 'server');
   grunt.registerTask('server', ['connect', 'test', 'dist:widgets', 'watch']);
-  grunt.registerTask('deploy', ['version', 'dist', 's3:prod']);
+  grunt.registerTask('deploy', ['dist', 's3:prod']);
 
   require('./.grunt/customTasks')(grunt);
 

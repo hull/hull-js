@@ -4,7 +4,6 @@
  * @name Box
  * @param {String} id Required The conversation object - This must a conversation ID. Use the '/UID/conversations' api call to get conversation IDs for an entity or hull object.
  * @param {Boolean} focus Optional Focus after render
- * @datasource {conversations} A conversation
  * @template {box} A form that allow logged user to add messages to the conversation
  * @example <div data-hull-component="conversations/box@hull" data-hull-id="app"></div>
  * @example <div data-hull-component="conversations/box@hull" data-hull-id="OBJECT_ID"></div>
