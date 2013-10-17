@@ -20,12 +20,7 @@ Hull.component({
   refreshEvents: ['model.hull.me.change'],
   requiredOptions: ['id'],
 
-  require:{
-    paths:{
-      tooltip: 'bootstrap-tooltip',
-      popover: 'bootstrap-popover',
-    }
-  },
+  require: [ 'bootstrap-tooltip', 'bootstrap-popover' ],
 
   datasources: {
     /*
@@ -98,7 +93,7 @@ Hull.component({
       placement: 'bottom',
       content: ''
     });
-    this.$el.on('shown', this.sandbox.util._.bind(this.renderPopover, this));
+    btn.on('shown', this.sandbox.util._.bind(this.renderPopover, this));
     this.sandbox.dom.find(document.body).on('click', _.bind(function (evt) {
       if (this.$el.find('.popover').find(evt.target).length === 0 && btn.index(evt.target) === -1) {
         btn.popover('hide');
