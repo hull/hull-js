@@ -6,9 +6,7 @@ Hull.component({
   require: ['jquery.fileupload'],
 
   initialize: function() {
-  },
-
-  beforeRender: function() {
+    this.currentState = 'pending';
   },
 
   afterRender: function() {
@@ -24,72 +22,65 @@ Hull.component({
 
       add: function(event, data) {
         var f = _.pick(data.files[0], 'name', 'type', 'size');
-        self.api('app/videos/authorize', { file: f }, 'post').then(function(r) {
+        self.api(self.options.id + '/videos/authorize', { file: f }, 'post').then(function(r) {
           self.postProcessPath = r.postprocess_path;
           self.postProcessParams = r.postprocess_params;
 
           self.$upload[0].setAttribute('action', r.credentials.url);
-          self.$upload.find('[name="Filename"]').val(f.name);
-
-          // TODO ensure that we do not create to field with the same name
           _.each(r.credentials.params, function(v, k) {
-            var input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = k;
-            input.value = v;
-
-            self.$upload.append(input);
+            self.$upload.find('[name="' + k + '"]').val(v);
           });
 
           data.submit();
         });
       },
 
-      send: function() {
-        console.log('Start upload');
-      },
-
-      progress: function(event, data) {
-        console.log('PROGRESS');
-      },
-
-      fail: function(event, data) {
-        console.log('Fail', data);
-      },
-
       done: function(event, data) {
-        var url = self.postProcessPath, params = self.postProcessParams;
-        self.api(url, params, 'post').then(function(video) {
+        self.api(self.postProcessPath, self.postProcessParams, 'post').then(function(video) {
           self.pollVideo(video.id);
         });
       }
+    }).on([
+      'fileuploadadd',
+      'fileuploadsubmit',
+      'fileuploadsend',
+      'fileuploadfail',
+      'fileuploadalways',
+      'fileuploadprogress',
+      'fileuploadprogressall',
+      'fileuploadstart',
+      'fileuploadstop',
+      'fileuploadchange',
+      'fileuploadpaste',
+      'fileuploaddrop',
+      'fileuploaddragover',
+      'fileuploadchunksend',
+      'fileuploadchunkdone',
+      'fileuploadchunkfail',
+      'fileuploadchunkalways',
+      'fileuploadprocessstart',
+      'fileuploadprocess',
+      'fileuploadprocessdone',
+      'fileuploadprocessfail',
+      'fileuploadprocessalways',
+      'fileuploadprocessstop'
+    ].join(' '), function(e, data) {
+      var name = e.type.replace('fileupload', '');
+      self.sandbox.emit('hull.uploads.video.' + name, data);
     });
   },
 
   pollVideo: function(id) {
     var _ = this.sandbox.util._;
     this.api(id).then(_.bind(function(video) {
-      if (video.state === 'finished') { return; }
-
-      if (_.isFunction(this.stateHandlers[video.state])) {
-        this.stateHandlers[video.state].call(this, video);
+      if (video.state !== this.currentState) {
+        this.currentState = video.state;
+        this.sandbox.emit('hull.encoding.video.state.change', video);
       }
+
+      if (video.state === 'finished') { return; }
 
       setTimeout(_.bind(this.pollVideo, this), 5000, id);
     }, this));
-  },
-
-  stateHandlers: {
-    processing: function(video) {
-      console.log('Processing', video);
-    },
-
-    finished: function(video) {
-      console.log('Finished', video);
-    },
-
-    failed: function(video) {
-      console.log('Failed', video);
-    }
   }
 });
