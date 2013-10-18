@@ -7,6 +7,7 @@
  * @template {elements} Displays the form to create a new list and all the lists that belong to the current user
  * @datasource {lists}    Collection of all the lists the user has access to
  * @datasource {listedIn} Collection of lists in which the current item is listed into
+ * @requires {jQuery.fn.popover} The popover plugin available in Twitter Bootstrap
  * @action {toggle} Toggles the presence of the current item in the selected list
  * @example <div data-hull-component="lists/membership@hull" data-hull-uid="http://path.to/my/url"></div>
  * @example <div data-hull-component="lists/membership@hull" data-hull-id="HULL_OBJECT_ID"></div>
@@ -19,8 +20,6 @@ Hull.component({
   templates: ['main', 'items', 'loggedOut', 'header'],
   refreshEvents: ['model.hull.me.change'],
   requiredOptions: ['id'],
-
-  require: [ 'bootstrap-tooltip', 'bootstrap-popover' ],
 
   datasources: {
     /*
