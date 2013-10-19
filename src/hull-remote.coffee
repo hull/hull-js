@@ -12,7 +12,7 @@ define ['aura/aura', 'lib/utils/version'], (Aura, version)->
 
     hull.app.use('lib/remote/services/facebook') if config?.services?.settings?.facebook_app?.appId
 
-    services = ['github', 'twitter', 'instagram', 'soundcloud', 'angellist']
+    services = ['github', 'twitter', 'instagram', 'soundcloud', 'angellist', 'tumblr']
     _.each services, (value, index) ->
       hull.app.use "lib/remote/services/#{value}" if config?.services?.settings?["#{value}_app"]
 
