@@ -20,12 +20,7 @@ Hull.component({
   refreshEvents: ['model.hull.me.change'],
   requiredOptions: ['id'],
 
-  require:{
-    paths:{
-      tooltip: 'bootstrap-tooltip',
-      popover: 'bootstrap-popover',
-    }
-  },
+  require: [ 'bootstrap-tooltip', 'bootstrap-popover' ],
 
   datasources: {
     /*
@@ -51,32 +46,6 @@ Hull.component({
       });
     }
   },
-  events: {
-    /*
-     * Retrieves the data from the form in the popup when it is submitted.
-     * Calls the method to create a new list for the user
-     */
-    "submit .new form": function (evt) {
-      "use strict";
-      evt.preventDefault();
-      var formData = this.sandbox.dom.getFormData(evt.currentTarget);
-      return this.createList(formData);
-    }
-  },
-  actions: {
-    /*
-     * Inserts or Removes the current item from the selected list
-     */
-    toggle: function (evt, ctx) {
-      "use strict";
-      var _ = this.sandbox.util._;
-      var listId = ctx.data.listId;
-      var method = this.isItemInList(listId) ? 'removeFromList' : 'addToList';
-      var promise = this[method](listId);
-      promise.then(_.bind(this.refreshElements, this));
-    }
-  },
-
 
   initialize: function () {
     "use strict";
@@ -96,11 +65,12 @@ Hull.component({
       title: 'Add to List',
       html: true,
       placement: 'bottom',
-      content: ''
+      content: '',
+      container: 'body'
     });
-    this.$el.on('shown', this.sandbox.util._.bind(this.renderPopover, this));
+    btn.on('show', this.sandbox.util._.bind(this.renderPopover, this));
     this.sandbox.dom.find(document.body).on('click', _.bind(function (evt) {
-      if (this.$el.find('.popover').find(evt.target).length === 0 && btn.index(evt.target) === -1) {
+      if (this.getContentTip().find(evt.target).length === 0 && btn.index(evt.target) === -1) {
         btn.popover('hide');
       }
     }, this));
@@ -114,6 +84,7 @@ Hull.component({
     this.api.post('me/lists', listData).then(_.bind(function (list) {
       this.data.lists.unshift({id: list.id, name: list.name});
       this.addToList(list.id).then(_.bind(this.refreshElements, this));
+      this.getContentTip().find('input').val('');
     }, this));
   },
   /*
@@ -162,7 +133,8 @@ Hull.component({
    */
   renderPopover: function () {
     "use strict";
-    var $popoverContent = this.$el.find('.popover-content');
+    var tip = this.getContentTip();
+    var $popoverContent = tip.find('.popover-content');
     if (!this.loggedIn()) {
       $popoverContent.html(this.renderTemplate('loggedOut'));
     } else {
@@ -173,13 +145,29 @@ Hull.component({
       this.refreshElements();
     }
     this.sandbox.start($popoverContent, { reset: true  });
+
+    var self = this;
+    tip.on('click', '.lists a', function (evt, ctx) {
+      evt.preventDefault();
+      var _ = self.sandbox.util._;
+      var listId = self.sandbox.dom.find(evt.currentTarget).data('hull-list-id');
+      var method = self.isItemInList(listId) ? 'removeFromList' : 'addToList';
+      var promise = self[method](listId);
+      promise.then(_.bind(self.refreshElements, self));
+    });
+    tip.on('submit', 'form', function (evt) {
+      evt.preventDefault();
+      var formData = self.sandbox.dom.getFormData(evt.currentTarget);
+      return self.createList(formData);
+    });
   },
   /*
    * Renders the lists in the popover
    */
   refreshElements: function () {
     "use strict";
-    var $elts = this.$el.find('.popover-content .lists');
+    var content = this.getContentTip();
+    var $elts = content.find('.popover-content .lists');
     var _ = this.sandbox.util._;
     this.$find('input[type=text][name=name]').val('');
     _.each(this.data.lists, _.bind(function (list) {
@@ -188,5 +176,8 @@ Hull.component({
     $elts.html(this.renderTemplate('items', {
       elements: this.data.lists
     }));
+  },
+  getContentTip: function () {
+    return this.$el.find('[data-hull-toggle]').data('popover').tip();
   }
 });
