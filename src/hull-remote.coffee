@@ -14,7 +14,6 @@ define ['aura/aura', 'lib/utils/version'], (Aura, version)->
 
     services = ['github', 'twitter', 'instagram', 'soundcloud', 'angellist']
     _.each services, (value, index) ->
-      console.log(value, config?.services?.settings, "#{value}_app")
       hull.app.use "lib/remote/services/#{value}" if config?.services?.settings?["#{value}_app"]
 
     hull.app.start()
