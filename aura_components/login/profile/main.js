@@ -1,5 +1,5 @@
 /**
- * 
+ *
  * Allow users to log in with auth services that you have hooked on your app.
  * When logged in, show a micro-profile card.
  *
@@ -13,6 +13,7 @@
  * @example <div data-hull-component="login/profile@hull" data-hull-provider="github,facebook"></div>
  */
 
+/* jshint browser:true, devel:true */
 Hull.component({
   type: 'Hull',
 
@@ -29,43 +30,51 @@ Hull.component({
   initialize: function() {
     "use strict";
     this.authHasFailed = false;
+    var configuredProviders = this.sandbox.login.available();
+    var _ = this.sandbox.util._;
 
-    this.sandbox.on('hull.auth.failure', this.sandbox.util._.bind(function() {
+    this.sandbox.on('hull.auth.failure', _.bind(function() {
       this.authHasFailed = true;
       this.render();
     }, this));
 
-    this.authServices = this.sandbox.util._.map(this.sandbox.config.services.types.auth, function(s) {
-      return s.replace(/_app$/, '');
-    });
-
-    if (this.sandbox.util._.isEmpty(this.authServices)) {
+    if (_.isEmpty(configuredProviders)) {
       console.error('No Auth services configured. please add one to be able to authenticate users.');
     }
+
+    // If providers are specified, then use only those. else use all configuredauthServices
+    var authServices;
+    if (this.options.provider) {
+      authServices = this.options.provider.replace(' ','').split(',');
+    } else {
+      authServices = configuredProviders || [];
+    }
+
+    this.configuredProviders = _.filter(authServices, function (provider) {
+      if (!this.sandbox.login.available(provider)) {
+        console.error('No auth service configured for ' + provider);
+        return false;
+      }
+      return true;
+    }, this);
   },
 
   beforeRender: function(data) {
     "use strict";
     data.authHasFailed = this.authHasFailed;
-
-    // If providers are specified, then use only those. else use all configuredauthServices
-    if(this.options.provider){
-      data.providers = this.options.provider.replace(' ','').split(',');
-    } else {
-      data.providers = this.authServices || [];
-    }
+    var _ = this.sandbox.util._;
 
     // If I'm logged in, then create an array of logged In providers
     if(this.loggedIn()){
-      data.loggedInProviders = this.sandbox.util._.keys(this.loggedIn());
+      data.loggedInProviders = _.keys(this.loggedIn());
     } else {
       data.loggedInProviders = [];
     }
 
     // Create an array of logged out providers.
-    data.loggedOut = this.sandbox.util._.difference(data.providers, data.loggedInProviders);
-    data.matchingProviders = this.sandbox.util._.intersection(data.providers.concat('email'), data.loggedInProviders);
-    data.authServices = this.authServices;
+    data.loggedOut = _.difference(this.configuredProviders, data.loggedInProviders);
+    data.matchingProviders = _.intersection(this.configuredProviders.concat('email'), data.loggedInProviders);
+    data.authServices = this.configuredProviders;
 
     return data;
   },

@@ -23,7 +23,7 @@ define ['jquery', 'underscore', 'lib/utils/promises', 'lib/utils/version'], ($, 
 
       throw 'The provider name must be a String' unless _.isString(providerName)
       providerName = providerName.toLowerCase()
-      throw "No authentication service #{providerName} configured for the app" unless ~(authServices.indexOf(providerName + '_app'))
+      throw "No authentication service #{providerName} configured for the app" unless hasProvider(providerName)
 
       authenticating = promises.deferred()
       authenticating.providerName = providerName
@@ -33,6 +33,13 @@ define ['jquery', 'underscore', 'lib/utils/promises', 'lib/utils/version'], ($, 
       module.authHelper(authUrl)
 
       authenticating #TODO It would be better to return the promise
+
+    hasProvider = login.has = (name)->
+      authServices = _.map authServices, (s)->
+        s.replace(/_app$/, '')
+      return authServices unless name
+      _.contains authServices, name
+
 
     # Starts the logout process
     # @returns {Promise}

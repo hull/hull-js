@@ -11,7 +11,7 @@ module.exports = function (grunt) {
     function write (name) {
       grunt.config.set("PKG_VERSION", name);
       grunt.file.write(conf.dest, grunt.template.process(conf.template));
-      grunt.log.writeln('Generated version description for \'' + conf.dest + '\' successfully.');
+      grunt.log.writeln('Generated version description for \'' + conf.dest + '\' successfully: ' + name);
       done();
     }
     git.branch(function(branch) {

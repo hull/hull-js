@@ -200,6 +200,8 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
             , (err)->
               app.core.mediator.emit 'hull.auth.failure', err
 
+          app.sandbox.login.available = obj.auth.login.has
+
           app.sandbox.logout = (callback=->)->
             obj.auth.logout(callback).then ->
               app.core.mediator.emit('hull.auth.logout')
