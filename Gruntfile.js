@@ -184,7 +184,7 @@ module.exports = function (grunt) {
     watch: {
       widgets: {
         files: ['aura_components/**/*'],
-        tasks: ['hull_widgets']
+        tasks: ['dist:widgets']
       },
       remote: {
         files: remoteConfig.srcFiles,
@@ -261,7 +261,7 @@ module.exports = function (grunt) {
       "api": ['version', 'clean:client', 'coffee:api', 'wrap', 'version', 'requirejs:api'],
       "client-no-underscore": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
       "client-no-backbone": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
-      "widgets": ["hull_widgets"],
+      "widgets": ["version", "hull_widgets"],
       "docs": ['dox'],
       "describe": ['describe']
     }
