@@ -10,20 +10,11 @@ define ['aura/aura', 'lib/utils/version'], (Aura, version)->
     hull.app.use('lib/remote/services')
     hull.app.use('lib/remote/services/hull')
 
-    if config.services.settings.facebook_app?.appId
-      hull.app.use('lib/remote/services/facebook')
+    hull.app.use('lib/remote/services/facebook') if config?.services?.settings?.facebook_app?.appId
 
-    if config.services.settings.github_app
-      hull.app.use('lib/remote/services/github')
-
-    if config.services.settings.twitter_app
-      hull.app.use('lib/remote/services/twitter')
-
-    if config.services.settings.instagram_app
-      hull.app.use('lib/remote/services/instagram')
-
-    if config.services.settings.angellist_app
-      hull.app.use('lib/remote/services/angellist')
+    services = ['github', 'twitter', 'instagram', 'soundcloud', 'angellist']
+    _.each services, (value, index) ->
+      hull.app.use "lib/remote/services/#{value}" if config?.services?.settings?["#{value}_app"]
 
     hull.app.start()
 
