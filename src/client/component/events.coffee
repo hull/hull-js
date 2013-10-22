@@ -19,7 +19,6 @@ define ['underscore'], (_)->
     finally
       e.preventDefault()
       e.stopPropagation()
-      e.stopImmediatePropagation()
 
   module = 
     configure: (options)->
