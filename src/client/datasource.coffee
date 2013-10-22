@@ -102,7 +102,7 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
         transportDfd = @transport(@def)
         transportDfd.then (obj, headers) =>
           if _.isArray(obj)
-            @paginationLinks = parseLinkHeader(headers['Link'])
+            @paginationLinks = parseLinkHeader(headers['Link']) if headers?.Link
             dfd.resolve (new Backbone.Collection obj)
           else
             dfd.resolve (new Backbone.Model obj)
