@@ -49,6 +49,9 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
         .use('lib/client/entity')
         .use('lib/client/api')
         .use('lib/client/templates')
+        .use('lib/client/component/actions')
+        .use('lib/client/component/datasource')
+        .use('lib/client/component/template')
         .use('lib/client/component')
         .use('lib/client/api/reporting')
         .use (app)->
