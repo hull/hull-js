@@ -37,7 +37,7 @@ Hull.component({
 
       done: function(event, data) {
         self.api(self.postProcessPath, self.postProcessParams, 'post').then(function(video) {
-          self.pollVideo(video.id);
+          self.sandbox.emit('hull.uploads.video.done', data, video);
         });
       }
     }).on([
@@ -68,19 +68,5 @@ Hull.component({
       var name = e.type.replace('fileupload', '');
       self.sandbox.emit('hull.uploads.video.' + name, data);
     });
-  },
-
-  pollVideo: function(id) {
-    var _ = this.sandbox.util._;
-    this.api(id).then(_.bind(function(video) {
-      if (video.state !== this.currentState) {
-        this.currentState = video.state;
-        this.sandbox.emit('hull.encoding.video.state.change', video);
-      }
-
-      if (video.state === 'finished') { return; }
-
-      setTimeout(_.bind(this.pollVideo, this), 5000, id);
-    }, this));
   }
 });

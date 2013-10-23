@@ -1,8 +1,18 @@
 <link href="//vjs.zencdn.net/4.2.1/video-js.css" rel="stylesheet">
-<video
-  id="{{video.id}}"
-  class="video-js vjs-default-skin"
-  controls
-  preload="auto">
-  <source src="{{video.uid}}" type="video/mp4"></source>
-</video>
+
+<div class="video-container">
+  {{#if isFinished}}
+    <video id="{{video.id}}" class="video-js vjs-default-skin" controls preload="auto" poster={{poster}}>
+      <source type="application/x-mpegurl" src="{{hls}}">
+      <source type="video/mp4" src="{{mp4}}">
+    </video>
+  {{/if}}
+
+  {{#if isProcessing}}
+    Your video is processing
+  {{/if}}
+
+  {{#if hasFailed}}
+    mega fail retry please
+  {{/if}}
+</div>
