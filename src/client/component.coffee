@@ -182,9 +182,8 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
               data = _.extend(dataAfterBefore || ctx.build(), data)
               @doRender(tpl, data)
               _.defer(@afterRender.bind(@, data))
-              _.defer((-> @sandbox.start(@$el, { reset: true })).bind(@))
+              _.defer((=> @sandbox.start(@$el, { reset: true })))
               @isInitialized = true;
-              # debugger
               @emitLifecycleEvent('render')
             beforeRendering.fail (err)=>
               console.error("Error in beforeRender on ", this.options.name,  err.message, err)
