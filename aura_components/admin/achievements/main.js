@@ -1,9 +1,9 @@
 /**
- * 
+ *
  * Displays the list of all the achievements in your app, and allows you to add/remove achievements.
  *
  * @name Achievements
- * @datasource {achievements} Achievements for the current app 
+ * @datasource {achievements} Achievements for the current app
  * @template {main} Displays a form to create achievements and a table to list (and delete) all the achievements available in the app.
  * @action {remove} Removes an achievement
  * @example <div data-hull-component="admin/achievements@hull"></div>
@@ -31,7 +31,7 @@ Hull.component({
   },
 
   deleteAchievement: function (data) {
-    var promise = this.api.delete(data.data.achievementId)
+    var promise = this.api(data.data.achievementId, 'delete');
     this._attachHandlers(promise);
   },
 

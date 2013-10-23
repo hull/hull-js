@@ -1,6 +1,6 @@
 /**
  * Allows the user of your applications to attach documents and files to the application.
- * 
+ *
  * @name Upload Image
  * @dependency {jquery.fileupload} This plugin uses [jQuery File upload plugin](https://github.com/blueimp/jQuery-File-Upload) to handle the file upload gracefully. Please note that the plugin is packaged within the component so you don't have to struggle against the dependencies.
  * @dependency {storage} This plugin requires that you have attached an S3 storage to your Hull application in the admin.
@@ -42,7 +42,7 @@ Hull.component({
 
   uploader_events: {
     'fileuploadadd'        : 'onAdd',
-    'fileuploadadded'      : 'onAdded', 
+    'fileuploadadded'      : 'onAdded',
     'fileuploadalways'     : 'onAlways',
     'fileuploadchange'     : 'onChange',
     'fileuploadcompleted'  : 'onCompleted',
@@ -144,7 +144,7 @@ Hull.component({
 
   cancel: function () {},
 
-  delete: function () {},
+  'delete': function () {},
 
   onSuccess: function () {
     this.dropzone.find('b').text('Thanks !');

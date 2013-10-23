@@ -88,7 +88,7 @@ Hull.component({
 
   actions: {
     nextPage: function() {
-      delete this.query.skip;
+      this.query.skip = undefined;
 
       this.query.limit = this.options.limit || this.options.perPage;
       this.query.page = this.query.page || 1;
@@ -98,7 +98,7 @@ Hull.component({
     },
 
     previousPage: function() {
-      delete this.query.skip;
+      this.query.skip = undefined;
 
       this.query.limit = this.options.limit || this.options.perPage;
       this.query.page = this.query.page || 1;
