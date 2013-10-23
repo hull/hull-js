@@ -148,7 +148,8 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
       loggedIn: =>
         return false unless @sandbox.data.api.model('me').id?
         identities = {}
-        @sandbox.data.api.model('me').get("identities").map (i)-> identities[i.provider] = i
+        _.map @sandbox.data.api.model('me').get("identities"), (i)->
+          identities[i.provider] = i
         identities
 
       getTemplate: (tpl, data)=>
