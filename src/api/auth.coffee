@@ -1,4 +1,4 @@
-if document.location.hash.indexOf("#hull-auth-status-")==0 &&  window.opener && window.opener.Hull
+if /hull-auth-status-/.test(document.location.hash) &&  window.opener && window.opener.Hull
   try
     authCbName = document.location.hash.replace('#hull-auth-status-', '')
     cb = window.opener.__hull_login_status__
@@ -23,7 +23,7 @@ define ['jquery', 'underscore', 'lib/utils/promises', 'lib/utils/version'], ($, 
 
       throw 'The provider name must be a String' unless _.isString(providerName)
       providerName = providerName.toLowerCase()
-      throw "No authentication service #{providerName} configured for the app" unless ~(authServices.indexOf(providerName + '_app'))
+      throw "No authentication service #{providerName} configured for the app" unless ~(_.indexOf(authServices, providerName + '_app'))
 
       authenticating = promises.deferred()
       authenticating.providerName = providerName
@@ -70,7 +70,7 @@ define ['jquery', 'underscore', 'lib/utils/promises', 'lib/utils/version'], ($, 
       createCallback: ->
         successToken = "__h__#{Math.random().toString(36).substr(2)}"
         cbFn = (name)->
-          delete window.__hull_login_status__
+          window.__hull_login_status__ = undefined
           result = (name == successToken)
           onCompleteAuthentication.call undefined, result
         window.__hull_login_status__ = _.bind(cbFn, undefined)

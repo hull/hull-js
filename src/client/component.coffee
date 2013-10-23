@@ -148,7 +148,8 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
       loggedIn: =>
         return false unless @sandbox.data.api.model('me').id?
         identities = {}
-        @sandbox.data.api.model('me').get("identities").map (i)-> identities[i.provider] = i
+        _.map @sandbox.data.api.model('me').get("identities"), (i)->
+          identities[i.provider] = i
         identities
 
       getTemplate: (tpl, data)=>
@@ -182,9 +183,8 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
               data = _.extend(dataAfterBefore || ctx.build(), data)
               @doRender(tpl, data)
               _.defer(@afterRender.bind(@, data))
-              _.defer((-> @sandbox.start(@$el, { reset: true })).bind(@))
+              _.defer((=> @sandbox.start(@$el, { reset: true })))
               @isInitialized = true;
-              # debugger
               @emitLifecycleEvent('render')
             beforeRendering.fail (err)=>
               console.error("Error in beforeRender on ", this.options.name,  err.message, err)

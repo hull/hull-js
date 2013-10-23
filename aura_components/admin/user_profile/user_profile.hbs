@@ -67,7 +67,7 @@
             <dd>{{value}}</dd>
           </dl>
         {{/key_value}}
-        
+
       </div>
 
     </div>
@@ -89,7 +89,7 @@
         {{#each user.profiles}}
           <header>
             <h5>{{@key}}:</h5>
-          </header><!-- /header -->
+          </header>
           <dl>
             {{#each this}}
               <dt>{{@key}}:</dt>
@@ -98,6 +98,36 @@
           </dl>
         {{/each}}
       </div>
+    {{/if}}
+
+    {{#if badges}}
+    <h3>Badges</h3>
+    {{#badges}}
+    <div class="admin-infos">
+      <header>
+        <h5>
+          <small class="pull-right">
+            <a class="btn-link" data-hull-action="deleteBadge" data-hull-id="{{id}}">
+              <i class="icon-trash"></i> delete
+            </a>
+          </small>
+          [{{achievement_type}}] {{achievement_name}}
+        </h5>
+      </header>
+      <dl>
+        <dt>created_at:</dt>
+        <dd>{{created_at}}</dd>
+        <dt>updated_at:</dt>
+        <dd>{{updated_at}}</dd>
+        <dt>Score:</dt>
+        <dd>{{score}}</dd>
+        <dt>Best Score:</dt>
+        <dd>{{best_score}}</dd>
+        <dt># attempts:</dt>
+        <dd>{{stats.attempts}}</dd>
+      </dl>
+    </div>
+    {{/badges}}
     {{/if}}
 
   {{else}}
