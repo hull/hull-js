@@ -38,6 +38,18 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
     uri
 
   #
+  # Turns a payload into a Backbone Model or Collection
+  # Updates the pagination info
+  #
+  modelize =  (dfd, obj, headers) ->
+    if _.isArray(obj)
+      @paginationLinks = parseLinkHeader(headers['Link']) if headers?.Link
+      dfd.resolve (new Backbone.Collection obj)
+    else
+      dfd.resolve (new Backbone.Model obj)
+        
+
+  #
   # Helps managing the various definitions a component datasource can take
   # Sets decent defaults, validates input, and sends requests to the API
   #
@@ -92,7 +104,8 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
       else if _.isFunction(@def)
         ret = @def()
         if ret?.promise
-          dfd = ret
+          ret.then _.bind(modelize, @, dfd), (err)->
+            dfd.reject err
         else
           dfd.resolve ret
       else
@@ -100,14 +113,9 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
           dfd.resolve(false)
           return dfd.promise()
         transportDfd = @transport(@def)
-        transportDfd.then (obj, headers) =>
-          if _.isArray(obj)
-            @paginationLinks = parseLinkHeader(headers['Link']) if headers?.Link
-            dfd.resolve (new Backbone.Collection obj)
-          else
-            dfd.resolve (new Backbone.Model obj)
-        , (err)->
+        transportDfd.then _.bind(modelize, @, dfd), (err)->
           dfd.reject err
+
       dfd.promise()
 
     # Is datasource paginable?
