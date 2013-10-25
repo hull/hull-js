@@ -9,6 +9,23 @@ Hull.component({
 
   require: ['//vjs.zencdn.net/4.2.1/video.js'],
 
+  initialize: function() {
+    this.trackPlayer = this.sandbox.util._.throttle(function(player) {
+      var progress = Math.round((player.currentTime() / player.duration()) * 100);
+
+      var event;
+      if (progress > 10 && progress < 80 && !this.playTracked) {
+        this.playTracked = true;
+        event = 'video.play';
+      } else if (progress >= 80 && !this.completeTracked) {
+        this.completeTracked = true;
+        event = 'video.complete';
+      }
+
+      if (event) { this.track(event, { id: this.options.id }); }
+    }, 500);
+  },
+
   beforeRender: function(data) {
     this.currentState = this.currentState || data.video.state;
 
@@ -36,7 +53,10 @@ Hull.component({
         height: this.options.height || data.height
       };
 
-      videojs(data.video.id, options);
+      var self = this;
+      videojs(data.video.id, options).on('timeupdate', function() {
+        self.trackPlayer(this);
+      });
     }
   },
 
