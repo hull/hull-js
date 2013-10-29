@@ -10,28 +10,6 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
 
     default_datasources = {}
 
-    actionHandler = (e)->
-      try
-        source  = $(e.currentTarget)
-        action  = source.data("hull-action")
-        fn = @actions[action] || @["#{action}Action"]
-        fn = @[fn] if _.isString(fn)
-        unless _.isFunction(fn)
-          throw new Error("Can't find action #{action} on this component")
-        data = {}
-        for k,v of source.data()
-          do ->
-            key = k.replace(/^hull/, "")
-            key = key.charAt(0).toLowerCase() + key.slice(1)
-            data[key] = v
-        fn.call(@, e, { el: source, data: data })
-      catch err
-        console.error("Error in action handler: ", action, err.message, err)
-      finally
-        e.preventDefault()
-        e.stopPropagation()
-        e.stopImmediatePropagation()
-
     class HullComponent extends app.core.mvc.View
       actions: {}
 
@@ -56,18 +34,6 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
           options[k] ||= v
 
         try
-          @events = if _.isFunction(@events) then @events() else @events
-          @events ?= {}
-          @events["click [data-hull-action]"] = _.bind actionHandler,@
-
-          # Building actions hash
-          @actions = if _.isFunction(@actions) then @actions() else @actions
-          @actions ?= {}
-          @actions.login ?= (e, params)=> @sandbox.login(params.data.provider, params.data)
-          @actions.linkIdentity ?= (e, params)=> @sandbox.linkIdentity(params.data.provider, params.data)
-          @actions.unlinkIdentity ?= (e, params)=> @sandbox.unlinkIdentity(params.data.provider)
-          @actions.logout ?= => @sandbox.logout()
-
           unless @className?
             @className = "hull-component"
             @className += " hull-#{@namespace}" if @namespace?
@@ -75,16 +41,16 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
           _.each @datasources, (ds, i)=>
             ds = _.bind ds, @ if _.isFunction ds
             @datasources[i] = new Datasource(ds, @api) unless ds instanceof Datasource
-
         catch e
-          console.error("Error loading HullComponent", e.message)
+          console.error "Unable to init component #{@componentName}"
+
+
         # Copy/Paste + adaptation of the Backbone.View constructor
         # TODO remove it whenever possible
         @cid = _.uniqueId('view')
         @_configure(options || {})
         @_ensureElement()
         @invokeWithCallbacks('initialize', options).then _.bind(->
-          @delegateEvents()
           @render()
           @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
         , @), (err)->
