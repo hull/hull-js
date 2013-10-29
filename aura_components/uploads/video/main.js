@@ -1,13 +1,21 @@
+/**
+ * Allows the user of your applications to attach video to a given object.
+ *
+ * This widget proxify all event emited by jQuery.fileupload. For example fileuploadadd becomes hull.uploads.video.add. To see all fileupload events checkout the plugin documentation. https://github.com/blueimp/jQuery-File-Upload/wiki/Options
+ *
+ * @name Video Upload
+ * @param {String} id Required The object ID on which to attach the video
+ * @template {upload} The main template. Because the jQuery plugin has some requirements, the template makes sure everything is set up as needed.
+ * @event {hull.uploads.video.done} Triggered when upload is done and video * object is created
+ * @example <div data-hull-component="uplads/video@hull" data-hull-id="VIDEO_ID"></div>
+ */
+
 Hull.component({
   type: 'Hull',
 
-  templates: ['upload', 'file'],
+  templates: ['upload'],
 
   require: ['jquery.fileupload'],
-
-  initialize: function() {
-    this.currentState = 'pending';
-  },
 
   afterRender: function() {
     var self = this;

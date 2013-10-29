@@ -1,5 +1,3 @@
-<link href="//vjs.zencdn.net/4.2.1/video-js.css" rel="stylesheet">
-
 <div class="video-container">
   {{#if isFinished}}
     <video id="{{video.id}}" class="video-js vjs-default-skin" controls preload="auto" poster={{poster}}>
@@ -9,10 +7,10 @@
   {{/if}}
 
   {{#if isProcessing}}
-    Your video is processing
+    <p>Your video is processing.</p>
   {{/if}}
 
   {{#if hasFailed}}
-    mega fail retry please
+    </p>Video encoding has failed, please retry later.</p>
   {{/if}}
 </div>
