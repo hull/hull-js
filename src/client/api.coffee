@@ -236,5 +236,9 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
 
         app.core.mediator.on    'hull.login', clearModelsCache
         app.core.mediator.on    'hull.logout', clearModelsCache
+        app.core.mediator.on 'hull.login', ->
+          app.sandbox.track 'hull.auth.login', app.core.data.api.model('me').toJSON()
+        app.core.mediator.on 'hull.logout', ->
+          app.sandbox.track 'hull.auth.logout', app.core.data.api.model('me').toJSON()
 
     module
