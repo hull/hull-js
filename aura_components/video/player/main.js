@@ -1,18 +1,18 @@
-/** Display a video player if the video is encoded, show the encoding status
- * otherwise. It polls the video at a given interval when it is encoding.  Once
- * the video is encoded, it displays a videojs player.
+/**
+ * Display a video player if the video is encoded, show the encoding status otherwise. It polls the video at a given interval when it is encoding.  Once the video is encoded, it displays a videojs player.
  *
- * You need to add videojs css to your document to use this widget.  <link
- * href="//vjs.zencdn.net/4.2.1/video-js.css" rel="stylesheet">
+ * You need to add videojs css to your document to use this widget.
+ * <link href="//vjs.zencdn.net/4.2.1/video-js.css" rel="stylesheet">
  *
- * @name Player @param {String} id Required The video id @param {String} width
- * Optional The player width in pixel @param {String} height Optional The player
- * height in pixel @param {String} quality Optional The video quality can be
- * full, high, standard, medium, low default: standard @param {String} interval
- * Optional Number of second to wait before requesting the video default: 10000
- * @datasource {video} A video @template {main} The main template that shows the
- * player @example <div data-hull-component="video/player@hull"
- * data-hull-id="VIDEO_ID"></div>
+ * @name Player
+ * @param {String} id Required The video id
+ * @param {String} width Optional The player width in pixel
+ * @param {String} height Optional The player height in pixel
+ * @param {String} quality Optional The video quality can be full, high, standard, medium, low default: standard
+ * @param {String} interval Optional Number of second to wait before requesting the video default: 10000
+ * @datasource {video} A video
+ * @template {main} The main template that shows the player
+ * @example <div data-hull-component="video/player@hull" data-hull-id="VIDEO_ID"></div>
  */
 
 /* global videojs:true */
