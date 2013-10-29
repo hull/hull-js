@@ -51,13 +51,18 @@ Hull.component({
     data.isFinished = data.video.state === 'finished';
 
     if (data.isFinished) {
-      var mp4 = data.video.files[this.options.quality] || data.video.files.standard;
-
       data.poster = data.video.picture || data.video.thumbnails[0];
-      data.hls = data.video.base_url + '/' + data.video.files.hls.name;
-      data.mp4 = data.video.base_url + '/' + mp4.name;
-      data.width = mp4.width;
-      data.height = mp4.height;
+
+      if (data.video.files.hls) {
+        data.hls = data.video.base_url + '/' + data.video.files.hls.name;
+      }
+
+      var file = data.video.files[this.options.quality] || data.video.files.standard;
+      file.url = data.video.base_url + '/' + file.name;
+      data.file = file;
+
+      data.width = file.width;
+      data.height = file.height;
     }
   },
 

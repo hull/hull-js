@@ -1,8 +1,10 @@
 <div class="video-container">
   {{#if isFinished}}
     <video id="{{video.id}}" class="video-js vjs-default-skin" controls preload="auto" poster={{poster}}>
-      <source type="application/x-mpegurl" src="{{hls}}">
-      <source type="video/mp4" src="{{mp4}}">
+      {{#if hls}}
+        <source type="application/x-mpegurl" src="{{hls}}">
+      {{/if}}
+      <source type="{{file.content_type}}" src="{{file.url}}">
     </video>
   {{/if}}
 
