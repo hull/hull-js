@@ -45,7 +45,7 @@ Hull.component({
 
   actions: {
     review: 'postReview',
-    delete:  'deleteReview'
+    'delete':  'deleteReview'
   },
 
   initialize: function() {
@@ -103,7 +103,7 @@ Hull.component({
     var $parent = action.el
       .addClass('is-removing')
       .parents('[data-hull-review-id="'+ id +'"]');
-    this.api.delete(id).then(function (review) {
+    this.api(id, 'delete').then(function (review) {
       self.sandbox.emit('hull.reviews.' + self.options.id + '.removed', review);
       $parent.remove();
     });

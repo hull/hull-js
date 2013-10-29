@@ -1,5 +1,5 @@
 /**
- * 
+ *
  * Displays the profile of any user of your app.
  *
  * @name User Profile
@@ -21,8 +21,10 @@ Hull.component({
 
   datasources: {
     user: function() {
-      var user = this.user || this.options.id;
-      if (user) { return this.api(user, { fields: 'user.profiles' }); }
+      if (this.options.id) { return this.api(this.options.id, { fields: 'user.profiles' }); }
+    },
+    badges: function() {
+      if (this.options.id) {  return this.api(this.options.id + "/badges"); }
     }
   },
 
@@ -53,13 +55,22 @@ Hull.component({
       this.api(this.data.user.id + '/unapprove', 'post').then(function() {
         self.render();
       });
+    },
+
+    deleteBadge: function(e, action) {
+      var self = this;
+      if (confirm("Sure ?")) {
+        this.api(action.data.id, 'delete', function(res) {
+          self.render();
+        });
+      }
     }
   },
 
   renderUser: function(id) {
     var displayedUser = this.data.user;
     if (displayedUser && displayedUser.id === id) { return; }
-
+    this.options.id = id;
     this.user = id;
     this.render();
   },

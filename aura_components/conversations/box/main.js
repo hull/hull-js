@@ -75,14 +75,14 @@ Hull.component({
     var $parent = data.el
       .addClass('is-removing')
       .parents('[data-hull-message-id="'+ id +'"]');
-    this.api.delete(id).then(function () { $parent.remove(); });
+    this.api(id, 'delete').then(function () { $parent.remove(); });
   },
 
-  delete: function(e, data) {
+  'delete': function(e, data) {
     event.preventDefault();
     var id = data.data.id;
     var self = this;
-    this.api.delete(id).then(function () {
+    this.api(id, 'delete').then(function () {
       self.sandbox.emit('hull.conversation.thread.delete', {id:id, cid:self.cid});
     });
   },

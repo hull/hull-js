@@ -66,7 +66,8 @@ define ['jquery', 'underscore', 'lib/client/component/context', 'lib/utils/promi
       loggedIn: =>
         return false unless @sandbox.data.api.model('me').id?
         identities = {}
-        @sandbox.data.api.model('me').get("identities").map (i)-> identities[i.provider] = i
+        _.map @sandbox.data.api.model('me').get("identities"), (i)->
+          identities[i.provider] = i
         identities
 
       getTemplate: (tpl, data)=>

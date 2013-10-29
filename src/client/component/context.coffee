@@ -9,7 +9,7 @@ define ['underscore', 'lib/utils/promises'], (_, promises)->
     add: (name, value)->
       @_context[name] = value
     addDatasource: (name, dsPromise, fallback)->
-      fallback = (->).bind(undefined, name) unless _.isFunction(fallback)
+      fallback = _.bind((->), undefined, name) unless _.isFunction(fallback)
       dfd = _dfd()
       dsPromise.then (res)=>
         if _.isFunction res?.toJSON

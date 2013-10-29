@@ -25,7 +25,7 @@ Hull.component({
     deleteMsg: 'deleteMsg',
     enableNotifications: 'enableNotifications',
     disableNotifications: 'disableNotifications',
-    delete: 'delete'
+    'delete': 'delete'
   },
 
   options: {
@@ -150,16 +150,16 @@ Hull.component({
     e.preventDefault();
     var id = data.data.id;
     var $parent = data.el.addClass('is-removing').parents('[data-hull-message-id="' + id + '"]');
-    this.api.delete(id).then(function() {
+    this.api(id, 'delete').then(function() {
       $parent.remove();
     });
   },
 
-  delete: function(e, data) {
+  'delete': function(e, data) {
     event.preventDefault();
     var id = data.data.id;
     var self = this;
-    this.api.delete(id).then(function() {
+    this.api(id, 'delete').then(function() {
       self.sandbox.emit('hull.conversation.thread.delete', {
         id: id,
         cid: self.cid

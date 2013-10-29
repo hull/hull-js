@@ -31,7 +31,7 @@ Hull.component({
 
   actions: {
     comment: 'postComment',
-    delete:  'deleteComment',
+    'delete':  'deleteComment',
     flag:    'flagItem'
   },
 
@@ -89,7 +89,7 @@ Hull.component({
     var $parent = action.el
       .addClass('is-removing')
       .parents('[data-hull-comment-id="'+ id +'"]');
-    this.api.delete(id).then(function () {$parent.remove();});
+    this.api(id, 'delete').then(function () {$parent.remove();});
   },
 
   toggleLoading: function () {

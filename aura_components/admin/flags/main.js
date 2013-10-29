@@ -1,5 +1,5 @@
 /**
- * 
+ *
  * Allows an administrator to review all the flags on objects considered as inappropriate
  *
  * @name Flags
@@ -38,15 +38,15 @@ Hull.component({
     return dfd;
   },
   actions: {
-    delete: function (evt, ctx) {
+    'delete': function (evt, ctx) {
       var self = this;
-      this.api.delete(ctx.data.id).then(function () {
+      this.api(ctx.data.id, 'delete').then(function () {
         self.render();
       });
     },
     unflag: function (evt, ctx) {
       var self = this;
-      this.api.delete(ctx.data.id + '/flag?all=1').then(function () {
+      this.api(ctx.data.id + '/flag?all=1', 'delete').then(function () {
         self.render();
       });
     }
