@@ -45,9 +45,10 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
     if _.isArray(obj)
       @paginationLinks = parseLinkHeader(headers['Link']) if headers?.Link
       dfd.resolve (new Backbone.Collection obj)
-    else
+    else if _.isObject(obj)
       dfd.resolve (new Backbone.Model obj)
-        
+    else
+      dfd.resolve obj
 
   #
   # Helps managing the various definitions a component datasource can take
