@@ -10,6 +10,7 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
     rawFetch = null
 
     module =
+      apiModule: apiModule
       require:
         paths:
           cookie: 'bower_components/jquery.cookie/jquery.cookie'
@@ -20,8 +21,8 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
 
         slice = Array.prototype.slice
 
-        apiModule = apiModule(app.config)
-        apiModule.then (obj)->
+        apiPromise = apiModule(app.config)
+        apiPromise.then (obj)->
           core.data.api = api = obj.api
 
           #
@@ -171,7 +172,7 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
         #
 
         initialized = core.data.deferred()
-        apiModule.then (obj)->
+        apiPromise.then (obj)->
           remoteConfig = obj.remoteConfig
           data = remoteConfig.data
           app.config.assetsUrl            = remoteConfig.assetsUrl
@@ -224,7 +225,7 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
 
           initialized.resolve(data)
 
-        apiModule.fail (e)->
+        apiPromise.fail (e)->
           initialized.reject e
         initialized.reject(new TypeError 'no organizationURL provided. Can\'t proceed') unless app.config.orgUrl
         initialized.reject(new TypeError 'no applicationID provided. Can\'t proceed') unless app.config.appId

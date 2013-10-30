@@ -1,5 +1,5 @@
 /*global define:true */
-define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/underscore'], function (helper, aura) {
+define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/underscore', 'lib/utils/promises'], function (helper, aura, _, promises) {
 
   "use strict";
   /*jshint devel: true, browser: true */
@@ -46,47 +46,107 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
 
   define('easyXDM', function () { return easyXDMMock; });
 
-  xdescribe("API specs", function () {
-    var env, api, batch, app = aura(config);
-
-    var extension = {
-      initialize: function (appEnv) {
-        env = appEnv;
-        app.core = app.core || {};
-        app.core.mvc = window.Backbone;
+  describe("API specs", function () {
+    var extendable = {
+      extend: function () {
+        return {
+          extend: function () {
+            return function () {
+              return {
+                on: function () {},
+                fetch: function () {}
+              }
+            }
+          }
+        };
       }
     };
+    beforeEach(function (done) {
+      var apiPromise = promises.deferred
+      var self = this;
+      this.resolvedApiMock = {api: function () {}, remoteConfig: {data: {}}, auth: { login: function () {} }};
+      this.resolvedApiMock.auth.login.has = function () {};
+      this.baseApp = {
+        components: {
+          addSource: function () {}
+        },
+        sandbox: {
+          config: {}
+        },
+        config: {},
+        core: {
+          data: {
+            deferred:  function () { return promises.deferred(); }
+          },
+          mvc: {
+            Model: extendable,
+            Collection: extendable
+          }
+        }
+      };
 
-    app
-      .use(extension)
-      .use('lib/client/api');
-
-    before(function(done) {
-      app.start().then(function () {
-        api = app.sandboxes.create().data.api;
-        batch = api.batch;
+      define('lib/api', function () { self.apiPromise = apiPromise(); return function () { return self.apiPromise; }});
+      require(['lib/client/api'], function (module) {
+        self.clientApiModule = module;
+        self.module = self.clientApiModule();
         done();
       });
     });
 
-    it('should be available in the environment', function () {
-      env.sandbox.data.should.contain.keys('api');
-      api.should.be.a('function');
-    });
+    // var env, api, batch, app = aura(config);
+
+    // var extension = {
+    //   initialize: function (appEnv) {
+    //     env = appEnv;
+    //     app.core = app.core || {};
+    //     app.core.mvc = window.Backbone;
+    //   }
+    // };
+
+    // app
+    //   .use(extension)
+    //   .use('lib/client/api');
+
+    // before(function(done) {
+    //   app.start().then(function () {
+    //     api = app.sandboxes.create().data.api;
+    //     batch = api.batch;
+    //     done();
+    //   });
+    // });
+
+    // it('should be available in the environment', function () {
+    //   env.sandbox.data.should.contain.keys('api');
+    //   api.should.be.a('function');
+    // });
 
     describe("initializing the API client", function () {
-      it("should reject if there's an error", function (done) {
-        require(['lib/api'], function (apiClient) {
-          mustFail = true;
-          apiClient({appId: "please", orgUrl: "fail"}).then(
-            function () {done(new Error('Error'));},
-            function () {done();}
-          );
+      it("should reject if there's no orgUrl", function (done) {
+        var baseApp = this.baseApp;
+        baseApp.config.orgUrl = "ok";
+        var ret = this.module.initialize(baseApp);
+        ret.then(function () {
+          done('This should not have been called');
+        }, function (reason) {
+          reason.message.should.have.string("applicationID");
+          done();
+        });
+      });
+
+      it("should reject if there's no appId", function (done) {
+        var baseApp = this.baseApp;
+        baseApp.config.appId = "ok";
+        var ret = this.module.initialize(baseApp);
+        ret.then(function () {
+          done('This should not have been called');
+        }, function (reason) {
+          reason.message.should.have.string("organization");
+          done();
         });
       });
     });
 
-    describe("Basic API requests", function () {
+    xdescribe("Basic API requests", function () {
       it("should reject promise and execute failure callback with an invalid request", function (done) {
         var spySuccess = sinon.spy();
         var spyFailure = sinon.spy();
@@ -114,7 +174,7 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
       });
     });
 
-    describe('batching requests', function () {
+    xdescribe('batching requests', function () {
       var spySuccess, spyFailure;
       beforeEach(function () {
         spySuccess = sinon.spy();
@@ -188,7 +248,7 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
       });
     });
 
-    describe('Models', function () {
+    xdescribe('Models', function () {
       it("should be provided an id", function () {
         api.model.bind(api, 'anId').should.not.throw(Error);
         api.model.bind(api, {_id: 'anId'}).should.not.throw(Error);
@@ -217,7 +277,7 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
       });
     });
 
-    describe('Tracking API', function () {
+    xdescribe('Tracking API', function () {
       it('proxies to the `track` provider', function () {
         var orig = env.core.data.api;
         var spy = env.core.data.api = sinon.spy();
@@ -231,35 +291,19 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
       });
     });
 
-    xdescribe('List of authentication providers', function () {
-      beforeEach(function () {
-        this.module = clientApiModule({});
-      });
-      it('should be accessible through a function', function () {
-        var app = { core: {}, sandbox: {} };
-        this.module.initialize(app);
-        app.sandbox.login.provider.should.be.a('function');
-      });
-      it('should return the list of providers', function () {
-        var app = { core: {}, sandbox: {
-          config: {services: {types: {auth: ['hoola', 'hoop']}}}
-        } };
-        this.module.initialize(app);
-        app.sandbox.login.provider().should.eql(['hoola', 'hoop']);
-      });
-      it('should return true if the provider in param is available', function () {
-        var app = { core: {}, sandbox: {
-          config: {services: {types: {auth: ['hoola', 'hoop']}}}
-        } };
-        this.module.initialize(app);
-        app.sandbox.login.provider('hoola').should.be.true;
-      });
-      it('should return false if the provider in param is not available', function () {
-        var app = { core: {}, sandbox: {
-          config: {services: {types: {auth: ['hoola', 'hoop']}}}
-        } };
-        this.module.initialize(app);
-        app.sandbox.login.provider('nope').should.be.false;
+    describe('List of authentication providers', function () {
+      it('should be accessible through a function', function (done) {
+        var baseApp = this.baseApp;
+        var self = this;
+        baseApp.config.appId = baseApp.config.orgUrl = "ok";
+        this.module.initialize(this.baseApp).then(function () {
+          baseApp.sandbox.login.available.should.be.a('function');
+          baseApp.sandbox.login.available.should.be.equal(self.resolvedApiMock.auth.login.has);
+          done();
+        }, function (err) {
+          done('it should not fail');
+        });
+        this.apiPromise.resolve(this.resolvedApiMock);
       });
     });
   });
