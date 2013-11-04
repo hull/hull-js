@@ -22,7 +22,14 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
 
         apiModule = apiModule(app.config)
         apiModule.then (obj)->
-          core.data.api = api = obj.api
+          core.data.api = api = (args...)->
+            dfd = obj.api args...
+            dfd.then (res, headers)->
+              hullTrack = headers['Hull-Track']
+              if hullTrack
+                [eventName, trackParams] = JSON.parse(atob(hullTrack))
+                app.core.mediator.emit(eventName, trackParams)
+            dfd
 
           #
           #
