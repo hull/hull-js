@@ -1,7 +1,7 @@
 define ['jquery', 'underscore'], ($, _)->
   API_PATH = '/api/v1/'
   API_PATH_REGEXP = /^\/?api\/v1\//
-  RESPONSE_HEADER = ['Hull-User-Id', 'Hull-User-Sig', 'Link', 'Hull-Track']
+  RESPONSE_HEADER = ['Hull-User-Id', 'Hull-User-Sig', 'Link', 'Hull-Track', 'Hull-Auth-Scope']
 
   (app)->
 

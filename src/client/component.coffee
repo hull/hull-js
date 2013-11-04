@@ -112,7 +112,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
         ctx = new Context()
         ctx.add 'options', @options
         ctx.add 'loggedIn', @loggedIn()
-        ctx.add 'isAdmin', @sandbox.isAdmin
+        ctx.add 'isAdmin', @sandbox.isAdmin()
         ctx.add 'debug', @sandbox.config.debug
         ctx.add 'renderCount', ++@_renderCount
 

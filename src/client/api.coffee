@@ -7,7 +7,8 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
     clearModelsCache =->
       models = _.pick(models, 'me', 'app', 'org')
 
-    rawFetch = null
+    rawFetch  = null
+    authScope = null
 
     module =
       require:
@@ -29,6 +30,7 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
               if hullTrack
                 [eventName, trackParams] = JSON.parse(atob(hullTrack))
                 app.core.mediator.emit(eventName, trackParams)
+              authScope = headers['Hull-Auth-Scope'].split(':')[0]
             dfd
 
           #
@@ -179,6 +181,7 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
 
         initialized = core.data.deferred()
         apiModule.then (obj)->
+          authScope = obj.authScope
           remoteConfig = obj.remoteConfig
           data = remoteConfig.data
           app.config.assetsUrl            = remoteConfig.assetsUrl
@@ -191,8 +194,10 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
           app.sandbox.config.orgUrl       = app.config.orgUrl
           app.sandbox.config.services     = remoteConfig.services
           app.sandbox.config.entity_id    = data.entity?.id
-          app.sandbox.isAdmin             = remoteConfig.access_token?
 
+
+          app.sandbox.isAdmin = ->
+            (authScope == 'Account' || app.sandbox.data.api.model('me').get('is_admin'))
 
           app.sandbox.login = (provider, opts={}, callback=->)->
             obj.auth.login.apply(undefined, arguments).then ->
