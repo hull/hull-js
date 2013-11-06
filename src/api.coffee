@@ -57,9 +57,13 @@ define ['jquery', 'underscore', 'lib/utils/version', 'lib/api/params', 'lib/api/
         setCurrentUser data.headers
       window.clearTimeout(timeout)
 
+      if data.headers && data.headers['Hull-Auth-Scope']
+        authScope = data.headers['Hull-Auth-Scope'].split(":")[0]
+
       dfd.resolve
         auth: authModule api, config, remoteConfig.services.types.auth
         remoteConfig: remoteConfig
+        authScope: authScope
         api: api
 
     url = buildRemoteUrl(config)
