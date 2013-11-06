@@ -1,7 +1,7 @@
 /**
- * 
+ *
  * Displays the list of users of your app.
- * 
+ *
  * Access to this component is limited to the administrators, you will need to be logged in to your admin on hullapp.io to access data.
  *
  * @name Users List
@@ -15,6 +15,8 @@ Hull.component({
   type: 'Hull',
 
   templates: ['users_list'],
+
+  refreshEvents: ['model.hull.me.change'],
 
   renderError: function(err) {
     if (err.message.status === 401) {
