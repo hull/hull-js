@@ -262,7 +262,7 @@ module.exports = function (grunt) {
       "client-no-underscore": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
       "client-no-backbone": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
       "widgets": ["version", "hull_widgets"],
-      "docs": ['dox'],
+      "docs": ['dox', 'cover', 'plato'],
       "describe": ['describe']
     }
   };
@@ -270,7 +270,7 @@ module.exports = function (grunt) {
   helpers.appendAWSConfig(gruntConfig);
   grunt.initConfig(gruntConfig);
 
-  grunt.registerTask('do_test', ['cover', 'plato', 'mocha']);
+  grunt.registerTask('do_test', ['mocha']);
   grunt.registerTask('test', ['dist:api', 'dist:client', 'dist:remote', 'do_test']);
   grunt.registerTask('reset', ['clean:reset']);
 

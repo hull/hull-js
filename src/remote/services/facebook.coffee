@@ -36,6 +36,5 @@ define ->
 
   initialize: (app)->
     FB.init(app.config.services.settings.facebook_app)
-    FB.getLoginStatus ->
     app.core.routeHandlers.fql = fql
     app.core.routeHandlers.facebook = api
