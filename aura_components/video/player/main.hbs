@@ -1,0 +1,18 @@
+<div class="video-container">
+  {{#if isFinished}}
+    <video id="{{video.id}}" class="video-js vjs-default-skin" controls preload="auto" poster={{poster}}>
+      {{#if hls}}
+        <source type="application/x-mpegurl" src="{{hls}}">
+      {{/if}}
+      <source type="{{file.content_type}}" src="{{file.url}}">
+    </video>
+  {{/if}}
+
+  {{#if isProcessing}}
+    <p>Your video is processing.</p>
+  {{/if}}
+
+  {{#if hasFailed}}
+    </p>Video encoding has failed, please retry later.</p>
+  {{/if}}
+</div>

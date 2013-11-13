@@ -25,12 +25,17 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
         apiModule.then (obj)->
           core.data.api = api = (args...)->
             dfd = obj.api args...
-            dfd.then (res, headers)->
-              hullTrack = headers['Hull-Track']
-              if hullTrack
-                [eventName, trackParams] = JSON.parse(atob(hullTrack))
-                app.core.mediator.emit(eventName, trackParams)
-              authScope = headers['Hull-Auth-Scope'].split(':')[0]
+            dfd.then (res, headers={})->
+              if headers?
+                hullTrack = headers['Hull-Track']
+                if hullTrack
+                  try
+                    [eventName, trackParams] = JSON.parse(atob(hullTrack))
+                    app.core.mediator.emit(eventName, trackParams)
+                  catch error
+                    false
+                if headers['Hull-Auth-Scope']
+                  authScope = headers['Hull-Auth-Scope'].split(':')[0]
             dfd
 
           #

@@ -11,6 +11,7 @@
   }
   define(['backbone'], {
     name: "The Back of the Bone",
+
     initialize: function(app) {
       var core = app.core, sandbox = app.sandbox;
       var Backbone = require('backbone');
@@ -27,14 +28,7 @@
       sandbox.mvc.Collection = function(collection) {
         return core.mvc.Collection.extend(collection);
       };
-    },
-
-    afterAppStart: function(app) {
-      app.sandbox.util._.delay(function() {
-        if (!app.core.mvc.History.started) {
-          app.core.mvc.history.start();
-        };
-      }, 500);
     }
+
   });
 })();
