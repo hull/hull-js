@@ -9,7 +9,7 @@
     <script src="../bower_components/jquery/jquery.js"></script>
     <link rel="stylesheet" href="//hullstrap.s3.amazonaws.com/stylesheets/hullstrap.css">
     <script src="//hullstrap.s3.amazonaws.com/javascripts/hullstrap.js"></script>
-    <script src="../dist/feature/video/hull.js"></script>
+    <script src="../dist/develop/hull.js"></script>
     <script src="app.js"></script>
   </head>
   <body>
@@ -21,10 +21,11 @@
         </div>
       </div>
 
-      <h4>Video</h4>
-      <div data-hull-component="video/player@hull" data-hull-id="52679ea15cc0173c16000041"></div>
-
-      <div data-hull-component="uploads/video@hull" data-hull-id="me"></div>
+      <h4>Comments</h4>
+      <div class="row">
+        <div class="span6" data-hull-component="login/profile@hull"></div>
+        <div class="span6" data-hull-component="comments/list@hull" data-hull-id="app"></div>
+      </div>
     </div>
   </body>
 </html>
