@@ -35,21 +35,7 @@ define ->
       facebook: { exports: 'FB' }
 
   initialize: (app)->
-    dfd = app.core.data.deferred()
-    resolve = (data = {})-> dfd.resolve(data)
-    timeout = setTimeout ->
-      console.info('Facebook timeout. Continuing without it')
-      resolve()
-    , 10000
-    try
-      FB.init(app.config.services.settings.facebook_app)
-      FB.getLoginStatus (data)->
-        clearTimeout timeout
-        resolve(data)
-    catch e
-      console.warn("Facebook provider failed to launch because of: #{e.message}")
-      clearTimeout timeout
-      resolve()
+    FB.init(app.config.services.settings.facebook_app)
+    FB.getLoginStatus ->
     app.core.routeHandlers.fql = fql
     app.core.routeHandlers.facebook = api
-    dfd
