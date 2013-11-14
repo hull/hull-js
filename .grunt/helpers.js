@@ -33,21 +33,25 @@ module.exports = function (grunt) {
             secret: '<%= aws.secret %>',
             bucket: '<%= aws.bucket %>',
             access: 'public-read',
-            // debug: true,
+            //debug: true,
             encodePaths: true,
-            maxOperations: 20
+            maxOperations: 20,
+            headers: {
+              'Cache-Control': 'max-age=<%= cache %>, public',
+              'Expires': '<%= expires %>'
+            }
           },
           prod:{
             upload:[
               {
-                gzip:  true,
+                gzip:  false,
                 src: 'dist/<%= PKG_VERSION %>/**/*',
                 dest: '<%= PKG_VERSION %>',
                 rel: 'dist/<%= PKG_VERSION %>'
               },
               {
-                gzip:  false,
-                src: 'dist/<%= PKG_VERSION %>/**/*',
+                gzip:  true,
+                src: 'dist/<%= PKG_VERSION %>/**/*.js',
                 dest: '<%= PKG_VERSION %>',
                 rel: 'dist/<%= PKG_VERSION %>'
               }
