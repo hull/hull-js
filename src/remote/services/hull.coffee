@@ -76,20 +76,24 @@ define ['jquery', 'underscore'], ($, _)->
 
       return
 
+    doTrack = (event, params)->
+      return unless event
+      params.hull_app_id    = config?.appId
+      params.hull_app_name  = config?.data?.app?.name
+      console.info "Tracking:", event, params
+      require('analytics').track(event, params)
 
     trackAction = (request, response)->
       return unless track = request.getResponseHeader('Hull-Track')
       try
         [eventName, trackParams] = JSON.parse(atob(track))
-        trackParams.hull_app_id    = config?.appId
-        trackParams.hull_app_name  = config?.data?.app?.name
-        require('analytics').track(eventName, trackParams) if eventName
+        doTrack(eventName, trackParams)
       catch error
         "Invalid Tracking header"
 
     trackHandler = (req, callback, errback)->
       eventName = req.path
-      require('analytics').track(eventName, req.params)
+      doTrack(eventName, req.params)
       req.path = "t"
       req.params.event ?= eventName
       req.params = { t: btoa(JSON.stringify(req.params)) }
