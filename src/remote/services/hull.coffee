@@ -76,7 +76,7 @@ define ['jquery', 'underscore'], ($, _)->
 
       return
 
-    doTrack = (event, params)->
+    doTrack = (event, params={})->
       return unless event
       params.hull_app_id    = config?.appId
       params.hull_app_name  = config?.data?.app?.name
@@ -119,6 +119,6 @@ define ['jquery', 'underscore'], ($, _)->
         identified = true
         identify(app.config.data.me)
 
-      analytics.track("init", { appId: app.config.appId })
+      doTrack("init")
       app.core.routeHandlers.hull = handler
       app.core.routeHandlers.track = trackHandler
