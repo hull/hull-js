@@ -62,7 +62,7 @@ Hull.component({
   beforeRender: function(data) {
     this.quiz   = data.quiz;
     this.badge  = data.badge || {};
-    if (!this.isInitialized) { this.track('init'); }
+    if (!this.isInitialized) { this.track('hull.quiz.init'); }
 
     if (data.me.id != this.currentUserId) {
       this.template = "intro";
@@ -153,7 +153,8 @@ Hull.component({
       this.answers[opts.questionRef] = opts.answerRef;
       this.data.quiz.set('answers', this.answers);
 
-      this.track('progress', {
+      this.track('hull.quiz.progress', {
+        quizId: this.id,
         questionRef: opts.questionRef,
         answerRef: opts.answerRef,
         questionIndex: this.currentQuestionIndex,
@@ -167,7 +168,8 @@ Hull.component({
     },
 
     start: function() {
-      this.track("start");
+      debugger
+      this.track("hull.quiz.start", { quizId: this.id });
       this.startQuiz();
     },
 
@@ -186,7 +188,8 @@ Hull.component({
     },
 
     submit: function() {
-      this.track("submit");
+      debugger
+      this.track("hull.quiz.submit", { quizId: this.id });
       var timing = 0;
       if (this.startedAt) {
         timing  = (new Date() - this.startedAt) / 1000;
@@ -203,7 +206,7 @@ Hull.component({
           self.submitted = true;
           self.badge = badge;
           self.render('result');
-          self.track('finish', { score: badge.data.score, timing: badge.data.timing });
+          self.track('hull.quiz.finish', { quizId: this.id, score: badge.data.score, timing: badge.data.timing });
         }
       });
       return false;

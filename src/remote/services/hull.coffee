@@ -119,6 +119,6 @@ define ['jquery', 'underscore'], ($, _)->
         identified = true
         identify(app.config.data.me)
 
-      doTrack("init")
+      doTrack("hull.app.init")
       app.core.routeHandlers.hull = handler
       app.core.routeHandlers.track = trackHandler
