@@ -1,6 +1,6 @@
 {
   "name": "hull-js",
-  "version": "0.7.7",
+  "version": "0.7.10",
   "main": "./lib/hull.js",
   "dependencies": {
     "jquery": "1.10.*",
@@ -8,7 +8,7 @@
     "backbone": "0.9.9",
     "easyXDM": "2.4.17",
     "require-handlebars-plugin": "0.4.0",
-    "analytics": "hull/analytics#0.8.3",
+    "analytics": "hull/analytics#1.0.8-hull",
     "base64": "0.1.1",
     "jquery-file-upload": "7.2.1",
     "moment": "1.7.2",

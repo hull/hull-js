@@ -6,13 +6,15 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
     server: ['require']
 
   #Compiles the template depending on its definition
-  setupTemplate = (tplSrc, tplName) ->
+  setupTemplate = (tplSrc, tplName, wrapped) ->
     engine = module.templateEngine
-    # tplName = tplName.replace(/\//g,'.',)
-    if (_.isFunction(tplSrc))
+    if (!_.isFunction(tplSrc))
+      compiled = engine.compile tplSrc
+    else if !wrapped
       compiled = engine.template tplSrc
     else
-      compiled = engine.compile tplSrc
+      compiled = tplSrc
+
     engine.registerPartial(tplName, compiled)
     compiled
 
@@ -36,7 +38,7 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
           module.global.Template[tplName]
       sprockets: (tplName)->
         if module.global.HandlebarsTemplates? && module.global.HandlebarsTemplates?[tplName]?
-          module.global.HandlebarsTemplates[tplName]
+          setupTemplate(module.global.HandlebarsTemplates[tplName], tplName, true)
       hullDefault: (tplName)->
         if module.global.Hull.templates._default?[tplName]
           setupTemplate(module.global.Hull.templates._default[tplName],  tplName)

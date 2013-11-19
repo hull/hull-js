@@ -119,11 +119,18 @@ define(['lib/client/api/reporting'], function (module) {
       this.component.options = {name: 'fake_name'};
       this.component.track('test', { foo: 'bar', });
       var trackingData = this.spy.args[0][1];
-      trackingData.should.deep.equal({
-        id: 'fake_id',
-        component: 'fake_name',
-        foo: 'bar'
-      });
+      trackingData.should.have.property('id', 'fake_id');
+      trackingData.should.have.property('component', 'fake_name');
+      trackingData.should.have.property('foo', 'bar');
+    });
+
+    it('should extend data with URL and referrer if available', function() {
+      this.component.id = 'fake_id';
+      this.component.options = {name: 'fake_name'};
+      this.component.track('test', { foo: 'bar', });
+      var trackingData = this.spy.args[0][1];
+      trackingData.should.have.property('url', window.location.href);
+      trackingData.should.have.property('referrer', document.referrer);
     });
   });
 });

@@ -4,7 +4,13 @@ define ['underscore'], (_)->
       @track = (name, data = {}) ->
         defaultData = _.result(@, 'trackingData')
         defaultData = if _.isObject(defaultData) then defaultData else {}
-        data = _.extend { id: @id, component: @options.name }, defaultData, data
+        data = _.extend {
+          id: @id,
+          component: @options.name,
+          url: window.location.href,
+          referrer: document.referrer
+        }, defaultData, data
+        
         @sandbox.track(name, data)
 
     initialize: (app)->

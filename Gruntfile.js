@@ -262,7 +262,7 @@ module.exports = function (grunt) {
       "client-no-underscore": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
       "client-no-backbone": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
       "widgets": ["version", "hull_widgets"],
-      "docs": ['dox'],
+      "docs": ['dox', 'cover', 'plato'],
       "describe": ['describe']
     }
   };

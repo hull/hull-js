@@ -35,9 +35,6 @@ define ->
       facebook: { exports: 'FB' }
 
   initialize: (app)->
-    dfd = app.core.data.deferred()
     FB.init(app.config.services.settings.facebook_app)
-    FB.getLoginStatus dfd.resolve
     app.core.routeHandlers.fql = fql
     app.core.routeHandlers.facebook = api
-    dfd
