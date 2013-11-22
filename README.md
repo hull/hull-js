@@ -16,8 +16,8 @@ Then switch to hull-js dir
     npm install
     grunt
 
-The last command starts a static HTTP server (port `3001`) that serves the files located in the root folder.
-
+The last command will start a static HTTP server (port `3001`) that serves the files located in
+the root folder.
 
 ## Using the boilerplate app
 
@@ -29,8 +29,8 @@ grunt
 open http://localhost:3001/app
 ```
 
-__Note__: You must configure `app/app.js` with the settings of your app, as found in your account at [https://accounts.hullapp.io](https://accounts.hullapp.io).
-
+__Note__: You must configure `app/app.js` with the settings of your app,
+as found in your account at [https://accounts.hullapp.io](https://accounts.hullapp.io).
 
 # Main `grunt` tasks
 
@@ -69,11 +69,14 @@ Create the file `.grunt/grunt-aws.json`, with the following content :
 * `git flow release start 0.x.x`
 * Bump versions in `bower.json` and `package.json` files
 * `git flow release finish 0.x.x`
+*
+
 
 
 # Contributing
 
-You're encouraged to submit pull requests, propose features and [discuss issues](http://github.com/hull/hull.js/issues).
+You're encouraged to submit pull requests,
+propose features and [discuss issues](http://github.com/hull/hull.js/issues).
 
 If you want to submit code:
 
@@ -88,8 +91,8 @@ If you want to submit code:
 If you created a component and want it featured in [the marketplace](http://hull.io/marketplace),
 be sure to provide documentation with the following syntax.
 
-The human-readable version of the documentation will be auto-generated when your component is integrated in the marketplace.
-
+The human-readable version of the documentation will be auto-generated
+when your component is integrated in the marketplace.
 
 ### Component Description Template:
 
@@ -116,11 +119,11 @@ For instance:
 
 ```javascript
 /**
- * Displays comments on an object, that can be an internal Hull object (when you specify data-hull-id) or an external UID, (with data-hull-uid)
- * If using data-hull-uid, any unique string you can generate can be used to attach comments
+ * Displays comments on an object, that can be an internal Hull object (when you specify data-hull-id) or an entity, (with data-hull-id:'entity:ENTITY')
+ * If using an Entity, any unique string you generate can be used to attach comments
  *
  * @name List
- * @param {String} id/uid Required The object you want to comment on.
+ * @param {String} id Required The object you want to comment on.
  * @param {String} focus  Optional Auto-Focus on the input field. default: false.
  * @datasource {comments} Collection of all the comments made on the object.
  * @action {comment} Submits a new comment.
@@ -128,7 +131,7 @@ For instance:
  * @action {flag} Flags a  comment.
  * @template {list} The main templates. Displays this list of comments.
  * @template {form} The form to enter a new comment.
- * @example <div data-hull-component="comments/list@hull" data-hull-uid="http://hull.io"></div>
+ * @example <div data-hull-component="comments/list@hull" data-hull-id="entity:http://hull.io"></div>
  * @example <div data-hull-component="comments/list@hull" data-hull-id="510fa2394875372516000009"></div>
  * @example <div data-hull-component="comments/list@hull" data-hull-id="app"></div>
  */
