@@ -8,7 +8,7 @@
  * @datasource {flaggedByMe} Indicates whether the object has been flagged by the current user ("me")
  * @template {main} Displays the flag button if the user os logged in
  * @example <div data-hull-component="utils/flag@hull" data-hull-id="app"></div>
- * @example <div data-hull-component="utils/flag@hull" data-hull-uid="http://hull.io"></div>
+ * @example <div data-hull-component="utils/flag@hull" data-hull-id="entity:http://hull.io"></div>
  */
 
 Hull.component({

@@ -1,9 +1,8 @@
 /**
- * Displays comments on an object, that can be an internal Hull object (when you specify data-hull-id) or an external UID, (with data-hull-uid)
- * If using data-hull-uid, any unique string you can generate can be used to attach comments
+ * Displays comments on an object, that can be an internal Hull object (when you specify data-hull-id) or an entity, (with data-hull-id='entity:YOUR_ENTITY')
  *
  * @name List
- * @param {String} id/uid Required The object you want to comment on.
+ * @param {String} id Required The object you want to comment on.
  * @param {String} focus  Optional Auto-Focus on the input field. default: false.
  * @datasource {comments} Collection of all the comments made on the object.
  * @action {comment} Submits a new comment.
@@ -11,7 +10,7 @@
  * @action {flag} Flags a  comment.
  * @template {list} The main templates. Displays this list of comments.
  * @template {form} The form to enter a new comment.
- * @example <div data-hull-component="comments/list@hull" data-hull-uid="http://hull.io"></div>
+ * @example <div data-hull-component="comments/list@hull" data-hull-id="entity:http://hull.io"></div>
  * @example <div data-hull-component="comments/list@hull" data-hull-id="510fa2394875372516000009"></div>
  * @example <div data-hull-component="comments/list@hull" data-hull-id="app"></div>
  */

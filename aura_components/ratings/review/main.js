@@ -6,7 +6,7 @@
  * jQuery plugins such as [raty](http://wbotelhos.com/raty)
  *
  * @name Reviews
- * @param {String} id/uid The object on which to do the review.
+ * @param {String} id The object on which to do the review.
  * @param {Integer} max The max rating number. default: 5
  * @param {Boolean} focus Optional Auto-Focus on the input field. default: false.
  * @datasource {review} The current user's review on the object.
@@ -15,8 +15,8 @@
  * @action {delete} Deletes the review.
  * @example <div data-hull-component="ratings/review@hull" data-hull-id="app" data-hull-range="5" data-hull-focus="true"></div>
  * @example <div data-hull-component="ratings/review@hull" data-hull-id="ANY_HULL_ID"></div>
- * @example <div data-hull-component="ratings/review@hull" data-hull-uid="YOUR_UNIQUE_ID"></div>
- * @example <div data-hull-component="ratings/review@hull" data-hull-uid="ANY_URL"></div>
+ * @example <div data-hull-component="ratings/review@hull" data-hull-id="entity:YOUR_UNIQUE_ID"></div>
+ * @example <div data-hull-component="ratings/review@hull" data-hull-id="entity:http://hull.io"></div>
  */
 Hull.component({
   type: 'Hull',

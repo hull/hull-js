@@ -8,7 +8,7 @@
  * @template {button} Shows the button with the right state
  * @example <div data-hull-component="lists/button@hull" data-hull-id="app" data-hull-list="favorites"></div>
  * @example <div data-hull-component="lists/button@hull" data-hull-id="HULL_ID" data-hull-list="favorites"></div>
- * @example <div data-hull-component="lists/button@hull" data-hull-uid="ANY_UNIQUE_ID" data-hull-list="favorites"></div>
+ * @example <div data-hull-component="lists/button@hull" data-hull-id="entity:ANY_UNIQUE_ID" data-hull-list="favorites"></div>
  */
 
 Hull.component({

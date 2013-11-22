@@ -3,11 +3,11 @@
  * Shows a star review system
  *
  * @name Stars
- * @param {String} id/uid The object on which to do the review
+ * @param {String} id The object on which to do the review
  * @example <div data-hull-component="ratings/stars@hull" data-hull-id="app"></div>
  * @example <div data-hull-component="ratings/stars@hull" data-hull-id="ANY_HULL_ID"></div>
- * @example <div data-hull-component="ratings/stars@hull" data-hull-uid="YOUR_UNIQUE_ID"></div>
- * @example <div data-hull-component="ratings/stars@hull" data-hull-uid="ANY_URL"></div>
+ * @example <div data-hull-component="ratings/stars@hull" data-hull-id="entity:YOUR_UNIQUE_ID"></div>
+ * @example <div data-hull-component="ratings/stars@hull" data-hull-id="entity:http://hull.io"></div>
  */
 Hull.component({
   type: 'Hull',
