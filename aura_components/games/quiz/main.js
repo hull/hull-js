@@ -168,7 +168,6 @@ Hull.component({
     },
 
     start: function() {
-      debugger
       this.track("hull.quiz.start", { quizId: this.id });
       this.startQuiz();
     },
@@ -188,7 +187,6 @@ Hull.component({
     },
 
     submit: function() {
-      debugger
       this.track("hull.quiz.submit", { quizId: this.id });
       var timing = 0;
       if (this.startedAt) {
