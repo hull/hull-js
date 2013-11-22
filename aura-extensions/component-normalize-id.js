@@ -12,7 +12,7 @@ define(['underscore'], function (_) {
       var sandbox = this.sandbox;
       var prefix = 'entity:'
       if (options.id) {
-        if (options.id.indexOf(prefix)==0){
+        if (options.id.match('^'+prefix)!==null){
           options.id = sandbox.util.entity.encode(options.id.slice(prefix.length));
         }
         return options;
