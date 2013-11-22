@@ -10,7 +10,11 @@ define(['underscore'], function (_) {
     },
     normalizeId: function (options) {
       var sandbox = this.sandbox;
+      var prefix = 'entity:'
       if (options.id) {
+        if (options.id.indexOf(prefix)==0){
+          options.id = sandbox.util.entity.encode(options.id.slice(prefix.length));
+        }
         return options;
       }
       if (options.uid) {
