@@ -80,7 +80,6 @@ define ['jquery', 'underscore'], ($, _)->
       return unless event
       params.hull_app_id    = config?.appId
       params.hull_app_name  = config?.data?.app?.name
-      console.info "Tracking:", event, params
       require('analytics').track(event, params)
 
     trackAction = (request, response)->

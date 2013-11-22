@@ -9,8 +9,8 @@
  * @datasource {listedIn} Collection of lists in which the current item is listed into
  * @requires {jQuery.fn.popover} The popover plugin available in Twitter Bootstrap
  * @action {toggle} Toggles the presence of the current item in the selected list
- * @example <div data-hull-component="lists/membership@hull" data-hull-uid="http://path.to/my/url"></div>
- * @example <div data-hull-component="lists/membership@hull" data-hull-id="HULL_OBJECT_ID"></div>
+ * @example <div data-hull-component="lists/membership@hull" data-hull-id="entity:http://hull.io"></div>
+ * @example <div data-hull-component="lists/membership@hull" data-hull-id="ANY_HULL_ID"></div>
  */
 
 /*jshint jquery:true */

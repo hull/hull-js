@@ -3,7 +3,7 @@
  *
  * @name List
  * @param {String} visibility Optional Visibility level (public/private/all)
- * @param {String} id/uid     Optional Display list of conversations on this specific id/uid
+ * @param {String} id     Optional Display list of conversations on this specific id
  * @datasource {conversations} List of conversations
  * @example <div data-hull-component="conversations/list@hull"></div>
  */

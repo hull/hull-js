@@ -2,7 +2,7 @@
  * View a conversation's messages and allow users to reply to the thread.
  *
  * @name Thread
- * @param {String} id Required The conversation object - This must a conversation ID. Use the '/UID/conversations' api call to get conversation IDs for an entity or hull object.
+ * @param {String} id Required The conversation object - This must a conversation ID. Use the '/:id/conversations' api call to get conversations for an entity or hull object.
  * @param {Boolean} focus Optional Focus after render.
  * @param {String} order  messages list ordering direction. default: desc. values: ['asc', 'desc']
  * @datasource {conversation} A conversation.

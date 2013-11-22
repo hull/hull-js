@@ -1,12 +1,12 @@
 /**
- * Displays a comment box for an object, that can be an internal Hull object (when you specify data-hull-id) or an external UID, (with data-hull-uid)
- * If using data-hull-uid, any unique string you can generate can be used to attach comments
+ * Displays a comment box for an object, that can be an internal Hull object (when you specify data-hull-id) or an entity ID, (with data-hull-id='entity:ENTITY_ID')
+ * If using entities any unique string you can generate can be used to attach comments
  *
  * @name Box
- * @param {String} id/uid Required The object you want to comment on.
+ * @param {String} id Required The object you want to comment on.
  * @param {String} focus  Optional Auto-Focus on the input field. default: false.
  * @action {comment} Submits a new comment.
- * @example <div data-hull-component="comments/box@hull" data-hull-uid="http://hull.io"></div>
+ * @example <div data-hull-component="comments/box@hull" data-hull-id="entity:http://hull.io"></div>
  * @example <div data-hull-component="comments/box@hull" data-hull-id="510fa2394875372516000009"></div>
  * @example <div data-hull-component="comments/box@hull" data-hull-id="app"></div>
  */

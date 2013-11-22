@@ -2,7 +2,7 @@
  * List the current participants of a conversation, and allow users to follow/unfollow it
  *
  * @name Participants
- * @param {String} id Required The conversation object - This must a conversation ID. Use the '/UID/conversations' api call to get conversation IDs for an entity or hull object.
+ * @param {String} id Required The conversation object - This must a conversation ID. Use the '/:id/conversations' api call to get conversations for an entity or hull object.
  * @param {Boolean} focus Optional Focus after render
  * @datasource {conversations} A conversation
  * @example <div data-hull-component="conversations/participants@hull" data-hull-id="5244ae9448e9c141de000015"></div>
