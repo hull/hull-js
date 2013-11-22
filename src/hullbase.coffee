@@ -13,10 +13,14 @@ _conflicts = {}
 
 Hull.init = (config, cb, errcb) ->
   require ['lib/hull'], (app) ->
+    hasConflicts = false
     for name in ['require', 'define']
       _conflicts[name] ||= window[name] if window[name]
+      if config.useRequire and Hull[name] != window[name]
+        hasConflicts = true
+        window[name] = Hull[name]
+    if hasConflicts
       console.log("Setting window.#{name} to Hull.#{name}. Use Hull.noConflict() to revert to previous values.") if window.console and config.debug
-      window[name] = Hull[name]
     app(config, cb, errcb)
 
 Hull.noConflict = ->
