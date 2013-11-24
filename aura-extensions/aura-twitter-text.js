@@ -1,12 +1,16 @@
 /*global define:true */
-(function(){
-  define(['twitter_text'],{
+define(function() {
+  var extension = {
     name: "twttr",
+    require: {
+      paths: {
+        twitter_text:   '/bower_components/twitter-text/twitter-text'
+      }
+    },
     initialize: function(app){
       "use strict";
-      require('twitter_text');
-      var core = app.core, sandbox = app.sandbox;
-      sandbox.util.twttr = window.twttr.txt;
+      app.sandbox.util.twttr = window.twttr.txt;
     }
-  });
-})();
+  }
+  return extension;
+});

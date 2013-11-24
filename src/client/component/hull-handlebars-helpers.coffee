@@ -1,7 +1,9 @@
-define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars'], (moment, _,utils, Handlebars)->
+define ['underscore'], (_)->
 
-  (app)->
+  helpers = (app)->
     __seq = new Date().getTime()
+
+    moment = app.sandbox.util.moment
 
     HandlebarsHelpers = {}
 
@@ -438,4 +440,13 @@ define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars'], (mo
       _.str.truncate string, length, truncateString
 
 
-    Handlebars.registerHelper(k, v) for k,v of HandlebarsHelpers
+    # Handlebars.registerHelper(k, v) for k,v of
+    HandlebarsHelpers
+
+  extension =
+    initialize: (app)->
+      h = helpers(app)
+      app.components.before 'initialize',()->
+        app.core.template.handlebars.registerHelper(k, v) for k,v of h
+  
+  extension

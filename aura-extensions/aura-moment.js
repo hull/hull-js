@@ -1,12 +1,16 @@
 /*global define:true */
-(function(){
-  define(['moment'],{
+define(function() {
+  var extension = {
     name: "Moment",
+    require: {
+      paths: {
+        moment: '/bower_components/moment/moment'
+      }
+    },
     initialize: function(app){
       "use strict";
-      var moment = require('moment');
-      var core = app.core, sandbox = app.sandbox;
-      sandbox.util.moment = moment;
+      app.sandbox.util.moment = moment;
     }
-  });
-})();
+  }
+  return extension;
+});

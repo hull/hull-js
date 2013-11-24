@@ -1,19 +1,18 @@
-define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base, apiModule, promises) ->
+define ['underscore', 'lib/hullbase', 'lib/api/api', 'lib/utils/promises'], (_, base, apiModule, promises) ->
 
   (app) ->
 
     models = {}
 
-    clearModelsCache =->
-      models = _.pick(models, 'me', 'app', 'org')
+    clearModelsCache =-> models = _.pick(models, 'me', 'app', 'org')
 
     rawFetch  = null
     authScope = null
 
     module =
-      require:
-        paths:
-          cookie: 'bower_components/jquery.cookie/jquery.cookie'
+      # require:
+      #   paths:
+      #     cookie: 'bower_components/jquery.cookie/jquery.cookie'
 
       initialize: (app)->
         core    = app.core
@@ -21,7 +20,7 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
 
         slice = Array.prototype.slice
 
-        apiModule = apiModule(app.config)
+        apiModule = apiModule.init(app.config)
         apiModule.then (obj)->
           core.data.api = api = (args...)->
             dfd = obj.api args...
@@ -31,7 +30,7 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
                 if hullTrack
                   try
                     [eventName, trackParams] = JSON.parse(atob(hullTrack))
-                    app.core.mediator.emit(eventName, trackParams)
+                    core.mediator.emit(eventName, trackParams)
                   catch error
                     false
                 if headers['Hull-Auth-Scope']
@@ -68,7 +67,7 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
               model.trigger 'error', model, rejected, options
             dfd
 
-          BaseHullModel = app.core.mvc.Model.extend
+          BaseHullModel = core.mvc.Model.extend
             sync: sync
 
           RawModel = BaseHullModel.extend
@@ -83,7 +82,7 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
                 url = @collection?.url
               url
 
-          Collection = app.core.mvc.Collection.extend
+          Collection = core.mvc.Collection.extend
             model: Model
             sync: sync
 
@@ -186,48 +185,54 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
 
         initialized = core.data.deferred()
         apiModule.then (obj)->
+          core = core
+          sandbox = app.sandbox
+
           authScope = obj.authScope
           remoteConfig = obj.remoteConfig
           data = remoteConfig.data
           app.config.assetsUrl            = remoteConfig.assetsUrl
           app.config.services             = remoteConfig.services
           app.components.addSource('hull', remoteConfig.baseUrl + '/aura_components')
-          app.sandbox.config ?= {}
-          app.sandbox.config.debug        = app.config.debug
-          app.sandbox.config.assetsUrl    = remoteConfig.assetsUrl
-          app.sandbox.config.appId        = app.config.appId
-          app.sandbox.config.orgUrl       = app.config.orgUrl
-          app.sandbox.config.services     = remoteConfig.services
-          app.sandbox.config.entity_id    = data.entity?.id
+          sandbox.config ?= {}
+          sandbox.config.debug        = app.config.debug
+          sandbox.config.assetsUrl    = remoteConfig.assetsUrl
+          sandbox.config.appId        = app.config.appId
+          sandbox.config.orgUrl       = app.config.orgUrl
+          sandbox.config.services     = remoteConfig.services
+          sandbox.config.entity_id    = data.entity?.id
 
 
-          app.sandbox.isAdmin = ->
-            (authScope == 'Account' || app.sandbox.data.api.model('me').get('is_admin'))
+          sandbox.isAdmin = ->
+            (authScope == 'Account' || sandbox.data.api.model('me').get('is_admin'))
 
-          app.sandbox.login = (provider, opts={}, callback=->)->
+          sandbox.login = (provider, opts={}, callback=->)->
             obj.auth.login.apply(undefined, arguments).then ->
               try
-                me = app.sandbox.data.api.model('me')
+                me = sandbox.data.api.model('me')
                 me.fetch().then ->
-                  app.core.mediator.emit 'hull.auth.complete', me
-                  app.core.mediator.emit('hull.login', me)
+                  core.mediator.emit 'hull.auth.complete', me
+                  core.mediator.emit 'hull.login', me
               catch err
-                app.core.mediator.emit 'hull.auth.failure', err
+                core.mediator.emit 'hull.auth.failure', err
                 console.error "Error on auth promise resolution", err
             , (err)->
-              app.core.mediator.emit 'hull.auth.failure', err
+              core.mediator.emit 'hull.auth.failure', err
 
-          app.sandbox.logout = (callback=->)->
+          # Add a .logout() method to the component sandbox, and emit events when logout is complete
+          sandbox.logout = (callback=->)->
             obj.auth.logout(callback).then ->
-              app.core.mediator.emit('hull.auth.logout')
-              app.core.mediator.emit('hull.logout')
+              core.mediator.emit('hull.auth.logout')
+              core.mediator.emit('hull.logout')
               core.data.api.model('me').clear()
 
-          app.sandbox.linkIdentity = (provider, opts={}, callback=->)->
+          # Add a .linkIdenity() method to the component sandbox
+          sandbox.linkIdentity = (provider, opts={}, callback=->)->
             opts.mode = 'connect'
-            app.sandbox.login(provider, opts, callback)
+            sandbox.login(provider, opts, callback)
 
-          app.sandbox.unlinkIdentity = (provider, callback=->)->
+          # Add a .unlinkIdenity() method to the component sandbox
+          sandbox.unlinkIdentity = (provider, callback=->)->
             core.data.api("me/identities/#{provider}", 'delete').then ->
               app.sandbox.data.api.model('me').fetch().then callback
 
@@ -239,23 +244,27 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
 
           initialized.resolve(data)
 
-        apiModule.fail (e)->
-          initialized.reject e
+        apiModule.fail (e)-> initialized.reject e
         initialized.reject(new TypeError 'no organizationURL provided. Can\'t proceed') unless app.config.orgUrl
         initialized.reject(new TypeError 'no applicationID provided. Can\'t proceed') unless app.config.appId
 
         initialized
 
       afterAppStart: (app)->
+        core    = app.core
+        sandbox = app.sandbox
+
         base.me     = rawFetch('me', true);
         base.app    = rawFetch('app', true);
         base.org    = rawFetch('org', true);
 
-        app.core.mediator.on    'hull.login', clearModelsCache
-        app.core.mediator.on    'hull.logout', clearModelsCache
-        app.core.mediator.on 'hull.login', ->
-          app.sandbox.track 'hull.auth.login', app.core.data.api.model('me').toJSON()
-        app.core.mediator.on 'hull.logout', ->
-          app.sandbox.track 'hull.auth.logout', app.core.data.api.model('me').toJSON()
+        core.mediator.on    'hull.login',       clearModelsCache
+        core.mediator.on    'hull.logout',      clearModelsCache
+
+        core.mediator.on    'hull.login',       ->
+          app.sandbox.track 'hull.auth.login',  core.data.api.model('me').toJSON()
+
+        core.mediator.on    'hull.logout',      ->
+          app.sandbox.track 'hull.auth.logout', core.data.api.model('me').toJSON()
 
     module

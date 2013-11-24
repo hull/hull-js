@@ -41,4 +41,6 @@ define ['underscore'], (_)->
 
       true
 
-    afterAppStart: -> rpc.ready(app.config)
+    afterAppStart: ->
+      console.log('afterAppStart')
+      rpc.ready(app.config)

@@ -1,12 +1,15 @@
 /*global define:true*/
-define(['underscore', 'jquery'], function(_, $) {
+define(['underscore'], function(_) {
   "use strict";
-  var extension = {
-    initialize: function (app) {
-      app.components.before('initialize', extension.checkOptions);
+
+  var module = {
+    name: "ValidateOptions",
+    initialize: function(app){
+      "use strict";
+      app.components.before('initialize', module.checkOptions);
     },
     checkOptions: function(options) {
-      var dfd = $.Deferred();
+      var dfd = app.core.promises.deferred();
       var optionKeys = _.keys(options);
       _.each(this.requiredOptions || [], function (name) {
         if (!_.contains(optionKeys, name) || options[name] === undefined) {
@@ -14,8 +17,8 @@ define(['underscore', 'jquery'], function(_, $) {
         }
       }, this);
       dfd.resolve();
-      return dfd.promise();
+      return dfd.promise;
     }
-  };
-  return extension;
+  }
+  return module;
 });

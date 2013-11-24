@@ -1,6 +1,13 @@
 {
   "namespace": "Hull",
-  "srcFiles": ["src/hullbase.coffee", "src/hull.coffee", "src/utils/**/*.coffee", "src/client/**/*.coffee", "src/api.coffee", "src/api/**/*.coffee"],
+  "srcFiles": [
+    "src/hullbase.coffee",
+    "src/hull.coffee",
+    "src/utils/**/*.coffee",
+    "src/client/**/*.coffee",
+    "src/api.coffee",
+    "src/api/**/*.coffee"
+  ],
   "requireJS": {
     "baseUrl": ".",
     "preserveLicenseComments": true,
@@ -12,14 +19,13 @@
       "easyXDM":        "lib/shims/bower_components/easyXDM/easyXDM",
       "handlebars":     "lib/shims/node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars",
       "requireLib":     "bower_components/requirejs/require",
-      "twitter_text":   "bower_components/twitter-text/twitter-text",
-      "moment":         "bower_components/moment/moment",
-      "cookie":         "bower_components/jquery.cookie/jquery.cookie",
+      "cookie":         "bower_components/cookies-js/src/cookies",
+      "q":              "bower_components/q/q",
+      "URIjs":          "bower_components/uri.js/src",
       "string":         "bower_components/underscore.string/lib/underscore.string",
       "jquery":         "empty:",
       "text":           "bower_components/requirejs-text/text",
-      "base64":         "bower_components/base64/base64",
-      "serializeJSON":  "bower_components/jquery.serializeJSON/jquery.serializeJSON"
+      "base64":         "bower_components/base64/base64"
     },
     "shim": {
       "backbone":   { "exports": "Backbone", "deps": ["underscore", "jquery"] },
@@ -28,14 +34,11 @@
     "include": [
       "requireLib",
       "underscore",
-      "moment",
-      "twitter_text",
       "string",
       "cookie",
       "base64",
       "backbone",
       "text",
-      "serializeJSON",
       "aura/ext/debug",
       "aura/ext/mediator",
       "aura/ext/components",

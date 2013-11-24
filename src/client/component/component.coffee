@@ -1,4 +1,4 @@
-define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/context', 'lib/utils/promises'], ($, _, Datasource, Context, promises)->
+define ['jquery', 'underscore', 'lib/client/component/datasource', 'lib/client/component/context', 'lib/utils/promises'], ($, _, Datasource, Context, promises)->
 
   (app)->
     debug = false
@@ -121,6 +121,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
         @data = {}
         try
           keys = _.keys(@datasources)
+          # Build an array with all promisese for the current component
           promiseArray  = _.map keys, (k)=>
             ds = @datasources[k]
             ds.parse(_.extend({}, @, @options || {}))
@@ -128,15 +129,21 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
             handler = _.bind(handler, @) if _.isFunction(handler)
             ctx.addDatasource(k, ds.fetch(), handler).then (res)=>
               @data[k] = res
+
+          # Get a Deferred to wrap all these arrays.
           componentDeferred = @sandbox.data.when.apply(undefined, promiseArray)
-          templateDeferred = @sandbox.template.load(@templates, @ref, @el)
-          templateDeferred.done (tpls)=>
-            @_templates     = tpls
-          readyDfd = promises.when(componentDeferred, templateDeferred)
+
+          # Get a Deferred to wrap template rendering
+          templateDeferred  = @sandbox.template.load(@templates, @ref, @el)
+          templateDeferred.done (tpls)=> @_templates     = tpls
+
+          readyDfd = promises.all([componentDeferred, templateDeferred])
+
           readyDfd.fail (err)=>
             console.error("Error in Building Render Context", err.message, err)
             @renderError.call(@, err.message, err)
             dfd.reject err
+
           readyDfd.done ()->
             dfd.resolve ctx
 
@@ -198,7 +205,7 @@ define ['jquery', 'underscore', 'lib/client/datasource', 'lib/client/component/c
 
     (app)->
       default_datasources =
-        me: new Datasource app.core.data.api.model('me')
+        me:  new Datasource app.core.data.api.model('me')
         app: new Datasource app.core.data.api.model('app')
         org: new Datasource app.core.data.api.model('org')
       debug = app.config.debug

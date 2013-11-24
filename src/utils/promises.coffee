@@ -1,4 +1,6 @@
-define ['jquery'], ($)->
-  deferred: $.Deferred
-  when: $.when
-
+define ['q'], (Q)->
+  {
+    deferred: Q.defer
+    when: Q
+    all: Q.all
+  }

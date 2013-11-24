@@ -7,7 +7,7 @@ if /hull-auth-status-/.test(document.location.hash) &&  window.opener && window.
   catch e
     console.warn("Error: " + e)
 
-define ['jquery', 'underscore', 'lib/utils/promises', 'lib/utils/version'], ($, _, promises, version)->
+define ['URIjs/URI', 'underscore', 'lib/utils/promises', 'lib/utils/version'], (URI, _, promises, version)->
 
   (apiFn, config, authServices=[]) ->
     # Holds the state of the authentication process
@@ -27,7 +27,7 @@ define ['jquery', 'underscore', 'lib/utils/promises', 'lib/utils/version'], ($, 
 
       authenticating = promises.deferred()
       authenticating.providerName = providerName
-      authenticating.done callback if _.isFunction(callback)
+      authenticating.promise.done callback if _.isFunction(callback)
 
       authUrl = module.authUrl(config, providerName, opts)
       module.authHelper(authUrl)
@@ -41,7 +41,7 @@ define ['jquery', 'underscore', 'lib/utils/promises', 'lib/utils/version'], ($, 
       dfd = apiFn('logout')
       dfd.done ->
         callback() if _.isFunction(callback)
-      dfd.promise() #TODO It would be better to return the promise
+      dfd.promise #TODO It would be better to return the promise
 
     # Callback executed on successful authentication
     onCompleteAuthentication = (isSuccess)->
@@ -60,8 +60,8 @@ define ['jquery', 'underscore', 'lib/utils/promises', 'lib/utils/version'], ($, 
       auth_params.auth_referer  = module.location.toString()
       auth_params.callback_name = module.createCallback()
       auth_params.version       = version
-
-      "#{config.orgUrl}/auth/#{provider}?#{$.param(auth_params)}"
+      URI("#{config.orgUrl}").directory("auth/#{provider}").search(auth_params)
+      # "#{config.orgUrl}/auth/#{provider}?#{$.param(auth_params)}"
 
     module =
       isAuthenticating: -> authenticating #TODO It would be better to return Boolean (isXYZ method)

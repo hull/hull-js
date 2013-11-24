@@ -276,7 +276,7 @@ module.exports = function (grunt) {
 
   //These tasks are the only ones needed to be used
   grunt.registerTask('default', 'server');
-  grunt.registerTask('server', ['connect', 'test', 'dist:widgets', 'watch']);
+  grunt.registerTask('server', ['connect', 'dist:widgets', 'watch']);
   grunt.registerTask('deploy', ['dist', 's3:prod']);
 
   require('./.grunt/customTasks')(grunt);

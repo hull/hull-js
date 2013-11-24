@@ -11,10 +11,13 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
 
     afterAppStart: (app)->
       sb = app.sandboxes.create();
+
       _.extend(HullDef, sb);
+      # After app init, call the queued events
       for evt, cbArray of evtPool
-        _.each cbArray, (cb)->
-          app.core.mediator.on evt, cb
+        _.each cbArray, (cb)-> app.core.mediator.on evt, cb
+
+      # In production mode, only expose select properties on the Hull object
       if !app.config.debug
         props = ['component', 'templates', 'emit', 'on', 'version', 'track', 'login', 'logout', 'data']
         props.concat(app.config.expose || [])
@@ -36,25 +39,30 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
 
     initProcess = hull.app
         .use(myApp())
-        .use('aura-extensions/aura-handlebars') #TODO Can probably be removed. See the file for details.
+        .use('aura-extensions/aura-base64')
+        # .use('aura-extensions/aura-promises')
+        .use('aura-extensions/aura-cookies')
         .use('aura-extensions/aura-backbone')
         .use('aura-extensions/aura-moment')
         .use('aura-extensions/aura-twitter-text')
+        .use('aura-extensions/aura-handlebars') #TODO Can probably be removed. See the file for details.
+        .use('aura-extensions/hull-reporting')
+        .use('aura-extensions/hull-entities')
         .use('aura-extensions/hull-utils')
-        .use('aura-extensions/component-normalize-id')
-        .use('aura-extensions/component-validate-options')
-        .use('aura-extensions/component-require')
-        .use('lib/client/handlebars-helpers')
-        .use('lib/client/helpers')
-        .use('lib/client/entity')
-        .use('lib/client/api')
-        .use('lib/client/templates')
-        .use('lib/client/component')
-        .use('lib/client/api/reporting')
+        .use('aura-extensions/hull-reporting')
+        .use('aura-extensions/aura-component-validate-options')
+        .use('aura-extensions/aura-component-require')
+        .use('aura-extensions/hull-component-normalize-id')
+        .use('aura-extensions/hull-component-reporting')
+        .use('lib/client/component/api')
+        .use('lib/client/component/component')
+        .use('lib/client/component/hull-handlebars-helpers')
+        .use('lib/client/component/templates')
         .use (app)->
           afterAppStart: (app)->
             window.Hull.parse = (el, options={})->
               app.core.appSandbox.start(el, options)
+              debugger
         .start({ components: 'body' })
 
     initProcess.fail (err)->
