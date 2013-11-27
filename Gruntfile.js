@@ -40,6 +40,12 @@ module.exports = function (grunt) {
       return extension.replace('.js', '');
     });
 
+  var vendorLibs = grunt.file.glob
+    .sync('vendor/**/*.js')
+    .map(function (extension) {
+      return extension.replace('.js', '');
+    });
+
   //Augment the require.js configuation with some computed elements
   var apiRJSConfig = (function () {
     var _c = apiConfig.requireJS;
@@ -48,14 +54,14 @@ module.exports = function (grunt) {
   })();
   var clientRJSConfig = (function () {
     var _c = clientConfig.requireJS;
-    _c.include = _c.include.concat(auraExtensions).concat(clientLibs);
+    _c.include = _c.include.concat(auraExtensions).concat(vendorLibs).concat(clientLibs);
     _c.optimize = grunt.option('dev') ? "none" : "uglify";
     return _c;
   })();
 
   var remoteRJSConfig = (function () {
     var _c = remoteConfig.requireJS;
-    _c.include = _c.include.concat(remoteLibs);
+    _c.include = _c.include.concat(remoteLibs).concat(vendorLibs);
     _c.optimize = grunt.option('dev') ? "none" : "uglify";
     return _c;
   })();
@@ -87,21 +93,21 @@ module.exports = function (grunt) {
         }
       },
       remote: {
-        files: grunt.file.expandMapping(remoteConfig.srcFiles, 'lib/', {
+        files: grunt.file.expandMapping(remoteConfig.coffeeFiles, 'lib/', {
           rename: function (destBase, destPath) {
             return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
           }
         })
       },
       client: {
-        files: grunt.file.expandMapping(clientConfig.srcFiles, 'lib/', {
+        files: grunt.file.expandMapping(clientConfig.coffeeFiles, 'lib/', {
           rename: function (destBase, destPath) {
             return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
           }
         })
       },
       api: {
-        files: grunt.file.expandMapping(apiConfig.srcFiles, 'lib/', {
+        files: grunt.file.expandMapping(apiConfig.coffeeFiles, 'lib/', {
           rename: function (destBase, destPath) {
             return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
           }
@@ -187,15 +193,15 @@ module.exports = function (grunt) {
         tasks: ['dist:widgets']
       },
       remote: {
-        files: remoteConfig.srcFiles,
+        files: remoteConfig.coffeeFiles,
         tasks: ['dist:remote', 'do_test']
       },
       api: {
-        files: apiConfig.srcFiles,
+        files: apiConfig.coffeeFiles,
         tasks: ['dist:api', 'do_test']
       },
       client: {
-        files: [clientConfig.srcFiles, "aura-extensions/**/*.js"],
+        files: [clientConfig.coffeeFiles, "aura-extensions/**/*.js"],
         tasks: ['dist:client', 'do_test']
       },
       spec: {
