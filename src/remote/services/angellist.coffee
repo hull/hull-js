@@ -18,15 +18,16 @@ define ->
 
       req_data.access_token = app.config.services.settings.angellist_app?.access_token
 
-      request = $.ajax
+      request = app.core.data.ajax
         url: url
         type: req.method
         data: req_data
         dataType: 'jsonp'
         headers: headers
 
-      request.done((response)-> callback({ response: response, provider: 'angellist' }))
-      request.fail(errback)
+      request.then (response)->
+        callback({ response: response, provider: 'angellist' })
+      , errback
 
       return
 

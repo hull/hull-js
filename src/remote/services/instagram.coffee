@@ -36,10 +36,11 @@ define ->
           headers:
             'Hull-App-Id': app.config.appId
 
-        request = $.ajax(requestParams)
-        request.done (response)->
+        request = app.core.data.ajax requestParams 
+
+        request.then (response)->
           callback({ response: response, provider: 'instagram' })
-        request.fail(errback)
+        , errback
 
       return
 

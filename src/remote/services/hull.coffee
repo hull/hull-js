@@ -1,4 +1,4 @@
-define ['zepto', 'underscore'], ($, _)->
+define ['underscore'], (_)->
   API_PATH = '/api/v1/'
   API_PATH_REGEXP = /^\/?api\/v1\//
   RESPONSE_HEADER = ['Hull-User-Id', 'Hull-User-Sig', 'Link', 'Hull-Track', 'Hull-Auth-Scope']
@@ -46,7 +46,7 @@ define ['zepto', 'underscore'], ($, _)->
       if accessToken
         request_headers['Hull-Access-Token'] = accessToken
 
-      request = $.ajax
+      request = app.core.data.ajax
         url: url
         type: req.method
         data: req_data
@@ -54,7 +54,7 @@ define ['zepto', 'underscore'], ($, _)->
         dataType: 'json'
         headers: request_headers
 
-      request.done (response)->
+      request.then (response)->
         identify(_.clone(response)) if url == '/api/v1/me'
 
         headers = _.reduce RESPONSE_HEADER, (memo, name) ->
@@ -71,8 +71,7 @@ define ['zepto', 'underscore'], ($, _)->
 
         trackAction(request, response)
 
-
-      request.fail(errback)
+      ,  errback
 
       return
 
@@ -83,7 +82,8 @@ define ['zepto', 'underscore'], ($, _)->
       require('analytics').track(event, params)
 
     trackAction = (request, response)->
-      return unless track = request.getResponseHeader('Hull-Track')
+      track = request.getResponseHeader('Hull-Track')
+      return unless track
       try
         [eventName, trackParams] = JSON.parse(atob(track))
         doTrack(eventName, trackParams)
