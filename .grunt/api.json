@@ -1,6 +1,6 @@
 {
   "namespace": "Hull",
-  "srcFiles": ["src/hull.api.coffee", "src/api/**/*.coffee",  "src/utils/**/*.coffee"],
+  "coffeeFiles": ["src/hull.api.coffee", "src/api/**/*.coffee",  "src/utils/**/*.coffee"],
   "requireJS": {
     "baseUrl": ".",
     "preserveLicenseComments": false,
@@ -11,7 +11,6 @@
       "easyXDM":        "lib/shims/bower_components/easyXDM/easyXDM",
       "cookie":         "bower_components/cookies-js/src/cookies",
       "q":              "bower_components/q/q",
-      "URIjs":          "bower_components/uri.js/src",
       "base64":         "bower_components/base64/base64"
     },
     "shim": {
