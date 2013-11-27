@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'lib/client/component/datasource', 'lib/client/component/context', 'lib/utils/promises'], ($, _, Datasource, Context, promises)->
+define ['underscore', 'lib/client/component/datasource', 'lib/client/component/context', 'lib/utils/promises'], (_, Datasource, Context, promises)->
 
   (app)->
     debug = false
@@ -12,7 +12,7 @@ define ['zepto', 'underscore', 'lib/client/component/datasource', 'lib/client/co
 
     actionHandler = (e)->
       try
-        source  = $(e.currentTarget)
+        source  = app.core.dom.find(e.currentTarget)
         action  = source.data("hull-action")
         fn = @actions[action] || @["#{action}Action"]
         fn = @[fn] if _.isString(fn)

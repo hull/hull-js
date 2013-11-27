@@ -12,15 +12,16 @@ define ->
       else
         req_data = req.params
 
-      request = $.ajax
+      request = app.core.data.ajax
         url: url
         type: req.method
         data: req_data
         headers:
           'Hull-App-Id': app.config.appId
 
-      request.done((response)-> callback({ response: response, provider: 'twitter' }))
-      request.fail(errback)
+      request.then (response)->
+        callback({ response: response, provider: 'twitter' })
+      , errback
 
       return
 

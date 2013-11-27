@@ -66,6 +66,8 @@ define [
         auth:
           login: api.auth.login
           logout: api.auth.logout
+        login: api.auth.login
+        logout: api.auth.logout
 
       # Execute Hull.init callback
       Hull.events.emit('hull.init')
