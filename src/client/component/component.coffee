@@ -150,7 +150,7 @@ define ['zepto', 'underscore', 'lib/client/component/datasource', 'lib/client/co
         catch e
           console.error("Caught error in buildContext", e.message, e)
           dfd.reject(e)
-        dfd.promise()
+        dfd.promise
 
       loggedIn: =>
         return false unless @sandbox.data.api.model('me').id?
