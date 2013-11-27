@@ -7,7 +7,7 @@ if /hull-auth-status-/.test(document.location.hash) &&  window.opener && window.
   catch e
     console.warn("Error: " + e)
 
-define ['URIjs/URI', 'underscore', 'lib/utils/promises', 'lib/utils/version'], (URI, _, promises, version)->
+define ['underscore', 'lib/utils/promises', 'lib/utils/version'], (_, promises, version)->
 
   (apiFn, config, authServices=[]) ->
     # Holds the state of the authentication process
@@ -60,8 +60,10 @@ define ['URIjs/URI', 'underscore', 'lib/utils/promises', 'lib/utils/version'], (
       auth_params.auth_referer  = module.location.toString()
       auth_params.callback_name = module.createCallback()
       auth_params.version       = version
-      URI("#{config.orgUrl}").directory("auth/#{provider}").search(auth_params)
-      # "#{config.orgUrl}/auth/#{provider}?#{$.param(auth_params)}"
+      querystring = _.map auth_params,(v,k) ->
+        encodeURIComponent(k)+'='+encodeURIComponent(v)
+      .join('&')
+      "#{config.orgUrl}/auth/#{provider}?#{querystring}"
 
     module =
       isAuthenticating: -> authenticating #TODO It would be better to return Boolean (isXYZ method)
