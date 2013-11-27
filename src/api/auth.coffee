@@ -41,7 +41,7 @@ define ['URIjs/URI', 'underscore', 'lib/utils/promises', 'lib/utils/version'], (
       dfd = apiFn('logout')
       dfd.done ->
         callback() if _.isFunction(callback)
-      dfd.promise #TODO It would be better to return the promise
+      dfd.promise
 
     # Callback executed on successful authentication
     onCompleteAuthentication = (isSuccess)->

@@ -106,5 +106,5 @@ define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
           dfd.resolve _.object(names, [].slice.apply(arguments))
         , (err)->
           dfd.reject err
-        dfd.promise()
+        dfd.promise
   module

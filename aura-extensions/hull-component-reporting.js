@@ -1,4 +1,4 @@
-define(['underscore'], function(_, reporting) {
+define(['underscore'], function(_) {
   return {
     name: 'Reporting',
     initialize: function(app) {
@@ -22,14 +22,12 @@ define(['underscore'], function(_, reporting) {
         initialize: function(app) {
           var core = app.core;
           var sandbox = app.sandbox;
-          reporting.then(function(reporting){
-            sandbox.track = function(eventName, params) {
-              return reporting.track(eventName, params);
-            };
-            sandbox.flag = function(id) {
-              return reporting.flag(id);
-            };
-          });
+          sandbox.track = function(eventName, params) {
+            return app.core.reporting.track(eventName, params);
+          };
+          sandbox.flag = function(id) {
+            return app.core.reporting.flag(id);
+          };
           return app.components.before('initialize', module.track);
         }
       };

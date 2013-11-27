@@ -23,12 +23,13 @@
       "q":              "bower_components/q/q",
       "URIjs":          "bower_components/uri.js/src",
       "string":         "bower_components/underscore.string/lib/underscore.string",
-      "jquery":         "empty:",
+      "zepto":          "bower_components/zepto/zepto",
+      "zeptodata":      "lib/zepto-data",
       "text":           "bower_components/requirejs-text/text",
       "base64":         "bower_components/base64/base64"
     },
     "shim": {
-      "backbone":   { "exports": "Backbone", "deps": ["underscore", "jquery"] },
+      "backbone":   { "exports": "Backbone", "deps": ["underscore"] },
       "underscore": { "exports": "_" }
     },
     "include": [

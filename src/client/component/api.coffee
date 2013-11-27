@@ -170,7 +170,7 @@ define ['underscore', 'lib/hullbase', 'lib/api/api', 'lib/utils/promises'], (_, 
 
             throw new Error('No request given. Aborting') unless requests.length
             promises = _.map requests, (request)->
-              core.data.api.apply(core.data.api, request).promise()
+              core.data.api.apply(core.data.api, request).promise
 
 
             # Actual request
@@ -248,7 +248,7 @@ define ['underscore', 'lib/hullbase', 'lib/api/api', 'lib/utils/promises'], (_, 
         initialized.reject(new TypeError 'no organizationURL provided. Can\'t proceed') unless app.config.orgUrl
         initialized.reject(new TypeError 'no applicationID provided. Can\'t proceed') unless app.config.appId
 
-        initialized
+        initialized.promise
 
       afterAppStart: (app)->
         core    = app.core

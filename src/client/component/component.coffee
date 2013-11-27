@@ -1,4 +1,4 @@
-define ['jquery', 'underscore', 'lib/client/component/datasource', 'lib/client/component/context', 'lib/utils/promises'], ($, _, Datasource, Context, promises)->
+define ['zepto', 'underscore', 'lib/client/component/datasource', 'lib/client/component/context', 'lib/utils/promises'], ($, _, Datasource, Context, promises)->
 
   (app)->
     debug = false
@@ -139,13 +139,13 @@ define ['jquery', 'underscore', 'lib/client/component/datasource', 'lib/client/c
 
           readyDfd = promises.all([componentDeferred, templateDeferred])
 
-          readyDfd.fail (err)=>
+          readyDfd.spread ()=>
+            dfd.resolve ctx
+          ,(err)=>
             console.error("Error in Building Render Context", err.message, err)
             @renderError.call(@, err.message, err)
             dfd.reject err
-
-          readyDfd.done ()->
-            dfd.resolve ctx
+          .done()
 
         catch e
           console.error("Caught error in buildContext", e.message, e)

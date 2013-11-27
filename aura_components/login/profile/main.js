@@ -30,6 +30,7 @@ Hull.component({
     "use strict";
     this.authHasFailed = false;
 
+
     this.sandbox.on('hull.auth.failure', this.sandbox.util._.bind(function() {
       this.authHasFailed = true;
       this.render();
@@ -42,10 +43,16 @@ Hull.component({
     if (this.sandbox.util._.isEmpty(this.authServices)) {
       console.error('No Auth services configured. please add one to be able to authenticate users.');
     }
+
+    console.log('Login Compo')
+
   },
 
   beforeRender: function(data) {
     "use strict";
+
+    console.log('beforeRender')
+
     data.authHasFailed = this.authHasFailed;
 
     // If providers are specified, then use only those. else use all configuredauthServices

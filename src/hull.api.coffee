@@ -30,11 +30,11 @@ define [
   'lib/utils/emitter'
   'lib/api/api'
   'lib/api/auth'
+  'lib/api/reporting'
   'lib/utils/entity'
-  'lib/utils/reporting'
   'lib/utils/promises'
   'lib/utils/version'
-  ], (_, emitter, api, auth, entity, reporting, promises, version) ->
+  ], (_, emitter, api, auth, reporting,  entity, promises, version) ->
 
   (config, cb, errb)->
     return cb(Hull) if Hull.config
