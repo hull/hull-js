@@ -6,11 +6,95 @@ define ['jquery', 'underscore'], ($, _)->
   (app)->
 
     config = app.config
-
     identified = false
-
     accessToken     = app.config.access_token
     originalUserId  = app.config.data?.me?.id
+
+    # Stores calls to flushCall, and processes them at once.
+    batchable = (opts) ->
+      delay                                = opts.delay
+      timeout                              = null
+      batchMinSize                         = opts.minSize
+      batchMaxSize                         = opts.maxSize 
+      requests                             = []
+      request_headers                      = { 'Hull-App-Id': config.appId }
+      request_headers['Hull-Access-Token'] = accessToken if accessToken
+
+      flush = ()->
+        timeout = null
+        flushedRequests = _.first(requests,batchMaxSize)
+        requests = _.rest(requests,batchMaxSize)
+        return if flushedRequests.length == 0
+
+        if flushedRequests.length<=batchMinSize
+
+          $.ajax(flushedRequests[0].request).then (response, status, request)->
+
+            headers = _.reduce RESPONSE_HEADER, (memo, name) ->
+              value = request.getResponseHeader(name)
+              memo[name] = value if value?
+              memo
+            , {}
+
+            flushedRequests[0].deferred.resolve({response:response, headers:headers})
+          , (error)->
+            flushedRequests[0].deferred.reject(error)
+        else
+          formatted_request =
+            ops: _.map(flushedRequests, (r)-> 
+              req = r.request 
+              return {
+                url: req.url
+                method: req.type
+                params: req.data
+                headers: req.headers
+              })
+            sequential:true
+
+          req = 
+            url:  '/api/v1/batch'
+            type: 'post'
+            data: JSON.stringify(formatted_request)
+            contentType: 'application/json'
+            headers: request_headers
+            dataType: 'json'
+
+          # Apply stored params to flush call
+          $.ajax.call(this, req).then (responses)->
+            _.each responses.results, (response, i)->
+              response.response = JSON.parse(response.body)
+
+              # response.headers = _.reduce RESPONSE_HEADER, (memo, name) ->
+              #   value = response.headers[name]
+              #   memo[name] = value if value?
+              #   memo
+              # , {}
+
+              flushedRequests[i].deferred.resolve(response)
+          , (error)->
+            _.map _.pluck(flushedRequests, 'deferred'), (d)-> d.reject(error)
+
+        true
+
+      (request) ->
+        context = this;
+        deferred = $.Deferred()
+  
+        # Store one more requests into the request queue
+        request.headers = request_headers
+        requests.push({ request: request, deferred: deferred })
+        # When we call the method, clear the queue
+
+        flush() while requests.length > batchMaxSize
+        timeout ?= setTimeout(flush, delay || 30)
+
+        deferred.promise()
+
+    batchableRequest = batchable
+      delay:30
+      minSize: 1
+      maxSize: 10
+
 
     identify = (me) ->
       return unless me
@@ -42,35 +126,25 @@ define ['jquery', 'underscore'], ($, _)->
       else
         req_data = req.params
 
-      request_headers = { 'Hull-App-Id': config.appId }
-      if accessToken
-        request_headers['Hull-Access-Token'] = accessToken
-
-      request = $.ajax
+      request = batchableRequest({
         url: url
         type: req.method
         data: req_data
         contentType: 'application/json'
         dataType: 'json'
-        headers: request_headers
+      })
 
       request.done (response)->
-        identify(_.clone(response)) if url == '/api/v1/me'
+        identify(_.clone(response.response)) if url == '/api/v1/me'
 
-        headers = _.reduce RESPONSE_HEADER, (memo, name) ->
-          value = request.getResponseHeader(name)
-          memo[name] = value if value?
-          memo
-        , {}
-
-        if accessToken && originalUserId && originalUserId != headers['Hull-User-Id']
+        if accessToken && originalUserId && originalUserId != response.headers['Hull-User-Id']
           # Reset token if the user has changed...
           accessToken = false
 
-        callback({ response: response, headers: headers, provider: 'hull' }) if _.isFunction(callback)
+        response.provider = 'hull'
+        callback(response) if _.isFunction(callback)
 
-        trackAction(request, response)
-
+        trackAction(response)
 
       request.fail(errback)
 
@@ -82,8 +156,8 @@ define ['jquery', 'underscore'], ($, _)->
       params.hull_app_name  = config?.data?.app?.name
       require('analytics').track(event, params)
 
-    trackAction = (request, response)->
-      return unless track = request.getResponseHeader('Hull-Track')
+    trackAction = (response)->
+      return unless track = response.headers['Hull-Track']
       try
         [eventName, trackParams] = JSON.parse(atob(track))
         doTrack(eventName, trackParams)
