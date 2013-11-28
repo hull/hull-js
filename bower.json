@@ -6,7 +6,6 @@
     "jquery": "1.10.*",
     "aura": "hull/aura#feature/zepto",
     "backbone": "0.9.9",
-    "easyXDM": "2.4.17",
     "require-handlebars-plugin": "0.4.0",
     "analytics": "hull/analytics#1.0.8-hull",
     "cookies-js": "0.3.1",
@@ -16,7 +15,8 @@
     "underscore.string": "2.3.1",
     "twitter-text": "1.6.1",
     "q": "~0.9.7",
-    "form2js": "*"
+    "form2js": "*",
+    "xdm.js": "~1.0.1"
   },
   "devDependencies": {
     "JSCovReporter": "git://github.com/TwoApart/JSCovReporter.git"

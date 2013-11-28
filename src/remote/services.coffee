@@ -1,4 +1,4 @@
-define ['underscore'], (_)->
+define ['underscore', 'easyXDM'], (_, easyXDM)->
   rpc = null
 
   catchAll = (res)->
@@ -6,12 +6,6 @@ define ['underscore'], (_)->
     res
 
   (app)->
-    require:
-      paths:
-        'easyXDM': 'components/easyXDM/easyXDM'
-      shim:
-        easyXDM: { exports: 'easyXDM' }
-
 
     initialize: (app)->
       core = app.core

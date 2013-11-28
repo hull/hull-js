@@ -8,19 +8,17 @@
       "requireLib":     "bower_components/requirejs/require",
       "underscore":     "bower_components/underscore/underscore",
       "eventemitter":   "bower_components/eventemitter2/lib/eventemitter2",
-      "easyXDM":        "lib/shims/bower_components/easyXDM/easyXDM",
+      "easyXDM":        "bower_components/xdm.js/xdm",
       "cookie":         "bower_components/cookies-js/src/cookies",
       "q":              "bower_components/q/q",
       "base64":         "bower_components/base64/base64"
     },
     "shim": {
-      "underscore": { "exports": "_" },
-      "easyXDM":    { "exports": "easyXDM" }
+      "underscore": { "exports": "_" }
     },
     "include": [
       "requireLib",
       "underscore",
-      "easyXDM",
       "cookie",
       "base64",
       "lib/hull.api"

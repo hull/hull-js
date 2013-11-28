@@ -2,14 +2,6 @@ queuedEvents = {}
 queuedTracks = {}
 window.Hull = Hull = {}
 
-# _conflicts = {}
-# Hull.noConflict = ->
-#   for name of _conflicts
-#     window[name] = _conflicts[name]
-
-# Allow to queue events so we can store them before the app starts.
-# TODO: do the same for Tracking calls.
-
 Hull.on   = (evt, fn)->
   queuedEvents[evt] ?= []
   queuedEvents[evt].push fn
@@ -38,14 +30,6 @@ define [
 
   (config, cb, errb)->
     return cb(Hull) if Hull.config
-
-    # hasConflicts = false
-    # for name in ['require', 'define']
-    #   _conflicts[name] ||= window[name] if window[name]
-    #   if config.useRequire and Hull[name] != window[name]
-    #     hasConflicts = true
-    #     window[name] = Hull[name]
-    # console.log("Setting window.#{name} to Hull.#{name}. Use Hull.noConflict() to revert to previous values.") if hasConflicts and window.console and config.debug
 
     # Prepare config
     config.namespace = 'hull'

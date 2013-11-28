@@ -72,7 +72,9 @@ define ['underscore', 'lib/utils/cookies', 'lib/utils/version', 'lib/api/params'
 
       url = buildRemoteUrl(config)
       rpc = new easyXDM.Rpc({
-        remote: url
+        remote: url,
+        container: document.body
+
       }, {
         remote: { message: {}, ready: {} }
         local:  { message: onRemoteMessage, ready: onRemoteReady }
