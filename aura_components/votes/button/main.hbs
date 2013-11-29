@@ -1,0 +1,15 @@
+<p><strong>{{votesSum}}</strong> votes</p>
+
+{{#if loggedIn}}
+  {{#if canVote}}
+    <button class="btn" data-hull-action="vote">Vote</button>
+  {{/if}}
+
+  {{#if noRemainingObject}}
+    <p>No remaining vote for "{{target.name}}". Come back {{fromNow credits.votes.period.end}}.</p>
+  {{/if}}
+
+  {{#if noRemainingPeriod}}
+    <p>No remaining vote for the current period. Come back {{fromNow credits.votes.period.end}}.</p>
+  {{/if}}
+{{/if}}
