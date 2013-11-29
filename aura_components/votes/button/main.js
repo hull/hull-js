@@ -35,18 +35,10 @@ Hull.component({
 
     if(data.credits.votes.remaining === 0) {
       data.noRemainingPeriod = true;
-    } else if(data.credits.votes.max_per_object === data.credits.votes.credited[this.getBSONId(data)]) {
+    } else if(data.credits.votes.max_per_object === data.credits.votes.credited[data.target.id]) {
       data.noRemainingObject = true;
     } else {
       data.canVote = true;
-    }
-  },
-
-  getBSONId: function(data) {
-    if (this.sandbox.util._.include(['me', 'app', 'org'], this.options.id)) {
-      return data[this.options.id].id;
-    } else {
-      return this.options.id;
     }
   },
 
