@@ -11,7 +11,7 @@
 Hull.component({
   type: 'Hull',
 
-  templates: ['button'],
+  templates: ['button', 'icons_library'],
 
   options: {
     text: 'Hull.io Rocks',
@@ -56,7 +56,6 @@ Hull.component({
     if(!providers.length){
       providers = _.keys(this.sharers);
     }
-
     var buttons = _.map(providers,function(p){
       var s = self.sharers[p];
       var link = s.sharer;
