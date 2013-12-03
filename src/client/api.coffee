@@ -16,8 +16,20 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
           cookie: 'bower_components/jquery.cookie/jquery.cookie'
 
       initialize: (app)->
+        _trackIfHeader = (res, headers={})->
+          if headers?
+            hullTrack = headers['Hull-Track']
+            if hullTrack
+              try
+                [eventName, trackParams] = JSON.parse(atob(hullTrack))
+                app.core.mediator.emit(eventName, trackParams)
+              catch error
+                false
+            if headers['Hull-Auth-Scope']
+              authScope = headers['Hull-Auth-Scope'].split(':')[0]
         core    = app.core
         sandbox = app.sandbox
+        _       = sandbox.util._
 
         slice = Array.prototype.slice
 
@@ -25,18 +37,13 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
         apiModule.then (obj)->
           core.data.api = api = (args...)->
             dfd = obj.api args...
-            dfd.then (res, headers={})->
-              if headers?
-                hullTrack = headers['Hull-Track']
-                if hullTrack
-                  try
-                    [eventName, trackParams] = JSON.parse(atob(hullTrack))
-                    app.core.mediator.emit(eventName, trackParams)
-                  catch error
-                    false
-                if headers['Hull-Auth-Scope']
-                  authScope = headers['Hull-Auth-Scope'].split(':')[0]
+            dfd.then _trackIfHeader
             dfd
+          _.each _.keys(obj.api), (key)->
+            core.data.api[key] = (args...)->
+              dfd = obj.api[key] args...
+              dfd.then _trackIfHeader
+              dfd
 
           #
           #
