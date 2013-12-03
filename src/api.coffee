@@ -1,4 +1,4 @@
-define ['jquery', 'underscore', 'lib/utils/version', 'lib/api/params', 'lib/api/auth', 'easyXDM', 'lib/utils/promises'], ($, _, version, apiParams, authModule, easyXDM, promises)->
+define ['jquery', 'underscore', 'lib/utils/version', 'lib/api/params', 'lib/api/auth', 'easyXDM', 'lib/utils/promises', 'lib/api/methods'], ($, _, version, apiParams, authModule, easyXDM, promises, httpMethods)->
   slice = Array.prototype.slice
 
   # Builds the URL used by easyXDM
@@ -16,7 +16,7 @@ define ['jquery', 'underscore', 'lib/utils/version', 'lib/api/params', 'lib/api/
     # Main method to request the API
     api = -> message.apply(undefined, apiParams.parse(slice.call(arguments)))
     # Method-specific function
-    _.each ['get', 'post', 'put', 'delete'], (method)->
+    _.each httpMethods, (method)->
       api[method] = ()->
         args = apiParams.parse (slice.call(arguments))
         req         = args[0]

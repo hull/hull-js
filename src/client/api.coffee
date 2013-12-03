@@ -1,4 +1,4 @@
-define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base, apiModule, promises) ->
+define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises', 'lib/api/methods'], (_, base, apiModule, promises, httpMethods) ->
 
   (app) ->
 
@@ -39,7 +39,7 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises'], (_, base
             dfd = obj.api args...
             dfd.then _trackIfHeader
             dfd
-          _.each _.keys(obj.api), (key)->
+          _.each httpMethods, (key)->
             core.data.api[key] = (args...)->
               dfd = obj.api[key] args...
               dfd.then _trackIfHeader
