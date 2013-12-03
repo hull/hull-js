@@ -46,7 +46,7 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
 
   define('easyXDM', function () { return easyXDMMock; });
 
-  xdescribe("API specs", function () {
+  describe("API specs", function () {
     var env, api, batch, app = aura(config);
 
     var extension = {
@@ -69,12 +69,22 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
       });
     });
 
-    it('should be available in the environment', function () {
-      env.sandbox.data.should.contain.keys('api');
-      api.should.be.a('function');
+    describe('API exposition', function () {
+      it('should be available in the environment', function () {
+        env.sandbox.data.should.contain.keys('api');
+        api.should.be.a('function');
+      });
+
+      it('should have method-specific functions', function () {
+        env.sandbox.data.api.should.contain.keys('get', 'post', 'put', 'delete');
+        env.sandbox.data.api.get.should.be.a('function');
+        env.sandbox.data.api.put.should.be.a('function');
+        env.sandbox.data.api.post.should.be.a('function');
+        env.sandbox.data.api.delete.should.be.a('function');
+      });
     });
 
-    describe("initializing the API client", function () {
+    xdescribe("initializing the API client", function () {
       it("should reject if there's an error", function (done) {
         require(['lib/api'], function (apiClient) {
           mustFail = true;
@@ -86,7 +96,7 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
       });
     });
 
-    describe("Basic API requests", function () {
+    xdescribe("Basic API requests", function () {
       it("should reject promise and execute failure callback with an invalid request", function (done) {
         var spySuccess = sinon.spy();
         var spyFailure = sinon.spy();
@@ -114,7 +124,7 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
       });
     });
 
-    describe('batching requests', function () {
+    xdescribe('batching requests', function () {
       var spySuccess, spyFailure;
       beforeEach(function () {
         spySuccess = sinon.spy();
@@ -188,7 +198,7 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
       });
     });
 
-    describe('Models', function () {
+    xdescribe('Models', function () {
       it("should be provided an id", function () {
         api.model.bind(api, 'anId').should.not.throw(Error);
         api.model.bind(api, {_id: 'anId'}).should.not.throw(Error);
@@ -217,7 +227,7 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
       });
     });
 
-    describe('Tracking API', function () {
+    xdescribe('Tracking API', function () {
       it('proxies to the `track` provider', function () {
         var orig = env.core.data.api;
         var spy = env.core.data.api = sinon.spy();
