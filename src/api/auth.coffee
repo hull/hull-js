@@ -79,7 +79,9 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
         successToken
       authHelper: (path)-> window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
       onCompleteAuth: onCompleteAuthentication
-    api =
+
+    authModule =
       login: login
       logout: logout
-    api
+
+    authModule
