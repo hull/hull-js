@@ -1,7 +1,7 @@
-define ['underscore', 'lib/utils/cookies', 'lib/utils/version', 'lib/api/params', 'lib/api/auth', 'easyXDM', 'lib/utils/promises', 'lib/utils/cookies'], (_, cookie, version, apiParams, authModule, easyXDM, promises, cookies)->
+define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '../api/auth', 'xdm', '../utils/promises', '../utils/cookies'], (_, cookie, version, apiParams, authModule, xdm, promises, cookies)->
   slice = Array.prototype.slice
 
-  # Builds the URL used by easyXDM
+  # Builds the URL used by xdm
   # Based upon the (app) configuration
   buildRemoteUrl = (config)->
     remoteUrl = "#{config.orgUrl}/api/v1/#{config.appId}/remote.html?v=#{version}"
@@ -29,7 +29,7 @@ define ['underscore', 'lib/utils/cookies', 'lib/utils/version', 'lib/api/params'
       onRemoteMessage = (e)->
         console.log('remoteMessage', e)
         if e.error
-          # Get out of the easyXDM try/catch jail
+          # Get out of the xdm try/catch jail
           setTimeout(
             -> dfd.reject(e.error)
           , 0)
@@ -71,7 +71,7 @@ define ['underscore', 'lib/utils/cookies', 'lib/utils/version', 'lib/api/params'
         true
 
       url = buildRemoteUrl(config)
-      rpc = new easyXDM.Rpc({
+      rpc = new xdm.Rpc({
         remote: url,
         container: document.body
 
@@ -81,7 +81,7 @@ define ['underscore', 'lib/utils/cookies', 'lib/utils/version', 'lib/api/params'
       })
 
       ###
-      # Sends the message described by @params to easyXDM
+      # Sends the message described by @params to xdm
       # @param {Object} contains the provider, uri and parameters for the message
       # @param {Function} optional a success callback
       # @param {Function} optional an error callback

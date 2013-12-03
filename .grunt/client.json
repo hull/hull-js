@@ -13,11 +13,11 @@
     "preserveLicenseComments": true,
     "paths": {
       "jquery":         "empty:",
-      "aura":           "bower_components/aura/lib",
       "underscore":     "bower_components/underscore/underscore",
+      "aura":           "bower_components/aura/lib",
       "eventemitter":   "bower_components/eventemitter2/lib/eventemitter2",
       "backbone":       "bower_components/backbone/backbone",
-      "easyXDM":            "bower_components/xdm.js/xdm",
+      "xdm":            "bower_components/xdm.js/xdm",
       "handlebars":     "lib/shims/node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars",
       "requireLib":     "bower_components/requirejs/require",
       "cookie":         "bower_components/cookies-js/src/cookies",

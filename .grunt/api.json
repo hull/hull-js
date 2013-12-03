@@ -5,10 +5,10 @@
     "baseUrl": ".",
     "preserveLicenseComments": false,
     "paths": {
-      "requireLib":     "bower_components/requirejs/require",
+      "requireLib":     "bower_components/almond/almond",
       "underscore":     "bower_components/underscore/underscore",
       "eventemitter":   "bower_components/eventemitter2/lib/eventemitter2",
-      "easyXDM":        "bower_components/xdm.js/xdm",
+      "xdm":            "bower_components/xdm.js/xdm",
       "cookie":         "bower_components/cookies-js/src/cookies",
       "promises":       "bower_components/q/q",
       "base64":         "bower_components/base64/base64"
@@ -26,7 +26,7 @@
     "out": "dist/<%= PKG_VERSION %>/hull.api.js",
     "wrap": {
       "start": "(function(){       var require, requirejs, define, root={}; (function () {",
-      "end": ";  }).call(root);})();"
+      "end": "; window.Hull = require('lib/hull.api'); }).call(root);})();"
     }
   }
 }

@@ -1,4 +1,4 @@
-define ['underscore', 'lib/api/api'], (_, api) ->
+define ['underscore', './api'], (_, api) ->
 
   module =
     initialize: (app)->

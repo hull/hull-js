@@ -1,4 +1,4 @@
-define ['underscore', 'easyXDM'], (_, easyXDM)->
+define ['underscore', 'xdm'], (_, xdm)->
   rpc = null
 
   catchAll = (res)->
@@ -21,14 +21,14 @@ define ['underscore', 'easyXDM'], (_, easyXDM)->
           errback(catchAll(req))
 
       try
-        rpc = new easyXDM.Rpc({
+        rpc = new xdm.Rpc({
           acl: app.config.appDomains
         }, {
           remote: { message: {}, ready: {} }
           local:  { message: onRemoteMessage }
         })
       catch e
-        rpcFall = new easyXDM.Rpc({},
+        rpcFall = new xdm.Rpc({},
           remote: {message: {}}
         )
         rpcFall.message error: "#{e.message}, please make sure this domain is whitelisted for this app."

@@ -4,7 +4,7 @@
   "main": "./lib/hull.js",
   "dependencies": {
     "jquery": "1.10.*",
-    "aura": "hull/aura#feature/zepto",
+    "aura": "hull/aura#feature/clean",
     "backbone": "0.9.9",
     "require-handlebars-plugin": "0.4.0",
     "analytics": "hull/analytics#1.0.8-hull",
@@ -16,7 +16,8 @@
     "twitter-text": "1.6.1",
     "q": "~0.9.7",
     "form2js": "*",
-    "xdm.js": "~1.0.1"
+    "xdm.js": "~1.0.1",
+    "almond": "~0.2.7"
   },
   "devDependencies": {
     "JSCovReporter": "git://github.com/TwoApart/JSCovReporter.git"
