@@ -12,8 +12,16 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
     remoteUrl
 
   dfd = promises.deferred()
-  apiObject =
+
+  apiConnection =
     init : (config)->
+
+      # Fail right now if we don't have the required setup
+      unless config.orgUrl and config.appId
+        dfd.reject(new TypeError 'no organizationURL provided. Can\'t proceed') unless config.orgUrl
+        dfd.reject(new TypeError 'no applicationID provided. Can\'t proceed') unless config.appId
+        return dfd
+
       message = null
       # Main method to request the API
       api = -> message.apply(undefined, apiParams.parse(slice.call(arguments)))
@@ -24,6 +32,7 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
           req         = args[0]
           req.method  = method
           message.apply(api, args)
+
       api.parseRoute = apiParams.parse
 
       onRemoteMessage = (e)->
@@ -41,6 +50,7 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
         ()->
           dfd.reject('Remote loading has failed. Please check "orgUrl" and "appId" in your configuration. This may also be about connectivity.')
         , 30000)
+
 
       setCurrentUser = (headers={})->
         return unless config.appId
@@ -60,14 +70,14 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
 
         authScope = data.headers['Hull-Auth-Scope'].split(":")[0] if data.headers?['Hull-Auth-Scope']
 
-        apiObject = 
-          auth: authModule api, config, remoteConfig.services.types.auth
+        apiConnection = 
+          auth: authModule(api, config, remoteConfig.services.types.auth)
           remoteConfig: remoteConfig
           authScope: authScope or ''
           api: api
           init: ()-> dfd.promise
 
-        dfd.resolve apiObject
+        dfd.resolve apiConnection
         true
 
       url = buildRemoteUrl(config)
@@ -104,5 +114,5 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
       dfd.promise
     promise: dfd.promise
 
-  # We return apiObject, for subsequent calls.
-  apiObject
+  # We return apiConnection, for subsequent calls.
+  apiConnection

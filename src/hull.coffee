@@ -1,44 +1,48 @@
-evtPool = {}
-Hull.on = (evt, fn)->
-  evtPool[evt] ?= []
-  evtPool[evt].push fn
+# _chk = (n,d)->
+#   unless d
+#     _msg = "#{n} is not defined. It is required to run hull.js"
+#     alert(_msg)
+#     throw new Error(_msg)
+#     true
 
-define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
-  myApp = ()->
+# _chk('jQuery', window.jQuery)
+
+Hull = {
+  on: ()->
+  track: ()->
+  init: (config, cb, errb)->
+}
+
+define ['aura/aura', './hull.api'], (Aura, HullAPI) ->
+
+
+  hullApiMiddleware = (app)->
     name: 'Hull'
+
     initialize: (app)->
       app.core.mediator.setMaxListeners(100)
+      app.core.data.hullApi = HullAPI.data.api
 
     afterAppStart: (app)->
+      _ = app.core.util._
       sb = app.sandboxes.create();
 
-      _.extend(HullDef, sb);
+      # _.extend(HullDef, sb);
       # After app init, call the queued events
       for evt, cbArray of evtPool
         _.each cbArray, (cb)-> app.core.mediator.on evt, cb
 
-      # In production mode, only expose select properties on the Hull object
-      if !app.config.debug
-        props = ['component', 'templates', 'emit', 'on', 'version', 'track', 'login', 'logout', 'data']
-        props.concat(app.config.expose || [])
-        _h = {}
-        _.map props, (k)->
-          _h[k] = window.Hull[k]
-        window.Hull = _h
+  hullInitMiddleware = (app)->
 
-  hull = null
-  (config, cb, errcb) ->
-    return hull if hull && hull.app
+    initialize: (app) ->
 
-    config.namespace = 'hull'
-    config.debug = config.debug && { enable: true }
+    afterAppStart: (app) ->
+      # window.Hull.parse = (el, options={})->
+      #   app.core.appSandbox.start(el, options)
 
-    hull =
-      config: config
-      app: new Aura(config)
-
+  initSuccess=(hullApi)->
     initProcess = hull.app
-        .use(myApp())
+        .use(hullApiMiddleware())
         .use('aura-extensions/aura-base64')
         .use('aura-extensions/aura-cookies')
         .use('aura-extensions/aura-backbone')
@@ -52,15 +56,11 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
         .use('aura-extensions/aura-component-require')
         .use('aura-extensions/hull-component-normalize-id')
         .use('aura-extensions/hull-component-reporting')
-        .use('lib/client/component/api')
-        .use('lib/client/component/component')
-        .use('lib/client/component/hull-handlebars-helpers')
-        .use('lib/client/component/templates')
-        .use (app)->
-          afterAppStart: (app)->
-            window.Hull.parse = (el, options={})->
-              app.core.appSandbox.start(el, options)
-              debugger
+        # .use('lib/client/component/api')
+        # .use('lib/client/component/component')
+        # .use('lib/client/component/hull-handlebars-helpers')
+        # .use('lib/client/component/templates')
+        .use(hullInitMiddleware())
         .start({ components: 'body' })
 
     initProcess.fail (err)->
@@ -73,4 +73,26 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
       hull.app.sandbox.emit('hull.init')
       cb(window.Hull) if cb
 
-    return hull
+  initFailure: ()->
+
+  Hull = 
+    on: ()->
+    track: ()->
+    init: (config, cb, errcb) ->
+      return Hull if Hull && Hull.app
+      config.namespace = 'hull'
+      config.debug = config.debug && { enable: true }
+
+      Hull =
+        config: config
+        app: new Aura(config)
+
+      HullAPI.init(config, initSuccess, initFailure)
+
+      Hull
+
+  Hull
+
+# Hull.define(i.toLowerCase(), (i) -> root[i]) if _chk(i, root[i]) && root.hasOwnProperty(i) for i in root
+
+# main.call(root)

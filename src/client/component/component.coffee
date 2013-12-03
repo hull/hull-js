@@ -203,10 +203,15 @@ define ['underscore', 'lib/client/component/datasource', 'lib/client/component/c
       emitLifecycleEvent: (name)->
         @sandbox.emit("hull.#{@componentName.replace('/','.')}.#{name}",{cid:@cid})
 
-    (app)->
-      default_datasources =
-        me:  new Datasource app.core.data.api.model('me')
-        app: new Datasource app.core.data.api.model('app')
-        org: new Datasource app.core.data.api.model('org')
-      debug = app.config.debug
-      app.components.addType("Hull", HullComponent.prototype)
+    module = 
+      afterAppStart: ()->
+        default_datasources =
+          me:  new Datasource app.core.data.api.model('me')
+          app: new Datasource app.core.data.api.model('app')
+          org: new Datasource app.core.data.api.model('org')
+
+      initialize: (app)->
+        debug = app.config.debug
+        app.components.addType("Hull", HullComponent.prototype)
+
+    module

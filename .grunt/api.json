@@ -3,7 +3,7 @@
   "coffeeFiles": ["src/hull.api.coffee", "src/api/**/*.coffee",  "src/utils/**/*.coffee"],
   "requireJS": {
     "baseUrl": ".",
-    "preserveLicenseComments": false,
+    "preserveLicenseComments": true,
     "paths": {
       "requireLib":     "bower_components/almond/almond",
       "underscore":     "bower_components/underscore/underscore",

@@ -1,6 +1,8 @@
-define ['underscore', 'lib/hullbase', 'lib/api/api', 'lib/utils/promises'], (_, base, apiModule, promises) ->
+define () ->
 
-  (app) ->
+  (app) -> 
+
+    _ = app.core.util._
 
     models = {}
 
@@ -10,9 +12,6 @@ define ['underscore', 'lib/hullbase', 'lib/api/api', 'lib/utils/promises'], (_, 
     authScope = null
 
     module =
-      # require:
-      #   paths:
-      #     cookie: 'bower_components/jquery.cookie/jquery.cookie'
 
       initialize: (app)->
         core    = app.core
@@ -20,22 +19,21 @@ define ['underscore', 'lib/hullbase', 'lib/api/api', 'lib/utils/promises'], (_, 
 
         slice = Array.prototype.slice
 
-        apiModule = apiModule.init(app.config)
-        apiModule.then (obj)->
-          core.data.api = api = (args...)->
-            dfd = obj.api args...
-            dfd.then (res, headers={})->
-              if headers?
-                hullTrack = headers['Hull-Track']
-                if hullTrack
-                  try
-                    [eventName, trackParams] = JSON.parse(atob(hullTrack))
-                    core.mediator.emit(eventName, trackParams)
-                  catch error
-                    false
-                if headers['Hull-Auth-Scope']
-                  authScope = headers['Hull-Auth-Scope'].split(':')[0]
-            dfd
+        hullApi = core.data.hullApi
+
+        core.data.api = (args...)->
+          hullApi( args...).then (res, headers={})->
+            if headers?
+              hullTrack = headers['Hull-Track']
+              if hullTrack
+                try
+                  [eventName, trackParams] = JSON.parse(atob(hullTrack))
+                  core.mediator.emit(eventName, trackParams)
+                catch error
+                  false
+              if headers['Hull-Auth-Scope']
+                authScope = headers['Hull-Auth-Scope'].split(':')[0]
+          hullApi
 
           #
           #
@@ -127,7 +125,7 @@ define ['underscore', 'lib/hullbase', 'lib/api/api', 'lib/utils/promises'], (_, 
               args = slice.call(arguments)
               eventName = ("collection." + route.path.replace(/\//g, ".") + '.' + args[0])
               core.mediator.emit(eventName, { eventName: eventName, collection: collection, changes: args[1]?.changes })
-            dfd   = collection.deferred = core.data.deferred()
+            dfd   = collection.deferred = core.promises.deferred()
             if collection.models.length > 0
               collection._fetched = true
               dfd.resolve(collection)
@@ -183,72 +181,63 @@ define ['underscore', 'lib/hullbase', 'lib/api/api', 'lib/utils/promises'], (_, 
         # Initialization
         #
 
-        initialized = core.data.deferred()
-        apiModule.then (obj)->
-          core = core
-          sandbox = app.sandbox
+        core = core
+        sandbox = app.sandbox
 
-          authScope = obj.authScope
-          remoteConfig = obj.remoteConfig
-          data = remoteConfig.data
-          app.config.assetsUrl            = remoteConfig.assetsUrl
-          app.config.services             = remoteConfig.services
-          app.components.addSource('hull', remoteConfig.baseUrl + '/aura_components')
-          sandbox.config ?= {}
-          sandbox.config.debug        = app.config.debug
-          sandbox.config.assetsUrl    = remoteConfig.assetsUrl
-          sandbox.config.appId        = app.config.appId
-          sandbox.config.orgUrl       = app.config.orgUrl
-          sandbox.config.services     = remoteConfig.services
-          sandbox.config.entity_id    = data.entity?.id
+        authScope = hullApi.authScope
+        remoteConfig = hullApi.remoteConfig
+        data = remoteConfig.data
+        app.config.assetsUrl            = remoteConfig.assetsUrl
+        app.config.services             = remoteConfig.services
+        app.components.addSource('hull', remoteConfig.baseUrl + '/aura_components')
+        sandbox.config ?= {}
+        sandbox.config.debug        = app.config.debug
+        sandbox.config.assetsUrl    = remoteConfig.assetsUrl
+        sandbox.config.appId        = app.config.appId
+        sandbox.config.orgUrl       = app.config.orgUrl
+        sandbox.config.services     = remoteConfig.services
+        sandbox.config.entity_id    = data.entity?.id
 
 
-          sandbox.isAdmin = ->
-            (authScope == 'Account' || sandbox.data.api.model('me').get('is_admin'))
+        sandbox.isAdmin = ->
+          (authScope == 'Account' || sandbox.data.api.model('me').get('is_admin'))
 
-          sandbox.login = (provider, opts={}, callback=->)->
-            obj.auth.login.apply(undefined, arguments).then ->
-              try
-                me = sandbox.data.api.model('me')
-                me.fetch().then ->
-                  core.mediator.emit 'hull.auth.complete', me
-                  core.mediator.emit 'hull.login', me
-              catch err
-                core.mediator.emit 'hull.auth.failure', err
-                console.error "Error on auth promise resolution", err
-            , (err)->
+        sandbox.login = (provider, opts={}, callback=->)->
+          hullApi.auth.login.apply(undefined, arguments).then ->
+            try
+              me = sandbox.data.api.model('me')
+              me.fetch().then ->
+                core.mediator.emit 'hull.auth.complete', me
+                core.mediator.emit 'hull.login', me
+            catch err
               core.mediator.emit 'hull.auth.failure', err
+              console.error "Error on auth promise resolution", err
+          , (err)->
+            core.mediator.emit 'hull.auth.failure', err
 
-          # Add a .logout() method to the component sandbox, and emit events when logout is complete
-          sandbox.logout = (callback=->)->
-            obj.auth.logout(callback).then ->
-              core.mediator.emit('hull.auth.logout')
-              core.mediator.emit('hull.logout')
-              core.data.api.model('me').clear()
+        # Add a .logout() method to the component sandbox, and emit events when logout is complete
+        sandbox.logout = (callback=->)->
+          hullApi.auth.logout(callback).then ->
+            core.mediator.emit('hull.auth.logout')
+            core.mediator.emit('hull.logout')
+            core.data.api.model('me').clear()
 
-          # Add a .linkIdenity() method to the component sandbox
-          sandbox.linkIdentity = (provider, opts={}, callback=->)->
-            opts.mode = 'connect'
-            sandbox.login(provider, opts, callback)
+        # Add a .linkIdenity() method to the component sandbox
+        sandbox.linkIdentity = (provider, opts={}, callback=->)->
+          opts.mode = 'connect'
+          sandbox.login(provider, opts, callback)
 
-          # Add a .unlinkIdenity() method to the component sandbox
-          sandbox.unlinkIdentity = (provider, callback=->)->
-            core.data.api("me/identities/#{provider}", 'delete').then ->
-              app.sandbox.data.api.model('me').fetch().then callback
+        # Add a .unlinkIdenity() method to the component sandbox
+        sandbox.unlinkIdentity = (provider, callback=->)->
+          core.data.api("me/identities/#{provider}", 'delete').then ->
+            app.sandbox.data.api.model('me').fetch().then callback
 
-          for m in ['me', 'app', 'org', 'entity']
-            attrs = data[m]
-            if attrs
-              attrs._id = m
-              rawFetch(attrs, true)
+        for m in ['me', 'app', 'org', 'entity']
+          attrs = data[m]
+          if attrs
+            attrs._id = m
+            rawFetch(attrs, true)
 
-          initialized.resolve(data)
-
-        apiModule.fail (e)-> initialized.reject e
-        initialized.reject(new TypeError 'no organizationURL provided. Can\'t proceed') unless app.config.orgUrl
-        initialized.reject(new TypeError 'no applicationID provided. Can\'t proceed') unless app.config.appId
-
-        initialized.promise
 
       afterAppStart: (app)->
         core    = app.core
