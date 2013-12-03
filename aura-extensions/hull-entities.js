@@ -1,5 +1,5 @@
 /* global define:true */
-define(['underscore', 'lib/utils/entity'], function (_, entity) {
+define(['lib/utils/entity'], function (entity) {
   "use strict";
 
   parseQueryString = function(str) {
@@ -15,6 +15,7 @@ define(['underscore', 'lib/utils/entity'], function (_, entity) {
   var extension = {
     initialize: function (app) {
       app.core.util.entity = entity
+      var _ = app.core.util._;
       if (app.config.withEntity === true) {
         og = core.dom.find('meta[property="og:url"]');
         if (og && og.length && og.attr('content')) {

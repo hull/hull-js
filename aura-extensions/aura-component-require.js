@@ -1,10 +1,11 @@
 /*global define:true */
-define(['underscore'], function(_) {
+define(function() {
   "use strict";
   function nameToComponentPath (name, component) {
     return component.ref + '/' + name;
   }
   return function(app) {
+    var _ = app.core.util._;
     return {
       initialize: function(){
         app.components.before('initialize', this.componentRequire);

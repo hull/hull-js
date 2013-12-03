@@ -1,5 +1,5 @@
 /*global define:true */
-define(['underscore'], function(_) {
+define(function() {
 
   return {
     require: {
@@ -12,6 +12,7 @@ define(['underscore'], function(_) {
     },
     initialize: function(app) {
       "use strict";
+      var _ = app.core.util._;
       app.sandbox.utils = app.sandbox.utils || {}
     }
   }

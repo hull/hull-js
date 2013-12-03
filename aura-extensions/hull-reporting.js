@@ -1,7 +1,8 @@
-define(['underscore', 'lib/api/api'], function(_, api) {
+define(['lib/api/api'], function(api) {
 
   var module = {
     initialize: function(app){
+      var _ = app.core.util._;
       api.promise.then(function(apiObject) {
         var reporting = {
           track: function(eventName, params) {

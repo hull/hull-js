@@ -1,7 +1,8 @@
-define(['underscore'], function(_) {
+define(function() {
   return {
     name: 'Reporting',
     initialize: function(app) {
+      var _ = app.core.util._;
       var module;
       module = {
         track: function() {

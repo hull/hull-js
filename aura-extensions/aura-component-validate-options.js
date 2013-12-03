@@ -1,8 +1,10 @@
 /*global define:true*/
-define(['underscore'], function(_) {
+define(function() {
   "use strict";
 
   return function(app) {
+    var _ = app.core.util._;
+
     return {
       name: "ValidateOptions",
       initialize: function(app){

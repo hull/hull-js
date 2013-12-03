@@ -1,10 +1,10 @@
 /* global define:true */
-define(['underscore'], function (_) {
+define(function () {
   "use strict";
 
   var extension = {
     initialize: function (app) {
-
+      var _ = app.core.util._;
       imageUrl = function(id, size, fallback) {
         if (size == null) {
           size = "small";
