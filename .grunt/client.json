@@ -21,7 +21,7 @@
       "handlebars":     "lib/shims/node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars",
       "requireLib":     "bower_components/requirejs/require",
       "cookie":         "bower_components/cookies-js/src/cookies",
-      "q":              "bower_components/q/q",
+      "promises":       "bower_components/rsvp/rsvp.amd",
       "string":         "bower_components/underscore.string/lib/underscore.string",
       "text":           "bower_components/requirejs-text/text",
       "base64":         "bower_components/base64/base64"

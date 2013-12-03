@@ -10,7 +10,7 @@
       "eventemitter":   "bower_components/eventemitter2/lib/eventemitter2",
       "easyXDM":        "bower_components/xdm.js/xdm",
       "cookie":         "bower_components/cookies-js/src/cookies",
-      "q":              "bower_components/q/q",
+      "promises":       "bower_components/q/q",
       "base64":         "bower_components/base64/base64"
     },
     "shim": {

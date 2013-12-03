@@ -1,6 +1,6 @@
-define ['q'], (Q)->
+define ['promises'], (promises)->
   {
-    deferred: Q.defer
-    when: Q
-    all: Q.all
+    deferred: promises.defer
+    when: promises
+    all: promises.all
   }
