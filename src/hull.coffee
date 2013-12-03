@@ -40,7 +40,6 @@ define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
     initProcess = hull.app
         .use(myApp())
         .use('aura-extensions/aura-base64')
-        # .use('aura-extensions/aura-promises')
         .use('aura-extensions/aura-cookies')
         .use('aura-extensions/aura-backbone')
         .use('aura-extensions/aura-moment')
