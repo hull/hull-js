@@ -18,7 +18,7 @@
     "grunt-contrib-handlebars": "0.5.9",
     "grunt-contrib-requirejs": "0.4.0",
     "grunt-contrib-uglify": "0.1.1",
-    "grunt-contrib-watch": "0.2.0",
+    "grunt-contrib-watch": "0.5.3",
     "grunt-hull-dox": "git://github.com/hull/grunt-hull-dox.git",
     "grunt-hull-widgets": "~0.7.0",
     "grunt-mocha": "0.3.1",
