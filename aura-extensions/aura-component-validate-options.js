@@ -22,7 +22,7 @@ define(function() {
         dfd.resolve();
         return dfd.promise;
       }
-    }
+    };
   };
 
 });

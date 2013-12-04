@@ -1,8 +1,8 @@
 "use strict";
-define(['lib/client/component/context', 'jquery'], function (Context, $) {
+define(['lib/client/component/context', 'promises'], function (Context, promises) {
   var promises = {
-    deferred: $.Deferred,
-    when: $.when
+    deferred: promises.defer,
+    when: promises.when
   };
   describe('Component context builder', function () {
     it('should be a constructor', function () {
@@ -28,13 +28,13 @@ define(['lib/client/component/context', 'jquery'], function (Context, $) {
       it('should return a promise', function () {
         var c = new Context();
         var dfd = promises.deferred();
-        var ret = c.addDatasource('test', dfd.promise());
-        ret.should.contain.keys(['promise', 'done', 'fail']);
+        var ret = c.addDatasource('test', dfd.promise);
+        ret.should.be.instanceOf(promises.constructor);
       });
       it('should return a new promise', function () {
         var c = new Context();
         var dfd = promises.deferred();
-        var ret = c.addDatasource('test', dfd.promise());
+        var ret = c.addDatasource('test', dfd.promise);
         ret.should.not.eql(dfd);
       });
       describe('The returned promise', function () {
@@ -42,7 +42,7 @@ define(['lib/client/component/context', 'jquery'], function (Context, $) {
           it('should return null for its errors', function () {
             var c = new Context();
             var dfd = promises.deferred();
-            var ret = c.addDatasource('test', dfd.promise());
+            var ret = c.addDatasource('test', dfd.promise);
             ret.then(function (v) {
               expect(c.errors()).to.be.null;
             });
@@ -51,7 +51,7 @@ define(['lib/client/component/context', 'jquery'], function (Context, $) {
           it('should resolve to the same value as the datasource if it succeeds', function (done) {
             var c = new Context();
             var dfd = promises.deferred();
-            var ret = c.addDatasource('test', dfd.promise());
+            var ret = c.addDatasource('test', dfd.promise);
             var resolvedValue = {OK: "GREAT"};
             ret.then(function (v) {
               v.should.be.equal(resolvedValue);
@@ -62,7 +62,7 @@ define(['lib/client/component/context', 'jquery'], function (Context, $) {
           it('should add an entry to the context', function (done) {
             var c = new Context();
             var dfd = promises.deferred();
-            var ret = c.addDatasource('test', dfd.promise());
+            var ret = c.addDatasource('test', dfd.promise);
             var resolvedValue = {OK: "GREAT"};
             ret.then(function (v) {
               c.build().should.contain.keys(['test']);
@@ -76,7 +76,7 @@ define(['lib/client/component/context', 'jquery'], function (Context, $) {
           it('should add an entry to the errors', function (done) {
             var c = new Context();
             var dfd = promises.deferred();
-            var ret = c.addDatasource('test', dfd.promise());
+            var ret = c.addDatasource('test', dfd.promise);
             var err = new Error('FAIL!');
             ret.then(function (v) {
               c.errors().should.contain.keys(['test']);
@@ -88,7 +88,7 @@ define(['lib/client/component/context', 'jquery'], function (Context, $) {
           it('should add an entry to the context', function (done) {
             var c = new Context();
             var dfd = promises.deferred();
-            var ret = c.addDatasource('test', dfd.promise());
+            var ret = c.addDatasource('test', dfd.promise);
             ret.then(function (v) {
               c.build().should.contain.keys(['test']);
               expect(c.build().test).to.be.undefined;
@@ -99,7 +99,7 @@ define(['lib/client/component/context', 'jquery'], function (Context, $) {
           it('should resolve to undefined if no fallback is provided', function (done) {
             var c = new Context();
             var dfd = promises.deferred();
-            var ret = c.addDatasource('test', dfd.promise());
+            var ret = c.addDatasource('test', dfd.promise);
             ret.then(function (v) {
               expect(v).to.be.undefined;
               done();
@@ -110,7 +110,7 @@ define(['lib/client/component/context', 'jquery'], function (Context, $) {
             var c = new Context();
             var dfd = promises.deferred();
             var spy = sinon.spy();
-            var ret = c.addDatasource('test', dfd.promise(), spy);
+            var ret = c.addDatasource('test', dfd.promise, spy);
             ret.then(function (v) {
               spy.should.have.been.called;
               done();
@@ -124,9 +124,9 @@ define(['lib/client/component/context', 'jquery'], function (Context, $) {
             var spy = sinon.spy(function () {
               return fallback;
             });
-            var ret = c.addDatasource('test', dfd.promise(), spy);
+            var ret = c.addDatasource('test', dfd.promise, spy);
             ret.then(function (v) {
-              c.build().test.should.be.equal(fallback)
+              c.build().test.should.be.equal(fallback);
               done();
             });
             dfd.reject(new Error('FAIL!'));
