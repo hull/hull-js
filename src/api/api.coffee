@@ -1,4 +1,4 @@
-define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '../api/auth', 'xdm', '../utils/promises', '../utils/cookies'], (_, cookie, version, apiParams, authModule, xdm, promises, cookies)->
+define ['domready', 'underscore', '../utils/cookies', '../utils/version', '../api/params', '../api/auth', 'xdm', '../utils/promises', '../utils/cookies'], (domready, _, cookie, version, apiParams, authModule, xdm, promises, cookies)->
   slice = Array.prototype.slice
 
   # Builds the URL used by xdm
@@ -81,14 +81,17 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
         true
 
       url = buildRemoteUrl(config)
-      rpc = new xdm.Rpc({
-        remote: url,
-        container: document.body
 
-      }, {
-        remote: { message: {}, ready: {} }
-        local:  { message: onRemoteMessage, ready: onRemoteReady }
-      })
+      rpc = null
+      domready ->
+        rpc = new xdm.Rpc({
+          remote: url,
+          container: document.body
+
+        }, {
+          remote: { message: {}, ready: {} }
+          local:  { message: onRemoteMessage, ready: onRemoteReady }
+        })
 
       ###
       # Sends the message described by @params to xdm

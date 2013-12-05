@@ -17,7 +17,8 @@
     "q": "~0.9.7",
     "form2js": "*",
     "xdm.js": "~1.0.1",
-    "almond": "~0.2.7"
+    "almond": "~0.2.7",
+    "domready": ""
   },
   "devDependencies": {
     "JSCovReporter": "git://github.com/TwoApart/JSCovReporter.git"
