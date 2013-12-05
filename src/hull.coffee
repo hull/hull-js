@@ -7,35 +7,24 @@
 
 # _chk('jQuery', window.jQuery)
 
-Hull = {
-  on: ()->
-  track: ()->
-  init: (config, cb, errb)->
-}
-
-define ['aura/aura', './hull.api'], (Aura, HullAPI) ->
+define ['aura/aura', './hull.api'], (Aura, HullAP) ->
 
 
   hullApiMiddleware = (app)->
     name: 'Hull'
-
     initialize: (app)->
       app.core.mediator.setMaxListeners(100)
       app.core.data.hullApi = HullAPI.data.api
-
     afterAppStart: (app)->
       _ = app.core.util._
       sb = app.sandboxes.create();
-
       # _.extend(HullDef, sb);
       # After app init, call the queued events
       for evt, cbArray of evtPool
         _.each cbArray, (cb)-> app.core.mediator.on evt, cb
 
   hullInitMiddleware = (app)->
-
     initialize: (app) ->
-
     afterAppStart: (app) ->
       # window.Hull.parse = (el, options={})->
       #   app.core.appSandbox.start(el, options)
@@ -75,7 +64,7 @@ define ['aura/aura', './hull.api'], (Aura, HullAPI) ->
 
   initFailure: ()->
 
-  Hull = 
+  Hull =
     on: ()->
     track: ()->
     init: (config, cb, errcb) ->
@@ -92,6 +81,7 @@ define ['aura/aura', './hull.api'], (Aura, HullAPI) ->
       Hull
 
   Hull
+
 
 # Hull.define(i.toLowerCase(), (i) -> root[i]) if _chk(i, root[i]) && root.hasOwnProperty(i) for i in root
 

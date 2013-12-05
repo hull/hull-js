@@ -1,67 +1,75 @@
 queuedEvents = {}
 queuedTracks = {}
-userSuccessCb = null
-userFailureCb = null
-initialized = false
+initConfig = null
+userSuccessFn = ->
+userFailureFn = ->
+currentFlavour = null
+_extend = null
 
-# Pools the calls made to Hull.on
+preInit = (config, cb, errb)->
+  throw 'Hull.init has already been called' if initConfig
+
+  # Prepare config
+  config.namespace = 'hull'
+  config.debug = config.debug && { enable: true }
+  initConfig = config
+  userSuccessFn = cb if cb
+  userFailureFn = errb if errb
+
+  bootstrap() if currentFlavour
+
+# Pools the calls made to Hull.on before init
 preInitOn = (evt, fn)->
   queuedEvents[evt] ?= []
   queuedEvents[evt].push fn
 
-# Pools the calls made to Hull.track
+# Pools the calls made to Hull.track before init
 preInitTrack = (evtName, params)->
   queuedTracks[evt] ?= []
   queuedTracks[evt].push params
 
+_hull = window.Hull =
+  on:      preInitOn
+  track:   preInitTrack
+  init:    preInit
+
+
 # Wraps the success callback
 # * Reinjects events in the live app from the pool
 # * Replays the track events
-buildSuccessCb = (flavourSuccessFn)->
+buildSuccessCb = (flavourSuccessFn, userSuccessFn)->
   (args...)->
-    booted = flavourSuccessFn(args...)
+    extension = flavourSuccessFn(args...)
+    _hull = window.Hull = _extend(_hull, extension)
     # Prune callback queue
     for evt, cbArray of queuedEvents
       for cb of cbArray
-        booted.events.on evt, cb
+        _hull.events.on evt, cb
     queuedEvents = []
 
     # Prune init queue
-    userSuccessCb(booted)
-    userSuccessCb = undefined
+    userSuccessFn(_hull)
 
     booted.track(evt, params) for evt, param of queuedTracks
     queuedTracks = []
 
-    booted
+    _hull
 
 # Wraps the failure callback
 # * Executes the failure behaviour defined by the current flavour
-buildFailureCb = (flavourFailureCb)->
+buildFailureCb = (flavourFailureFn, userFailureFn)->
   (args...)->
-    flavourFailureCb(args)
-    flavourFailureCb = undefined
-    userFailureCb(args...)
+    flavourFailureFn(args...)
+    userFailureFn(args...)
 
-define ['./utils/version'], (version)->
+bootstrap = ()->
+  success = buildSuccessCb(currentFlavour.success, userSuccessFn)
+  failure = buildFailureCb(currentFlavour.failure, userFailureFn)
+  currentFlavour.condition(initConfig).then(success, failure)
 
-  (condition, flavourSuccess, flavourFailure)->
-    init = (config, cb, errb)->
-      throw 'Hull.init has already been called' if initialized
-      initialized = true
-      userSuccessCb = cb
-      userFailureCb = errb
-
-      # Prepare config
-      config.namespace = 'hull'
-      config.debug = config.debug && { enable: true }
-
-      condition(config).then(buildSuccessCb(flavourSuccess), buildFailureCb(flavourFailure))
-
-    {
-      on:      preInitOn
-      track:   preInitTrack
-      version: version
-      init:    init
-    }
+require ['flavour', 'underscore', 'lib/utils/version'], (flavour, _, version)->
+  _hull.version = version
+  _extend = _.extend
+  currentFlavour = flavour
+  bootstrap(initConfig) if initConfig
 

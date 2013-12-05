@@ -1,6 +1,6 @@
 {
   "namespace": "Hull",
-  "coffeeFiles": ["src/hull.api.coffee", "src/bootstrap.coffee", "src/api/**/*.coffee",  "src/utils/**/*.coffee"],
+  "coffeeFiles": ["src/bootstrap.coffee", "src/hull.api.coffee", "src/api/**/*.coffee",  "src/utils/**/*.coffee"],
   "requireJS": {
     "baseUrl": ".",
     "preserveLicenseComments": true,
@@ -12,7 +12,8 @@
       "cookie":         "bower_components/cookies-js/src/cookies",
       "promises":       "bower_components/q/q",
       "base64":         "bower_components/base64/base64",
-      "domready":       "bower_components/domready/ready"
+      "domready":       "bower_components/domready/ready",
+      "flavour":        "lib/hull.api"
     },
     "shim": {
       "underscore": { "exports": "_" }
@@ -23,12 +24,12 @@
       "cookie",
       "base64",
       "domready",
-      "lib/hull.api"
+      "lib/bootstrap"
       ],
     "out": "dist/<%= PKG_VERSION %>/hull.api.js",
     "wrap": {
       "start": "(function(){       var require, requirejs, define, root={}; (function () {",
-      "end": "; window.Hull = require('lib/hull.api'); }).call(root);})();"
+      "end": ";}).call(root);})();"
     }
   }
 }

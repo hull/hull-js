@@ -1,18 +1,11 @@
 define [
-  'underscore'
-  './utils/emitter'
-  './api/api'
-  './api/auth'
-  './api/reporting'
-  './utils/entity'
-  './utils/promises'
-  './utils/version'
-  './bootstrap'
-  ], (_, emitter, api, auth, reporting,  entity, promises, version, bootstrap) ->
-    booting = undefined
+  'lib/utils/emitter'
+  'lib/api/api'
+  'lib/api/reporting'
+  ], (emitter, api, reporting) ->
     success = (api)->
       reporting = reporting.init(api)
-      booted = _.extend booting, {
+      booted = 
         events: emitter
         track: reporting.track
         flag: reporting.flag
@@ -23,7 +16,6 @@ define [
           logout: api.auth.logout
         login: api.auth.login
         logout: api.auth.logout
-      }
 
       # Execute Hull.init callback
       booted.events.emit('hull.init')
@@ -31,8 +23,8 @@ define [
 
     failure = (error)->
 
-    condition = (config)->
-      api.init(config)
+    condition = (config)-> api.init(config)
 
-    booting = bootstrap(condition, success, failure)
-    booting
+    condition: condition
+    success: success
+    failure: failure
