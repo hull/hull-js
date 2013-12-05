@@ -1,26 +1,23 @@
-define ['underscore', './api'], (_, api) ->
+define ['underscore'], (_) ->
 
-  module =
-    initialize: (app)->
-      api.promise.then (apiObject) ->
-        reporting = 
+  init: (apiObject)->
+    track: (eventName, params) ->
+      data = _.extend
+        url: window.location.href
+        referrer: document.referrer
+      ,params
 
-          track: (eventName, params) ->
-            data = _.extend
-              url: window.location.href
-              referrer: document.referrer
-            ,params
+      apiObject.api
+        provider: "track"
+        path: eventName
+      , 'post', data
 
-            apiObject.api
-              provider: "track"
-              path: eventName
-            , 'post', data
+    flag: (id) ->
+      apiObject.api
+        provider: "hull"
+        path: [id, 'flag'].join('/')
+      ,'post'
 
-          flag: (id) ->
-            apiObject.api
-              provider: "hull"
-              path: [id, 'flag'].join('/')
-            ,'post'
-        app.core.reporting = reporting;
+      #TODO, make an extension from this
+      # app.core.reporting = reporting;
 
-      true

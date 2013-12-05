@@ -2,7 +2,7 @@
   "namespace": "Hull",
   "coffeeFiles": [
     "src/hull.coffee",
-    "src/hullbase.coffee",
+    "src/bootstrap.coffee",
     "src/hull.api.coffee",
     "src/utils/**/*.coffee",
     "src/client/**/*.coffee",

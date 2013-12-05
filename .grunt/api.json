@@ -1,6 +1,6 @@
 {
   "namespace": "Hull",
-  "coffeeFiles": ["src/hull.api.coffee", "src/api/**/*.coffee",  "src/utils/**/*.coffee"],
+  "coffeeFiles": ["src/hull.api.coffee", "src/bootstrap.coffee", "src/api/**/*.coffee",  "src/utils/**/*.coffee"],
   "requireJS": {
     "baseUrl": ".",
     "preserveLicenseComments": true,

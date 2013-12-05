@@ -1,4 +1,4 @@
-define ['underscore', 'lib/hullbase', 'handlebars'], (_, Hull, Handlebars) ->
+define ['underscore', 'handlebars'], (_, Handlebars) ->
 
   strategies =
     app: ['hullGlobal', 'meteor', 'sprockets', 'hullDefault']
