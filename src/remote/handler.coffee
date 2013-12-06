@@ -29,8 +29,8 @@ define ['jquery', 'underscore'], ($, _)->
       @options = options
 
       @options.min ?= 1
-      @options.max ?= 50
-      @options.delay ?= 50
+      @options.max ?= 15
+      @options.delay ?= 2
 
       @headers = @options.headers || {}
 
