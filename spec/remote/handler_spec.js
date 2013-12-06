@@ -103,7 +103,7 @@ define(['lib/remote/handler', 'jquery'], function(Handler, $) {
 
         describe('when the number of requests is to damn high', function() {
           it('sends multiple batches', function() {
-            for (var i = 0; i < 60; i++) {
+            for (var i = 0; i < 20; i++) {
               handler.handle({ type: 'get', url: '/api/v1/me' });
             }
 
@@ -114,8 +114,8 @@ define(['lib/remote/handler', 'jquery'], function(Handler, $) {
             var b1 = JSON.parse(requests[0].requestBody).ops;
             var b2 = JSON.parse(requests[1].requestBody).ops;
 
-            b1.should.have.length(50);
-            b2.should.have.length(10);
+            b1.should.have.length(15);
+            b2.should.have.length(5);
           });
         });
 
