@@ -251,9 +251,9 @@ define () ->
         core.mediator.on    'hull.logout',      clearModelsCache
 
         core.mediator.on    'hull.login',       ->
-          app.sandbox.track 'hull.auth.login',  core.data.api.model('me').toJSON()
+          core.data.hullApi.track 'hull.auth.login',  core.data.api.model('me').toJSON()
 
         core.mediator.on    'hull.logout',      ->
-          app.sandbox.track 'hull.auth.logout', core.data.api.model('me').toJSON()
+          core.data.hullApi.track 'hull.auth.logout', core.data.api.model('me').toJSON()
 
     module

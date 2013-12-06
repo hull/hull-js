@@ -45,11 +45,13 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
 
     # Callback executed on successful authentication
     onCompleteAuthentication = (isSuccess)->
+      _auth = authenticating
       if isSuccess
-        authenticating.resolve()
+        authenticating.resolve {}
       else
         authenticating.reject('Login canceled')
       authenticating = false
+      _auth
 
     # Generates the complete URL to be reached to validate login
     generateAuthUrl = (config, provider, opts)->
