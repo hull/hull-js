@@ -4,14 +4,14 @@ define ['jquery', 'underscore'], ($, _)->
     timeout = null
 
     ->
+      context = this
+      args.push(Array::slice.call(arguments))
+
       delayed = ->
         fn.call(context, args)
 
         timeout = null
         args = []
-
-      context = this
-      args.push(Array::slice.call(arguments))
 
       clearTimeout(timeout)
       timeout = setTimeout(delayed, threshold)
