@@ -54,7 +54,7 @@ module.exports = function (grunt) {
   })();
   var clientRJSConfig = (function () {
     var _c = clientConfig.requireJS;
-    _c.include = _c.include.concat(auraExtensions).concat(vendorLibs).concat(clientLibs);
+    _c.include = _c.include.concat(auraExtensions).concat(clientLibs);
     _c.optimize = grunt.option('dev') ? "none" : "uglify";
     return _c;
   })();

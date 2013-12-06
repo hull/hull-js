@@ -28,7 +28,7 @@
       ],
     "out": "dist/<%= PKG_VERSION %>/hull.api.js",
     "wrap": {
-      "start": "(function(){       var require, requirejs, define, root={}; (function () {",
+      "start": "(function(){var require, requirejs, define, root={}, HULL_ENV='api'; (function () {",
       "end": ";}).call(root);})();"
     }
   }

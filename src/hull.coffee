@@ -7,21 +7,19 @@
 
 # _chk('jQuery', window.jQuery)
 
-define ['aura/aura', './hull.api'], (Aura, HullAP) ->
+define ['promises', 'aura/aura', 'lib/hull.api'], (promises, Aura, HullAPI) ->
 
 
-  hullApiMiddleware = (app)->
+  hullApiMiddleware = (api)->
     name: 'Hull'
     initialize: (app)->
       app.core.mediator.setMaxListeners(100)
-      app.core.data.hullApi = HullAPI.data.api
+      app.core.data.hullApi = api
     afterAppStart: (app)->
       _ = app.core.util._
       sb = app.sandboxes.create();
       # _.extend(HullDef, sb);
       # After app init, call the queued events
-      for evt, cbArray of evtPool
-        _.each cbArray, (cb)-> app.core.mediator.on evt, cb
 
   hullInitMiddleware = (app)->
     initialize: (app) ->
@@ -29,58 +27,115 @@ define ['aura/aura', './hull.api'], (Aura, HullAP) ->
       # window.Hull.parse = (el, options={})->
       #   app.core.appSandbox.start(el, options)
 
-  initSuccess=(hullApi)->
-    initProcess = hull.app
-        .use(hullApiMiddleware())
-        .use('aura-extensions/aura-base64')
-        .use('aura-extensions/aura-cookies')
-        .use('aura-extensions/aura-backbone')
-        .use('aura-extensions/aura-moment')
-        .use('aura-extensions/aura-twitter-text')
-        .use('aura-extensions/aura-handlebars') #TODO Can probably be removed. See the file for details.
-        .use('aura-extensions/hull-reporting')
-        .use('aura-extensions/hull-entities')
-        .use('aura-extensions/hull-utils')
-        .use('aura-extensions/aura-component-validate-options')
-        .use('aura-extensions/aura-component-require')
-        .use('aura-extensions/hull-component-normalize-id')
-        .use('aura-extensions/hull-component-reporting')
-        # .use('lib/client/component/api')
-        # .use('lib/client/component/component')
-        # .use('lib/client/component/hull-handlebars-helpers')
-        # .use('lib/client/component/templates')
-        .use(hullInitMiddleware())
-        .start({ components: 'body' })
-
-    initProcess.fail (err)->
-      errcb(err) if errcb
-      hull.app.stop()
-      delete hull.app
-      throw err if !errcb
-
-    initProcess.done ()->
-      hull.app.sandbox.emit('hull.init')
-      cb(window.Hull) if cb
 
   initFailure: ()->
 
-  Hull =
-    on: ()->
-    track: ()->
-    init: (config, cb, errcb) ->
-      return Hull if Hull && Hull.app
-      config.namespace = 'hull'
-      config.debug = config.debug && { enable: true }
+  # Hull =
+  #   init: (config, cb, errcb) ->
+  #     return Hull if Hull && Hull.app
+  #     config.namespace = 'hull'
+  #     config.debug = config.debug && { enable: true }
 
-      Hull =
-        config: config
-        app: new Aura(config)
+  #     Hull =
+  #       config: config
+  #       app: new Aura(config)
 
-      HullAPI.init(config, initSuccess, initFailure)
+  #     HullAPI.init(config, initSuccess, initFailure)
 
-      Hull
+  #     Hull
 
-  Hull
+  # Hull
+
+
+
+
+
+
+
+
+
+
+
+
+  _component = (componentName, componentDef)->
+    unless componentDef
+      componentDef = componentName
+      componentName = null
+    #Validates the name
+    if componentName and not Object.prototype.toString.apply(componentName) == '[object String]'
+      throw 'The component identifier must be a String'
+
+    #Fetch the definition
+    componentDef = componentDef() if Object.prototype.toString.apply(componentDef) == '[object Function]'
+    throw "A component must have a definition" unless Object.prototype.toString.apply(componentDef) == '[object Object]'
+
+    componentDef.type ?= "Hull"
+
+    _normalizeComponentName = (name)->
+      [name, source] = name.split('@')
+      source ?= 'default'
+      "__component__$#{name}@#{source}"
+
+    Hull.define = define
+    detectModuleName = (module)->
+      if componentName
+        throw "Mismatch in the names of the module" if _normalizeComponentName(componentName) != module.id
+      Hull.define(module.id, componentDef)
+      componentDef
+
+    if componentName
+      Hull.define _normalizeComponentName(componentName), componentDef
+    else
+      Hull.define ['module'], detectModuleName
+    return componentDef
+
+
+
+
+
+  setupApp = (app, api)->
+    deferred = promises.defer()
+    initProcess = app
+      .use(hullApiMiddleware(api))
+      .use('aura-extensions/aura-base64')
+      .use('aura-extensions/aura-cookies')
+      .use('aura-extensions/aura-backbone')
+      .use('aura-extensions/aura-moment')
+      .use('aura-extensions/aura-twitter-text')
+      .use('aura-extensions/aura-handlebars') #TODO Can probably be removed. See the file for details.
+      .use('aura-extensions/hull-reporting')
+      .use('aura-extensions/hull-entities')
+      .use('aura-extensions/hull-utils')
+      .use('aura-extensions/aura-component-validate-options')
+      .use('aura-extensions/aura-component-require')
+      .use('aura-extensions/hull-component-normalize-id')
+      .use('aura-extensions/hull-component-reporting')
+      .use('lib/client/component/api')
+      .use('lib/client/component/component')
+      .use('lib/client/component/hull-handlebars-helpers')
+      .use('lib/client/component/templates')
+      .use(hullInitMiddleware())
+      .start({ components: 'body' })
+
+    initProcess.fail (err)->
+      app.stop()
+      deferred.reject err
+
+    initProcess.done ()->
+      deferred.resolve app
+    deferred.promise
+
+  condition: (config)->
+    app = new Aura(config)
+    appPromise = HullAPI.condition(config).then (hullApi)->
+      return setupApp(app, hullApi)
+    appPromise
+  success: (auraApp)->
+    booted = HullAPI.success(auraApp.core.data.hullApi)
+    booted.component = _component
+    booted
+  failure: (error)->
+    debugger
 
 
 # Hull.define(i.toLowerCase(), (i) -> root[i]) if _chk(i, root[i]) && root.hasOwnProperty(i) for i in root

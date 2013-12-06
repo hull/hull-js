@@ -1,4 +1,4 @@
-define ['underscore', 'lib/client/component/datasource', 'lib/client/component/context', 'lib/utils/promises'], (_, Datasource, Context, promises)->
+define ['underscore', 'lib/client/component/datasource', 'lib/client/component/context'], (_, Datasource, Context)->
 
   (app)->
     debug = false
@@ -137,9 +137,9 @@ define ['underscore', 'lib/client/component/datasource', 'lib/client/component/c
           templateDeferred  = @sandbox.template.load(@templates, @ref, @el)
           templateDeferred.done (tpls)=> @_templates     = tpls
 
-          readyDfd = promises.all([componentDeferred, templateDeferred])
+          readyDfd = @sandbox.data.when([componentDeferred, templateDeferred])
 
-          readyDfd.spread ()=>
+          readyDfd.then ()=>
             dfd.resolve ctx
           ,(err)=>
             console.error("Error in Building Render Context", err.message, err)
@@ -150,7 +150,7 @@ define ['underscore', 'lib/client/component/datasource', 'lib/client/component/c
         catch e
           console.error("Caught error in buildContext", e.message, e)
           dfd.reject(e)
-        dfd.promise
+        @sandbox.data.promise dfd
 
       loggedIn: =>
         return false unless @sandbox.data.api.model('me').id?
@@ -184,7 +184,7 @@ define ['underscore', 'lib/client/component/datasource', 'lib/client/component/c
         ctxPromise.then (ctx)=>
           try
             beforeCtx = @beforeRender.call(@, ctx.build(), ctx.errors())
-            beforeRendering = promises.when(beforeCtx)
+            beforeRendering = @sandbox.data.when(beforeCtx)
             beforeRendering.done (dataAfterBefore)=>
               #FIXME SRSLY need some clarification
               data = _.extend(dataAfterBefore || ctx.build(), data)
@@ -203,7 +203,7 @@ define ['underscore', 'lib/client/component/datasource', 'lib/client/component/c
       emitLifecycleEvent: (name)->
         @sandbox.emit("hull.#{@componentName.replace('/','.')}.#{name}",{cid:@cid})
 
-    module = 
+    module =
       afterAppStart: ()->
         default_datasources =
           me:  new Datasource app.core.data.api.model('me')

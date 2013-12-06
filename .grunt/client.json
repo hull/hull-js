@@ -1,8 +1,8 @@
 {
   "namespace": "Hull",
   "coffeeFiles": [
-    "src/hull.coffee",
     "src/bootstrap.coffee",
+    "src/hull.coffee",
     "src/hull.api.coffee",
     "src/utils/**/*.coffee",
     "src/client/**/*.coffee",
@@ -25,7 +25,8 @@
       "text":           "bower_components/requirejs-text/text",
       "base64":         "bower_components/base64/base64",
       "aura":           "bower_components/aura/lib",
-      "domready":       "bower_components/domready/ready"
+      "domready":       "bower_components/domready/ready",
+      "flavour":        "lib/hull"
     },
     "shim": {
       "backbone":   { "exports": "Backbone", "deps": ["underscore", "jquery"] },
@@ -44,13 +45,12 @@
       "aura/ext/debug",
       "aura/ext/mediator",
       "aura/ext/components",
-      "lib/hull.api",
-      "lib/hull"
+      "lib/bootstrap"
       ],
     "out": "dist/<%= PKG_VERSION %>/hull.js",
     "wrap": {
-      "start": "(function(){       var require, requirejs, define, root={}; (function () {",
-      "end": "; window.Hull = require('lib/hull'); }).call(root);})();"
+      "start": "(function(){var require, requirejs, define, root={jQuery: window.jQuery}, HULL_ENV = 'client'; (function () {",
+      "end": ";}).call(root);})();"
     }
   }
 }

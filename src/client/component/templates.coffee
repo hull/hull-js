@@ -91,9 +91,9 @@ define ['underscore', 'handlebars'], (_, Handlebars) ->
     deferred: undefined
     initialize: (app) ->
       module.domFind = app.core.dom.find
-      module.deferred = app.core.promises.deferred
+      module.deferred = app.core.data.deferred
       app.core.template.load = (names=[], ref, el, format="hbs") ->
-        dfd = app.core.promises.deferred()
+        dfd = app.core.data.deferred()
         names = [names] if _.isString(names)
         componentProps =
           componentName: ref.replace('__component__$', '').split('@')[0]
@@ -106,5 +106,5 @@ define ['underscore', 'handlebars'], (_, Handlebars) ->
           dfd.resolve _.object(names, [].slice.apply(arguments))
         , (err)->
           dfd.reject err
-        dfd.promise
+        app.core.data.promise dfd
   module

@@ -32,16 +32,16 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       authUrl = module.authUrl(config, providerName, opts)
       module.authHelper(authUrl)
 
-      authenticating #TODO It would be better to return the promise
+      authenticating.promise
 
     # Starts the logout process
     # @returns {Promise}
     # @TODO Misses a `dfd.fail`
     logout = (callback=->)->
-      dfd = apiFn('logout')
-      dfd.done ->
+      promise = apiFn('logout')
+      promise.done ->
         callback() if _.isFunction(callback)
-      dfd.promise
+      promise
 
     # Callback executed on successful authentication
     onCompleteAuthentication = (isSuccess)->

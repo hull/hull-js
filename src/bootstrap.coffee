@@ -12,13 +12,10 @@ createLock = (locks, openDoorFn)->
 
 # Helpers to manage the calls to functions defined from the start
 # event if they are not available
-_pool = {}
+_pool = _pool || {}
 createPool = (name)->
-  _pool[name]  = {} unless _pool[name]
-  _p = _pool[name]
-  (evt, params)->
-    _p[evt] ?= []
-    _p[evt].push params
+  _pool[name] ?= []
+  (args...)-> _pool[name].push args
 deletePool = (name)->
   delete _pool[name]
 
@@ -42,10 +39,11 @@ preInit = (config, cb, errb)->
 
 
 _hull = window.Hull =
-  on:      createPool('events')
-  track:   createPool('tracks')
-  init:    preInit
+  on:         createPool 'events'
+  track:      createPool 'tracks' 
+  init:       preInit
 
+_hull.component =  createPool 'component' if HULL_ENV=="client"
 
 # Wraps the success callback
 # * Extends the global object
@@ -55,16 +53,17 @@ successCb = (args...)->
   extension = currentFlavour.success(args...)
   _hull = window.Hull = _extend(_hull, extension)
   # Prune callback queue
-  for evt, cbArray of _pool['events']
-    for cb of cbArray
-      _hull.events.on evt, cb
+  _hull.events.on(data...) for data in _pool['events']
   deletePool('events')
 
   # Prune init queue
   _setup.userSuccessFn(_hull)
 
-  booted.track(evt, params) for evt, param of _pool['tracks']
+  booted.track(data...) for data in _pool['tracks']
   deletePool('tracks')
+
+  booted.component(data...) for data in _pool['component'] if _pool['components'] if HULL_ENV=="client"
+  deletePool('component')
 
   _hull
 
