@@ -13,13 +13,13 @@ define(['lib/remote/handler', 'jquery'], function(Handler, $) {
 
         xhr.onCreate = function(xhr) {
           requests.push(xhr);
-        }
+        };
       });
 
       afterEach(function() {
         clock.restore();
 
-        xhr.restore()
+        xhr.restore();
         requests = [];
       });
 
@@ -116,6 +116,34 @@ define(['lib/remote/handler', 'jquery'], function(Handler, $) {
 
             b1.should.have.length(50);
             b2.should.have.length(10);
+          });
+        });
+
+        describe('when batch request fails', function() {
+          it('rejects all promises', function(done) {
+            var p1 = handler.handle({ type: 'get', url: '/api/v1/me' });
+            var p2 = handler.handle({ type: 'put', url: '/api/v1/me', params: { name: 'hullio' } });
+            var p3 = handler.handle({ type: 'get', url: '/api/v1/asldasldjas' });
+
+            clock.tick(100);
+
+            requests[0].respond(400, { 'Content-Type': 'application/json' }, JSON.stringify({
+              status: 400,
+              message: 'nope'
+            }));
+
+            var f = function(m) {
+              m.response.status.should.equal(400);
+              m.response.message.should.equal('nope');
+            };
+
+            p1.fail(f);
+            p2.fail(f);
+            p3.fail(f);
+
+            $.when(p1, p2, p3).always(function() {
+              done();
+            });
           });
         });
       });

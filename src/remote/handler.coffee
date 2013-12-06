@@ -85,8 +85,8 @@ define ['jquery', 'underscore'], ($, _)->
           else
             deferred.resolve(h)
       , (xhr) ->
-        for response, i in responses
-          requests[i][1].reject(response: xhr.responseJSON, headers: {})
+        for request in requests
+          request[1].reject(response: xhr.responseJSON, headers: {})
 
     ajax: (options) ->
       options = $.extend true, options,
