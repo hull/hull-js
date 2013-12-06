@@ -1,10 +1,18 @@
-_pool = {}
 _setup = null
 _extend = null
 currentFlavour = null
 
+
+createLock = (locks, openDoorFn)->
+  _locks = [].concat locks
+  (lock)->
+    index = _locks.indexOf lock
+    openDoorFn() if !!~index and _locks.splice(index, 1).length and !_locks.length
+
+
 # Helpers to manage the calls to functions defined from the start
 # event if they are not available
+_pool = {}
 createPool = (name)->
   _pool[name]  = {} unless _pool[name]
   _p = _pool[name]
@@ -14,6 +22,10 @@ createPool = (name)->
 deletePool = (name)->
   delete _pool[name]
 
+
+# * Checks that it has not been called before
+# * Augments coniguration
+# * Unlocks the achievement :p
 preInit = (config, cb, errb)->
   throw 'Hull.init has already been called' if _setup
 
@@ -26,7 +38,8 @@ preInit = (config, cb, errb)->
     userSuccessFn: cb or ->
     userFailureFn: errb or ->
 
-  bootstrap()
+  bootstrapUnlock 'init'
+
 
 _hull = window.Hull =
   on:      createPool('events')
@@ -55,19 +68,19 @@ successCb = (args...)->
 
   _hull
 
+
 # Wraps the failure callback
 # * Executes the failure behaviour defined by the current flavour
 failureCb = (args...)->
   currentFlavour.failure(args...)
   _setup.userFailureFn(args...)
 
-bootstrap = ()->
-  return unless _setup and currentFlavour
+bootstrapUnlock = createLock ['init', 'require'], ->
   currentFlavour.condition(_setup.config).then(successCb, failureCb)
 
 require ['flavour', 'underscore', 'lib/utils/version'], (flavour, _, version)->
   _hull.version = version
   _extend = _.extend
   currentFlavour = flavour
-  bootstrap()
+  bootstrapUnlock 'require'
 
