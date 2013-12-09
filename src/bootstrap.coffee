@@ -30,7 +30,7 @@ preInit = (config, cb, errb)->
   config.namespace = 'hull'
   config.debug = config.debug && { enable: true }
 
-  _setup = 
+  _setup =
     config: config
     userSuccessFn: cb or ->
     userFailureFn: errb or ->
@@ -40,7 +40,7 @@ preInit = (config, cb, errb)->
 
 _hull = window.Hull =
   on:         createPool 'events'
-  track:      createPool 'tracks' 
+  track:      createPool 'tracks'
   init:       preInit
 
 _hull.component =  createPool 'component' if HULL_ENV=="client"

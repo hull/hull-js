@@ -30,7 +30,8 @@ define(['chai', 'sinonChai'], function(chai, sinonChai) {
     'spec/client/component/context_spec',
     'spec/lib/extensions/auth_spec',
     'spec/client/api/params_spec',
-    'spec/client/api/reporting_spec'
+    'spec/client/api/reporting_spec',
+    'spec/remote/handler_spec'
   ];
   require(specs, runMocha);
 

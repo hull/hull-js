@@ -54,7 +54,7 @@ define ['underscore'], (_)->
 
     method ?= 'get'
     callback ?= ->
-    errback  ?= (err, data)-> console.error('The request has failed: ', err, data)
+    errback  ?= (data)-> console.error('The request has failed: ', data)
 
     [{ provider: provider, path: path, method: method, params: params }, callback, errback]
 
