@@ -24,14 +24,15 @@ Hull.component({
     }
   },
 
-  onCreditsError: function () {
-    return false;
-  },
-
   beforeRender: function(data) {
     data.votesSum = data.target.stats.votes.sum || 0;
 
     if (data.credits === false) { return; }
+
+    if (data.credits.votes == null) {
+      data.canVote = true;
+      return;
+    }
 
     if(data.credits.votes.remaining === 0) {
       data.noRemainingPeriod = true;
