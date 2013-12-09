@@ -51,10 +51,10 @@ define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars'], (mo
     ###*
      * Auto-links URLs in text.
      * Uses [twitter-text.js](https://github.com/twitter/twitter-text-js) behind the scenes.
-     * 
+     *
      *     snippet="You have to try http://hull.io/try"
      *
-     * 
+     *
      *     <p class='content'>{{autoLink snippet}}</p>
      *     => <p class='content'>You have to try <a href="http://hull.io/try">http://hull.io/try</a></p>
      *
@@ -395,7 +395,7 @@ define ['moment', 'underscore', 'aura-extensions/hull-utils', 'handlebars'], (mo
         fallback = map.fallback
         return '' unless fallback?
 
-        type = (entry.object?.uid if type is 'entity') || fallback.object[type] || entry.object.description
+        type = (entry.object?.uid if type is 'entity') || fallback.object[type] || entry.object.name || entry.object.description
 
         (fallback.verb[verb]||verb) + ' ' + type
 

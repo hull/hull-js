@@ -27,7 +27,7 @@ Hull.component({
     _.each(data.quizzes, function(q) {
       _.each([
         ['best_score', 'Score'],
-        ['timing', 'Timing'],
+        ['data.timing', 'Timing'],
         ['stats.attempts', 'Attempts']
       ], function(k) {
         key = ['apps', data.app.id, 'badges', q.id, k[0]].join('.');
