@@ -1,11 +1,12 @@
 define [
   'lib/utils/emitter'
   'lib/api/api'
-  'lib/api/reporting'
-  ], (emitter, api, reporting) ->
+  'lib/api/reporting',
+  'lib/utils/entity'
+  ], (emitter, api, reporting, entity) ->
     success = (api)->
       reporting = reporting.init(api)
-      booted = 
+      booted =
         events: emitter
         track: reporting.track
         flag: reporting.flag
@@ -16,6 +17,8 @@ define [
           logout: api.auth.logout
         login: api.auth.login
         logout: api.auth.logout
+        util:
+          entity: entity
 
       # Execute Hull.init callback
       booted.events.emit('hull.init')
