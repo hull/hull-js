@@ -1,3 +1,18 @@
+# This file is responsible for defining window.Hull
+# and providing pooled methods to the user while
+# Hull is actually loading.
+#
+# It provides some global code that is to be executed immediately
+# and an AMD module,
+# The AMD module loads a particvular flavour of Hull, defined as a set of 3 methods:
+# * condition: Returns a promise or a value that indicates the success or failure of the loading process
+# * success: will to be executed if the app is loaded correctly
+# * failure: will be executed if the app fails to load
+#
+# The global code only defines some methods into window.Hull and pools the parameters
+# to replay them if the app has loaded correctly
+#
+
 _setup = null
 _extend = null
 currentFlavour = null
