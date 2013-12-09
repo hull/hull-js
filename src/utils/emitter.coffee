@@ -1,13 +1,13 @@
 ee = null
-methods = ['on', 'onAny', 'offAny', 'once', 'many', 'off', 'removeAllListeners', 'listeners', 'listenersAny', 'emit']
+methods = ['on', 'onAny', 'offAny', 'once', 'many', 'off', 'removeAllListeners', 'listeners', 'listenersAny', 'emit', 'setMaxListeners']
 
 define ['eventemitter'], (EventEmitter2)->
   return ee if ee?
-  ee = new EventEmitter2
+  _ee = new EventEmitter2
     wildcard: true
     delimiter: '.'
     newListener: false
     maxListeners: 100
-  emitter = {}
-  emitter[method] = ee[method] for method in methods
-  emitter
+  ee = {}
+  ee[method] = _ee[method] for method in methods
+  ee
