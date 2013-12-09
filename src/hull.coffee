@@ -7,7 +7,7 @@
 
 # _chk('jQuery', window.jQuery)
 
-define ['promises', 'aura/aura', 'lib/hull.api'], (promises, Aura, HullAPI) ->
+define ['underscore', 'promises', 'aura/aura', 'lib/hull.api', 'lib/utils/emitter'], (_, promises, Aura, HullAPI, emitterInstance) ->
 
 
   hullApiMiddleware = (api)->
@@ -126,7 +126,7 @@ define ['promises', 'aura/aura', 'lib/hull.api'], (promises, Aura, HullAPI) ->
     deferred.promise
 
   condition: (config)->
-    app = new Aura(config)
+    app = new Aura(_.extend config, mediatorInstance: emitterInstance )
     appPromise = HullAPI.condition(config).then (hullApi)->
       return setupApp(app, hullApi)
     appPromise
