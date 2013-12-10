@@ -106,6 +106,7 @@ define ['underscore', 'promises', 'aura/aura', 'lib/hull.api', 'lib/utils/emitte
       .use('aura-extensions/hull-reporting')
       .use('aura-extensions/hull-entities')
       .use('aura-extensions/hull-utils')
+      .use('aura-extensions/aura-form-serialize')
       .use('aura-extensions/aura-component-validate-options')
       .use('aura-extensions/aura-component-require')
       .use('aura-extensions/hull-component-normalize-id')
