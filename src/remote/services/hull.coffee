@@ -72,11 +72,18 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
     trackHandler = (req, callback, errback)->
       eventName = req.path
       doTrack(eventName, req.params)
-      req.path = "t"
       req.params.event ?= eventName
       req.params = { t: btoa(JSON.stringify(req.params)) }
-      req.method ?= 'post'
-      handler(req, callback, errback)
+      promise = handler.handle
+        url: normalizePath 't'
+        type: req.method || 'post'
+        data: req.params
+      promise.then (h)->
+        h.provider = 't'
+        callback(h)
+      , (err)->
+        errback(err.response)
+      return
 
     require:
       paths:
