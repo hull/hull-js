@@ -5,24 +5,22 @@ define(function() {
   return function(app) {
     var _ = app.core.util._;
 
-    return {
+    var module = {
       name: "ValidateOptions",
       initialize: function(app){
-        "use strict";
-        app.components.before('initialize', this.checkOptions);
+        app.components.before('initialize', module.checkOptions);
       },
       checkOptions: function(options) {
-        var dfd = app.core.data.deferred();
         var optionKeys = _.keys(options);
         _.each(this.requiredOptions || [], function (name) {
           if (!_.contains(optionKeys, name) || options[name] === undefined) {
-            dfd.reject('Missing option to component ' + this.componentName + ': ' + name);
+            throw new Error ('Missing option to component ' + this.componentName + ': ' + name);
           }
         }, this);
-        dfd.resolve();
-        return dfd.promise;
+        return true;
       }
     };
+    return module;
   };
 
 });
