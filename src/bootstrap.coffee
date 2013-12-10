@@ -39,7 +39,7 @@ deletePool = (name)->
 # * Augments coniguration
 # * Unlocks the achievement :p
 preInit = (config, cb, errb)->
-  throw 'Hull.init has already been called' if _setup
+  throw new Error 'Hull.init has already been called' if _setup
 
   # Prepare config
   config.namespace = 'hull'
