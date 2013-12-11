@@ -1,15 +1,14 @@
 define(['squire', 'lib/utils/promises'], function (Squire, promises) {
   var _buildApiMock = function (that, done) {
     that.squire = new Squire();
-    that.rpcSpy = sinon.spy();
+    that.rpcSpy = sinon.spy(function () { return promises.deferred().promise; });
     that.domreadySpy = sinon.spy();
     that.squire.mock({
       domready: function () { return that.domreadySpy; },
-      xdm: { Rpc: that.rpcSpy },
+      'lib/api/xdm': function () { return that.rpcSpy; },
       'lib/utils/cookies': function () {}
     })
     .store('domready')
-    .store('xdm')
     .require(['lib/api/api', 'mocks'], function (api, mocks) {
       that.api = api;
       that.mocks = mocks;
