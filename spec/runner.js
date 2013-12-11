@@ -17,14 +17,19 @@ define(['chai', 'sinonChai'], function(chai, sinonChai) {
 
   // Don't track
   window.notrack = true;
+  window.HULL_ENV = '';
 
   var specs = [
+    // 'spec/lib/bootstrap_spec',
+    'spec/lib/utils/base64_spec',
+    'spec/lib/utils/emitter_spec',
     'spec/aura-extensions/component-validate-options_spec',
     'spec/aura-extensions/component-normalize-id_spec',
     'spec/lib/extensions/templates_spec',
     'spec/client/api_spec',
     'spec/lib/hullbase_spec',
     'spec/lib/hull_spec',
+    'spec/lib/api/api_spec',
     'spec/client/datasource_spec',
     'spec/client/component_spec',
     'spec/client/component/context_spec',

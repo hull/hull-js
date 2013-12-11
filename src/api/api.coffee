@@ -1,26 +1,16 @@
-define ['domready', 'underscore', '../utils/cookies', '../utils/version', '../api/params', '../api/auth', 'xdm', '../utils/promises', '../utils/cookies'], (domready, _, cookie, version, apiParams, authModule, xdm, promises, cookies)->
+define ['domready', 'underscore', '../utils/cookies', '../utils/version', '../api/params', '../api/auth', '../utils/promises', 'lib/api/xdm'], (domready, _, cookie, version, apiParams, authModule, promises, xdm)->
   slice = Array.prototype.slice
-
-  # Builds the URL used by xdm
-  # Based upon the (app) configuration
-  buildRemoteUrl = (config)->
-    remoteUrl = "#{config.orgUrl}/api/v1/#{config.appId}/remote.html?v=#{version}"
-    remoteUrl += "&js=#{config.jsUrl}"  if config.jsUrl
-    remoteUrl += "&uid=#{config.uid}"   if config.uid
-    remoteUrl += "&access_token=#{config.appSecret}" if config.appSecret
-    remoteUrl += "&user_hash=#{config.userHash}" if config.userHash != undefined
-    remoteUrl
 
   dfd = promises.deferred()
 
   apiConnection =
-    init : (config)->
+    init : (config={})->
 
       # Fail right now if we don't have the required setup
       unless config.orgUrl and config.appId
-        dfd.reject(new TypeError 'no organizationURL provided. Can\'t proceed') unless config.orgUrl
-        dfd.reject(new TypeError 'no applicationID provided. Can\'t proceed') unless config.appId
-        return dfd
+        dfd.reject(new ReferenceError 'no organizationURL provided. Can\'t proceed') unless config.orgUrl
+        dfd.reject(new ReferenceError 'no applicationID provided. Can\'t proceed') unless config.appId
+        return dfd.promise
 
       message = null
       # Main method to request the API
@@ -45,12 +35,6 @@ define ['domready', 'underscore', '../utils/cookies', '../utils/version', '../ap
         else
           console.warn("RPC Message", arguments)
 
-      #TODO Probably useless now
-      timeout = setTimeout(
-        ()->
-          dfd.reject('Remote loading has failed. Please check "orgUrl" and "appId" in your configuration. This may also be about connectivity.')
-        , 30000)
-
 
       setCurrentUser = (headers={})->
         return unless config.appId
@@ -66,11 +50,10 @@ define ['domready', 'underscore', '../utils/cookies', '../utils/version', '../ap
       onRemoteReady = (remoteConfig)->
         data = remoteConfig.data
         setCurrentUser(data.headers) if data.headers && data.headers['Hull-User-Id']
-        window.clearTimeout(timeout)
 
         authScope = data.headers['Hull-Auth-Scope'].split(":")[0] if data.headers?['Hull-Auth-Scope']
 
-        apiConnection = 
+        apiConnection =
           auth: authModule(api, config, remoteConfig.services.types.auth)
           remoteConfig: remoteConfig
           authScope: authScope or ''
@@ -80,18 +63,13 @@ define ['domready', 'underscore', '../utils/cookies', '../utils/version', '../ap
         dfd.resolve apiConnection
         true
 
-      url = buildRemoteUrl(config)
-
       rpc = null
       domready ->
-        rpc = new xdm.Rpc({
-          remote: url,
-          container: document.body
-
-        }, {
-          remote: { message: {}, ready: {} }
-          local:  { message: onRemoteMessage, ready: onRemoteReady }
-        })
+        xdm(config, onRemoteMessage).then (readyObj)->
+          rpc = readyObj.rpc
+          onRemoteReady readyObj.config
+        , (err)->
+          dfd.reject err
 
       ###
       # Sends the message described by @params to xdm
