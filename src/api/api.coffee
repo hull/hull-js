@@ -23,18 +23,8 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
           req.method  = method
           message.apply(api, args)
 
+      # No need to be exposed, IMO
       api.parseRoute = apiParams.parse
-
-      onRemoteMessage = (e)->
-        console.log('remoteMessage', e)
-        if e.error
-          # Get out of the xdm try/catch jail
-          setTimeout(
-            -> dfd.reject(e.error)
-          , 0)
-        else
-          console.warn("RPC Message", arguments)
-
 
       setCurrentUser = (headers={})->
         return unless config.appId
@@ -64,7 +54,7 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
         true
 
       rpc = null
-      xdm(config, onRemoteMessage).then (readyObj)->
+      xdm(config).then (readyObj)->
         rpc = readyObj.rpc
         onRemoteReady readyObj.config
       , (err)->
@@ -81,11 +71,11 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
         console.error("Api not initialized yet") unless rpc
         deferred = promises.deferred()
 
-        onSuccess = (res)->
+        onSuccess = (res={})->
           setCurrentUser(res.headers) if res.provider == 'hull' && res.headers
           callback(res.response)
           deferred.resolve(res.response, res.headers)
-        onError = (err)->
+        onError = (err={})->
           errback(err.message)
           deferred.reject(err.message)
         rpc.message params, onSuccess, onError

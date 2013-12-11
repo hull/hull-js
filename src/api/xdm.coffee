@@ -10,11 +10,18 @@ define ['domready', 'lib/utils/promises', 'xdm', 'lib/utils/version'], (domready
     remoteUrl += "&user_hash=#{config.userHash}" if config.userHash != undefined
     remoteUrl
 
-  (config, onMessage)->
+  (config)->
     timeout = null
     rpc = null
     deferred = promises.deferred()
-    
+
+    onMessage = (e)->
+      console.log('remoteMessage', e)
+      if e.error
+        deferred.reject e.error
+      else
+        console.warn("RPC Message", arguments)
+
     readyFn = (remoteConfig)->
       window.clearTimeout(timeout)
       deferred.resolve { rpc: rpc, config: remoteConfig }
