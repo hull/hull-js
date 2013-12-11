@@ -12,6 +12,7 @@ define ['domready', 'lib/utils/promises', 'xdm', 'lib/utils/version'], (domready
 
   (config, onMessage)->
     timeout = null
+    rpc = null
     deferred = promises.deferred()
     
     readyFn = (remoteConfig)->
