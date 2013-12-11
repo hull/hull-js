@@ -1,4 +1,4 @@
-define ['lib/utils/promises', 'xdm', 'lib/utils/version'], (promises, xdm, version)->
+define ['domready', 'lib/utils/promises', 'xdm', 'lib/utils/version'], (domready, promises, xdm, version)->
 
   # Builds the URL used by xdm
   # Based upon the (app) configuration
@@ -11,22 +11,24 @@ define ['lib/utils/promises', 'xdm', 'lib/utils/version'], (promises, xdm, versi
     remoteUrl
 
   (config, onMessage)->
+    timeout = null
     deferred = promises.deferred()
     
-    timeout = setTimeout(
-      ()->
-        deferred.reject('Remote loading has failed. Please check "orgUrl" and "appId" in your configuration. This may also be about connectivity.')
-      , 30000)
-
     readyFn = (remoteConfig)->
       window.clearTimeout(timeout)
       deferred.resolve { rpc: rpc, config: remoteConfig }
 
-    rpc = new xdm.Rpc
-      remote: buildRemoteUrl config
-      container: document.body
-    ,
-      remote:  message: {}, ready: {} 
-      local:   message: onMessage, ready: readyFn 
+    domready ->
+      timeout = setTimeout(
+        ()->
+          deferred.reject('Remote loading has failed. Please check "orgUrl" and "appId" in your configuration. This may also be about connectivity.')
+        , 30000)
+
+      rpc = new xdm.Rpc
+        remote: buildRemoteUrl config
+        container: document.body
+      ,
+        remote:  message: {}, ready: {} 
+        local:   message: onMessage, ready: readyFn 
      
     deferred.promise

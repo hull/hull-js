@@ -1,4 +1,4 @@
-define ['domready', 'underscore', '../utils/cookies', '../utils/version', '../api/params', '../api/auth', '../utils/promises', 'lib/api/xdm'], (domready, _, cookie, version, apiParams, authModule, promises, xdm)->
+define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '../api/auth', '../utils/promises', 'lib/api/xdm'], (_, cookie, version, apiParams, authModule, promises, xdm)->
   slice = Array.prototype.slice
 
   dfd = promises.deferred()
@@ -64,12 +64,11 @@ define ['domready', 'underscore', '../utils/cookies', '../utils/version', '../ap
         true
 
       rpc = null
-      domready ->
-        xdm(config, onRemoteMessage).then (readyObj)->
-          rpc = readyObj.rpc
-          onRemoteReady readyObj.config
-        , (err)->
-          dfd.reject err
+      xdm(config, onRemoteMessage).then (readyObj)->
+        rpc = readyObj.rpc
+        onRemoteReady readyObj.config
+      , (err)->
+        dfd.reject err
 
       ###
       # Sends the message described by @params to xdm

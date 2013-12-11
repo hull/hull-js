@@ -1,14 +1,12 @@
 define(['squire', 'lib/utils/promises'], function (Squire, promises) {
   var _buildApiMock = function (that, done) {
     that.squire = new Squire();
-    that.rpcSpy = sinon.spy(function () { return promises.deferred().promise; });
-    that.domreadySpy = sinon.spy();
+    that.rpcMock = promises.deferred();
+    that.rpcModuleStub = sinon.stub().returns(that.rpcMock.promise);
     that.squire.mock({
-      domready: function () { return that.domreadySpy; },
-      'lib/api/xdm': function () { return that.rpcSpy; },
+      'lib/api/xdm': function () { return that.rpcModuleStub; },
       'lib/utils/cookies': function () {}
     })
-    .store('domready')
     .require(['lib/api/api', 'mocks'], function (api, mocks) {
       that.api = api;
       that.mocks = mocks;
@@ -63,16 +61,31 @@ define(['squire', 'lib/utils/promises'], function (Squire, promises) {
 
   describe('Init cross-domain', function () {
     beforeEach(function (done) {
+      this.apiConf = { appId: 'abcd', orgUrl: '1234' };
       _buildApiMock(this, done);
     });
     afterEach(function () { this.squire.remove(); });
     it('should init cross-domain communication', function () {
-      this.api.init({appId: 'abcd', orgUrl: 'efgh'});
-      this.domreadySpy.should.have.been.calledOnce;
-      this.domreadySpy.firstCall.args[0].should.be.a('function');
-      this.domreadySpy.firstCall.args[0]();
-      this.rpcSpy.should.have.been.called;
+      this.api.init(this.apiConf);
+      this.rpcModuleStub.should.have.been.called;
+    });
+    it('should reject the API if cross-domain fails to load', function (done) {
+      var promise = this.api.init(this.apiConf);
+      promise.then(
+        function () { done('should not have been called'); },
+        function (err) { err.should.eql('NO!!!'); done(); }
+      );
+      this.rpcMock.reject('NO!!!');
+    });
+    it('should accept the API if cross-domain succeeds to load and resolves to an object', function (done) {
+      var promise = this.api.init(this.apiConf);
+      promise.then(
+        function (obj) { obj.should.be.a('object'); done(); },
+        function () { done('should not have been called'); }
+      );
+      this.rpcMock.resolve({rpc: {}, config: {data: {}, services: {types: {}}}});
     });
   });
+
 
 });
