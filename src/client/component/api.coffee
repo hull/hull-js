@@ -22,7 +22,8 @@ define ['lib/utils/promises'], (promises) ->
         hullApi = core.data.hullApi
 
         core.data.api = (args...)->
-          hullApi.api( args...).then (res, headers={})->
+          dfd = hullApi.api( args...)
+          dfd.then (res, headers={})->
             if headers?
               hullTrack = headers['Hull-Track']
               if hullTrack
@@ -33,7 +34,7 @@ define ['lib/utils/promises'], (promises) ->
                   console.warn 'Error', error
               if headers['Hull-Auth-Scope']
                 authScope = headers['Hull-Auth-Scope'].split(':')[0]
-
+          dfd
         #
         #
         # Models/Collection related
@@ -231,6 +232,7 @@ define ['lib/utils/promises'], (promises) ->
           core.data.api("me/identities/#{provider}", 'delete').then ->
             app.sandbox.data.api.model('me').fetch().then callback
 
+        # FIXME Does it double with l.247-249?
         for m in ['me', 'app', 'org', 'entity']
           attrs = data[m]
           if attrs
@@ -247,8 +249,8 @@ define ['lib/utils/promises'], (promises) ->
         rawFetch('app', true);
         rawFetch('org', true);
 
-        # core.mediator.on    'hull.login',       clearModelsCache
-        # core.mediator.on    'hull.logout',      clearModelsCache
+        core.mediator.on    'hull.login',       clearModelsCache
+        core.mediator.on    'hull.logout',      clearModelsCache
 
         # core.mediator.on    'hull.login',       ->
         #   core.data.hullApi.track 'hull.auth.login',  core.data.api.model('me').toJSON()
