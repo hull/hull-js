@@ -7,7 +7,9 @@ define [
     success = (api)->
       reporting = reporting.init(api)
       booted =
-        events: emitter
+        on: emitter.on
+        off: emitter.off
+        emit: emitter.emit
         track: reporting.track
         flag: reporting.flag
         data:
@@ -21,7 +23,7 @@ define [
           entity: entity
 
       # Execute Hull.init callback
-      booted.events.emit('hull.init')
+      booted.emit('hull.init')
       booted
 
     failure = (error)->

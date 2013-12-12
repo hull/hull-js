@@ -68,7 +68,7 @@ successCb = (args...)->
   extension = currentFlavour.success(args...)
   _hull = window.Hull = _extend(_hull, extension)
   # Prune callback queue
-  _hull.events.on(data...) for data in _pool['events']
+  booted.on(data...) for data in _pool['events']
   deletePool('events')
 
   # Prune init queue

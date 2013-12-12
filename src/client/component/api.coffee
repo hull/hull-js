@@ -1,4 +1,4 @@
-define () ->
+define ['lib/utils/promises'], (promises) ->
 
   (app) ->
 
@@ -30,7 +30,7 @@ define () ->
                   [eventName, trackParams] = JSON.parse(atob(hullTrack))
                   core.mediator.emit(eventName, trackParams)
                 catch error
-                  false
+                  console.warn 'Error', error
               if headers['Hull-Auth-Scope']
                 authScope = headers['Hull-Auth-Scope'].split(':')[0]
 
@@ -124,7 +124,7 @@ define () ->
             args = slice.call(arguments)
             eventName = ("collection." + route.path.replace(/\//g, ".") + '.' + args[0])
             core.mediator.emit(eventName, { eventName: eventName, collection: collection, changes: args[1]?.changes })
-          dfd   = collection.deferred = core.promises.deferred()
+          dfd   = collection.deferred = promises.deferred()
           if collection.models.length > 0
             collection._fetched = true
             dfd.resolve(collection)
@@ -171,7 +171,7 @@ define () ->
 
 
           # Actual request
-          res = core.data.when.apply(undefined, promises)
+          res = promises.when(promises...)
           res.then(callback, errback)
           res
 
@@ -209,8 +209,8 @@ define () ->
                 core.mediator.emit 'hull.auth.complete', me
                 core.mediator.emit 'hull.login', me
             catch err
-              core.mediator.emit 'hull.auth.failure', err
               console.error "Error on auth promise resolution", err
+              core.mediator.emit 'hull.auth.failure', err
           , (err)->
             core.mediator.emit 'hull.auth.failure', err
 
@@ -247,13 +247,13 @@ define () ->
         rawFetch('app', true);
         rawFetch('org', true);
 
-        core.mediator.on    'hull.login',       clearModelsCache
-        core.mediator.on    'hull.logout',      clearModelsCache
+        # core.mediator.on    'hull.login',       clearModelsCache
+        # core.mediator.on    'hull.logout',      clearModelsCache
 
-        core.mediator.on    'hull.login',       ->
-          core.data.hullApi.track 'hull.auth.login',  core.data.api.model('me').toJSON()
+        # core.mediator.on    'hull.login',       ->
+        #   core.data.hullApi.track 'hull.auth.login',  core.data.api.model('me').toJSON()
 
-        core.mediator.on    'hull.logout',      ->
-          core.data.hullApi.track 'hull.auth.logout', core.data.api.model('me').toJSON()
+        # core.mediator.on    'hull.logout',      ->
+        #   core.data.hullApi.track 'hull.auth.logout', core.data.api.model('me').toJSON()
 
     module

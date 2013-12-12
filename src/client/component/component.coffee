@@ -1,4 +1,4 @@
-define ['underscore', 'lib/client/component/datasource', 'lib/client/component/context'], (_, Datasource, Context)->
+define ['underscore', 'lib/client/component/datasource', 'lib/client/component/context', 'lib/utils/promises'], (_, Datasource, Context, promises)->
 
   (app)->
     debug = false
@@ -116,7 +116,7 @@ define ['underscore', 'lib/client/component/datasource', 'lib/client/component/c
         ctx.add 'debug', @sandbox.config.debug
         ctx.add 'renderCount', ++@_renderCount
 
-        dfd = @sandbox.data.deferred()
+        dfd = promises.deferred()
         datasourceErrors = {}
         @data = {}
         try
@@ -131,13 +131,13 @@ define ['underscore', 'lib/client/component/datasource', 'lib/client/component/c
               @data[k] = res
 
           # Get a Deferred to wrap all these arrays.
-          componentDeferred = @sandbox.data.when.apply(undefined, promiseArray)
+          componentDeferred = promises.when.apply(undefined, promiseArray)
 
           # Get a Deferred to wrap template rendering
           templateDeferred  = @sandbox.template.load(@templates, @ref, @el)
           templateDeferred.done (tpls)=> @_templates     = tpls
 
-          readyDfd = @sandbox.data.when([componentDeferred, templateDeferred])
+          readyDfd = promises.when([componentDeferred, templateDeferred])
 
           readyDfd.then ()=>
             dfd.resolve ctx
@@ -150,7 +150,7 @@ define ['underscore', 'lib/client/component/datasource', 'lib/client/component/c
         catch e
           console.error("Caught error in buildContext", e.message, e)
           dfd.reject(e)
-        @sandbox.data.promise dfd
+        dfd.promise
 
       loggedIn: =>
         return false unless @sandbox.data.api.model('me').id?
@@ -184,8 +184,8 @@ define ['underscore', 'lib/client/component/datasource', 'lib/client/component/c
         ctxPromise.then (ctx)=>
           try
             beforeCtx = @beforeRender.call(@, ctx.build(), ctx.errors())
-            beforeRendering = @sandbox.data.when(beforeCtx)
-            beforeRendering.done (dataAfterBefore)=>
+            beforeRendering = promises.when(beforeCtx)
+            beforeRendering.then (dataAfterBefore)=>
               #FIXME SRSLY need some clarification
               data = _.extend(dataAfterBefore || ctx.build(), data)
               @doRender(tpl, data)
@@ -193,7 +193,7 @@ define ['underscore', 'lib/client/component/datasource', 'lib/client/component/c
               _.defer((=> @sandbox.start(@$el, { reset: true })))
               @isInitialized = true;
               @emitLifecycleEvent('render')
-            beforeRendering.fail (err)=>
+            , (err)=>
               console.error("Error in beforeRender on ", this.options.name,  err.message, err)
               @renderError.call(@, err)
           catch err

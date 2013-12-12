@@ -67,6 +67,7 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
         [eventName, trackParams] = JSON.parse(atob(track))
         doTrack(eventName, trackParams)
       catch error
+        console.warn 'Invalid Tracking header'
         "Invalid Tracking header"
 
     trackHandler = (req, callback, errback)->

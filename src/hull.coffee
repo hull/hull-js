@@ -7,7 +7,7 @@
 
 # _chk('jQuery', window.jQuery)
 
-define ['underscore', 'promises', 'aura/aura', 'lib/hull.api', 'lib/utils/emitter'], (_, promises, Aura, HullAPI, emitterInstance) ->
+define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/hull.api', 'lib/utils/emitter'], (_, promises, Aura, HullAPI, emitterInstance) ->
 
 
   hullApiMiddleware = (api)->
@@ -94,7 +94,7 @@ define ['underscore', 'promises', 'aura/aura', 'lib/hull.api', 'lib/utils/emitte
 
 
   setupApp = (app, api)->
-    deferred = promises.defer()
+    deferred = promises.deferred()
     initProcess = app
       .use(hullApiMiddleware(api))
       .use('aura-extensions/aura-base64')

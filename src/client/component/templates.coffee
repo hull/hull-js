@@ -1,4 +1,4 @@
-define ['underscore', 'handlebars'], (_, Handlebars) ->
+define ['underscore', 'handlebars', 'lib/utils/promises'], (_, Handlebars, promises) ->
 
   strategies =
     app: ['hullGlobal', 'meteor', 'sprockets', 'hullDefault']
@@ -45,7 +45,7 @@ define ['underscore', 'handlebars'], (_, Handlebars) ->
     server:
       require: (tplName, path, format)->
         path = "text!#{path}.#{format}"
-        dfd = module.deferred()
+        dfd = module.deferred.deferred()
         module.require [path], (tpl)->
           dfd.resolve setupTemplate(tpl, tplName)
         , (err)->
@@ -91,9 +91,9 @@ define ['underscore', 'handlebars'], (_, Handlebars) ->
     deferred: undefined
     initialize: (app) ->
       module.domFind = app.core.dom.find
-      module.deferred = app.core.data.deferred
+      module.deferred = promises
       app.core.template.load = (names=[], ref, el, format="hbs") ->
-        dfd = app.core.data.deferred()
+        dfd = module.deferred.deferred()
         names = [names] if _.isString(names)
         componentProps =
           componentName: ref.replace('__component__$', '').split('@')[0]
@@ -102,9 +102,9 @@ define ['underscore', 'handlebars'], (_, Handlebars) ->
           ref: ref
 
         tpls = _.map names, _.bind(lookupTemplate, undefined, componentProps)
-        app.core.data.when(tpls...).then ->
+        module.deferred.when(tpls...).then ->
           dfd.resolve _.object(names, [].slice.apply(arguments))
         , (err)->
           dfd.reject err
-        app.core.data.promise dfd
+        dfd.promise
   module
