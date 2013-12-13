@@ -88,6 +88,7 @@ define ['underscore', 'lib/client/component/datasource', 'lib/client/component/c
           @render()
           @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
         , @), (err)->
+          console.warn('WARNING', err)
           # Already displays a log in Aura and is caught above
 
       renderTemplate: (tpl, data)=>
@@ -129,15 +130,18 @@ define ['underscore', 'lib/client/component/datasource', 'lib/client/component/c
             handler = _.bind(handler, @) if _.isFunction(handler)
             ctx.addDatasource(k, ds.fetch(), handler).then (res)=>
               @data[k] = res
+              @data[k]
+            , (err)->
+              console.warn('Datasource Error', err)
 
           # Get a Deferred to wrap all these arrays.
-          componentDeferred = promises.when.apply(undefined, promiseArray)
+          componentDeferred = promises.all(promiseArray)
 
           # Get a Deferred to wrap template rendering
           templateDeferred  = @sandbox.template.load(@templates, @ref, @el)
           templateDeferred.done (tpls)=> @_templates     = tpls
 
-          readyDfd = promises.when([componentDeferred, templateDeferred])
+          readyDfd = promises.all([componentDeferred, templateDeferred])
 
           readyDfd.then ()=>
             dfd.resolve ctx
@@ -184,8 +188,7 @@ define ['underscore', 'lib/client/component/datasource', 'lib/client/component/c
         ctxPromise.then (ctx)=>
           try
             beforeCtx = @beforeRender.call(@, ctx.build(), ctx.errors())
-            beforeRendering = promises.when(beforeCtx)
-            beforeRendering.then (dataAfterBefore)=>
+            promises.when beforeCtx, (dataAfterBefore)=>
               #FIXME SRSLY need some clarification
               data = _.extend(dataAfterBefore || ctx.build(), data)
               @doRender(tpl, data)
@@ -199,6 +202,8 @@ define ['underscore', 'lib/client/component/datasource', 'lib/client/component/c
           catch err
             console.error("Error in beforeRender on ", this.options.name,  err.message, err)
             @renderError.call(@, err)
+        , (err)->
+          console.warn('WARNING', err)
 
       emitLifecycleEvent: (name)->
         @sandbox.emit("hull.#{@componentName.replace('/','.')}.#{name}",{cid:@cid})

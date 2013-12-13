@@ -102,9 +102,10 @@ define ['underscore', 'handlebars', 'lib/utils/promises'], (_, Handlebars, promi
           ref: ref
 
         tpls = _.map names, _.bind(lookupTemplate, undefined, componentProps)
-        module.deferred.when(tpls...).then ->
-          dfd.resolve _.object(names, [].slice.apply(arguments))
+        module.deferred.all(tpls).then (ary)->
+          dfd.resolve _.object(names, ary)
         , (err)->
+          console.warn('WARNING', err)
           dfd.reject err
         dfd.promise
   module

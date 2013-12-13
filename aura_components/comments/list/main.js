@@ -109,7 +109,7 @@ Hull.component({
         self.focusAfterRender = true;
         self.render();
       }, function() {
-        this.$el.find('input,textarea').focus();
+        self.$el.find('input,textarea').focus();
         self.toggleLoading();
       });
     }

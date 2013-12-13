@@ -113,8 +113,8 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/hull.api', 'lib/ut
       .use('aura-extensions/hull-component-reporting')
       .use('lib/client/component/api')
       .use('lib/client/component/component')
-      .use('lib/client/component/hull-handlebars-helpers')
       .use('lib/client/component/templates')
+      .use('lib/client/component/hull-handlebars-helpers')
       .use(hullInitMiddleware())
       .start({ components: 'body' })
 
