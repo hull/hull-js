@@ -19,13 +19,15 @@ Hull.component({
     }
   },
 
+  require: ['backbone'],
+
   events: {
     'submit form': 'submitQuiz'
   },
 
   actions : {
     selectQuiz : function(event, action) {
-      var Model = require('backbone').Model;
+      var Model = this.require('backbone').Model;
 
       var quiz;
       if (action.data.quizId != null) {
