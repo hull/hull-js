@@ -26,7 +26,8 @@
       "base64":         "bower_components/base64/base64",
       "aura":           "bower_components/aura/lib",
       "domready":       "bower_components/domready/ready",
-      "flavour":        "lib/hull"
+      "flavour":        "lib/hull",
+      "moment":         "bower_components/moment/moment"
     },
     "shim": {
       "backbone":   { "exports": "Backbone", "deps": ["underscore", "jquery"] },
@@ -45,7 +46,8 @@
       "aura/ext/debug",
       "aura/ext/mediator",
       "aura/ext/components",
-      "lib/bootstrap"
+      "lib/bootstrap",
+      "moment"
       ],
     "out": "dist/<%= PKG_VERSION %>/hull.js",
     "wrap": {

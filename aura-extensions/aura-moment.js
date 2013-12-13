@@ -1,5 +1,5 @@
 /*global define:true */
-define(['bower_components/moment/moment'], function(moment) {
+define(['moment'], function(moment) {
   return {
     initialize: function(app){
       "use strict";
