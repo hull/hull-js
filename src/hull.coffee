@@ -50,4 +50,5 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/hull.api', 'lib/ut
       appParts.app.stop()
     booted
   failure: (error)->
-    debugger
+    console.error(error.message)
+    error
