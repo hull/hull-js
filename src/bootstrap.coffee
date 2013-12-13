@@ -13,10 +13,12 @@
 # to replay them if the app has loaded correctly
 #
 
+#
+# Utilities
+#
 _setup = null
 _extend = null
 currentFlavour = null
-
 
 createLock = (locks, openDoorFn)->
   _locks = [].concat locks
@@ -34,6 +36,13 @@ createPool = (name)->
 deletePool = (name)->
   delete _pool[name]
 
+
+#
+# "Real" code
+#
+
+bootstrapUnlock = createLock ['init', 'require'], ->
+  currentFlavour.condition(_setup.config).then(successCb, failureCb)
 
 # * Checks that it has not been called before
 # * Augments coniguration
@@ -77,7 +86,7 @@ successCb = (args...)->
   booted.track(data...) for data in _pool['tracks']
   deletePool('tracks')
 
-  booted.component(data...) for data in _pool['component'] if _pool['components'] if HULL_ENV=="client"
+  booted.component(data...) for data in _pool['component'] if HULL_ENV=="client"
   deletePool('component')
 
   _hull
@@ -88,9 +97,6 @@ successCb = (args...)->
 failureCb = (args...)->
   currentFlavour.failure(args...)
   _setup.userFailureFn(args...)
-
-bootstrapUnlock = createLock ['init', 'require'], ->
-  currentFlavour.condition(_setup.config).then(successCb, failureCb)
 
 require ['flavour', 'underscore', 'lib/utils/version'], (flavour, _, version)->
   _hull.version = version

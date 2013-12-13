@@ -1,14 +1,4 @@
-# _chk = (n,d)->
-#   unless d
-#     _msg = "#{n} is not defined. It is required to run hull.js"
-#     alert(_msg)
-#     throw new Error(_msg)
-#     true
-
-# _chk('jQuery', window.jQuery)
-
-define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/hull.api', 'lib/utils/emitter'], (_, promises, Aura, HullAPI, emitterInstance) ->
-
+define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/hull.api', 'lib/utils/emitter', 'lib/client/component/registrar'], (_, promises, Aura, HullAPI, emitterInstance, componentRegistrar) ->
 
   hullApiMiddleware = (api)->
     name: 'Hull'
@@ -24,78 +14,11 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/hull.api', 'lib/ut
   hullInitMiddleware = (app)->
     initialize: (app) ->
     afterAppStart: (app) ->
-      # window.Hull.parse = (el, options={})->
-      #   app.core.appSandbox.start(el, options)
-
-
-  initFailure: ()->
-
-  # Hull =
-  #   init: (config, cb, errcb) ->
-  #     return Hull if Hull && Hull.app
-  #     config.namespace = 'hull'
-  #     config.debug = config.debug && { enable: true }
-
-  #     Hull =
-  #       config: config
-  #       app: new Aura(config)
-
-  #     HullAPI.init(config, initSuccess, initFailure)
-
-  #     Hull
-
-  # Hull
-
-
-
-
-
-
-
-
-
-
-
-
-  _component = (componentName, componentDef)->
-    unless componentDef
-      componentDef = componentName
-      componentName = null
-    #Validates the name
-    if componentName and not Object.prototype.toString.apply(componentName) == '[object String]'
-      throw 'The component identifier must be a String'
-
-    #Fetch the definition
-    componentDef = componentDef() if Object.prototype.toString.apply(componentDef) == '[object Function]'
-    throw "A component must have a definition" unless Object.prototype.toString.apply(componentDef) == '[object Object]'
-
-    componentDef.type ?= "Hull"
-
-    _normalizeComponentName = (name)->
-      [name, source] = name.split('@')
-      source ?= 'default'
-      "__component__$#{name}@#{source}"
-
-    Hull.define = define
-    detectModuleName = (module)->
-      if componentName
-        throw "Mismatch in the names of the module" if _normalizeComponentName(componentName) != module.id
-      Hull.define(module.id, componentDef)
-      componentDef
-
-    if componentName
-      Hull.define _normalizeComponentName(componentName), componentDef
-    else
-      Hull.define ['module'], detectModuleName
-    return componentDef
-
-
-
-
+      window.Hull.parse = (el, options={})->
+        app.core.appSandbox.start(el, options)
 
   setupApp = (app, api)->
-    deferred = promises.deferred()
-    initProcess = app
+    app
       .use(hullApiMiddleware(api))
       .use('aura-extensions/aura-base64')
       .use('aura-extensions/aura-cookies')
@@ -116,29 +39,20 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/hull.api', 'lib/ut
       .use('lib/client/component/templates')
       .use('lib/client/component/hull-handlebars-helpers')
       .use(hullInitMiddleware())
-      .start({ components: 'body' })
-
-    initProcess.fail (err)->
-      app.stop()
-      deferred.reject err
-
-    initProcess.done ()->
-      deferred.resolve app
-    deferred.promise
 
   condition: (config)->
     app = new Aura(_.extend config, mediatorInstance: emitterInstance )
     appPromise = HullAPI.condition(config).then (hullApi)->
-      return setupApp(app, hullApi)
+      app: setupApp(app, hullApi)
+      api: hullApi
     appPromise
-  success: (auraApp)->
-    booted = HullAPI.success(auraApp.core.data.hullApi)
-    booted.component = _component
+  success: (appParts)->
+    booted = HullAPI.success(appParts.api)
+    booted.component = componentRegistrar(define)
+    booted.define = define
+    appParts.app.start({ components: 'body' }).fail (e)->
+      console.error('Unable to start Aura app:', e)
+      appParts.app.stop()
     booted
   failure: (error)->
     debugger
-
-
-# Hull.define(i.toLowerCase(), (i) -> root[i]) if _chk(i, root[i]) && root.hasOwnProperty(i) for i in root
-
-# main.call(root)
