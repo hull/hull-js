@@ -31,7 +31,7 @@ define ['underscore', 'handlebars', 'lib/utils/promises'], (_, Handlebars, promi
         _domTemplate($el)
     app:
       hullGlobal: (tplName)->
-        if module.global.Hull.templates[tplName]
+        if module.global.Hull.templates?[tplName]
           setupTemplate module.global.Hull.templates["#{tplName}"], tplName
       meteor: (tplName)->
         if module.global.Meteor? && module.global.Template?[tplName]?
@@ -40,7 +40,7 @@ define ['underscore', 'handlebars', 'lib/utils/promises'], (_, Handlebars, promi
         if module.global.HandlebarsTemplates? && module.global.HandlebarsTemplates?[tplName]?
           setupTemplate(module.global.HandlebarsTemplates[tplName], tplName, true)
       hullDefault: (tplName)->
-        if module.global.Hull.templates._default?[tplName]
+        if module.global.Hull.templates?._default?[tplName]
           setupTemplate(module.global.Hull.templates._default[tplName],  tplName)
     server:
       require: (tplName, path, format)->
@@ -51,7 +51,7 @@ define ['underscore', 'handlebars', 'lib/utils/promises'], (_, Handlebars, promi
         , (err)->
           console.error "Error loading template", tplName, err.message
           dfd.reject err
-        dfd
+        dfd.promise
 
   _execute = (type, args...)->
     for stratName in strategies[type]
