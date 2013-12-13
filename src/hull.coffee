@@ -11,12 +11,6 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/hull.api', 'lib/ut
       # _.extend(HullDef, sb);
       # After app init, call the queued events
 
-  hullInitMiddleware = (app)->
-    initialize: (app) ->
-    afterAppStart: (app) ->
-      window.Hull.parse = (el, options={})->
-        app.core.appSandbox.start(el, options)
-
   setupApp = (app, api)->
     app
       .use(hullApiMiddleware(api))
@@ -38,7 +32,6 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/hull.api', 'lib/ut
       .use('lib/client/component/component')
       .use('lib/client/component/templates')
       .use('lib/client/component/hull-handlebars-helpers')
-      .use(hullInitMiddleware())
 
   init: (config)->
     app = new Aura(_.extend config, mediatorInstance: emitterInstance )
@@ -50,6 +43,8 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/hull.api', 'lib/ut
     booted = HullAPI.success(appParts.api)
     booted.component = componentRegistrar(define)
     booted.define = define
+    booted.parse = (el, options={})->
+      appParts.app.sandbox.start(el, options)
     appParts.app.start({ components: 'body' }).fail (e)->
       console.error('Unable to start Aura app:', e)
       appParts.app.stop()

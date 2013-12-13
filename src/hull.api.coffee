@@ -14,9 +14,6 @@ define [
         flag: reporting.flag
         data:
           api: api.api
-        auth:
-          login: api.auth.login
-          logout: api.auth.logout
         login: api.auth.login
         logout: api.auth.logout
         util:
