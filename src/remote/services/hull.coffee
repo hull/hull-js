@@ -1,16 +1,14 @@
-define ['jquery', 'underscore'], ($, _)->
+define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
   API_PATH = '/api/v1/'
   API_PATH_REGEXP = /^\/?api\/v1\//
-  RESPONSE_HEADER = ['Hull-User-Id', 'Hull-User-Sig', 'Link', 'Hull-Track', 'Hull-Auth-Scope']
 
   (app)->
-
-    config = app.config
+    accessToken = app.config.access_token
+    headers = { 'Hull-App-Id': app.config.appId }
+    headers['Hull-Access-Token'] = accessToken if accessToken?
 
     identified = false
-
-    accessToken     = app.config.access_token
-    originalUserId  = app.config.data?.me?.id
+    originalUserId = app.config.data?.me?.id
 
     identify = (me) ->
       return unless me
@@ -34,45 +32,27 @@ define ['jquery', 'underscore'], ($, _)->
       path = path.substring(1) if path[0] == '/'
       API_PATH + path
 
-    handler = (req, callback, errback)=>
-      url = normalizePath(req.path)
+    handler = new Handler(headers: headers)
 
-      if req.method.toLowerCase() != 'get'
-        req_data = JSON.stringify(req.params || {})
-      else
-        req_data = req.params
+    hullHandler = (options, success, error) ->
+      url = normalizePath(options.path)
 
-      request_headers = { 'Hull-App-Id': config.appId }
-      if accessToken
-        request_headers['Hull-Access-Token'] = accessToken
-
-      request = $.ajax
+      promise = handler.handle
         url: url
-        type: req.method
-        data: req_data
-        contentType: 'application/json'
-        dataType: 'json'
-        headers: request_headers
+        type: options.method
+        data: options.params
 
-      request.done (response)->
-        identify(_.clone(response)) if url == '/api/v1/me'
+      promise.then (h) ->
+        identify(h.response) if url == '/api/v1/me'
 
-        headers = _.reduce RESPONSE_HEADER, (memo, name) ->
-          value = request.getResponseHeader(name)
-          memo[name] = value if value?
-          memo
-        , {}
+        if accessToken && originalUserId && originalUserId != h.headers['Hull-User-Id']
+          accessToken = null
 
-        if accessToken && originalUserId && originalUserId != headers['Hull-User-Id']
-          # Reset token if the user has changed...
-          accessToken = false
+        h.provider = 'hull'
 
-        callback({ response: response, headers: headers, provider: 'hull' }) if _.isFunction(callback)
-
-        trackAction(request, response)
-
-
-      request.fail(errback)
+        success(h) if _.isFunction(success)
+      , (h) ->
+        error(h.response)
 
       return
 
@@ -82,8 +62,8 @@ define ['jquery', 'underscore'], ($, _)->
       params.hull_app_name  = config?.data?.app?.name
       require('analytics').track(event, params)
 
-    trackAction = (request, response)->
-      return unless track = request.getResponseHeader('Hull-Track')
+    trackAction = (response)->
+      return unless track = response.headers['Hull-Track']
       try
         [eventName, trackParams] = JSON.parse(atob(track))
         doTrack(eventName, trackParams)
@@ -119,5 +99,5 @@ define ['jquery', 'underscore'], ($, _)->
         identify(app.config.data.me)
 
       doTrack("hull.app.init")
-      app.core.routeHandlers.hull = handler
+      app.core.routeHandlers.hull = hullHandler
       app.core.routeHandlers.track = trackHandler
