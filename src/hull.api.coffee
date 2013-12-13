@@ -27,9 +27,11 @@ define [
       booted
 
     failure = (error)->
+      console.error('Unable to start Hull.api', error)
+      error
 
-    condition = (config)-> api.init(config)
+    init = (config)-> api.init(config)
 
-    condition: condition
+    init: init
     success: success
     failure: failure

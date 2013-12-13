@@ -40,9 +40,9 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/hull.api', 'lib/ut
       .use('lib/client/component/hull-handlebars-helpers')
       .use(hullInitMiddleware())
 
-  condition: (config)->
+  init: (config)->
     app = new Aura(_.extend config, mediatorInstance: emitterInstance )
-    appPromise = HullAPI.condition(config).then (hullApi)->
+    appPromise = HullAPI.init(config).then (hullApi)->
       app: setupApp(app, hullApi)
       api: hullApi
     appPromise

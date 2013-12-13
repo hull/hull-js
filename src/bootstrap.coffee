@@ -5,13 +5,14 @@
 # It provides some global code that is to be executed immediately
 # and an AMD module,
 # The AMD module loads a particvular flavour of Hull, defined as a set of 3 methods:
-# * condition: Returns a promise or a value that indicates the success or failure of the loading process
+# * init: Returns a promise or a value that indicates the success or failure of the loading process
 # * success: will to be executed if the app is loaded correctly
 # * failure: will be executed if the app fails to load
 #
 # The global code only defines some methods into window.Hull and pools the parameters
 # to replay them if the app has loaded correctly
 #
+
 
 #
 # Utilities
@@ -36,13 +37,17 @@ createPool = (name)->
 deletePool = (name)->
   delete _pool[name]
 
+rerun = (name, withObj)->
+  withObj[name](data...) for data in _pool['on']
+  deletePool('on')
+
 
 #
 # "Real" code
 #
 
-bootstrapUnlock = createLock ['init', 'require'], ->
-  currentFlavour.condition(_setup.config).then(successCb, failureCb)
+unlock = createLock ['init', 'require'], ->
+  currentFlavour.init(_setup.config).then(successCb, failureCb)
 
 # * Checks that it has not been called before
 # * Augments coniguration
@@ -59,12 +64,12 @@ preInit = (config, cb, errb)->
     userSuccessFn: cb or ->
     userFailureFn: errb or ->
 
-  bootstrapUnlock 'init'
+  unlock 'init'
 
 
 _hull = window.Hull =
-  on:         createPool 'events'
-  track:      createPool 'tracks'
+  on:         createPool 'on'
+  track:      createPool 'track'
   init:       preInit
 
 _hull.component =  createPool 'component' if HULL_ENV=="client"
@@ -76,18 +81,13 @@ _hull.component =  createPool 'component' if HULL_ENV=="client"
 successCb = (args...)->
   extension = currentFlavour.success(args...)
   _hull = window.Hull = _extend(_hull, extension)
-  # Prune callback queue
-  booted.on(data...) for data in _pool['events']
-  deletePool('events')
+
+  rerun('on', booted)
+  rerun('track', booted)
+  rerun('component', booted) if HULL_ENV=="client"
 
   # Prune init queue
   _setup.userSuccessFn(_hull)
-
-  booted.track(data...) for data in _pool['tracks']
-  deletePool('tracks')
-
-  booted.component(data...) for data in _pool['component'] if HULL_ENV=="client"
-  deletePool('component')
 
   _hull
 
@@ -102,5 +102,5 @@ require ['flavour', 'underscore', 'lib/utils/version'], (flavour, _, version)->
   _hull.version = version
   _extend = _.extend
   currentFlavour = flavour
-  bootstrapUnlock 'require'
+  unlock 'require'
 
