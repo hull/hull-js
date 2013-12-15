@@ -29,8 +29,10 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/hull.api', 'lib/ut
       .use('aura-extensions/hull-component-normalize-id')
       .use('aura-extensions/hull-component-reporting')
       .use('lib/client/component/api')
+      .use('lib/client/component/actions')
       .use('lib/client/component/component')
       .use('lib/client/component/templates')
+      .use('lib/client/component/datasource')
       .use('lib/client/component/hull-handlebars-helpers')
 
   init: (config)->

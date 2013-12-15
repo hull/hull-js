@@ -1,83 +1,38 @@
-define ['underscore', 'lib/client/component/datasource', 'lib/client/component/context', 'lib/utils/promises'], (_, Datasource, Context, promises)->
+define ['underscore', 'lib/utils/q2jQuery', 'lib/client/component/context', 'lib/utils/promises'], (_, q2jQuery, Context, promises)->
+  _invokeBeforeRender = (data, ctx)->
+    dfd = promises.deferred()
+    @invokeWithCallbacks('beforeRender', ctx.build(), ctx.errors()).then (_data)=>
+      data = _.extend({}, @data, _data || ctx.build(), data)
+      dfd.resolve data
+    , (err)->
+      console.error(err)
+      dfd.reject err
+    q2jQuery dfd.promise
+
 
   (app)->
     debug = false
 
-    slice = Array.prototype.slice
-
-    decamelize = (camelCase)->
-      camelCase.replace(/([A-Z])/g, '_' + '$1').toLowerCase()
-
-    default_datasources = {}
-
-    actionHandler = (e)->
-      try
-        source  = app.core.dom.find(e.currentTarget)
-        action  = source.data("hull-action")
-        fn = @actions[action] || @["#{action}Action"]
-        fn = @[fn] if _.isString(fn)
-        unless _.isFunction(fn)
-          throw new Error("Can't find action #{action} on this component")
-        data = {}
-        for k,v of source.data()
-          do ->
-            key = k.replace(/^hull/, "")
-            key = key.charAt(0).toLowerCase() + key.slice(1)
-            data[key] = v
-        fn.call(@, e, { el: source, data: data })
-      catch err
-        console.error("Error in action handler: ", action, err.message, err)
-      finally
-        e.preventDefault()
-        e.stopPropagation()
-        e.stopImmediatePropagation()
-
     class HullComponent extends app.core.mvc.View
-      actions: {}
-
-      templates: []
-
       initialize: ->
 
       isInitialized: false
-
-      requiredOptions: []
 
       options: {}
 
       constructor: (options)->
         @ref = options.ref
         @api = @sandbox.data.api
-        @datasources = _.extend {}, default_datasources, @datasources, options.datasources
-        @refresh ?= _.throttle(@render, 200)
+        @refresh ?= _.throttle((-> @invokeWithCallbacks 'render' ), 200)
         @componentName = options.name
 
         for k, v of @options
           options[k] ||= v
 
-        try
-          @events = if _.isFunction(@events) then @events() else @events
-          @events ?= {}
-          @events["click [data-hull-action]"] = _.bind actionHandler,@
+        unless @className?
+          @className = "hull-component"
+          @className += " hull-#{@namespace}" if @namespace?
 
-          # Building actions hash
-          @actions = if _.isFunction(@actions) then @actions() else @actions
-          @actions ?= {}
-          @actions.login ?= (e, params)=> @sandbox.login(params.data.provider, params.data)
-          @actions.linkIdentity ?= (e, params)=> @sandbox.linkIdentity(params.data.provider, params.data)
-          @actions.unlinkIdentity ?= (e, params)=> @sandbox.unlinkIdentity(params.data.provider)
-          @actions.logout ?= => @sandbox.logout()
-
-          unless @className?
-            @className = "hull-component"
-            @className += " hull-#{@namespace}" if @namespace?
-
-          _.each @datasources, (ds, i)=>
-            ds = _.bind ds, @ if _.isFunction ds
-            @datasources[i] = new Datasource(ds, @api) unless ds instanceof Datasource
-
-        catch e
-          console.error("Error loading HullComponent", e.message)
         # Copy/Paste + adaptation of the Backbone.View constructor
         # TODO remove it whenever possible
         @cid = _.uniqueId('view')
@@ -85,7 +40,7 @@ define ['underscore', 'lib/client/component/datasource', 'lib/client/component/c
         @_ensureElement()
         @invokeWithCallbacks('initialize', options).then _.bind(->
           @delegateEvents()
-          @render()
+          @invokeWithCallbacks 'render'
           @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
         , @), (err)->
           console.warn('WARNING', err)
@@ -108,53 +63,14 @@ define ['underscore', 'lib/client/component/datasource', 'lib/client/component/c
         else
           console.warn("[DEBUG] #{@options.name}", msg, @)
 
-      buildContext: =>
+      buildContext: (ctx)=>
         @_renderCount ?= 0
-        ctx = new Context()
         ctx.add 'options', @options
         ctx.add 'loggedIn', @loggedIn()
         ctx.add 'isAdmin', @sandbox.isAdmin()
         ctx.add 'debug', @sandbox.config.debug
         ctx.add 'renderCount', ++@_renderCount
-
-        dfd = promises.deferred()
-        datasourceErrors = {}
-        @data = {}
-        try
-          keys = _.keys(@datasources)
-          # Build an array with all promisese for the current component
-          promiseArray  = _.map keys, (k)=>
-            ds = @datasources[k]
-            ds.parse(_.extend({}, @, @options || {}))
-            handler = @["on#{_.string.capitalize(_.string.camelize(k))}Error"]
-            handler = _.bind(handler, @) if _.isFunction(handler)
-            ctx.addDatasource(k, ds.fetch(), handler).then (res)=>
-              @data[k] = res
-              @data[k]
-            , (err)->
-              console.warn('Datasource Error', err)
-
-          # Get a Deferred to wrap all these arrays.
-          componentDeferred = promises.all(promiseArray)
-
-          # Get a Deferred to wrap template rendering
-          templateDeferred  = @sandbox.template.load(@templates, @ref, @el)
-          templateDeferred.done (tpls)=> @_templates     = tpls
-
-          readyDfd = promises.all([componentDeferred, templateDeferred])
-
-          readyDfd.then ()=>
-            dfd.resolve ctx
-          ,(err)=>
-            console.error("Error in Building Render Context", err.message, err)
-            @renderError.call(@, err.message, err)
-            dfd.reject err
-          .done()
-
-        catch e
-          console.error("Caught error in buildContext", e.message, e)
-          dfd.reject(e)
-        dfd.promise
+        ctx
 
       loggedIn: =>
         return false unless @sandbox.data.api.model('me').id?
@@ -164,7 +80,7 @@ define ['underscore', 'lib/client/component/datasource', 'lib/client/component/c
         identities
 
       getTemplate: (tpl, data)=>
-        tpl || @template || @templates[0]
+        tpl || @template || @templates?[0]
 
       doRender: (tpl, data)=>
         tplName = @getTemplate(tpl, data)
@@ -176,45 +92,27 @@ define ['underscore', 'lib/client/component/datasource', 'lib/client/component/c
 
       afterRender: (data)=> data
 
-      # Build render context from datasources
       # Call beforeRender
       # doRender
       # afterRender
       # Start nested components...
       render: (tpl, data)=>
-        ctxPromise = @buildContext()
-        ctxPromise.fail (err)->
-          console.error("Error fetching Datasources ", err.message, err)
-        ctxPromise.then (ctx)=>
-          try
-            beforeCtx = @beforeRender.call(@, ctx.build(), ctx.errors())
-            promises.when beforeCtx, (dataAfterBefore)=>
-              #FIXME SRSLY need some clarification
-              data = _.extend(dataAfterBefore || ctx.build(), data)
-              @doRender(tpl, data)
-              _.defer(@afterRender.bind(@, data))
-              _.defer((=> @sandbox.start(@$el, { reset: true })))
-              @isInitialized = true;
-              @emitLifecycleEvent('render')
-            , (err)=>
-              console.error("Error in beforeRender on ", this.options.name,  err.message, err)
-              @renderError.call(@, err)
-          catch err
-            console.error("Error in beforeRender on ", this.options.name,  err.message, err)
-            @renderError.call(@, err)
-        , (err)->
-          console.warn('WARNING', err)
-
+        @invokeWithCallbacks('buildContext', new Context())
+        .then(_.bind(_invokeBeforeRender, @, data))
+        .then (data)=>
+          @invokeWithCallbacks 'doRender', tpl, data
+          _.defer(@afterRender.bind(@, data))
+          _.defer((-> @sandbox.start(@$el, { reset: true })).bind(@))
+          @isInitialized = true;
+          # debugger
+          @emitLifecycleEvent('render')
+        , (err)=>
+          console.error(err.message)
+          @renderError(err)
       emitLifecycleEvent: (name)->
         @sandbox.emit("hull.#{@componentName.replace('/','.')}.#{name}",{cid:@cid})
 
     module =
-      afterAppStart: ()->
-        default_datasources =
-          me:  new Datasource app.core.data.api.model('me')
-          app: new Datasource app.core.data.api.model('app')
-          org: new Datasource app.core.data.api.model('org')
-
       initialize: (app)->
         debug = app.config.debug
         app.components.addType("Hull", HullComponent.prototype)

@@ -32,6 +32,8 @@ define(['chai', 'sinonChai'], function(chai, sinonChai) {
     'spec/lib/api/api_spec',
     'spec/client/datasource_spec',
     'spec/client/component_spec',
+    'spec/client/component/actions_spec',
+    'spec/client/component/datasource_spec',
     'spec/client/component/context_spec',
     'spec/lib/extensions/auth_spec',
     'spec/client/api/params_spec',

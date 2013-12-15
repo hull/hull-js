@@ -1,4 +1,4 @@
-define ['underscore', 'handlebars', 'lib/utils/promises'], (_, Handlebars, promises) ->
+define ['underscore', 'handlebars', 'lib/utils/promises', 'lib/utils/q2jQuery'], (_, Handlebars, promises, q2jQuery) ->
 
   strategies =
     app: ['hullGlobal', 'meteor', 'sprockets', 'hullDefault']
@@ -92,7 +92,7 @@ define ['underscore', 'handlebars', 'lib/utils/promises'], (_, Handlebars, promi
     initialize: (app) ->
       module.domFind = app.core.dom.find
       module.deferred = promises
-      app.core.template.load = (names=[], ref, el, format="hbs") ->
+      load = (names=[], ref, el, format="hbs") ->
         dfd = module.deferred.deferred()
         names = [names] if _.isString(names)
         componentProps =
@@ -107,5 +107,15 @@ define ['underscore', 'handlebars', 'lib/utils/promises'], (_, Handlebars, promi
         , (err)->
           console.warn('WARNING', err)
           dfd.reject err
-        dfd.promise
+        #FIXME OMG!!
+        (dfd.promise)
+      app.components.before 'initialize', ->
+        promise = load(@templates, @ref, @el).then (tpls)=>
+          @_templates = tpls
+        , (err)->
+          console.error('Error while loading templates:', err)
+          throw err
+        #FIXME OMG!!
+        q2jQuery(promise)
+      null
   module
