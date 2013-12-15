@@ -28,7 +28,7 @@ define ['lib/client/datasource', 'underscore', 'lib/utils/promises', 'lib/utils/
         fetcher = ds.fetch()
         promises.when fetcher, (res)=>
           @data[k] = res
-        context.addDatasource(k, ds.fetch(), handler)
+        context.addDatasource(k, fetcher, handler)
       #FIXME OMG!!
       q2jQuery promises.all(promiseArray)
 

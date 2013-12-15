@@ -241,21 +241,6 @@ define(['lib/client/component/datasource'], function (module) {
           contextSpy.restore();
           stubErrorHandler.restore();
         });
-
-        xit("should add a property to the `data` property of the component if the datasource succeeds", function () {
-          this.component.datasources = {
-            test: new this.dsModelStub()
-          };
-          var result = {};
-          var then = sinon.spy();
-          var stub = sinon.stub(this.mockContext, 'addDatasource', function () {
-            return {
-              then: then
-            };
-          });
-          this.module.fetchDatasources.call(this.component, this.mockContext);
-          //TODO FIXME
-        });
       });
     });
   });
