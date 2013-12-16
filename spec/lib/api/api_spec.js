@@ -12,10 +12,10 @@ define(['squire', 'lib/utils/promises'], function (Squire, promises) {
     that.paramsStub = {parse: function () {} };
 
     that.squire.mock({
-      'lib/api/xdm': function () { return that.rpcModuleStub; },
+      'lib/api/xdm': function () { return that.rpcModuleStub(); },
       'lib/utils/cookies': function () {},
-      'lib/api/params': function () { return that.paramsStub; },
-      'lib/utils/cookies': function () { return that.cookieStub; }
+      'lib/api/params': that.paramsStub,
+      'lib/utils/cookies': that.cookieStub
     })
     .require(['lib/api/api', 'mocks'], function (api, mocks) {
       that.apiMod = api;

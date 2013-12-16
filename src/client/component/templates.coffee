@@ -89,26 +89,27 @@ define ['underscore', 'handlebars', 'lib/utils/promises', 'lib/utils/q2jQuery'],
     templateEngine: Handlebars
     domFind: undefined
     deferred: undefined
+    load: (names=[], ref, el, format="hbs") ->
+      dfd = module.deferred.deferred()
+      names = [names] if _.isString(names)
+      componentProps =
+        componentName: ref.replace('__component__$', '').split('@')[0]
+        templateFormat: format
+        rootEl: el
+        ref: ref
+
+      tpls = _.map names, _.bind(lookupTemplate, undefined, componentProps)
+      module.deferred.all(tpls).then (ary)->
+        dfd.resolve _.object(names, ary)
+      , (err)->
+        console.warn('WARNING', err)
+        dfd.reject err
+      #FIXME OMG!!
+      (dfd.promise)
     initialize: (app) ->
       module.domFind = app.core.dom.find
       module.deferred = promises
-      load = (names=[], ref, el, format="hbs") ->
-        dfd = module.deferred.deferred()
-        names = [names] if _.isString(names)
-        componentProps =
-          componentName: ref.replace('__component__$', '').split('@')[0]
-          templateFormat: format
-          rootEl: el
-          ref: ref
-
-        tpls = _.map names, _.bind(lookupTemplate, undefined, componentProps)
-        module.deferred.all(tpls).then (ary)->
-          dfd.resolve _.object(names, ary)
-        , (err)->
-          console.warn('WARNING', err)
-          dfd.reject err
-        #FIXME OMG!!
-        (dfd.promise)
+      load = module.load
       app.components.before 'initialize', ->
         promise = load(@templates, @ref, @el).then (tpls)=>
           @_templates = tpls

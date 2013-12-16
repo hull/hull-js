@@ -12,7 +12,7 @@ define(function () {
     }
   };
 
-  describe('Hull global wrapper', function () {
+  xdescribe('Hull global wrapper', function () {
     var hullbase;
     before(function (done){
       require(['lib/hullbase'], function (base) {

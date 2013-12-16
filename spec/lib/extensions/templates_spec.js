@@ -1,5 +1,5 @@
 /*global define:true, beforeEach:true */
-define(['spec/support/spec_helper', 'jquery', 'lib/client/templates'], function(helpers, jquery, module) {
+define(['spec/support/spec_helper', 'jquery', 'lib/client/component/templates'], function(helpers, jquery, module) {
 
   'use strict';
   /*jshint browser: true */
@@ -27,7 +27,7 @@ define(['spec/support/spec_helper', 'jquery', 'lib/client/templates'], function(
   describe("Template loader", function() {
     var app;
     beforeEach(function () {
-      app = {
+      this.app = {
         core: {
           data: {
             deferred: jquery.Deferred,
@@ -40,13 +40,18 @@ define(['spec/support/spec_helper', 'jquery', 'lib/client/templates'], function(
             }
           },
           template: {}
+        },
+        components: {
+          before: sinon.spy()
         }
       };
-      module.initialize(app);
+      module.initialize(this.app);
     });
     describe("Check the correct loading of the module", function() {
-      it("should contain a load function", function () {
-        app.core.template.load.should.be.a("function");
+      it("should hook before initialize", function () {
+        this.app.components.before.should.have.been.called;
+        this.app.components.before.args[0][0].should.eql('initialize');
+        this.app.components.before.args[0][1].should.be.a('function');
       });
     });
 
@@ -71,7 +76,7 @@ define(['spec/support/spec_helper', 'jquery', 'lib/client/templates'], function(
       before(insertTemplateHelper(hullTemplateName, templateContents));
 
       it("should contain the template as the return value of the promise", function (done) {
-        var ret = app.core.template.load(tplName, prefix);
+        var ret = module.load(tplName, prefix);
         ret.done(function (ret) {
           ret.should.contain.keys('tpl1');
           ret.tpl1.should.be.a('function');
@@ -83,7 +88,7 @@ define(['spec/support/spec_helper', 'jquery', 'lib/client/templates'], function(
 
     xdescribe("Server loading", function () {
       it("should use require to fetch the necessary templates", function (done) {
-        var ret = app.core.template.load('test', 'fixtures');
+        var ret = module.load('test', 'fixtures');
         ret.done(function (tpls) {
           arguments.should.have.length(1);
           tpls.should.be.a('object');
@@ -99,7 +104,7 @@ define(['spec/support/spec_helper', 'jquery', 'lib/client/templates'], function(
       before(insertTemplateHelper('fixtures/test1', tplContents));
 
       it("should prefer DOM over server-template", function (done) {
-        var ret = app.core.template.load('test1', 'fixtures');
+        var ret = module.load('test1', 'fixtures');
         ret.done(function (tpls) {
           tpls.should.have.keys('test1');
           tpls.test1.should.be.a('function');
@@ -114,7 +119,7 @@ define(['spec/support/spec_helper', 'jquery', 'lib/client/templates'], function(
         $elt.appendTo('body');
         $elt.append(createTemplate('fixtures/test2', innerTpl));
 
-        var ret = app.core.template.load('test2', 'fixtures', $elt.get(0));
+        var ret = module.load('test2', 'fixtures', $elt.get(0));
         ret.done(function (tpls) {
           tpls.should.have.keys('test2');
           tpls.test2.should.be.a('function');
@@ -129,7 +134,7 @@ define(['spec/support/spec_helper', 'jquery', 'lib/client/templates'], function(
       before(insertTemplateHelper("multiple/tpl2", "Second template"));
 
       it("should load an array of templates", function (done) {
-        var ret = app.core.template.load(["tpl1", "tpl2"], "multiple");
+        var ret = module.load(["tpl1", "tpl2"], "multiple");
         ret.done(function (tpls) {
           tpls.should.contain.keys("tpl1");
           tpls.should.contain.keys("tpl2");

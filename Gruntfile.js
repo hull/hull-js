@@ -76,7 +76,7 @@ module.exports = function (grunt) {
         src: 'lib/remote/**/*'
       },
       reset: {
-        src: ['build', 'lib', 'tmp', 'dist', 'components', 'node_modules']
+        src: ['build', 'lib', 'tmp', 'dist', 'bower_components', 'node_modules']
       }
     },
     dox: {

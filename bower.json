@@ -1,10 +1,10 @@
 {
   "name": "hull-js",
-  "version": "0.7.11",
+  "version": "0.8.0-rc1",
   "main": "./lib/hull.js",
   "dependencies": {
     "jquery": "1.10.*",
-    "aura": "hull/aura#2758d592f94cac9ac5958dbd50b2ed8a158356ed",
+    "aura": "hull/aura#1975092c1849c3d95b17a47c0b8f31d848dd7156",
     "backbone": "0.9.9",
     "require-handlebars-plugin": "0.4.0",
     "analytics": "hull/analytics#1.0.8-hull",
