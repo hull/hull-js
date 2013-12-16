@@ -1,6 +1,6 @@
 define(['underscore', 'lib/api/reporting'], function(_, reporting) {
   var module = {
-    track: function() {
+    setup: function() {
       this.track = function(name, data) {
         var defaultData;
         if (data == null) {
@@ -23,7 +23,7 @@ define(['underscore', 'lib/api/reporting'], function(_, reporting) {
       sandbox.flag = function(id) {
         return reporting.get().flag(id);
       };
-      return app.components.before('initialize', module.track);
+      return app.components.before('initialize', module.setup);
     }
   };
   return module;
