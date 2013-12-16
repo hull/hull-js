@@ -1,6 +1,7 @@
-define(['lib/client/component/datasource'], function (module) {
+define(['squire', 'underscore'], function (Squire, _) {
   describe("Datasource bindings for components", function () {
-    before(function () {
+    before(function (done) {
+      var that = this;
       this.mockContext = {
         addDatasource: function () {
           return {
@@ -10,15 +11,29 @@ define(['lib/client/component/datasource'], function (module) {
           };
         }
       };
-      this.module = module;
-      this.dsModelStub = sinon.stub(module, 'datasourceModel', function () {
-        this.parse = function () {};
-        this.fetch = function () {
-          return {
-            then: function () {}
-          };
+      var injector = new Squire();
+      _.string = {
+        camelize: function () {
+          return "camelized";
+        },
+        capitalize: function () {
+          return "Capitalized";
         }
-        return this;
+      };
+      injector.mock({
+        'underscore': _
+      }).require(['lib/client/component/datasource'], function (module) {
+        that.module = module;
+        that.dsModelStub = sinon.stub(module, 'datasourceModel', function () {
+          this.parse = function () {};
+          this.fetch = function () {
+            return {
+              then: function () {}
+            };
+          }
+          return this;
+        });
+        done();
       });
     });
     afterEach(function () {
@@ -33,7 +48,6 @@ define(['lib/client/component/datasource'], function (module) {
           components: { before: this.beforeSpy,  after: this.afterSpy },
           core: {data: {api: {model: function () {}}}}
         };
-        this.module = module;
       });
 
       it("should attach the datasource injection method before Component::initialize", function () {
@@ -43,15 +57,15 @@ define(['lib/client/component/datasource'], function (module) {
         wrapper.should.be.a('function');
         //Check that the function wraps the injection method
         var spy = sinon.spy(this.module, 'addDatasources');
-        module.addDatasources.should.not.have.been.called;
+        this.module.addDatasources.should.not.have.been.called;
         var scope = {}; // We need to ensure the scope is passed from the wrapper to the method of the module
         wrapper.call(scope, {});
-        module.addDatasources.should.have.been.calledOnce;
-        module.addDatasources.should.have.been.calledOn(scope);
-        module.addDatasources.args[0][0].should.contain.keys(['me', 'app', 'org']);
-        module.addDatasources.args[0][0].me.should.be.instanceOf(this.dsModelStub);
-        module.addDatasources.args[0][0].app.should.be.instanceOf(this.dsModelStub);
-        module.addDatasources.args[0][0].org.should.be.instanceOf(this.dsModelStub);
+        this.module.addDatasources.should.have.been.calledOnce;
+        this.module.addDatasources.should.have.been.calledOn(scope);
+        this.module.addDatasources.args[0][0].should.contain.keys(['me', 'app', 'org']);
+        this.module.addDatasources.args[0][0].me.should.be.instanceOf(this.dsModelStub);
+        this.module.addDatasources.args[0][0].app.should.be.instanceOf(this.dsModelStub);
+        this.module.addDatasources.args[0][0].org.should.be.instanceOf(this.dsModelStub);
         spy.reset();
       });
 
@@ -152,9 +166,7 @@ define(['lib/client/component/datasource'], function (module) {
 
         it("should use the custom handler provided by the component if available", function () {
           var spy = sinon.spy();
-          var component = {
-            onDsError: spy
-          };
+          var component = { onCapitalizedError: spy };
           var handler = this.module.getDatasourceErrorHandler('Ds', component);
           handler();
           this.defaultStub.should.not.have.been.called;
@@ -179,7 +191,7 @@ define(['lib/client/component/datasource'], function (module) {
             sandbox: { data: { when: this.whenStub } }
           };
           this.dsModelStub.restore();
-          this.dsModelStub = sinon.stub(module, 'datasourceModel', function () {
+          this.dsModelStub = sinon.stub(this.module, 'datasourceModel', function () {
             this.parse = function () {};
             this.fetch = function () {};
             return this;
