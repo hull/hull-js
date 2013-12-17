@@ -1,4 +1,4 @@
-define ['underscore', 'handlebars', 'lib/utils/promises', 'lib/utils/q2jQuery'], (_, Handlebars, promises, q2jQuery) ->
+define ['underscore', 'lib/utils/handlebars', 'lib/utils/promises', 'lib/utils/q2jQuery'], (_, Handlebars, promises, q2jQuery) ->
 
   strategies =
     app: ['hullGlobal', 'meteor', 'sprockets', 'hullDefault']
@@ -86,7 +86,7 @@ define ['underscore', 'handlebars', 'lib/utils/promises', 'lib/utils/q2jQuery'],
     global: window
     require: require
     define: define
-    templateEngine: Handlebars.default
+    templateEngine: Handlebars
     domFind: undefined
     deferred: undefined
     load: (names=[], ref, el, format="hbs") ->
@@ -109,9 +109,8 @@ define ['underscore', 'handlebars', 'lib/utils/promises', 'lib/utils/q2jQuery'],
     initialize: (app) ->
       module.domFind = app.core.dom.find
       module.deferred = promises
-      load = module.load
       app.components.before 'initialize', ->
-        promise = load(@templates, @ref, @el).then (tpls)=>
+        promise = module.load(@templates, @ref, @el).then (tpls)=>
           @_templates = tpls
         , (err)->
           console.error('Error while loading templates:', err)

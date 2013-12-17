@@ -1,9 +1,6 @@
-define ['underscore'], (_)->
+define ['underscore', 'lib/utils/handlebars', 'moment'], (_, Handlebars, moment)->
 
-  helpers = (app)->
     __seq = new Date().getTime()
-
-    moment = app.sandbox.util.moment
 
     HandlebarsHelpers = {}
 
@@ -53,10 +50,10 @@ define ['underscore'], (_)->
     ###*
      * Auto-links URLs in text.
      * Uses [twitter-text.js](https://github.com/twitter/twitter-text-js) behind the scenes.
-     * 
+     *
      *     snippet="You have to try http://hull.io/try"
      *
-     * 
+     *
      *     <p class='content'>{{autoLink snippet}}</p>
      *     => <p class='content'>You have to try <a href="http://hull.io/try">http://hull.io/try</a></p>
      *
@@ -439,14 +436,4 @@ define ['underscore'], (_)->
     HandlebarsHelpers.truncate = (string, length, truncateString)->
       _.str.truncate string, length, truncateString
 
-
-    # Handlebars.registerHelper(k, v) for k,v of
-    HandlebarsHelpers
-
-  extension =
-    initialize: (app)->
-      h = helpers(app)
-      app.components.before 'initialize',()->
-        app.core.template.handlebars.registerHelper(k, v) for k,v of h
-  
-  extension
+    Handlebars.registerHelper(k, v) for k,v of HandlebarsHelpers

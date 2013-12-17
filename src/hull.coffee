@@ -19,7 +19,6 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/hull.api', 'lib/ut
       .use('aura-extensions/aura-backbone')
       .use('aura-extensions/aura-moment')
       .use('aura-extensions/aura-twitter-text')
-      .use('aura-extensions/aura-handlebars') #TODO Can probably be removed. See the file for details.
       .use('aura-extensions/hull-reporting')
       .use('aura-extensions/hull-entities')
       .use('aura-extensions/hull-utils')
