@@ -1,5 +1,5 @@
 /*global define:true */
-define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/underscore'], function (helper, aura) {
+define(['spec/support/spec_helper', 'aura/aura', 'underscore'], function (helper, aura) {
 
   "use strict";
   /*jshint devel: true, browser: true */

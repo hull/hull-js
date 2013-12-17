@@ -1,46 +1,45 @@
-/*jshint browser:true, debug: true */
-/*global define:true, mocha:true, runMocha:true*/
-var should;
-define(['chai', 'sinonChai'], function(chai, sinonChai) {
-  "use strict";
+var allTestFiles = [];
+Object.keys(window.__karma__.files).forEach(function(file) {
+  if (/_spec\.js$/.test(file) && file.indexOf('bootstrap') === -1) {
+    allTestFiles.push(file);
+  }
+});
 
-  window.chai         = chai;
-  window.expect       = chai.expect;
-  window.assert       = chai.assert;
-  window.sinonChai    = sinonChai;
-  should              = chai.should();
-  chai.use(sinonChai);
+//FIXME, this is from src/utils/base64.coffee
+mocha.globals(['atob', 'btoa']);
 
-  mocha.setup('bdd');
+window.console = {
+  log: function () {},
+  warn: function () {},
+  error: function () {},
+};
 
-  console = window.console || function() {};
+require.config({
+  baseUrl: '/base/',
+  paths: {
+    "aura": 'bower_components/aura/lib',
+    "aura-extensions": 'aura-extensions',
+    underscore: 'bower_components/underscore/underscore-min',
+    promises: 'bower_components/q/q',
+    eventemitter: 'bower_components/eventemitter2/lib/eventemitter2',
+    squire: 'bower_components/squire/src/Squire',
+    jquery: 'bower_components/jquery/jquery.min',
+    handlebars: 'bower_components/require-handlebars-plugin/Handlebars',
+    backbone: 'bower_components/backbone/backbone-min',
+    fixtures: 'spec/fixtures',
+    string: 'bower_components/underscore.string/lib/underscore.string',
+    text: 'bower_components/requirejs-text/text',
+  },
+  shim: {
+    "underscore": {
+      exports: "_"
+    },
+    "backbone": {
+      exports: "Backbone"
+    }
+  }
+});
 
-  // Don't track
-  window.notrack = true;
-  window.HULL_ENV = '';
-
-  var specs = [
-    // 'spec/lib/bootstrap_spec',
-    'spec/lib/utils/base64_spec',
-    'spec/lib/utils/emitter_spec',
-    'spec/aura-extensions/component-validate-options_spec',
-    'spec/aura-extensions/component-normalize-id_spec',
-    'spec/lib/extensions/templates_spec',
-    'spec/client/api_spec',
-    'spec/lib/hullbase_spec',
-    'spec/lib/hull_spec',
-    'spec/lib/api/api_spec',
-    'spec/lib/api/reporting_spec',
-    'spec/client/datasource_spec',
-    'spec/client/component_spec',
-    'spec/client/component/actions_spec',
-    'spec/client/component/datasource_spec',
-    'spec/client/component/context_spec',
-    'spec/lib/extensions/auth_spec',
-    'spec/client/api/params_spec',
-    'spec/client/api/reporting_spec',
-    'spec/remote/handler_spec'
-  ];
-  require(specs, runMocha);
-
+require(allTestFiles, function () {
+  window.__karma__.start();
 });

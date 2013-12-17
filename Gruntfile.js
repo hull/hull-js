@@ -8,15 +8,13 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
-  grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-hull-dox');
   grunt.loadNpmTasks('grunt-hull-widgets');
   grunt.loadNpmTasks('grunt-s3');
   grunt.loadNpmTasks('grunt-git-describe');
-  grunt.loadNpmTasks('grunt-coverjs');
-  grunt.loadNpmTasks('grunt-plato');
   grunt.loadNpmTasks('grunt-wrap');
+  grunt.loadNpmTasks('grunt-karma');
 
   var clientConfig = grunt.file.readJSON('.grunt/client.json');
   var remoteConfig = grunt.file.readJSON('.grunt/remote.json');
@@ -68,6 +66,11 @@ module.exports = function (grunt) {
 
 
   var gruntConfig = {
+    karma: {
+      test: {
+        configFile: 'karma.conf.js'
+      }
+    },
     clean: {
       client: {
         src: 'lib/client/**/*'
@@ -149,29 +152,6 @@ module.exports = function (grunt) {
       remote: {
         options: clone(remoteRJSConfig, true)
       },
-      upload: {
-        options: {
-          namespace: 'Hull',
-          paths: {
-            jquery: "empty:",
-            "jquery.ui.widget" : 'bower_components/jquery-file-upload/js/vendor/jquery.ui.widget',
-            "jquery.fileupload" : 'bower_components/jquery-file-upload/js/jquery.fileupload'
-          },
-          include: [
-            'jquery.fileupload'
-          ],
-          out: 'tmp/aura_components/upload/deps/jquery.fileupload.js'
-        }
-      },
-      // registration: {
-      //   options: {
-      //     namespace: 'Hull',
-      //     paths: { h5f: 'aura_components/registration/h5f' },
-      //     shim: { h5f: { exports: 'H5F' } },
-      //     include: ['h5f'],
-      //     out: 'tmp/aura_components/registration/deps.js'
-      //   }
-      // },
       dox: {
         options: {
           namespace: 'Hull',
@@ -194,15 +174,15 @@ module.exports = function (grunt) {
       },
       remote: {
         files: remoteConfig.coffeeFiles,
-        tasks: ['dist:remote', 'do_test']
+        tasks: ['dist:remote', 'test']
       },
       api: {
         files: apiConfig.coffeeFiles,
-        tasks: ['dist:api', 'do_test']
+        tasks: ['dist:api', 'test']
       },
       client: {
         files: [clientConfig.coffeeFiles, "aura-extensions/**/*.js"],
-        tasks: ['dist:client', 'do_test']
+        tasks: ['dist:client', 'test']
       },
       spec: {
         files: ['spec/**/*.js'],
@@ -210,7 +190,7 @@ module.exports = function (grunt) {
       },
       extensions: {
         files: ['aura-extensions/**/*.js'],
-        tasks: ['dist:client', 'do_test']
+        tasks: ['dist:client', 'test']
       }
     },
     version: {
@@ -235,30 +215,6 @@ module.exports = function (grunt) {
         wrapper: [
           '(function () {', ';define("handlebars", function () {return Handlebars;});})()'
         ]
-      },
-      easyXDM: {
-        src: 'bower_components/easyXDM/easyXDM.js',
-        dest: 'lib/shims',
-        wrapper: [
-          '', ';var _available = window.easyXDM;define("easyXDM", function () {return window.easyXDM.noConflict();});if(!_available){delete window.easyXDM;};'
-        ]
-      }
-    },
-    cover: {
-      compile: {
-        files: {
-          'build/instrumented/*.js' : ['lib/**/*.js']
-        },
-        options: {
-          basePath: 'lib'
-        }
-      }
-    },
-    plato: {
-      develop: {
-        files: {
-          'build/report': ['lib/**/*.js']
-        }
       }
     },
     dist: {
@@ -268,7 +224,7 @@ module.exports = function (grunt) {
       "client-no-underscore": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
       "client-no-backbone": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
       "widgets": ["version", "hull_widgets"],
-      "docs": ['dox', 'cover', 'plato'],
+      "docs": ['dox'],
       "describe": ['describe']
     }
   };
@@ -276,13 +232,12 @@ module.exports = function (grunt) {
   helpers.appendAWSConfig(gruntConfig);
   grunt.initConfig(gruntConfig);
 
-  grunt.registerTask('do_test', ['cover', 'plato', 'mocha']);
-  grunt.registerTask('test', ['dist:api', 'dist:client', 'dist:remote', 'do_test']);
+  grunt.registerTask('test', ['version', 'karma:test']);
   grunt.registerTask('reset', ['clean:reset']);
 
   //These tasks are the only ones needed to be used
   grunt.registerTask('default', 'server');
-  grunt.registerTask('server', ['connect', 'dist:widgets', 'watch']);
+  grunt.registerTask('server', ['connect', 'dist:remote', 'dist:client', 'dist:api', 'dist:widgets', 'watch']);
   grunt.registerTask('deploy', ['dist', 's3:prod']);
 
   require('./.grunt/customTasks')(grunt);

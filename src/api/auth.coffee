@@ -3,7 +3,7 @@ if /hull-auth-status-/.test(document.location.hash) &&  window.opener && window.
     authCbName = document.location.hash.replace('#hull-auth-status-', '')
     cb = window.opener.__hull_login_status__
     cb(authCbName)
-    return window.close()
+    window.close()
   catch e
     console.warn("Error: " + e)
 

@@ -17,6 +17,7 @@
 #
 # Utilities
 #
+HULL_ENV = HULL_ENV || ''
 _setup = null
 _extend = null
 currentFlavour = null

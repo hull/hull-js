@@ -1,62 +1,57 @@
 define(['lib/utils/base64'], function (base64) {
   describe('Base64 transforms', function () {
-    describe('Encoding to Base64', function () {
-      beforeEach(function () {
-        this.unescapeStub       = sinon.stub(window, 'unescape', function (v) { return v + '_unescape'; });
-        this.encodeURIComponent = sinon.stub(window, 'encodeURIComponent', function (v) { return v + '_encodeURIComponent'; });
-        this.btoaStub           = sinon.stub(window, 'btoa', function (v) { return v + '_btoa'; });
-      });
-      afterEach(function () {
-        this.unescapeStub.restore();
-        this.encodeURIComponent.restore();
-        this.btoaStub.restore();
-      });
+    before(function () {
+      sinon.stub(base64.utils, 'unescape', function (v) { return v + '_unescape'; });
+      sinon.stub(base64.utils, 'encodeURIComponent', function (v) { return v + '_encodeURIComponent'; });
+      sinon.stub(base64.utils, 'btoa', function (v) { return v + '_btoa'; });
+      sinon.stub(base64.utils, 'atob', function (v) { return v + '_atob'; });
+      sinon.stub(base64.utils, 'escape', function (v) { return v + '_escape'; });
+      sinon.stub(base64.utils, 'decodeURIComponent', function (v) { return v + '_decodeURIComponent'; });
+    });
+    after(function () {
+      base64.utils.btoa.restore();
+      base64.utils.unescape.restore();
+      base64.utils.encodeURIComponent.restore();
+      base64.utils.atob.restore();
+      base64.utils.escape.restore();
+      base64.utils.decodeURIComponent.restore();
+    });
 
+    describe('Encoding to Base64', function () {
       it('should call global methods in correct order', function () {
         base64.encode('abcd');
-        this.btoaStub.should.have.been.called;
-        this.unescapeStub.should.have.been.called;
-        this.encodeURIComponent.should.have.been.called;
+        base64.utils.btoa.should.have.been.called;
+        base64.utils.unescape.should.have.been.called;
+        base64.utils.encodeURIComponent.should.have.been.called;
 
-        this.encodeURIComponent.should.have.been.calledBefore(this.unescapeStub);
-        this.unescapeStub.should.have.been.calledBefore(this.btoaStub);
+        base64.utils.encodeURIComponent.should.have.been.calledBefore(base64.utils.unescape);
+        base64.utils.unescape.should.have.been.calledBefore(base64.utils.btoa);
       });
       it('should return the encoded value', function () {
         base64.encode('abcd').should.be.eql('abcd_encodeURIComponent_unescape_btoa');
       });
     });
     describe('Decoding from Base64', function () {
-      beforeEach(function () {
-        this.atobStub           = sinon.stub(window, 'atob', function (v) { return v + '_btoa'; });
-        this.escapeStub         = sinon.stub(window, 'escape', function (v) { return v + '_escape'; });
-        this.decodeURIComponent = sinon.stub(window, 'decodeURIComponent', function (v) { return v + '_decodeURIComponent'; });
-      });
-      afterEach(function () {
-        this.atobStub.restore();
-        this.escapeStub.restore();
-        this.decodeURIComponent.restore();
-      });
-
       it('should call global methods in correct order', function () {
         base64.decode('abcd');
-        this.btoaStub.should.have.been.called;
-        this.escapeStub.should.have.been.called;
-        this.decodeURIComponent.should.have.been.called;
+        base64.utils.btoa.should.have.been.called;
+        base64.utils.escape.should.have.been.called;
+        base64.utils.decodeURIComponent.should.have.been.called;
 
-        this.decodeURIComponent.should.have.been.calledAfter(this.escapeStub);
-        this.escapeStub.should.have.been.calledAfter(this.btoaStub);
+        base64.utils.decodeURIComponent.should.have.been.calledAfter(base64.utils.escape);
+        base64.utils.escape.should.have.been.calledAfter(base64.utils.btoa);
       });
       it('should return the decoded value', function () {
-        base64.decode('abcd').should.be.eql('abcd_btoa_escape_decodeURIComponent');
+        base64.decode('abcd').should.be.eql('abcd_atob_escape_decodeURIComponent');
       });
     });
-    describe('Encoding and decoding are inverse functions', function () {
-      it('encode and decode are reversible', function () {
-        base64.decode(base64.encode('abcd')).should.be.eql('abcd');
-      });
-      it('should accept Unicode characters', function () {
-        base64.decode(base64.encode('✔')).should.be.eql('✔');
-      });
+  });
+  describe('Encoding and decoding are inverse functions', function () {
+    it('encode and decode are reversible', function () {
+      base64.decode(base64.encode('abcd')).should.be.eql('abcd');
+    });
+    it('should accept Unicode characters', function () {
+      base64.decode(base64.encode('✔')).should.be.eql('✔');
     });
   });
 });

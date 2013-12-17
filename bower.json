@@ -21,7 +21,6 @@
     "domready": ""
   },
   "devDependencies": {
-    "JSCovReporter": "git://github.com/TwoApart/JSCovReporter.git",
     "squire": "*"
   }
 }

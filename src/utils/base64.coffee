@@ -1,5 +1,8 @@
 define ()->
+  utilsContainer = window
+  utils: utilsContainer
   decode: (str)->
-    decodeURIComponent(escape(window.atob(str)))
+    utilsContainer.decodeURIComponent(utilsContainer.escape(utilsContainer.atob(str)))
   encode: (str)->
-    window.btoa(unescape(encodeURIComponent(str)))
+    utilsContainer.btoa(utilsContainer.unescape(utilsContainer.encodeURIComponent(str)))
+  utilsContainer: window
