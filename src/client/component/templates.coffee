@@ -1,4 +1,4 @@
-define ['underscore', 'lib/utils/handlebars', 'lib/utils/promises', 'lib/utils/q2jQuery'], (_, Handlebars, promises, q2jQuery) ->
+define ['underscore', 'lib/utils/handlebars', 'lib/utils/promises', 'lib/utils/q2jQuery', 'require'], (_, Handlebars, promises, q2jQuery, require) ->
 
   strategies =
     app: ['hullGlobal', 'meteor', 'sprockets', 'hullDefault']
@@ -6,12 +6,12 @@ define ['underscore', 'lib/utils/handlebars', 'lib/utils/promises', 'lib/utils/q
     server: ['require']
 
   #Compiles the template depending on its definition
-  setupTemplate = (tplSrc, tplName, wrapped) ->
+  setupTemplate = (tplSrc, tplName, wrapped, options) ->
     engine = module.templateEngine
     if (!_.isFunction(tplSrc))
       compiled = engine.compile tplSrc
     else if !wrapped
-      compiled = engine.template tplSrc
+      compiled = engine.template tplSrc, options
     else
       compiled = tplSrc
 
@@ -32,22 +32,22 @@ define ['underscore', 'lib/utils/handlebars', 'lib/utils/promises', 'lib/utils/q
     app:
       hullGlobal: (tplName)->
         if module.global.Hull.templates?[tplName]
-          setupTemplate module.global.Hull.templates["#{tplName}"], tplName
+          [module.global.Hull.templates["#{tplName}"], tplName, false]
       meteor: (tplName)->
         if module.global.Meteor? && module.global.Template?[tplName]?
-          module.global.Template[tplName]
+          [module.global.Template[tplName], tplName, false]
       sprockets: (tplName)->
         if module.global.HandlebarsTemplates? && module.global.HandlebarsTemplates?[tplName]?
-          setupTemplate(module.global.HandlebarsTemplates[tplName], tplName, true)
+          [module.global.HandlebarsTemplates[tplName], tplName, true]
       hullDefault: (tplName)->
         if module.global.Hull.templates?._default?[tplName]
-          setupTemplate(module.global.Hull.templates._default[tplName],  tplName)
+          [module.global.Hull.templates._default[tplName],  tplName, false]
     server:
       require: (tplName, path, format)->
         path = "text!#{path}.#{format}"
         dfd = module.deferred.deferred()
         module.require [path], (tpl)->
-          dfd.resolve setupTemplate(tpl, tplName)
+          dfd.resolve [tpl, tplName, false]
         , (err)->
           console.error "Error loading template", tplName, err.message
           dfd.reject err
@@ -61,7 +61,7 @@ define ['underscore', 'lib/utils/handlebars', 'lib/utils/promises', 'lib/utils/q
   applyDomStrategies = (tplName, el)->
     selector = "script[data-hull-template='#{tplName}']"
     tpl = _execute('dom', selector, tplName, el)
-    setupTemplate(tpl, tplName) if tpl
+    [tpl, tplName, false] if tpl
 
   applyAppStrategies = (tplName)->
     _execute('app', tplName)
@@ -74,12 +74,17 @@ define ['underscore', 'lib/utils/handlebars', 'lib/utils/promises', 'lib/utils/q
     path = "#{options.ref}/#{name}"
     tplName = [options.componentName, name.replace(/^_/, '')].join("/")
 
-    tpl = applyDomStrategies tplName, options.rootEl if module.domFind
-    tpl = applyAppStrategies tplName unless tpl
+    params = applyDomStrategies tplName, options.rootEl if module.domFind
+    params = applyAppStrategies tplName unless params
 
-    module.define path, tpl if tpl
-
-    tpl = applyServerStrategies tplName, path, options.templateFormat unless tpl
+    if params
+      params = params.concat({helpers: options.helpers})
+      tpl = setupTemplate(params...)
+      module.define path, tpl
+    else
+      tpl = applyServerStrategies(tplName, path, options.templateFormat).then (params)->
+        params = params.concat({helpers: options.helpers})
+        setupTemplate(params...)
     tpl
 
   module =
@@ -89,12 +94,13 @@ define ['underscore', 'lib/utils/handlebars', 'lib/utils/promises', 'lib/utils/q
     templateEngine: Handlebars
     domFind: undefined
     deferred: undefined
-    load: (names=[], ref, el, format="hbs") ->
+    load: (names=[], ref, el, helpers={}, format="hbs") ->
       dfd = module.deferred.deferred()
       names = [names] if _.isString(names)
       componentProps =
         componentName: ref.replace('__component__$', '').split('@')[0]
         templateFormat: format
+        helpers: helpers
         rootEl: el
         ref: ref
 
@@ -110,7 +116,7 @@ define ['underscore', 'lib/utils/handlebars', 'lib/utils/promises', 'lib/utils/q
       module.domFind = app.core.dom.find
       module.deferred = promises
       app.components.before 'initialize', ->
-        promise = module.load(@templates, @ref, @el).then (tpls)=>
+        promise = module.load(@templates, @ref, @el, @helpers).then (tpls)=>
           @_templates = tpls
         , (err)->
           console.error('Error while loading templates:', err)

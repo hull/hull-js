@@ -29,10 +29,6 @@ define(['spec/support/spec_helper', 'jquery', 'lib/client/component/templates'],
     beforeEach(function () {
       this.app = {
         core: {
-          data: {
-            deferred: jquery.Deferred,
-            when: jquery.when
-          },
           dom: {
             find: function (sel, ctx) {
               ctx = ctx || document; //TODO fix in Aura
@@ -55,17 +51,17 @@ define(['spec/support/spec_helper', 'jquery', 'lib/client/component/templates'],
       });
     });
 
-    // This does not work with phantomjs... DAMN
-    // describe("Error management", function () {
-    //   it("should fail the promise", function (done) {
-    //     var promise = env.core.template.load("does_not_exist", "test");
-    //     promise.always(function () {
-    //       var state = promise.state();
-    //       state.should.equal("rejected");
-    //       done();
-    //     });
-    //   });
-    // });
+    //FIXME This does not work with phantomjs... DAMN
+    xdescribe("Error management", function () {
+      it("should fail the promise", function (done) {
+        var promise = module.load("does_not_exist", "test");
+        promise.always(function () {
+          var state = promise.state();
+          state.should.equal("rejected");
+          done();
+        });
+      });
+    });
 
     describe("DOM loading", function () {
       var tplName = "tpl1";
