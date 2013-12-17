@@ -35,7 +35,6 @@ define(['spec/support/spec_helper', 'jquery', 'lib/client/component/templates'],
               return jquery(ctx).find(sel);
             }
           },
-          template: {}
         },
         components: {
           before: sinon.spy()
@@ -52,8 +51,8 @@ define(['spec/support/spec_helper', 'jquery', 'lib/client/component/templates'],
     });
 
     //FIXME This does not work with phantomjs... DAMN
-    xdescribe("Error management", function () {
-      it("should fail the promise", function (done) {
+    describe("Error management", function () {
+      xit("should fail the promise", function (done) {
         var promise = module.load("does_not_exist", "test");
         promise.always(function () {
           var state = promise.state();

@@ -1,4 +1,4 @@
-define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/hull.api', 'lib/utils/emitter', 'lib/client/component/registrar'], (_, promises, Aura, HullAPI, emitterInstance, componentRegistrar) ->
+define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars', 'lib/hull.api', 'lib/utils/emitter', 'lib/client/component/registrar'], (_, promises, Aura, Handlebars, HullAPI, emitterInstance, componentRegistrar) ->
 
   hullApiMiddleware = (api)->
     name: 'Hull'
@@ -42,6 +42,7 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/hull.api', 'lib/ut
   success: (appParts)->
     booted = HullAPI.success(appParts.api)
     booted.component = componentRegistrar(define)
+    booted.util.Handlebars = Handlebars
     booted.define = define
     booted.parse = (el, options={})->
       appParts.app.sandbox.start(el, options)
