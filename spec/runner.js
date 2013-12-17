@@ -1,6 +1,6 @@
 var allTestFiles = [];
 Object.keys(window.__karma__.files).forEach(function(file) {
-  if (/_spec\.js$/.test(file) && file.indexOf('bootstrap') === -1) {
+  if (/_spec\.js$/.test(file) && (/^\/base\/spec/).test(file) && file.indexOf('bootstrap') === -1) {
     allTestFiles.push(file);
   }
 });
