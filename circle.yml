@@ -1,4 +1,0 @@
-dependencies:
-  override:
-    - npm install -g grunt-cli bower
-    - npm install
