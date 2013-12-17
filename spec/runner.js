@@ -28,7 +28,8 @@ require.config({
     backbone: 'bower_components/backbone/backbone-min',
     fixtures: 'spec/fixtures',
     string: 'bower_components/underscore.string/lib/underscore.string',
-    text: 'bower_components/requirejs-text/text',
+    moment: 'bower_components/underscore.string/lib/underscore.string',
+    text: 'bower_components/moment/moment',
   },
   shim: {
     "underscore": {

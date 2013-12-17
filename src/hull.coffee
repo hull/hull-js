@@ -32,7 +32,6 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/hull.api', 'lib/ut
       .use('lib/client/component/component')
       .use('lib/client/component/templates')
       .use('lib/client/component/datasource')
-      .use('lib/client/component/hull-handlebars-helpers')
 
   init: (config)->
     app = new Aura(_.extend config, mediatorInstance: emitterInstance )
