@@ -162,11 +162,6 @@ module.exports = function (grunt) {
         }
       }
     },
-    mocha: {
-      hull: {
-        src: ["spec/index.html"]
-      }
-    },
     watch: {
       widgets: {
         files: ['aura_components/**/*'],
@@ -186,7 +181,7 @@ module.exports = function (grunt) {
       },
       spec: {
         files: ['spec/**/*.js'],
-        tasks: ['mocha']
+        tasks: ['test']
       },
       extensions: {
         files: ['aura-extensions/**/*.js'],

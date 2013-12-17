@@ -86,7 +86,7 @@ define ['underscore', 'handlebars', 'lib/utils/promises', 'lib/utils/q2jQuery'],
     global: window
     require: require
     define: define
-    templateEngine: Handlebars
+    templateEngine: Handlebars.default
     domFind: undefined
     deferred: undefined
     load: (names=[], ref, el, format="hbs") ->

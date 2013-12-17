@@ -6,7 +6,6 @@
     "jquery": "1.10.*",
     "aura": "hull/aura#895497cf0140ea65fda4f68befecc592c304f335",
     "backbone": "0.9.9",
-    "require-handlebars-plugin": "0.4.0",
     "analytics": "hull/analytics#1.0.8-hull",
     "cookies-js": "0.3.1",
     "base64": "0.1.1",

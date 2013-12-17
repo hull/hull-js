@@ -18,7 +18,7 @@
       "eventemitter":   "bower_components/eventemitter2/lib/eventemitter2",
       "backbone":       "bower_components/backbone/backbone",
       "xdm":            "bower_components/xdm.js/xdm",
-      "handlebars":     "lib/shims/node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars",
+      "handlebars":     "bower_components/handlebars/handlebars.amd",
       "cookie":         "bower_components/cookies-js/src/cookies",
       "promises":       "bower_components/q/q",
       "string":         "bower_components/underscore.string/lib/underscore.string",

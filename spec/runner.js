@@ -24,7 +24,7 @@ require.config({
     eventemitter: 'bower_components/eventemitter2/lib/eventemitter2',
     squire: 'bower_components/squire/src/Squire',
     jquery: 'bower_components/jquery/jquery.min',
-    handlebars: 'bower_components/require-handlebars-plugin/Handlebars',
+    handlebars: 'bower_components/handlebars/handlebars.amd',
     backbone: 'bower_components/backbone/backbone-min',
     fixtures: 'spec/fixtures',
     string: 'bower_components/underscore.string/lib/underscore.string',

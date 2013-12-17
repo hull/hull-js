@@ -9,7 +9,7 @@ define(['handlebars'], function (Handlebars) {
         if (typeof tpl === "function") return Handlebars.template(tpl);
         return Handlebars.compile(tpl);
       };
-      app.core.template.handlebars = Handlebars;
+      app.core.template.handlebars = Handlebars.default;
     }
   };
 });
