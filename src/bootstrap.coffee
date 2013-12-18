@@ -39,8 +39,8 @@ deletePool = (name)->
   delete _pool[name]
 
 rerun = (name, withObj)->
-  withObj[name](data...) for data in _pool['on']
-  deletePool('on')
+  withObj[name](data...) for data in _pool[name]
+  deletePool(name)
 
 
 #
@@ -83,9 +83,9 @@ successCb = (args...)->
   extension = currentFlavour.success(args...)
   _hull = window.Hull = _extend(_hull, extension)
 
-  rerun('on', booted)
-  rerun('track', booted)
-  rerun('component', booted) if ENV=="client"
+  rerun('on', _hull)
+  rerun('track', _hull)
+  rerun('component', _hull) if ENV=="client"
 
   # Prune init queue
   _setup.userSuccessFn(_hull)
