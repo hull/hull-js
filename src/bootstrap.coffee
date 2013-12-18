@@ -17,7 +17,7 @@
 #
 # Utilities
 #
-HULL_ENV = HULL_ENV || ''
+ENV = if HULL_ENV? then HULL_ENV else ''
 _setup = null
 _extend = null
 currentFlavour = null
@@ -73,7 +73,7 @@ _hull = window.Hull =
   track:      createPool 'track'
   init:       preInit
 
-_hull.component =  createPool 'component' if HULL_ENV=="client"
+_hull.component =  createPool 'component' if ENV=="client"
 
 # Wraps the success callback
 # * Extends the global object
@@ -85,7 +85,7 @@ successCb = (args...)->
 
   rerun('on', booted)
   rerun('track', booted)
-  rerun('component', booted) if HULL_ENV=="client"
+  rerun('component', booted) if ENV=="client"
 
   # Prune init queue
   _setup.userSuccessFn(_hull)
