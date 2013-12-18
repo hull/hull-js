@@ -11,7 +11,7 @@ define ['lib/client/datasource', 'underscore', 'lib/utils/promises', 'lib/utils/
       console.warn "An error occurred with datasource #{datasourceName}", err.status, err.statusText
 
     # Adds datasources to the instance of the component
-    addDatasources: (datasources)->
+    addDatasources: (datasources={})->
       _builtDs = _.map datasources, (ds, i)=>
         ds = _.bind ds, @ if _.isFunction ds
         ds = new module.datasourceModel(ds, @api) unless ds instanceof module.datasourceModel
@@ -41,7 +41,7 @@ define ['lib/client/datasource', 'underscore', 'lib/utils/promises', 'lib/utils/
 
       app.components.before 'initialize', (options)->
         datasources = _.extend {}, default_datasources, @datasources, options.datasources
-        module.addDatasources.call(@, datasources)
+        module.addDatasources.call @, datasources
 
       app.components.after 'buildContext', module.fetchDatasources
 
