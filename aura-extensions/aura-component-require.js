@@ -1,5 +1,5 @@
 /*global define:true */
-define(['underscore', 'lib/utils/promises'], function(_, promises) {
+define(['underscore', 'lib/utils/promises', 'lib/utils/q2jquery'], function(_, promises, q2jquery) {
   "use strict";
 
   function nameToComponentPath (name, component) {
@@ -36,7 +36,7 @@ define(['underscore', 'lib/utils/promises'], function(_, promises) {
         dfd.reject(err);
       });
     });
-    return dfd.promise;
+    return q2jquery(dfd.promise);
   }
 
   return {
