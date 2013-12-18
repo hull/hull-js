@@ -7,15 +7,14 @@ define ['underscore', 'lib/utils/handlebars', 'lib/utils/promises', 'lib/utils/q
 
   #Compiles the template depending on its definition
   setupTemplate = (tplSrc, tplName, wrapped, options) ->
-    engine = module.templateEngine
     if (!_.isFunction(tplSrc))
-      compiled = engine.compile tplSrc
+      compiled = Handlebars.compile tplSrc
     else if !wrapped
-      compiled = engine.template tplSrc, options
+      compiled = Handlebars.template tplSrc, options
     else
       compiled = tplSrc
 
-    engine.registerPartial(tplName, compiled)
+    Handlebars.registerPartial(tplName, compiled)
     compiled
 
   _domTemplate = ($el)->
@@ -45,7 +44,7 @@ define ['underscore', 'lib/utils/handlebars', 'lib/utils/promises', 'lib/utils/q
     server:
       require: (tplName, path, format)->
         path = "text!#{path}.#{format}"
-        dfd = module.deferred.deferred()
+        dfd = promises.deferred()
         module.require [path], (tpl)->
           dfd.resolve [tpl, tplName, false]
         , (err)->
@@ -78,45 +77,38 @@ define ['underscore', 'lib/utils/handlebars', 'lib/utils/promises', 'lib/utils/q
     params = applyAppStrategies tplName unless params
 
     if params
-      params = params.concat({helpers: options.helpers})
       tpl = setupTemplate(params...)
       module.define path, tpl
     else
       tpl = applyServerStrategies(tplName, path, options.templateFormat).then (params)->
-        params = params.concat({helpers: options.helpers})
         setupTemplate(params...)
     tpl
 
   module =
     global: window
-    require: require
     define: define
-    templateEngine: Handlebars
+    require: require
     domFind: undefined
-    deferred: undefined
-    load: (names=[], ref, el, helpers={}, format="hbs") ->
-      dfd = module.deferred.deferred()
+    load: (names=[], ref, el, format="hbs") ->
+      dfd = promises.deferred()
       names = [names] if _.isString(names)
       componentProps =
         componentName: ref.replace('__component__$', '').split('@')[0]
         templateFormat: format
-        helpers: helpers
         rootEl: el
         ref: ref
 
       tpls = _.map names, _.bind(lookupTemplate, undefined, componentProps)
-      module.deferred.all(tpls).then (ary)->
+      promises.all(tpls).then (ary)->
         dfd.resolve _.object(names, ary)
       , (err)->
         console.warn('WARNING', err)
         dfd.reject err
-      #FIXME OMG!!
-      (dfd.promise)
+      dfd.promise
     initialize: (app) ->
       module.domFind = app.core.dom.find
-      module.deferred = promises
       app.components.before 'initialize', ->
-        promise = module.load(@templates, @ref, @el, @helpers).then (tpls)=>
+        promise = module.load(@templates, @ref, @el).then (tpls)=>
           @_templates = tpls
         , (err)->
           console.error('Error while loading templates:', err)

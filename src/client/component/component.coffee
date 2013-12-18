@@ -49,7 +49,7 @@ define ['underscore', 'lib/utils/q2jQuery', 'lib/client/component/context', 'lib
       renderTemplate: (tpl, data)=>
         _tpl = @_templates?[tpl]
         if _tpl
-          _tpl(data || @)
+          _tpl data || @, helpers: _.extend {}, @helpers
         else
           "Cannot find template '#{tpl}'"
 
