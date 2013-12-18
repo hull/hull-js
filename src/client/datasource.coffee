@@ -92,7 +92,7 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
       else if _.isFunction(@def)
         ret = @def()
         if ret?.promise
-          dfd = ret
+          return promises.when(ret)
         else
           dfd.resolve ret
       else
