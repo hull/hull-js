@@ -12,11 +12,11 @@ define ['lib/client/datasource', 'underscore', 'lib/utils/promises', 'lib/utils/
 
     # Adds datasources to the instance of the component
     addDatasources: (datasources)->
-      @datasources ?= {}
-      _.each datasources, (ds, i)=>
+      _builtDs = _.map datasources, (ds, i)=>
         ds = _.bind ds, @ if _.isFunction ds
         ds = new module.datasourceModel(ds, @api) unless ds instanceof module.datasourceModel
-        @datasources[i] = ds
+        ds
+      @datasources = _.object _.keys(datasources), _builtDs
 
     # Fetches all the datasources for the instance of the component
     fetchDatasources: ()->

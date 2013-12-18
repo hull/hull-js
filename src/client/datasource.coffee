@@ -90,7 +90,7 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
       if (@def instanceof Backbone.Model || @def instanceof Backbone.Collection)
         dfd.resolve @def
       else if _.isFunction(@def)
-        ret = @def()
+        ret = @def.call()
         if ret?.promise
           return promises.when(ret)
         else
