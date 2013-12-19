@@ -87,6 +87,9 @@ successCb = (args...)->
   rerun('track', _hull)
   rerun('component', _hull) if ENV=="client"
 
+  # Execute Hull.init callback
+  _hull.emit('hull.init')
+
   # Prune init queue
   _setup.userSuccessFn(_hull)
 

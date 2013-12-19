@@ -19,8 +19,6 @@ define [
         util:
           entity: entity
 
-      # Execute Hull.init callback
-      booted.emit('hull.init')
       booted
 
     failure = (error)->
