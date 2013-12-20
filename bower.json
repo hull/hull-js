@@ -1,10 +1,10 @@
 {
   "name": "hull-js",
-  "version": "0.7.12",
+  "version": "0.7.13",
   "main": "./lib/hull.js",
   "dependencies": {
     "jquery": "1.10.*",
-    "aura": "0.9.2",
+    "aura": "hull/aura#593d293b931b686f37553aa41b4224b398ef7f82",
     "backbone": "0.9.9",
     "easyXDM": "2.4.17",
     "require-handlebars-plugin": "0.4.0",
