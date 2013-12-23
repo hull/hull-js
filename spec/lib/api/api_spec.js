@@ -38,14 +38,9 @@ define(['squire', 'lib/utils/promises'], function (Squire, promises) {
     after(function () {
       this.squire.remove();
     });
-    it('should have 2 properties', function () {
-      this.apiMod.should.have.keys('init', 'promise');
+    it('should have 1 property', function () {
+      this.apiMod.should.have.keys('init');
       this.apiMod.init.should.be.a('function');
-      //Doesn't work, no idea why...
-      //this.apiMod.promise.should.be.instanceOf(q.defer().promise.constructor);
-    });
-    it('should be pending', function () {
-      this.apiMod.promise.inspect().state.should.eql('pending');
     });
   });
 
@@ -58,20 +53,20 @@ define(['squire', 'lib/utils/promises'], function (Squire, promises) {
       this.squire.remove();
     });
     it('should reject if no configuration is provided', function () {
-      this.apiMod.init();
-      this.apiMod.promise.inspect().state.should.eql('rejected');
+      var promise = this.apiMod.init();
+      promise.inspect().state.should.eql('rejected');
     });
     it('should reject if appId is missing', function () {
-      this.apiMod.init({orgUrl: 'abcd'});
-      this.apiMod.promise.inspect().state.should.eql('rejected');
+      var promise = this.apiMod.init({orgUrl: 'abcd'});
+      promise.inspect().state.should.eql('rejected');
     });
     it('should reject if orgUrl is missing', function () {
-      this.apiMod.init({appId: 'abcd'});
-      this.apiMod.promise.inspect().state.should.eql('rejected');
+      var promise = this.apiMod.init({appId: 'abcd'});
+      promise.inspect().state.should.eql('rejected');
     });
     it('should resolve if appId and orgUrl are available', function () {
-      this.apiMod.init({appId: 'abcd', orgUrl: 'efgh'});
-      this.apiMod.promise.inspect().state.should.eql('pending');
+      var promise = this.apiMod.init({appId: 'abcd', orgUrl: 'efgh'});
+      promise.inspect().state.should.eql('pending');
     });
   });
 

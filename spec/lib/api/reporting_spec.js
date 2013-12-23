@@ -17,22 +17,14 @@ define([, 'squire'], function (reporting, Squire) {
       });
     });
     it('should have a getter and an init', function () {
-      this.module.should.have.keys('init', 'get');
+      this.module.should.have.keys('init');
     });
     describe('initialization', function () {
-      it('should not be able to get the value if not initialized', function () {
-        this.module.get.should.throw(Error);
-      });
       it('should return an object on init', function () {
         this.module.init({}).should.be.an('object');
       });
       it('should not throw when initialized', function () {
         this.module.init({});
-        this.module.get.should.not.throw(Error);
-      });
-      it('should always return the same value after init', function () {
-        var control = this.module.init({});
-        this.module.get().should.eql(control);
       });
     });
     describe('Using tracking', function () {

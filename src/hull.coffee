@@ -1,4 +1,4 @@
-define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars', 'lib/hull.api', 'lib/utils/emitter', 'lib/client/component/registrar'], (_, promises, Aura, Handlebars, HullAPI, emitterInstance, componentRegistrar) ->
+define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars', 'lib/hull.api', 'lib/utils/emitter', 'lib/client/component/registrar', 'lib/helpers/login'], (_, promises, Aura, Handlebars, HullAPI, emitterInstance, componentRegistrar, loginHelpers) ->
 
   hullApiMiddleware = (api)->
     name: 'Hull'
@@ -34,19 +34,28 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
       .use('lib/client/component/datasource')
 
   init: (config)->
-    app = new Aura(_.extend config, mediatorInstance: emitterInstance )
-    appPromise = HullAPI.init(config).then (hullApi)->
-      app: setupApp(app, hullApi)
-      api: hullApi
+    appPromise = HullAPI.init(config).then (successResult)->
+      app = new Aura(_.extend config, mediatorInstance: successResult.eventEmitter)
+      deps = 
+        api: successResult.raw.api
+        authScope: successResult.raw.authScope
+        remoteConfig: successResult.raw.remoteConfig
+        login: successResult.api.login
+        logout: successResult.api.logout
+      app: setupApp(app, deps)
+      api: successResult.api
     appPromise
   success: (appParts)->
-    booted = HullAPI.success(appParts.api)
+    booted = HullAPI.success(appParts)
     booted.component = componentRegistrar(define)
     booted.util.Handlebars = Handlebars
     booted.define = define
     booted.parse = (el, options={})->
       appParts.app.sandbox.start(el, options)
-    appParts.app.start({ components: 'body' }).fail (e)->
+    appParts.app.start({ components: 'body' }).then ->
+      booted.on 'hull.auth.complete', _.bind(loginHelpers.login, undefined,  appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
+      booted.on 'hull.auth.logout', _.bind(loginHelpers.logout, undefined, appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
+    ,(e)->
       console.error('Unable to start Aura app:', e)
       appParts.app.stop()
     booted

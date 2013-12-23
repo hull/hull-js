@@ -10,6 +10,7 @@ define(['squire'], function (Squire) {
       };
       this.appMock = {
         sandbox: {},
+        core: { data: { hullApi: function () {} } },
         components: {
           before: sinon.spy()
         }
@@ -17,8 +18,8 @@ define(['squire'], function (Squire) {
       this.trackSpy = sinon.spy();
       this.flagSpy = sinon.spy();
       var injector = new Squire();
-      var reporting = { get: function () {} };
-      var reportingStub = sinon.stub(reporting, 'get', function () { return {
+      var reporting = { init: function () {} };
+      var reportingStub = sinon.stub(reporting, 'init', function () { return {
         track: that.trackSpy,
         flag: that.flagSpy
       }});

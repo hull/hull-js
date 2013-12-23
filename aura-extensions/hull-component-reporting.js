@@ -16,12 +16,13 @@ define(['underscore', 'lib/api/reporting'], function(_, reporting) {
       };
     },
     initialize: function(app) {
+      var _reporting = reporting.init(app.core.data.hullApi);
       var sandbox = app.sandbox;
       sandbox.track = function(eventName, params) {
-        return reporting.get().track(eventName, params);
+        return _reporting.track(eventName, params);
       };
       sandbox.flag = function(id) {
-        return reporting.get().flag(id);
+        return _reporting.flag(id);
       };
       return app.components.before('initialize', module.setup);
     }

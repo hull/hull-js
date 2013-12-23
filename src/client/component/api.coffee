@@ -161,25 +161,9 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
       sandbox.isAdmin = ->
         (authScope == 'Account' || sandbox.data.api.model('me').get('is_admin'))
 
-      sandbox.login = (provider, opts={}, callback=->)->
-        hullApi.auth.login.apply(undefined, arguments).then ->
-          try
-            me = sandbox.data.api.model('me')
-            me.fetch().then ->
-              core.mediator.emit 'hull.auth.complete', me
-              core.mediator.emit 'hull.login', me
-          catch err
-            console.error "Error on auth promise resolution", err
-            core.mediator.emit 'hull.auth.failure', err
-        , (err)->
-          core.mediator.emit 'hull.auth.failure', err
-
+      sandbox.login = hullApi.login
       # Add a .logout() method to the component sandbox, and emit events when logout is complete
-      sandbox.logout = (callback=->)->
-        hullApi.auth.logout(callback).then ->
-          core.mediator.emit('hull.auth.logout')
-          core.mediator.emit('hull.logout')
-          core.data.api.model('me').clear()
+      sandbox.logout = hullApi.logout
 
       # Add a .linkIdenity() method to the component sandbox
       sandbox.linkIdentity = (provider, opts={}, callback=->)->

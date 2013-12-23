@@ -106,5 +106,4 @@ require ['flavour', 'underscore', 'lib/utils/version'], (flavour, _, version)->
   _hull.version = version
   _extend = _.extend
   currentFlavour = flavour
-  unlock 'require'
 
