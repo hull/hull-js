@@ -34,9 +34,11 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
       .use('lib/client/component/datasource')
 
   init: (config)->
-    appPromise = HullAPI.init(config).then (successResult)->
+    appPromise = HullAPI.init(config)
+    return appPromise if config.apiOnly is true
+    appPromise.then (successResult)->
       app = new Aura(_.extend config, mediatorInstance: successResult.eventEmitter)
-      deps = 
+      deps =
         api: successResult.raw.api
         authScope: successResult.raw.authScope
         remoteConfig: successResult.raw.remoteConfig
@@ -44,9 +46,10 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
         logout: successResult.api.logout
       app: setupApp(app, deps)
       api: successResult.api
-    appPromise
+      components: true
   success: (appParts)->
     booted = HullAPI.success(appParts)
+    return booted unless appParts.components
     booted.component = componentRegistrar(define)
     booted.util.Handlebars = Handlebars
     booted.define = define

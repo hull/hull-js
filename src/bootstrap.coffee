@@ -18,16 +18,15 @@
 # Utilities
 #
 ENV = if HULL_ENV? then HULL_ENV else ''
-_setup = null
 _extend = null
 currentFlavour = null
 
-createLock = (locks, openDoorFn)->
-  _locks = [].concat locks
-  (lock)->
-    index = _locks.indexOf lock
-    openDoorFn() if !!~index and _locks.splice(index, 1).length and !_locks.length
-
+createLock = ()->
+  _cbs = []
+  run: (cb)->
+    _cbs.push cb
+  unlock: ()->
+    cb() for cb in _cbs
 
 # Helpers to manage the calls to functions defined from the start
 # event if they are not available
@@ -47,31 +46,37 @@ rerun = (name, withObj)->
 # "Real" code
 #
 
-unlock = createLock ['init', 'require'], ->
-  currentFlavour.init(_setup.config).then(successCb, failureCb)
+lock = createLock()
 
-# * Checks that it has not been called before
 # * Augments coniguration
-# * Unlocks the achievement :p
-preInit = (config, cb, errb)->
-  throw new Error 'Hull.init has already been called' if _setup
-
+# * Adds a callback when ready
+_mainCalled = false
+preInit = (isMain, config, cb, errb)->
+  throw new Error('Hull.init can be called only once') if isMain and _mainCalled
+  _mainCalled = true if isMain
   # Prepare config
   config.namespace = 'hull'
   config.debug = config.debug && { enable: true }
 
-  _setup =
-    config: config
-    userSuccessFn: cb or ->
-    userFailureFn: errb or ->
+  lock.run ->
+    currentFlavour.init(config).then (args...)->
+      successCb [isMain, cb or ->].concat(args)...
+    , (args...)->
+      failureCb [isMain, errb or ->].concat(args)...
 
-  unlock 'init'
+initApi = (config, args...)->
+  config.apiOnly = true
+  preInit [false, config].concat(args)...
 
+initMain = (config, args...)->
+  preInit [true, config].concat(args)...
 
 _hull = window.Hull =
   on:         createPool 'on'
   track:      createPool 'track'
-  init:       preInit
+  init:       initMain
+
+_hull.init.api = initApi
 
 _hull.component =  createPool 'component' if ENV=="client"
 
@@ -79,31 +84,36 @@ _hull.component =  createPool 'component' if ENV=="client"
 # * Extends the global object
 # * Reinjects events in the live app from the pool
 # * Replays the track events
-successCb = (args...)->
+successCb = (isMain, success, args...)->
   extension = currentFlavour.success(args...)
-  _hull = window.Hull = _extend(_hull, extension)
+  _final = _extend({}, _hull, extension)
 
-  rerun('on', _hull)
-  rerun('track', _hull)
-  rerun('component', _hull) if ENV=="client"
+  if isMain
+    window.Hull = _final
+    rerun('on', _final)
+    rerun('track', _final)
+    rerun('component', _final) if ENV=="client"
+  else
+    delete _final.component #FIXME hackish
 
   # Execute Hull.init callback
-  _hull.emit('hull.init')
+  _final.emit('hull.init', _final)
 
   # Prune init queue
-  _setup.userSuccessFn(_hull)
+  success(_final)
 
-  _hull
+  _final
 
 
 # Wraps the failure callback
 # * Executes the failure behaviour defined by the current flavour
-failureCb = (args...)->
+failureCb = (isMain, failure, args...)->
   currentFlavour.failure(args...)
-  _setup.userFailureFn(args...)
+  failure(args...)
 
 require ['flavour', 'underscore', 'lib/utils/version'], (flavour, _, version)->
   _hull.version = version
   _extend = _.extend
   currentFlavour = flavour
+  lock.unlock()
 
