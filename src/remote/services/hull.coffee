@@ -3,21 +3,21 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
   API_PATH_REGEXP = /^\/?api\/v1\//
 
   (app)->
+    # Safari hack: Safari doesn't send response tokens for remote exchange
     accessToken = app.config.access_token
     headers = { 'Hull-App-Id': app.config.appId }
-    headers['Hull-Access-Token'] = accessToken if accessToken?
 
     identified = false
     originalUserId = app.config.data?.me?.id
 
     identify = (me) ->
       return unless me
+      identified = !!me.id?
+      return unless identified
       analytics = require('analytics')
       signInCount = me.stats?.sign_in_count || 0
 
-      if identified && signInCount == 1
-        analytics.alias(me.id)
-        identified = true
+      analytics.alias(me.id) if identified && signInCount == 1
 
       ident = _.pick(me, 'name', 'email', 'id', 'picture')
       ident.created = me.created_at
@@ -37,6 +37,7 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
     hullHandler = (options, success, error) ->
       url = normalizePath(options.path)
 
+      handler.headers['Hull-Access-Token'] = accessToken
       promise = handler.handle
         url: url
         type: options.method
@@ -46,7 +47,7 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
         identify(h.response) if url == '/api/v1/me'
 
         if accessToken && originalUserId && originalUserId != h.headers['Hull-User-Id']
-          accessToken = null
+          accessToken = undefined
 
         h.provider = 'hull'
 
@@ -75,6 +76,7 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
       doTrack(eventName, req.params)
       req.params.event ?= eventName
       req.params = { t: btoa(JSON.stringify(req.params)) }
+      handler.headers['Hull-Access-Token'] = accessToken
       promise = handler.handle
         url: normalizePath 't'
         type: req.method || 'post'
@@ -101,9 +103,7 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
 
       analytics.initialize(analyticsSettings)
 
-      if app.config.data.me?.id?
-        identified = true
-        identify(app.config.data.me)
+      identify(app.config.data.me) if app.config.data.me?
 
       doTrack("hull.app.init")
       app.core.routeHandlers.hull = hullHandler
