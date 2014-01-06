@@ -58,8 +58,8 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
 
     doTrack = (event, params={})->
       return unless event
-      params.hull_app_id    = config?.appId
-      params.hull_app_name  = config?.data?.app?.name
+      params.hull_app_id    = app.config?.appId
+      params.hull_app_name  = app.config?.data?.app?.name
       require('analytics').track(event, params)
 
     trackAction = (response)->
