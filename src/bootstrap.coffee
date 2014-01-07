@@ -60,13 +60,13 @@ _mainCalled = false
 preInit = (isMain, config, cb, errb)->
   throw new Error('Hull.init can be called only once') if isMain and _mainCalled
   _mainCalled = true if isMain
-  # Prepare config
-  config.namespace = 'hull'
-  config.debug = config.debug && { enable: true }
 
   lock.run ->
-    currentFlavour.init(config).then (args...)->
-      successCb [isMain, cb or ->].concat(args)...
+    _config = _extend {}, config
+    _config.namespace = 'hull'
+    _config.debug = config.debug && { enable: true }
+    currentFlavour.init(_config).then (args...)->
+      successCb [config, isMain, cb or ->].concat(args)...
     , (args...)->
       failureCb [isMain, errb or ->].concat(args)...
 
@@ -90,9 +90,10 @@ _hull.component =  createPool 'component' if ENV=="client"
 # * Extends the global object
 # * Reinjects events in the live app from the pool
 # * Replays the track events
-successCb = (isMain, success, args...)->
+successCb = (config, isMain, success, args...)->
   extension = currentFlavour.success(args...)
-  _final = _extend({}, _hull, extension)
+  _config = _extend {}, config
+  _final = _extend({ config: config }, _hull, extension)
 
   if isMain
     window.Hull = _final
