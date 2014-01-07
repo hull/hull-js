@@ -36,5 +36,4 @@ define ['underscore', 'xdm'], (_, xdm)->
       true
 
     afterAppStart: ->
-      console.log('afterAppStart')
       rpc.ready(app.config)
