@@ -22,10 +22,16 @@ _extend = null
 currentFlavour = null
 
 createLock = ()->
+  _open = false
   _cbs = []
   run: (cb)->
-    _cbs.push cb
+    if _open
+      cb()
+    else
+      _cbs.push cb
+
   unlock: ()->
+    _open = true
     cb() for cb in _cbs
 
 # Helpers to manage the calls to functions defined from the start
