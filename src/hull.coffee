@@ -45,10 +45,11 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
         login: successResult.api.login
         logout: successResult.api.logout
       app: setupApp(app, deps)
-      api: successResult.api
+      api: successResult
       components: true
   success: (appParts)->
-    booted = HullAPI.success(appParts)
+    apiParts = HullAPI.success(appParts.api)
+    booted = apiParts.exports
     return booted unless appParts.components
     booted.component = componentRegistrar(define)
     booted.util.Handlebars = Handlebars
@@ -56,12 +57,14 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
     booted.parse = (el, options={})->
       appParts.app.sandbox.start(el, options)
     appParts.app.start({ components: 'body' }).then ->
-      booted.on 'hull.auth.complete', _.bind(loginHelpers.login, undefined,  appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
-      booted.on 'hull.auth.logout', _.bind(loginHelpers.logout, undefined, appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
+      #TODO populate the models from the remoteConfig
+      booted.on 'hull.login', _.bind(loginHelpers.login, undefined,  appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
+      booted.on 'hull.logout', _.bind(loginHelpers.logout, undefined, appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
     ,(e)->
       console.error('Unable to start Aura app:', e)
       appParts.app.stop()
-    booted
+    exports: booted
+    context: apiParts.context
   failure: (error)->
     console.error(error.message)
     error

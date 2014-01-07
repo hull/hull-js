@@ -9,6 +9,8 @@ define [
       _emitter = emitter()
       api.init(config).then (api)->
         _reporting = reporting.init(api)
+        _emitter.on 'hull.login', (me)-> _reporting.track('hull.login', me)
+        _emitter.on 'hull.logout', ()-> _reporting.track('hull.logout')
         created =
           on: _emitter.on
           off: _emitter.off
@@ -19,12 +21,13 @@ define [
             api: api.api
           login: (args...)->
             api.auth.login(args...).then ()->
-              _emitter.emit 'hull.auth.complete'
+              api.api('me').then (me)->
+                _emitter.emit 'hull.login', me
             , (err)->
-              _emitter.emit 'hull.auth.failure', err
+              _emitter.emit 'hull.login.failure', err
           logout: (args...)->
             api.auth.logout(args...).then ()->
-              _emitter.emit('hull.auth.logout')
+              _emitter.emit('hull.logout')
           util:
             entity: entity
             eventEmitter: _emitter
@@ -38,5 +41,10 @@ define [
       error
 
     init: (config)-> create(config)
-    success: (successResult)-> successResult.api
+    success: (successResult)->
+      exports: successResult.api
+      context:
+        me: successResult.raw.remoteConfig.data.me
+        app: successResult.raw.remoteConfig.data.app
+        org: successResult.raw.remoteConfig.data.org
     failure: failure

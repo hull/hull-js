@@ -108,9 +108,17 @@ define(['squire', 'lib/utils/promises'], function (Squire, promises) {
       });
     });
     describe('Success callback', function () {
-      it('should return the "api" key', function () {
-        var fake = {key1: {}, key2: {}, api: {}};
-        this.hullApi.success(fake).should.eql(fake.api);
+      before(function () {
+        this.fake = {key1: {}, key2: {}, api: {}, raw: { remoteConfig: { data: {} } } };
+      });
+      it('should have a context and exports', function () {
+        this.hullApi.success(this.fake).should.have.keys('context', 'exports');
+      });
+      it('exports should be the raw api', function () {
+        this.hullApi.success(this.fake).exports.should.eql(this.fake.api);
+      });
+      it('context should provide info for me/app/org', function () {
+        this.hullApi.success(this.fake).context.should.have.keys('me', 'app', 'org');
       });
     });
   });

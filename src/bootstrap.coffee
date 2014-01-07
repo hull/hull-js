@@ -93,7 +93,7 @@ _hull.component =  createPool 'component' if ENV=="client"
 successCb = (config, isMain, success, args...)->
   extension = currentFlavour.success(args...)
   _config = _extend {}, config
-  _final = _extend({ config: config }, _hull, extension)
+  _final = _extend({ config: config }, _hull, extension.exports)
 
   if isMain
     window.Hull = _final
@@ -104,7 +104,7 @@ successCb = (config, isMain, success, args...)->
     delete _final.component #FIXME hackish
 
   # Execute Hull.init callback
-  _final.emit('hull.init', _final)
+  _final.emit('hull.init', _final, extension.context.me, extension.context.app, extension.context.org)
 
   # Prune init queue
   success(_final)
