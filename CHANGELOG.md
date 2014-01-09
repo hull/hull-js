@@ -1,3 +1,4 @@
+* The success callback of `Hull.init()` receives 4 arguments: `Hull`, `me`, `app`, `org`
 * `Hull.login()` resolves to the current user if successful
 * `Hull.login()` and `Hull.logout()` return a promise
 * `Hull.init.api(config, cb, errb)` creates an instance of Hull with API features only

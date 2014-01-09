@@ -107,7 +107,7 @@ successCb = (config, isMain, success, args...)->
   _final.emit('hull.init', _final, extension.context.me, extension.context.app, extension.context.org)
 
   # Prune init queue
-  success(_final)
+  success(_final, extension.context.me, extension.context.app, extension.context.org)
 
   _final
 
