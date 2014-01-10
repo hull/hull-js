@@ -17,8 +17,7 @@ define [
           emit: _emitter.emit
           track: _reporting.track
           flag: _reporting.flag
-          data:
-            api: api.api
+          api: api.api
           login: (args...)->
             api.auth.login(args...).then ()->
               api.api('me').then (me)->
@@ -31,7 +30,7 @@ define [
           util:
             entity: entity
             eventEmitter: _emitter
-        created.data.api.create = create
+        created.api.create = create
         raw: api
         api: created
         eventEmitter: _emitter
