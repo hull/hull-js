@@ -1,11 +1,7 @@
 define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
-  API_PATH = '/api/v1/'
-  API_PATH_REGEXP = /^\/?api\/v1\//
-
   (app)->
     # Safari hack: Safari doesn't send response tokens for remote exchange
     accessToken = app.config.access_token
-    headers = { 'Hull-App-Id': app.config.appId }
 
     identified = false
     originalUserId = app.config.data?.me?.id
@@ -25,26 +21,17 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
 
       analytics.identify(me.id, ident)
 
-    normalizePath = (path) ->
-      if API_PATH_REGEXP.test(path)
-        return path.replace(API_PATH_REGEXP, API_PATH)
-
-      path = path.substring(1) if path[0] == '/'
-      API_PATH + path
-
-    handler = new Handler(headers: headers)
+    handler = app.core.handler
 
     hullHandler = (options, success, error) ->
-      url = normalizePath(options.path)
-
       handler.headers['Hull-Access-Token'] = accessToken
       promise = handler.handle
-        url: url
+        url: options.path
         type: options.method
         data: options.params
 
       promise.then (h) ->
-        identify(h.response) if url == '/api/v1/me'
+        identify(h.response) if h.request.url == '/api/v1/me'
 
         if accessToken && originalUserId && originalUserId != h.headers['Hull-User-Id']
           accessToken = undefined
@@ -78,7 +65,7 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
       req.params = { t: btoa(JSON.stringify(req.params)) }
       handler.headers['Hull-Access-Token'] = accessToken
       promise = handler.handle
-        url: normalizePath 't'
+        url: 't'
         type: req.method || 'post'
         data: req.params
       promise.then (h)->

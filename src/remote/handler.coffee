@@ -1,4 +1,15 @@
 define ['jquery', 'underscore'], ($, _)->
+  API_PATH = '/api/v1/'
+  API_PATH_REGEXP = /^\/?api\/v1\//
+
+  normalizePath = (path) ->
+    if API_PATH_REGEXP.test(path)
+      return path.replace(API_PATH_REGEXP, API_PATH)
+
+    path = path.substring(1) if path[0] == '/'
+    API_PATH + path
+
+
   batchable = (threshold, fn) ->
     args = []
     timeout = null
@@ -16,7 +27,7 @@ define ['jquery', 'underscore'], ($, _)->
       clearTimeout(timeout)
       timeout = setTimeout(delayed, threshold)
 
-  class Handler
+  handler = class Handler
     RESPONSE_HEADERS = [
       'Hull-Auth-Scope',
       'Hull-Track',
@@ -38,6 +49,7 @@ define ['jquery', 'underscore'], ($, _)->
         @flush(requests)
 
     handle: (request) ->
+      request.url = normalizePath request.url
       d = new $.Deferred()
       @queue(request, d)
 
@@ -60,9 +72,9 @@ define ['jquery', 'underscore'], ($, _)->
           memo
         , {}
 
-        deferred.resolve(response: r, headers: headers)
+        deferred.resolve(response: r, headers: headers, request: request)
       , (xhr) ->
-        deferred.reject(response: xhr.responseJSON, headers: {})
+        deferred.reject(response: xhr.responseJSON, headers: {}, request: request)
 
     handleMultiple: (requests) ->
       @ajax({
@@ -113,3 +125,7 @@ define ['jquery', 'underscore'], ($, _)->
         c
 
       data
+  handler: handler
+  initialize: (app)->
+    headers = { 'Hull-App-Id': app.config.appId }
+    app.core.handler = new handler headers: headers

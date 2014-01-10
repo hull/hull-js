@@ -1,7 +1,7 @@
-define(['lib/remote/handler', 'jquery'], function(Handler, $) {
+define(['lib/remote/handler', 'jquery'], function(handlerModule, $) {
   describe('Handler', function() {
     describe('#handle', function() {
-      var handler = new Handler();
+      var handler = new handlerModule.handler();
 
       var clock, xhr, requests;
 
@@ -21,6 +21,21 @@ define(['lib/remote/handler', 'jquery'], function(Handler, $) {
 
         xhr.restore();
         requests = [];
+      });
+
+      describe('module', function () {
+        it('should expose the Handler and an initializer function', function () {
+          handlerModule.should.have.keys('initialize', 'handler');
+        });
+        describe('initializer', function () {
+          it('should instantiate a handler and set it in the core', function () {
+            var fakeApp = { core: {} , config: { appId: 'Yeah' }};
+            handlerModule.initialize(fakeApp);
+            fakeApp.core.should.have.keys('handler');
+            fakeApp.core.handler.headers.should.have.keys('Hull-App-Id');
+            fakeApp.core.handler.headers['Hull-App-Id'].should.eql(fakeApp.config.appId);
+          });
+        });
       });
 
       describe('when there is one request', function() {

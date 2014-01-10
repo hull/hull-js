@@ -1,6 +1,7 @@
-define ->
+define ['lib/remote/services/proxy'], (proxyBuilder)->
   (app)->
     slice = Array.prototype.slice
+    proxy = proxyBuilder {name: 'instagram', path: 'instagram'}, app.core.handler
 
     handler = (req, callback, errback)=>
 
@@ -23,24 +24,7 @@ define ->
         request.fail(errback)
 
       else
-        url  = "/api/v1/services/instagram/" + path
-        if req.method.toLowerCase() == 'delete'
-          req_data = JSON.stringify(req.params || {})
-        else
-          req_data = req.params
-
-        requestParams =
-          url: url
-          type: req.method
-          data: req_data
-          headers:
-            'Hull-App-Id': app.config.appId
-
-        request = app.core.data.ajax requestParams 
-
-        request.then (response)->
-          callback({ response: response, provider: 'instagram' })
-        , errback
+        proxy(req, callback, errback)
 
       return
 
