@@ -76,7 +76,7 @@ define(['squire', 'lib/utils/promises'], function (Squire, promises) {
         }.bind(this), done);
       });
       it('should provide the interface for the API flavour in the "api" key', function () {
-        var expectedKeys = ['on', 'off', 'emit', 'track', 'flag', 'data', 'login', 'logout', 'util'];
+        var expectedKeys = ['on', 'api', 'off', 'emit', 'track', 'flag', 'login', 'logout', 'util'];
         this.flavour.should.have.keys(expectedKeys);
       });
       it('should expose the EventEmitter methods', function () {
@@ -92,14 +92,13 @@ define(['squire', 'lib/utils/promises'], function (Squire, promises) {
         this.flavour.util.entity.should.eql(this.entityMock);
         this.flavour.util.eventEmitter.should.eql(this.emitterMock);
       });
-      it('should expose the raw api method in the "data" property', function () {
-        this.flavour.data.should.have.key('api');
-        this.flavour.data.api.should.eql(this.rawApi.api);
+      it('should expose the raw api method as the "api" property', function () {
+        this.flavour.api.should.eql(this.rawApi.api);
       });
       it('should expose a method to create a new api flavour', function (done) {
-        this.flavour.data.api.should.have.key('create');
-        this.flavour.data.api.create.should.be.a('function');
-        var newInstance = this.flavour.data.api.create({});
+        this.flavour.api.should.have.key('create');
+        this.flavour.api.create.should.be.a('function');
+        var newInstance = this.flavour.api.create({});
         this.apiDeferred.resolve(this.rawApi);
         newInstance.then(function (ret) {
           ret.api.should.have.keys(Object.keys(this.flavour));
