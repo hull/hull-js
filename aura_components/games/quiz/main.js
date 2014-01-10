@@ -9,220 +9,300 @@
  *
  * @name Quiz
  * @param {String} id The id of the quiz you want to display
- * @template {intro}    Show the title and the description of the quiz. And secondarily the identity component if the user is not connected..
- * @template {question} Show a question and its answers.
- * @template {answer}   A partial template used in the `question` template. It shows the name and the description of the answer.
- * @template {finished} Say to the user that the quiz is finish.
- * @template {result}   Show to the user his score.
+ * @template {quiz}    Show the title and the description of the quiz. And secondarily the identity component if the user is not connected..
  * @datasource {quiz} A collection of all the questions and their possible answers.
+ * @datasource {badge} The result of the Quiz for the current user.
  * @example <div data-hull-component="games/quiz@hull"  data-hull-id="5130a76ed4384e508f000009"></div>
  */
 
+
 Hull.component({
 
+  templates: ['quiz'],
   requiredOptions: ['id'],
-
-  templates: [
-    'intro',
-    'question',
-    'answer',
-    'finished',
-    'result'
-  ],
-
-  answers: {},
+  refreshEvents: ['model.hull.me.change'],
 
   datasources: {
-    quiz: function() {
-      return this.quiz || this.sandbox.data.api.model(this.id);
-    },
-    badge: function() {
-      return this.badge || this.api('me/badges/' + this.id);
-    }
+    quiz: ':id',
+    badge: 'me/badges/:id'
   },
-
-  trackingData: function() {
-    var data = { type: 'quiz' };
-    var quiz = this.data.quiz;
-    if (quiz && quiz.get) { data.name = quiz.get('name'); }
-    return data;
-  },
-
-  initialize: function() {
-    this.sandbox.on('hull.model.' + this.id + '.change', function() {
-      this.render();
-    }.bind(this));
-    this.sandbox.on('model.hull.me.change', function() {
-      if(this.loggedIn()) {this.actions.start.apply(this); }
-    }.bind(this));
-    this.currentQuestionIndex = 0;
-    this.answers = {};
-  },
-
-  beforeRender: function(data) {
-    this.quiz   = data.quiz;
-    this.badge  = data.badge || {};
-    if (!this.isInitialized) { this.track('hull.quiz.init'); }
-
-    if (data.me.id != this.currentUserId) {
-      this.template = "intro";
-      this.reset();
-      return data;
-    }
-
-    data.result             = this.getResult(data);
-
-    if (this.started) {
-      data.questions        = this.getQuestions(data);
-      data.current          = this.getCurrent(data);
-    }
-    return data;
-  },
-
-  afterRender: function(data) {
-    this.sandbox.emit('hull.quiz.' + this.id, data);
-  },
-
-  startQuiz: function() {
-    this.reset();
-    this.startedAt = new Date();
-    this.started = true;
-    this.render('question');
-  },
-
-  reset: function() {
-    this.quiz = null;
-    this.badge = null;
-    this.started = false;
-    this.submitted = false;
-    this.answers = {};
-    this.currentQuestionIndex = 0;
-    this.currentUserId = this.api.model('me').id;
-  },
-
-  // TODO : Refactor this please !!!!
-  getTemplate: function(tpl, data) {
-    if (tpl) {
-      return tpl;
-    }
-    if (!this.loggedIn()) {
-      return "intro";
-    } else if (this.submitted && data.badge && data.badge.id) {
-      return "result";
-    } else if (data.current) {
-      if (data.current.question) {
-        return "question";
-      } else {
-        return "finished";
-      }
-    } else if (data.badge) {
-      return "result";
-    }
-    return "intro";
-  },
-
-
-  getCurrent: function(data) {
-    this.currentQuestion = data.questions[this.currentQuestionIndex];
-    return {
-      index:            this.currentQuestionIndex,
-      indexDisplayable: this.currentQuestionIndex+1,
-      question:         this.currentQuestion,
-      next:             data.questions[this.currentQuestionIndex + 1],
-      previous:         data.questions[this.currentQuestionIndex - 1]
-    };
-  },
-
-  getQuestions: function(data) {
-    return data.quiz.questions;
-  },
-
-  getResult: function(data) {
-    return data.badge;
-  },
-
 
   actions: {
 
-    login: function(e, params) {
-      this.sandbox.login(params.data.provider, params.data).then(this.startQuiz.bind(this));
-    },
-
-    answer: function(e, params) {
-      var opts = params.data;
-      this.answers[opts.questionRef] = opts.answerRef;
-      this.data.quiz.set('answers', this.answers);
-
-      this.track('hull.quiz.progress', {
-        quizId: this.id,
-        questionRef: opts.questionRef,
-        answerRef: opts.answerRef,
-        questionIndex: this.currentQuestionIndex,
-        questionsCount: this.data.quiz.get('questions').length
-      });
-    },
-
-    answerAndNext: function() {
+    answerAndNext: function () {
       this.actions.answer.apply(this, arguments);
       this.actions.next.apply(this);
     },
-
-    start: function() {
-      this.track("hull.quiz.start", { quizId: this.id });
-      this.startQuiz();
+ 
+    answer: function (event, action) {
+      var qRef = action.data.questionRef,
+        aRef = action.data.answerRef;
+      this.selectAnswer(qRef, aRef);
     },
 
-    next: function() {
-      this.currentQuestionIndex += 1;
+    submit: function (event, action) {
+      this.finishQuiz();
+    },
+
+    next: function () {
+      this.selectNextQuestion();
+    },
+
+    previous: function () {
+      this.selectPreviousQuestion();
+    },
+
+    replay: function (event, action) {
+      this.resetAnswers = !! action.data.reset;
+      this.playing = true;
+      if (this.resetAnswers) {
+        this.answers = {};
+      }
       this.render();
-      return false;
     },
 
-    previous: function() {
-      if (this.currentQuestionIndex > 0) {
-        this.currentQuestionIndex -= 1;
-        this.render('question');
+    start: function (event, action) {
+      this.resetAnswers = !! action.data.reset;
+      if (this.resetAnswers) {
+        this.answers = {};
       }
-      return false;
-    },
+      this.startQuiz();
+    }
+  },
 
-    submit: function() {
-      this.track("hull.quiz.submit", { quizId: this.id });
-      var timing = 0;
-      if (this.startedAt) {
-        timing  = (new Date() - this.startedAt) / 1000;
-      }
+  // Rendering
 
-      var res  = this.api(this.id + "/achieve", 'post', {
-        answers: this.answers,
-        timing: timing
-      });
-
-      var self = this;
-      res.done(function(badge) {
-        if (badge) {
-          self.submitted = true;
-          self.badge = badge;
-          self.render('result');
-          self.track('hull.quiz.finish', { quizId: this.id, score: badge.data.score, timing: badge.data.timing });
+  beforeRender: function (data) {
+    if (data.badge && data.badge.id && !this.playing) {
+      data.playing = false;
+    } else {
+      data.playing = true;
+      if (this.resetAnswers) {
+        this.answers = {};
+      } else {
+        var answers = {};
+        if (data.badge.data) {
+          answers = data.badge.data.answers || {};
         }
-      });
-      return false;
-    },
+        this.answers = answers;
+      }
+      this.questions = data.quiz.questions;
+      data.questions = this.getQuestions();
+    }
+  },
 
-    share: function (e, params) {
-      var data = params.data;
-      var currentUrl = document.URL, text = data.text;
-
-      switch (data.provider){
-        case 'facebook':
-          // @TODO :-)
-          break;
-        case 'twitter':
-          window.open('https://twitter.com/share?url='+currentUrl+'&text='+text);
-          break;
+  afterRender: function (data) {
+    var self = this;
+    _ = this.sandbox.util._;
+    if (data.playing) {
+      this.$find('[data-hull-action="answer"]')
+        .removeClass('active');
+      if (this.options.highlightAnswers) {
+        _.each(this.answers, function (a, q) {
+          self.getAnswerEl(q, a)
+            .addClass('active');
+        });
+      }
+      if (this.options.autoStart) {
+        this.startQuiz();
+      } else {
+        this.showSection('intro');
       }
     }
+  },
+
+  showSection: function (sectionName) {
+    this.$find('[data-hull-section]')
+      .addClass('hidden');
+    this.$find('[data-hull-section="' + sectionName + '"]')
+      .removeClass('hidden');
+  },
+
+  // Questions
+
+  getQuestions: function () {
+    var _ = this.sandbox.util._;
+    var questions = (this.questions || [])
+      .slice(0);
+    if (this.options.sampleQuestions > 0) {
+      questions = _.sample(questions, this.options.sampleQuestions);
+    }
+    var index = 0;
+    return _.map(questions, function (q) {
+      index += 1
+      return _.extend(q, {
+        pagination: {
+          index: index,
+          total: questions.length
+        }
+      });
+    });
+  },
+
+  getCurrentQuestion: function () {
+    var questions = this.getQuestions();
+    this.currentQuestionIndex = this.currentQuestionIndex || 0;
+    return questions[this.currentQuestionIndex];
+  },
+
+  getNextQuestion: function () {
+    this.currentQuestionIndex += 1;
+    return this.getCurrentQuestion();
+  },
+
+  getPreviousQuestion: function () {
+    this.currentQuestionIndex = Math.max(this.currentQuestionIndex - 1, 0);
+    return this.getCurrentQuestion();
+  },
+
+  // Quiz Lifecycle
+
+  startQuiz: function () {
+    var self = this;
+    this.showSection('questions');
+    this.currentQuestionIndex = 0;
+    var currentQuestion = this.getCurrentQuestion();
+    this.startTicker();
+    this.selectQuestion(currentQuestion.ref);
+    return this;
+  },
+
+  finishQuiz: function () {
+    var self = this;
+    this.stopTicker();
+    var $submitBtn = this.$find('[data-hull-action="submit"]');
+    $submitBtn.attr('disabled', true);
+    var timing = this.timer.finishedAt - this.timer.startedAt;
+    this.api(this.id + "/achieve", 'post', {
+      answers: this.answers,
+      timing: timing
+    }, function (badge) {
+      $submitBtn.attr('disabled', false);
+      self.playing = false;
+      self.render();
+    });
+  },
+
+
+  // Timers
+
+  startTicker: function () {
+    this.ticker = setInterval(this.onTick.bind(this), 1000);
+    this.timer = {
+      countdowns: {},
+      timings: {},
+      startedAt: new Date()
+    };
+    if (this.options.questionTimer > 0) {
+      this.timer.countdowns.question = this.options.questionTimer;
+    }
+    if (this.options.quizTimer > 0) {
+      this.timer.countdowns.quiz = this.options.quizTimer;
+    }
+  },
+
+  stopTicker: function () {
+    this.timer.finishedAt = new Date();
+    clearInterval(this.ticker);
+  },
+
+  onTick: function () {
+    if (this.sandbox.stopped) {
+      return this.stopTicker();
+    }
+    var timer = this.timer;
+
+    // Global Timer
+    if (this.options.quizTimer) {
+      if (timer.countdowns.quiz > 0) {
+        timer.countdowns.quiz -= 1;
+        this.onQuizTick(timer.countdowns.quiz, this.options.quizTimer);
+      } else if (timer.countdowns.quiz === 0) {
+        this.finishQuiz();
+      }
+    }
+
+    // Question Timer
+    if (this.options.questionTimer) {
+      if (timer.countdowns.question > 0) {
+        timer.countdowns.question -= 1;
+        this.onQuestionTick(timer.countdowns.question);
+      } else if (timer.countdowns.question === 0) {
+        this.selectNextQuestion();
+      }
+    }
+  },
+
+  resetQuestionCountdown: function () {
+    if (this.options.questionTimer) {
+      this.timer.countdowns.question = this.options.questionTimer;
+      this.onQuestionTick(this.options.questionTimer);
+    }
+  },
+
+  onQuestionTick: function (remaining, total) {
+    this.$find('[data-hull-question-ticker]')
+      .html(remaining);
+  },
+
+  onQuizTick: function (remaining, total) {
+    this.$find('[data-hull-quiz-ticker]')
+      .html(remaining);
+  },
+
+
+  // Navigation
+
+  selectQuestion: function (qRef) {
+    var self = this;
+    this.$find('[data-hull-question]')
+      .addClass('hidden');
+    this.getQuestionEl(qRef)
+      .removeClass('hidden');
+  },
+
+  selectNextQuestion: function () {
+    var q = this.getNextQuestion();
+    if (q) {
+      this.selectQuestion(q.ref);
+      this.resetQuestionCountdown();
+    } else {
+      if (this.options.autoSubmit) {
+        this.finishQuiz();
+      } else {
+        this.showSection('finished');
+        this.stopTicker();
+      }
+    }
+  },
+
+  selectPreviousQuestion: function () {
+    var q = this.getPreviousQuestion();
+    this.selectQuestion(q.ref);
+    this.resetQuestionCountdown();
+  },
+
+  selectAnswer: function (qRef, aRef) {
+    this.getQuestionEl(qRef)
+      .find("[data-hull-action='answer']")
+      .removeClass('active');
+    this.answers[qRef] = aRef;
+    this.getAnswerEl(qRef, aRef)
+      .addClass('active');
+    if (this.options.autoNext) {
+      this.selectNextQuestion();
+    }
+  },
+
+  // DOM getters
+
+  getQuestionEl: function (qRef) {
+    return this.$find("[data-hull-question='" + qRef + "']");
+  },
+
+  getAnswerEl: function (qRef, aRef) {
+    var $q = this.getQuestionEl(qRef);
+    return $q.find("[data-hull-action='answer'][data-hull-answer-ref='" + aRef + "']");
   }
 
 });

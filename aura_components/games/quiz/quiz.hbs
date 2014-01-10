@@ -1,0 +1,70 @@
+<header class='text-center'>
+  <h1>{{quiz.name}}</h1>
+  <p>{{quiz.description}}</p>
+</header>
+
+{{#if playing}}
+
+  <div data-hull-section="intro" class='text-center hidden'>
+    <h3>Hey, let's play together !</h3>
+    <a class='btn btn-block btn-primary' data-hull-action='start'>Start !</a>
+  </div>
+
+  <div data-hull-section="questions" class='text-center hidden'>
+    {{#questions}}
+    <div data-hull-question="{{ref}}" class="hidden">
+      <h3>{{name}}</h3>
+      <p>{{description}}</p>
+      <ul class="nav nav-pills nav-stacked">
+        {{#answers}}
+        <li data-hull-action="answer" data-hull-answer-ref="{{ref}}" data-hull-question-ref="{{question_ref}}">
+          <a href="#">
+            <h4>
+              {{#if weight}}<span class='muted pull-right'>{{weight}}</span>{{/if}}
+              {{name}}
+            </h4>
+            <p>{{description}}</p>
+          </a>
+        </li>
+        {{/answers}}
+      </ul>
+      <div class='text-center'>
+        <span>{{pagination.index}} / {{pagination.total}}</span>
+      </div>
+    </div>
+    {{/questions}}
+  </div>
+
+  <div data-hull-section="finished" class='text-center hidden'>
+    <h3>Done, now submit your stuff... !</h3>
+    <a class='btn btn-block btn-primary' data-hull-action='submit'>Submit !</a>
+  </div>
+
+  <hr>
+
+  <div class='well text-center'>
+    {{#if options.questionTimer}}
+    <span data-hull-question-ticker class='badge badge-important'>{{options.questionTimer}}</span>
+    <span data-hull-quiz-ticker class='badge badge-important'>{{options.quizTimer}}</span>
+    {{else}}
+    <ul class="pager">
+      <li><a href="#" data-hull-action="previous">Previous</a></li>
+      <li><a href="#" data-hull-action="next">Next</a></li>
+    </ul>
+    {{/if}}
+  </div>
+
+{{else}}
+
+  {{#badge}}
+  <div class="text-center">
+    <h3>Bravo !</h3>
+    <h1>{{data.score}} points <small class='muted'>after {{stats.attempts}} attempts</small></h1>
+    <p>
+      <a class="btn btn-primary" data-hull-action='replay'>Replay !</a>
+      <a class="btn btn-danger" data-hull-action='replay' data-hull-reset='true'>Reset !</a>
+    </p>
+  </div>
+  {{/badge}}
+
+{{/if}}
