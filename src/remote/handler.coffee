@@ -91,14 +91,14 @@ define ['jquery', 'underscore'], ($, _)->
             memo
           , {}
 
-          h = { response: response.body, headers: headers }
+          h = { response: response.body, headers: headers, request: requests[i] }
           if response.status >= 400
             deferred.reject(h)
           else
             deferred.resolve(h)
       , (xhr) ->
         for request in requests
-          request[1].reject(response: xhr.responseJSON, headers: {})
+          request[1].reject(response: xhr.responseJSON, headers: {}, request: request)
 
     ajax: (options) ->
       options = $.extend true, options,
