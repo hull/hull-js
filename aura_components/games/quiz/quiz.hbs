@@ -44,13 +44,15 @@
 
   <div class='well text-center'>
     {{#if options.questionTimer}}
-    <span data-hull-question-ticker class='badge badge-important'>{{options.questionTimer}}</span>
-    <span data-hull-quiz-ticker class='badge badge-important'>{{options.quizTimer}}</span>
+      <span data-hull-question-ticker class='badge badge-important'>{{options.questionTimer}}</span>
+      <span data-hull-quiz-ticker class='badge badge-important'>{{options.quizTimer}}</span>
     {{else}}
-    <ul class="pager">
-      <li><a href="#" data-hull-action="previous">Previous</a></li>
-      <li><a href="#" data-hull-action="next">Next</a></li>
-    </ul>
+      {{#unless options.autoAdvance}}
+        <ul class="pager">
+          <li><a href="#" data-hull-action="previous">Previous</a></li>
+          <li><a href="#" data-hull-action="next">Next</a></li>
+        </ul>
+      {{/unless}}
     {{/if}}
   </div>
 
