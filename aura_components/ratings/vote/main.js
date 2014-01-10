@@ -20,49 +20,43 @@ Hull.component({
   templates: ['vote'],
 
   datasources: {
-    myVote: function() {
-      if (this.loggedIn()) {
-        return this.myInitialVote || this.api(this.options.id + "/reviews/me");
+    myReview: function() {
+      if (this.loggedIn() && this.options.id) {
+        return this.api(this.options.id + "/reviews/me");
+      } else {
+        return false;
       }
-    }
+    },
+    target: ':id'
   },
 
 
   initialize: function() {
     this.sandbox.on('hull.reviews.' + this.options.id + '.**', function() {
-      this.myInitialVote = null;
       this.render();
     }, this);
   },
 
-  beforeRender: function(data){
-    "use strict";
-    this.myInitialVote = data.myVote;
-    if (!this.votes) {
-      this.updateVotesFromStats(data.myVote);
-    }
-    data.myVote   = this.myVote;
-    data.votes    = this.votes;
-    return data;
-  },
-
-  updateVotesFromStats: function(stats) {
-    this.myVote = (stats && stats.rating) || 0;
-    if (stats && stats.ratings && stats.ratings.distribution) {
-      var distribution = stats.ratings.distribution
-      this.votes = {
-        down: distribution['-1'] || 0,
-        up:   distribution['1'] || 0
+  beforeRender: function(data) {
+    var votes = { up: 0, down: 0 };
+    if (data.target && data.target.stats && data.target.stats.reviews) {
+      var reviews = data.target.stats.reviews;
+      if (reviews.distribution) {
+        votes = {
+          down: reviews.distribution['-1'] || 0,
+          up: reviews.distribution['1'] || 0
+        }
       }
-    } else {
-      this.votes = { down: 0, up: 0 };
     }
+    data.myVote = data.myReview.rating;
+    data.votes = votes;
+    return data;
   },
 
   update_vote: function(evt, rating){
     evt.stopPropagation();
     var description = this.$el.find("textarea").val();
-    var self= this;
+    var self = this;
     if(rating!=undefined){
       var d = {
         rating: rating,
@@ -70,8 +64,6 @@ Hull.component({
       };
       this.api(this.options.id + '/reviews', 'post', d).then(function(res) {
         self.sandbox.emit('hull.reviews.' + self.options.id + '.updated', res);
-        self.updateVotesFromStats(res);
-        self.render();
       });
     }
   },
