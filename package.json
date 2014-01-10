@@ -1,6 +1,6 @@
 {
   "name": "hull-js",
-  "version": "0.8.0-rc4",
+  "version": "0.8.0-rc5",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-s3": "0.2.0-alpha",

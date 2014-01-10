@@ -1,3 +1,4 @@
+* The 3rd party APIs which need to be proxified are now batchable
 * The success callback of `Hull.init()` receives 4 arguments: `Hull`, `me`, `app`, `org`
 * `Hull.login()` resolves to the current user if successful
 * `Hull.login()` and `Hull.logout()` return a promise
