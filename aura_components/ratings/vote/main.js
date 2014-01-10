@@ -47,7 +47,7 @@ Hull.component({
   },
 
   updateVotesFromStats: function(stats) {
-    this.myVote = stats.rating || 0;
+    this.myVote = (stats && stats.rating) || 0;
     if (stats && stats.ratings && stats.ratings.distribution) {
       var distribution = stats.ratings.distribution
       this.votes = {
