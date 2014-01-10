@@ -9,6 +9,13 @@
  *
  * @name Quiz
  * @param {String} id The id of the quiz you want to display
+ * @param {String} autoAdvance boolean: Advance to next question on click on an Answer
+ * @param {String} autoSubmit boolean: Skip final screen and auto submit quiz
+ * @param {String} quizTimer number: Add a global timer to the quiz
+ * @param {String} highlightAnswers boolean: Highlight the currently selected answer with an 'active' class
+ * @param {String} autoStart boolean: Skip the intro screen
+ * @param {String} sampleQuestions number: Choose n random questions among the total available
+ * @param {String} questionTimer number: Add a per-question timer to the quiz
  * @template {quiz}    Show the title and the description of the quiz. And secondarily the identity component if the user is not connected..
  * @datasource {quiz} A collection of all the questions and their possible answers.
  * @datasource {badge} The result of the Quiz for the current user.
@@ -29,15 +36,17 @@ Hull.component({
 
   actions: {
 
-    answerAndNext: function () {
+    answerAndNext: function (event, action) {
       this.actions.answer.apply(this, arguments);
       this.actions.next.apply(this);
     },
  
     answer: function (event, action) {
-      var qRef = action.data.questionRef,
-        aRef = action.data.answerRef;
-      this.selectAnswer(qRef, aRef);
+      if(!!this.options.autoAdvance){
+        this.actions.next.apply(this);
+      } else {
+        this.answer(event,action);
+      }
     },
 
     submit: function (event, action) {
@@ -70,6 +79,12 @@ Hull.component({
     }
   },
 
+
+  answer: function(event, action){
+      var qRef = action.data.questionRef,
+        aRef = action.data.answerRef;
+      this.selectAnswer(qRef, aRef);
+  },
   // Rendering
 
   beforeRender: function (data) {
