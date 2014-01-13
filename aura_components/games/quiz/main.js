@@ -15,13 +15,15 @@
  * @template {finished} Say to the user that the quiz is finish.
  * @template {result}   Show to the user his score.
  * @datasource {quiz} A collection of all the questions and their possible answers.
- * @example <div data-hull-component="games/quiz@hull"  data-hull-id="5130a76ed4384e508f000009"></div>
+ * @example <div data-hull-component='games/quiz@hull'  data-hull-id='5130a76ed4384e508f000009'></div>
  */
 
+/* global Hull:true*/
+'use strict';
 Hull.component({
-
+  type: 'Hull',
   requiredOptions: ['id'],
-
+ 
   templates: [
     'intro',
     'question',
@@ -29,9 +31,9 @@ Hull.component({
     'finished',
     'result'
   ],
-
+ 
   answers: {},
-
+ 
   datasources: {
     quiz: function() {
       return this.quiz || this.sandbox.data.api(this.id);
@@ -40,14 +42,14 @@ Hull.component({
       return this.badge || this.api('me/badges/' + this.id);
     }
   },
-
+ 
   trackingData: function() {
     var data = { type: 'quiz' };
     var quiz = this.data.quiz;
     if (quiz && quiz.get) { data.name = quiz.get('name'); }
     return data;
   },
-
+ 
   initialize: function() {
     this.sandbox.on('hull.model.' + this.id + '.change', function() {
       this.render();
@@ -58,38 +60,38 @@ Hull.component({
     this.currentQuestionIndex = 0;
     this.answers = {};
   },
-
+ 
   beforeRender: function(data) {
     this.quiz   = data.quiz;
     this.badge  = data.badge || {};
     if (!this.isInitialized) { this.track('hull.quiz.init'); }
-
+ 
     if (data.me.id != this.currentUserId) {
-      this.template = "intro";
+      this.template = 'intro';
       this.reset();
       return data;
     }
-
+ 
     data.result             = this.getResult(data);
-
+ 
     if (this.started) {
       data.questions        = this.getQuestions(data);
       data.current          = this.getCurrent(data);
     }
     return data;
   },
-
+ 
   afterRender: function(data) {
     this.sandbox.emit('hull.quiz.' + this.id, data);
   },
-
+ 
   startQuiz: function() {
     this.reset();
     this.startedAt = new Date();
     this.started = true;
     this.render('question');
   },
-
+ 
   reset: function() {
     this.quiz = null;
     this.badge = null;
@@ -99,29 +101,29 @@ Hull.component({
     this.currentQuestionIndex = 0;
     this.currentUserId = this.api.model('me').id;
   },
-
+ 
   // TODO : Refactor this please !!!!
   getTemplate: function(tpl, data) {
     if (tpl) {
       return tpl;
     }
     if (!this.loggedIn()) {
-      return "intro";
+      return 'intro';
     } else if (this.submitted && data.badge && data.badge.id) {
-      return "result";
+      return 'result';
     } else if (data.current) {
       if (data.current.question) {
-        return "question";
+        return 'question';
       } else {
-        return "finished";
+        return 'finished';
       }
     } else if (data.badge) {
-      return "result";
+      return 'result';
     }
-    return "intro";
+    return 'intro';
   },
-
-
+ 
+ 
   getCurrent: function(data) {
     this.currentQuestion = data.questions[this.currentQuestionIndex];
     return {
@@ -132,27 +134,27 @@ Hull.component({
       previous:         data.questions[this.currentQuestionIndex - 1]
     };
   },
-
+ 
   getQuestions: function(data) {
     return data.quiz.questions;
   },
-
+ 
   getResult: function(data) {
     return data.badge;
   },
-
-
+ 
+ 
   actions: {
-
+ 
     login: function(e, params) {
       this.sandbox.login(params.data.provider, params.data).then(this.startQuiz.bind(this));
     },
-
+ 
     answer: function(e, params) {
       var opts = params.data;
       this.answers[opts.questionRef] = opts.answerRef;
       this.data.quiz.set('answers', this.answers);
-
+ 
       this.track('hull.quiz.progress', {
         quizId: this.id,
         questionRef: opts.questionRef,
@@ -161,23 +163,23 @@ Hull.component({
         questionsCount: this.data.quiz.get('questions').length
       });
     },
-
+ 
     answerAndNext: function() {
       this.actions.answer.apply(this, arguments);
       this.actions.next.apply(this);
     },
-
+ 
     start: function() {
-      this.track("hull.quiz.start", { quizId: this.id });
+      this.track('hull.quiz.start', { quizId: this.id });
       this.startQuiz();
     },
-
+ 
     next: function() {
       this.currentQuestionIndex += 1;
       this.render();
       return false;
     },
-
+ 
     previous: function() {
       if (this.currentQuestionIndex > 0) {
         this.currentQuestionIndex -= 1;
@@ -185,19 +187,19 @@ Hull.component({
       }
       return false;
     },
-
+ 
     submit: function() {
-      this.track("hull.quiz.submit", { quizId: this.id });
+      this.track('hull.quiz.submit', { quizId: this.id });
       var timing = 0;
       if (this.startedAt) {
         timing  = (new Date() - this.startedAt) / 1000;
       }
-
-      var res  = this.api(this.id + "/achieve", 'post', {
+ 
+      var res  = this.api(this.id + '/achieve', 'post', {
         answers: this.answers,
         timing: timing
       });
-
+ 
       var self = this;
       res.done(function(badge) {
         if (badge) {
@@ -209,11 +211,11 @@ Hull.component({
       });
       return false;
     },
-
+ 
     share: function (e, params) {
       var data = params.data;
       var currentUrl = document.URL, text = data.text;
-
+ 
       switch (data.provider){
         case 'facebook':
           // @TODO :-)
@@ -224,5 +226,5 @@ Hull.component({
       }
     }
   }
-
+ 
 });
