@@ -28,6 +28,9 @@
       sandbox.mvc.Collection = function(collection) {
         return core.mvc.Collection.extend(collection);
       };
+      sandbox.mvc.Router = function(router) {
+        return core.mvc.Router.extend(router);
+      };
     }
 
   });
