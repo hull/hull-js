@@ -18,7 +18,8 @@
     "xdm.js": "~1.0.1",
     "almond": "~0.2.7",
     "domready": "",
-    "handlebars": "~1.1.2"
+    "handlebars": "~1.1.2",
+    "requirejs": "2.1.9"
   },
   "devDependencies": {
     "squire": "*"
