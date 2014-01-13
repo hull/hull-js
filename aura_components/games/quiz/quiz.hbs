@@ -6,8 +6,11 @@
 {{#if playing}}
 
   <div data-hull-section="intro" class='text-center hidden'>
-    <h3>Hey, let's play together !</h3>
-    <a class='btn btn-block btn-primary' data-hull-action='start'>Start !</a>
+    {{#if readyToPlay}}
+      <a class='btn btn-block btn-primary' data-hull-action='start'>Start !</a>
+    {{else}}
+      <div data-hull-component='login/profile@hull' data-hull-provider='twitter'></div>
+    {{/if}}
   </div>
 
   <div data-hull-section="questions" class='text-center hidden'>
@@ -37,7 +40,12 @@
 
   <div data-hull-section="finished" class='text-center hidden'>
     <h3>Done, now submit your stuff... !</h3>
-    <a class='btn btn-block btn-primary' data-hull-action='submit'>Submit !</a>
+    {{#if loggedIn}}
+      <a class='btn btn-block btn-primary' data-hull-action='submit'>Submit !</a>
+    {{else}}
+      <div data-hull-component='login/profile@hull' data-hull-provider='twitter'></div>
+    {{/if}}
+
   </div>
 
   <hr>
