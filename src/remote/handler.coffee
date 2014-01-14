@@ -44,6 +44,7 @@ define ['jquery', 'underscore'], ($, _)->
       @options.delay ?= 2
 
       @headers = @options.headers || {}
+      @afterCallbacks = []
 
       @queue = batchable @options.delay, (requests) ->
         @flush(requests)
@@ -53,7 +54,10 @@ define ['jquery', 'underscore'], ($, _)->
       d = new $.Deferred()
       @queue(request, d)
 
-      d.promise()
+      promise = d.promise()
+      _.each @afterCallbacks, (cb)->
+        promise.then(cb, cb)
+      promise
 
     flush: (requests) ->
       if requests.length <= @options.min
@@ -100,12 +104,15 @@ define ['jquery', 'underscore'], ($, _)->
         for request in requests
           request[1].reject(response: xhr.responseJSON, headers: {}, request: request)
 
+    after: (fn)->
+      @afterCallbacks.push fn
     ajax: (options) ->
       options = $.extend true, options,
         contentType: 'application/json'
         dataType: 'json'
         headers: @headers
 
+      options.type ?= 'get'
       if options.type.toLowerCase() != 'get'
         options.data = JSON.stringify(options.data || {})
 
@@ -127,5 +134,25 @@ define ['jquery', 'underscore'], ($, _)->
       data
   handler: handler
   initialize: (app)->
+    # Safari hack: Safari doesn't send response tokens for remote exchange
+    identified = app.config.data.me?.id
     headers = { 'Hull-App-Id': app.config.appId }
+    accessToken = app.config.access_token
+    headers['Hull-Access-Token'] = accessToken if accessToken
+
     app.core.handler = new handler headers: headers
+    app.core.handler.after (h)->
+      delete app.core.handler.headers['Hull-Access-Token']
+      userId = h.headers['Hull-User-Id']
+      changed = false
+      if identified != userId
+        identified = userId
+        changed = true
+      if identified and changed
+        app.core.handler.handle(url: 'me/tokens').then (h)->
+          app.core.tokens = h.response
+        , ()->
+          app.core.tokens = {}
+      if changed and not identified
+        app.core.tokens = {}
+

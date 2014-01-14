@@ -16,7 +16,7 @@ define ->
 
       headers = {}
 
-      req_data.access_token = app.config.services.settings.angellist_app?.access_token
+      req_data.access_token = app.config.services.credentials.angellist_app?.token
 
       request = app.core.data.ajax
         url: url

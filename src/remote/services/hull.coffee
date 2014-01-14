@@ -1,11 +1,5 @@
 define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
   (app)->
-    # Safari hack: Safari doesn't send response tokens for remote exchange
-    accessToken = app.config.access_token
-
-    identified = false
-    originalUserId = app.config.data?.me?.id
-
     identify = (me) ->
       return unless me
       identified = !!me.id?
@@ -24,7 +18,6 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
     handler = app.core.handler
 
     hullHandler = (options, success, error) ->
-      handler.headers['Hull-Access-Token'] = accessToken
       promise = handler.handle
         url: options.path
         type: options.method
@@ -32,9 +25,6 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
 
       promise.then (h) ->
         identify(h.response) if h.request.url == '/api/v1/me'
-
-        if accessToken && originalUserId && originalUserId != h.headers['Hull-User-Id']
-          accessToken = undefined
 
         h.provider = 'hull'
 
@@ -63,7 +53,6 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
       doTrack(eventName, req.params)
       req.params.event ?= eventName
       req.params = { t: btoa(JSON.stringify(req.params)) }
-      handler.headers['Hull-Access-Token'] = accessToken
       promise = handler.handle
         url: 't'
         type: req.method || 'post'

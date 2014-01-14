@@ -10,6 +10,7 @@ define ['underscore', 'xdm'], (_, xdm)->
     initialize: (app)->
       core = app.core
       core.routeHandlers = {}
+      core.tokens = app.config.services.credentials
 
       onRemoteMessage = (req, callback, errback)->
         throw new Error("Path not recognized #{JSON.stringify(req)}") unless req.path

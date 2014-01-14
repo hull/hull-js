@@ -14,8 +14,8 @@ define ->
 
       headers = {}
 
-      if app.config.services.settings.github_app?.access_token?
-        headers['Authorization'] = "token #{app.config.services.settings.github_app.access_token}"
+      token = app.core.tokens.github_app?.token
+      headers['Authorization'] = "token #{token}" if token
 
       request = app.core.data.ajax
         url: url
