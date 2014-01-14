@@ -1,3 +1,7 @@
+* `Hull.config` is now a function returning a clone of the whole configuration
+
+# 0.8.0-rc8
+
 * `Hull.data.api` has been renamed `Hull.api`
 * The 3rd party APIs which need to be proxified are now batchable
 * The success callback of `Hull.init()` receives 4 arguments: `Hull`, `me`, `app`, `org`

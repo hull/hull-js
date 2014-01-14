@@ -2,8 +2,9 @@ define [
   'lib/utils/emitter'
   'lib/api/api'
   'lib/api/reporting',
-  'lib/utils/entity'
-  ], (emitter, api, reporting, entity) ->
+  'lib/utils/entity',
+  'lib/utils/config'
+  ], (emitter, api, reporting, entity, configParser) ->
 
     create = (config)->
       _emitter = emitter()
@@ -12,6 +13,7 @@ define [
         _emitter.on 'hull.login', (me)-> _reporting.track('hull.login', me)
         _emitter.on 'hull.logout', ()-> _reporting.track('hull.logout')
         created =
+          config: configParser(config)
           on: _emitter.on
           off: _emitter.off
           emit: _emitter.emit

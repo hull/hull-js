@@ -93,7 +93,7 @@ _hull.component =  createPool 'component' if ENV=="client"
 successCb = (config, isMain, success, args...)->
   extension = currentFlavour.success(args...)
   _config = _extend {}, config
-  _final = _extend({ config: config }, _hull, extension.exports)
+  _final = _extend({}, _hull, extension.exports)
 
   if isMain
     window.Hull = _final
