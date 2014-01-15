@@ -23,12 +23,12 @@ define [
           login: (args...)->
             api.auth.login(args...).then ()->
               api.api('me').then (me)->
-                _emitter.emit 'hull.login', me
+                _emitter.emit 'hull.auth.login', me
             , (err)->
-              _emitter.emit 'hull.login.failure', err
+              _emitter.emit 'hull.auth.fail', err
           logout: (args...)->
             api.auth.logout(args...).then ()->
-              _emitter.emit('hull.logout')
+              _emitter.emit('hull.auth.logout')
           util:
             entity: entity
             eventEmitter: _emitter
