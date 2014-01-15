@@ -37,12 +37,15 @@ define ['domready', 'lib/utils/promises', 'xdm', 'lib/utils/version'], (domready
         container: document.body
         props:
           tabIndex: -1
+          height: "0"
+          width: "1px"
           style:
-            position: 'absolute'
-            top: '-2000px'
-            left: 0
+            position: 'fixed'
+            width: "0"
+            top: '-20px'
+            left: '-20px'
       ,
-        remote: message: {}, ready: {}
-        local: message: onMessage, ready: readyFn
+        remote:  message: {}, ready: {}
+        local:   message: onMessage, ready: readyFn
 
     deferred.promise
