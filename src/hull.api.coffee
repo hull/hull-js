@@ -10,8 +10,9 @@ define [
       _emitter = emitter()
       api.init(config).then (api)->
         _reporting = reporting.init(api)
-        _emitter.on 'hull.login', (me)-> _reporting.track('hull.login', me)
-        _emitter.on 'hull.logout', ()-> _reporting.track('hull.logout')
+        _emitter.on 'hull.auth.login', (me)-> _reporting.track('hull.auth.login', me)
+        _emitter.on 'hull.auth.logout', ()-> _reporting.track('hull.auth.logout')
+
         created =
           config: configParser(config)
           on: _emitter.on

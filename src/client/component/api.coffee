@@ -191,13 +191,6 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
       rawFetch('app', true);
       rawFetch('org', true);
 
-      core.mediator.on    'hull.login',       clearModelsCache
-      core.mediator.on    'hull.logout',      clearModelsCache
-
-      # core.mediator.on    'hull.login',       ->
-      #   core.data.hullApi.track 'hull.auth.login',  core.data.api.model('me').toJSON()
-
-      # core.mediator.on    'hull.logout',      ->
-      #   core.data.hullApi.track 'hull.auth.logout', core.data.api.model('me').toJSON()
+      core.mediator.on 'hull.auth.*', clearModelsCache
 
   module
