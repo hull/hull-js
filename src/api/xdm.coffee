@@ -35,8 +35,14 @@ define ['domready', 'lib/utils/promises', 'xdm', 'lib/utils/version'], (domready
       rpc = new xdm.Rpc
         remote: buildRemoteUrl config
         container: document.body
+        props:
+          tabIndex: -1
+          style:
+            position: 'absolute'
+            top: '-2000px'
+            left: 0
       ,
-        remote:  message: {}, ready: {} 
-        local:   message: onMessage, ready: readyFn 
-     
+        remote: message: {}, ready: {}
+        local: message: onMessage, ready: readyFn
+
     deferred.promise
