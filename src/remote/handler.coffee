@@ -149,10 +149,10 @@ define ['jquery', 'underscore'], ($, _)->
         identified = userId
         changed = true
       if identified and changed
-        app.core.handler.handle(url: 'me/tokens').then (h)->
-          app.core.tokens = h.response
+        app.core.handler.handle(url: 'me/credentials').then (h)->
+          app.core.credentials = h.response
         , ()->
-          app.core.tokens = {}
+          app.core.credentials = {}
       if changed and not identified
-        app.core.tokens = {}
+        app.core.credentials = {}
 

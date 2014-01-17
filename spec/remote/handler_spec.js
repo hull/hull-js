@@ -29,7 +29,7 @@ define(['lib/remote/handler', 'jquery'], function(handlerModule, $) {
         });
         describe('initializer', function () {
           it('should instantiate a handler and set it in the core', function () {
-            var fakeApp = { core: {} , config: { appId: 'Yeah' }};
+            var fakeApp = { core: {} , config: { appId: 'Yeah' , data: {} } };
             handlerModule.initialize(fakeApp);
             fakeApp.core.should.have.keys('handler');
             fakeApp.core.handler.headers.should.have.keys('Hull-App-Id');
