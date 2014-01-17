@@ -55,6 +55,7 @@ define ['jquery', 'underscore'], ($, _)->
       @queue(request, d)
 
       promise = d.promise()
+      return promise if request?.nocallback
       _.each @afterCallbacks, (cb)->
         promise.then(cb, cb)
       promise
@@ -134,25 +135,15 @@ define ['jquery', 'underscore'], ($, _)->
       data
   handler: handler
   initialize: (app)->
-    # Safari hack: Safari doesn't send response tokens for remote exchange
-    identified = app.config.data.me?.id
     headers = { 'Hull-App-Id': app.config.appId }
+    #
+    # The access token stuff is a Safari hack:
+    # Safari doesn't send response tokens for remote exchange
+    #
     accessToken = app.config.access_token
     headers['Hull-Access-Token'] = accessToken if accessToken
 
     app.core.handler = new handler headers: headers
     app.core.handler.after (h)->
       delete app.core.handler.headers['Hull-Access-Token']
-      userId = h.headers['Hull-User-Id']
-      changed = false
-      if identified != userId
-        identified = userId
-        changed = true
-      if identified and changed
-        app.core.handler.handle(url: 'me/credentials').then (h)->
-          app.core.credentials = h.response
-        , ()->
-          app.core.credentials = {}
-      if changed and not identified
-        app.core.credentials = {}
 

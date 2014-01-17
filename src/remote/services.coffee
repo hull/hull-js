@@ -1,16 +1,14 @@
 define ['underscore', 'xdm'], (_, xdm)->
-  rpc = null
 
   catchAll = (res)->
     console.warn("CatchAll Handler: ", res)
     res
 
   (app)->
-
+    rpc = null
     initialize: (app)->
       core = app.core
       core.routeHandlers = {}
-      core.credentials = app.config.data.credentials
 
       onRemoteMessage = (req, callback, errback)->
         throw new Error("Path not recognized #{JSON.stringify(req)}") unless req.path
@@ -25,7 +23,7 @@ define ['underscore', 'xdm'], (_, xdm)->
         rpc = new xdm.Rpc({
           acl: app.config.appDomains
         }, {
-          remote: { message: {}, ready: {} }
+          remote: { message: {}, ready: {}, userUpdate: {} }
           local:  { message: onRemoteMessage }
         })
       catch e
@@ -36,5 +34,6 @@ define ['underscore', 'xdm'], (_, xdm)->
 
       true
 
-    afterAppStart: ->
+    afterAppStart: (app)->
       rpc.ready(app.config)
+      app.sandbox.on 'hull.user.update', rpc.userUpdate.bind(rpc)

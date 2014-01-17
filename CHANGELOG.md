@@ -1,3 +1,4 @@
+* Adds `Hull.currentUser()` to easily fetch the current connected user of false if not available
 * Handles correctly when the auth popup windows are closed manually
 * Can not do multiple concurrently running calls to `Hull.login()`
 * `Hull.config` is now a function returning a clone of the whole configuration

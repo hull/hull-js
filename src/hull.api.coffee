@@ -3,12 +3,13 @@ define [
   'lib/api/api'
   'lib/api/reporting',
   'lib/utils/entity',
-  'lib/utils/config'
-  ], (emitter, api, reporting, entity, configParser) ->
+  'lib/utils/config',
+  'lib/api/current-user'
+  ], (emitter, api, reporting, entity, configParser, currentUser)->
 
     create = (config)->
       _emitter = emitter()
-      api.init(config).then (api)->
+      api.init(config, _emitter).then (api)->
         _reporting = reporting.init(api)
         _emitter.on 'hull.auth.login', (me)-> _reporting.track('hull.auth.login', me)
         _emitter.on 'hull.auth.logout', ()-> _reporting.track('hull.auth.logout')
@@ -21,18 +22,16 @@ define [
           track: _reporting.track
           flag: _reporting.flag
           api: api.api
+          currentUser: currentUser(_emitter)
           login: (args...)->
             if (api.auth.isAuthenticating())
               console.info "Authentication is in progress. Use `Hull.on('hull.auth.login', fn)` to call `fn` when done."
               return
             api.auth.login(args...).then ()->
-              api.api('me').then (me)->
-                _emitter.emit 'hull.auth.login', me
+              api.api('me')
             , (err)->
               _emitter.emit 'hull.auth.fail', err
-          logout: (args...)->
-            api.auth.logout(args...).then ()->
-              _emitter.emit('hull.auth.logout')
+          logout: api.auth.logout
           util:
             entity: entity
             eventEmitter: _emitter

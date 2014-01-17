@@ -52,7 +52,7 @@ define(['squire', 'lib/utils/promises'], function (Squire, promises) {
       });
       it('should resolve to a description of the flavour', function (done) {
         var ret = this.hullApi.init({});
-        var rawApi = { api: function () {} };
+        var rawApi = { api: function () {}, auth: { logout: function () {} } };
         this.apiDeferred.resolve(rawApi);
         ret.then(function (flavour) {
           flavour.should.be.an('object');
@@ -68,7 +68,7 @@ define(['squire', 'lib/utils/promises'], function (Squire, promises) {
     describe('interface of the API flavour', function () {
       beforeEach(function (done) {
         var ret = this.hullApi.init({});
-        this.rawApi = { api: function () {} };
+        this.rawApi = { api: function () {}, auth: { logout: function () {} } };
         this.apiDeferred.resolve(this.rawApi);
         ret.then(function (flavour) {
           this.flavour = flavour.api;
@@ -76,7 +76,7 @@ define(['squire', 'lib/utils/promises'], function (Squire, promises) {
         }.bind(this), done);
       });
       it('should provide the interface for the API flavour in the "api" key', function () {
-        var expectedKeys = ['config', 'on', 'api', 'off', 'emit', 'track', 'flag', 'login', 'logout', 'util'];
+        var expectedKeys = ['currentUser', 'config', 'on', 'api', 'off', 'emit', 'track', 'flag', 'login', 'logout', 'util'];
         this.flavour.should.have.keys(expectedKeys);
       });
       it('should expose the EventEmitter methods', function () {

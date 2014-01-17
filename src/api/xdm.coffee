@@ -10,7 +10,7 @@ define ['domready', 'lib/utils/promises', 'xdm', 'lib/utils/version'], (domready
     remoteUrl += "&user_hash=#{config.userHash}" if config.userHash != undefined
     remoteUrl
 
-  (config)->
+  (config, emitter)->
     timeout = null
     rpc = null
     deferred = promises.deferred()
@@ -21,6 +21,10 @@ define ['domready', 'lib/utils/promises', 'xdm', 'lib/utils/version'], (domready
         deferred.reject e.error
       else
         console.warn("RPC Message", arguments)
+
+    userUpdate = (currentUser)->
+      emitter.emit('hull.auth.login', currentUser) if currentUser
+      emitter.emit('hull.auth.logout') unless currentUser
 
     readyFn = (remoteConfig)->
       window.clearTimeout(timeout)
@@ -46,6 +50,6 @@ define ['domready', 'lib/utils/promises', 'xdm', 'lib/utils/version'], (domready
             left: '-20px'
       ,
         remote:  message: {}, ready: {}
-        local:   message: onMessage, ready: readyFn
+        local:   message: onMessage, ready: readyFn, userUpdate: userUpdate
 
     deferred.promise

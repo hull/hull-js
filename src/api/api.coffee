@@ -1,7 +1,7 @@
 define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '../api/auth', '../utils/promises', 'lib/api/xdm'], (_, cookie, version, apiParams, authModule, promises, xdm)->
   slice = Array.prototype.slice
 
-  init : (config={})->
+  init : (config={}, emitter)->
     dfd = promises.deferred()
 
     # Fail right now if we don't have the required setup
@@ -27,7 +27,6 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
     setCurrentUser = (headers={})->
       return unless config.appId
       cookieName = "hull_#{config.appId}"
-      currentUserId = cookie.get cookieName
       if headers && headers['Hull-User-Id'] && headers['Hull-User-Sig']
         val = btoa(JSON.stringify(headers))
         cookie.set(cookieName, val, path: "/")
@@ -37,7 +36,7 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
     # This will be executed exactly Once. The next call will be immediately resolved.
     onRemoteReady = (remoteConfig)->
       data = remoteConfig.data
-      setCurrentUser(data.headers) if data.headers && data.headers['Hull-User-Id']
+      setCurrentUser(data.headers)
 
       authScope = data.headers['Hull-Auth-Scope'].split(":")[0] if data.headers?['Hull-Auth-Scope']
 
@@ -52,7 +51,7 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
       true
 
     rpc = null
-    xdm(config).then (readyObj)->
+    xdm(config, emitter).then (readyObj)->
       rpc = readyObj.rpc
       onRemoteReady readyObj.config
     , (err)->
@@ -70,7 +69,7 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
       deferred = promises.deferred()
 
       onSuccess = (res={})->
-        setCurrentUser(res.headers) if res.provider == 'hull' && res.headers
+        setCurrentUser(res.headers) if res.provider == 'hull'
         callback(res.response)
         deferred.resolve(res.response, res.headers)
       onError = (err={})->

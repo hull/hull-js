@@ -10,6 +10,7 @@ define ['aura/aura', 'lib/utils/version'], (Aura, version)->
     hull.app = Aura(config)
     hull.app.use('lib/remote/services')
     hull.app.use('lib/remote/handler')
+    hull.app.use('lib/remote/current-user')
     hull.app.use('lib/remote/services/hull')
 
     hull.app.use('lib/remote/services/facebook') if config?.services?.settings?.facebook_app?.appId
