@@ -22,6 +22,9 @@ define [
           flag: _reporting.flag
           api: api.api
           login: (args...)->
+            if (api.auth.isAuthenticating())
+              console.info "Authentication is in progress. Use `Hull.on('hull.auth.login', fn)` to call `fn` when done."
+              return
             api.auth.login(args...).then ()->
               api.api('me').then (me)->
                 _emitter.emit 'hull.auth.login', me

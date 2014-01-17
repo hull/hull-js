@@ -1,3 +1,4 @@
+* Can not do multiple concurrently running calls to `Hull.login()`
 * `Hull.config` is now a function returning a clone of the whole configuration
 
 # 0.8.0-rc8

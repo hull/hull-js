@@ -12,7 +12,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
   (apiFn, config, authServices=[]) ->
     # Holds the state of the authentication process
     # @type {Promise|Boolean}
-    authenticating = false
+    authenticating = null
 
 
     # Starts the login process
@@ -50,7 +50,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
         authenticating.resolve {}
       else
         authenticating.reject('Login canceled')
-      authenticating = false
+      authenticating = null
       _auth
 
     # Generates the complete URL to be reached to validate login
@@ -68,7 +68,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       "#{config.orgUrl}/auth/#{provider}?#{querystring}"
 
     module =
-      isAuthenticating: -> authenticating #TODO It would be better to return Boolean (isXYZ method)
+      isAuthenticating: -> authenticating?
       location: document.location
       authUrl: generateAuthUrl
       createCallback: ->
@@ -85,5 +85,6 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
     authModule =
       login: login
       logout: logout
+      isAuthenticating: module.isAuthenticating
 
     authModule
