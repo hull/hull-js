@@ -13,6 +13,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
     # Holds the state of the authentication process
     # @type {Promise|Boolean}
     authenticating = null
+    _popupInterval = null
 
 
     # Starts the login process
@@ -46,11 +47,14 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
     # Callback executed on successful authentication
     onCompleteAuthentication = (isSuccess)->
       _auth = authenticating
+      return unless authenticating
       if isSuccess
         authenticating.resolve {}
       else
         authenticating.reject('Login canceled')
       authenticating = null
+      clearInterval(_popupInterval)
+      _popupInterval = null
       _auth
 
     # Generates the complete URL to be reached to validate login
@@ -79,7 +83,13 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
           onCompleteAuthentication.call undefined, result
         window.__hull_login_status__ = _.bind(cbFn, undefined)
         successToken
-      authHelper: (path)-> window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
+      authHelper: (path)->
+        win = window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
+        _popupInterval = setInterval ->
+          if win.closed
+            onCompleteAuthentication()
+        , 200
+
       onCompleteAuth: onCompleteAuthentication
 
     authModule =
