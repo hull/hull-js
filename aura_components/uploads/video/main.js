@@ -7,7 +7,7 @@
  * @param {String} id Required The object ID on which to attach the video
  * @template {upload} The main template. Because the jQuery plugin has some requirements, the template makes sure everything is set up as needed.
  * @event {hull.uploads.video.done} Triggered when upload is done and video * object is created
- * @example <div data-hull-component="uplads/video@hull" data-hull-id="VIDEO_ID"></div>
+ * @example <div data-hull-component="uploads/video@hull" data-hull-id="VIDEO_ID"></div>
  */
 
 Hull.component({
