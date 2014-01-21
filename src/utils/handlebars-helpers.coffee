@@ -393,7 +393,7 @@ define ['underscore', 'moment'], (_, moment)->
       fallback = map.fallback
       return '' unless fallback?
 
-      type = (entry.object?.uid if type is 'entity') || fallback.object[type] || entry.object.description
+      type = (entry.object?.uid if type is 'entity') || fallback.object[type] || entry.object.name || entry.object.description
 
       (fallback.verb[verb]||verb) + ' ' + type
 
