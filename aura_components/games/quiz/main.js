@@ -34,7 +34,7 @@ Hull.component({
 
   datasources: {
     quiz: function() {
-      return this.quiz || this.sandbox.data.api.model(this.id);
+      return this.quiz || this.sandbox.data.api(this.id);
     },
     badge: function() {
       return this.badge || this.api('me/badges/' + this.id);
@@ -63,8 +63,7 @@ Hull.component({
     this.quiz   = data.quiz;
     this.badge  = data.badge || {};
     if (!this.isInitialized) { this.track('hull.quiz.init'); }
-
-    if (data.me.id != this.currentUserId) {
+    if (!data.me || data.me.id != this.currentUserId) {
       this.template = "intro";
       this.reset();
       return data;
@@ -151,14 +150,14 @@ Hull.component({
     answer: function(e, params) {
       var opts = params.data;
       this.answers[opts.questionRef] = opts.answerRef;
-      this.data.quiz.set('answers', this.answers);
+      this.data.quiz.answers = this.answers;
 
       this.track('hull.quiz.progress', {
         quizId: this.id,
         questionRef: opts.questionRef,
         answerRef: opts.answerRef,
         questionIndex: this.currentQuestionIndex,
-        questionsCount: this.data.quiz.get('questions').length
+        questionsCount: this.data.quiz.questions.length
       });
     },
 

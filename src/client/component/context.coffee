@@ -1,6 +1,7 @@
 define ['underscore', 'lib/utils/promises'], (_, promises)->
   onDataError = (datasourceName, err)->
     console.log "An error occurred with datasource #{datasourceName}", err
+
   _dfd = promises.deferred
 
   class Context
@@ -10,6 +11,7 @@ define ['underscore', 'lib/utils/promises'], (_, promises)->
 
     add: (name, value)->
       @_context[name] = value
+
     addDatasource: (name, dsPromise, fallback)->
       fallback = _.bind(onDataError, undefined, name) unless _.isFunction(fallback)
       dfd = _dfd()
@@ -20,17 +22,19 @@ define ['underscore', 'lib/utils/promises'], (_, promises)->
           @add name, res[0]
         else
           @add name, res
-        dfd.resolve(res)
+        dfd.resolve res
       , (err)=>
         @_errors[name] = err
         resolved = fallback err
         @add name, resolved
         dfd.resolve resolved
-      dfd
+      dfd.promise
+
     errors: ->
       countKeys = _.keys(@_errors).length
       return null unless countKeys
       @_errors
+
     build: ->
       @_context
 

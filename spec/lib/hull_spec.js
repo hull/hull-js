@@ -1,4 +1,5 @@
 /*global sinon:true, define:true, describe:true, it:true, after:true, beforeEach:true */
+/*
 define(['../support/mocks/app'], function (appMock) {
   "use strict";
 
@@ -88,3 +89,4 @@ define(['../support/mocks/app'], function (appMock) {
     });
   });
 });
+*/

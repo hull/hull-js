@@ -3,16 +3,17 @@ if /hull-auth-status-/.test(document.location.hash) &&  window.opener && window.
     authCbName = document.location.hash.replace('#hull-auth-status-', '')
     cb = window.opener.__hull_login_status__
     cb(authCbName)
-    return window.close()
+    window.close()
   catch e
     console.warn("Error: " + e)
 
-define ['jquery', 'underscore', 'lib/utils/promises', 'lib/utils/version'], ($, _, promises, version)->
+define ['underscore', '../utils/promises', '../utils/version'], (_, promises, version)->
 
   (apiFn, config, authServices=[]) ->
     # Holds the state of the authentication process
     # @type {Promise|Boolean}
-    authenticating = false
+    authenticating = null
+    _popupInterval = null
 
 
     # Starts the login process
@@ -27,29 +28,34 @@ define ['jquery', 'underscore', 'lib/utils/promises', 'lib/utils/version'], ($, 
 
       authenticating = promises.deferred()
       authenticating.providerName = providerName
-      authenticating.done callback if _.isFunction(callback)
+      authenticating.promise.done callback if _.isFunction(callback)
 
       authUrl = module.authUrl(config, providerName, opts)
       module.authHelper(authUrl)
 
-      authenticating #TODO It would be better to return the promise
+      authenticating.promise
 
     # Starts the logout process
     # @returns {Promise}
     # @TODO Misses a `dfd.fail`
     logout = (callback=->)->
-      dfd = apiFn('logout')
-      dfd.done ->
+      promise = apiFn('logout')
+      promise.done ->
         callback() if _.isFunction(callback)
-      dfd.promise() #TODO It would be better to return the promise
+      promise
 
     # Callback executed on successful authentication
     onCompleteAuthentication = (isSuccess)->
+      _auth = authenticating
+      return unless authenticating
       if isSuccess
-        authenticating.resolve()
+        authenticating.resolve {}
       else
         authenticating.reject('Login canceled')
-      authenticating = false
+      authenticating = null
+      clearInterval(_popupInterval)
+      _popupInterval = null
+      _auth
 
     # Generates the complete URL to be reached to validate login
     generateAuthUrl = (config, provider, opts)->
@@ -60,11 +66,13 @@ define ['jquery', 'underscore', 'lib/utils/promises', 'lib/utils/version'], ($, 
       auth_params.auth_referer  = module.location.toString()
       auth_params.callback_name = module.createCallback()
       auth_params.version       = version
-
-      "#{config.orgUrl}/auth/#{provider}?#{$.param(auth_params)}"
+      querystring = _.map auth_params,(v,k) ->
+        encodeURIComponent(k)+'='+encodeURIComponent(v)
+      .join('&')
+      "#{config.orgUrl}/auth/#{provider}?#{querystring}"
 
     module =
-      isAuthenticating: -> authenticating #TODO It would be better to return Boolean (isXYZ method)
+      isAuthenticating: -> authenticating?
       location: document.location
       authUrl: generateAuthUrl
       createCallback: ->
@@ -75,9 +83,18 @@ define ['jquery', 'underscore', 'lib/utils/promises', 'lib/utils/version'], ($, 
           onCompleteAuthentication.call undefined, result
         window.__hull_login_status__ = _.bind(cbFn, undefined)
         successToken
-      authHelper: (path)-> window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
+      authHelper: (path)->
+        win = window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
+        _popupInterval = setInterval ->
+          if win.closed
+            onCompleteAuthentication()
+        , 200
+
       onCompleteAuth: onCompleteAuthentication
-    api =
+
+    authModule =
       login: login
       logout: logout
-    api
+      isAuthenticating: module.isAuthenticating
+
+    authModule

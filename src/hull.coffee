@@ -1,70 +1,70 @@
-evtPool = {}
-Hull.on = (evt, fn)->
-  evtPool[evt] ?= []
-  evtPool[evt].push fn
+define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars', 'lib/hull.api', 'lib/utils/emitter', 'lib/client/component/registrar', 'lib/helpers/login'], (_, promises, Aura, Handlebars, HullAPI, emitterInstance, componentRegistrar, loginHelpers) ->
 
-define ['aura/aura', 'lib/hullbase', 'underscore'], (Aura, HullDef, _) ->
-  myApp = ()->
+  hullApiMiddleware = (api)->
     name: 'Hull'
     initialize: (app)->
       app.core.mediator.setMaxListeners(100)
-
+      app.core.data.hullApi = api
     afterAppStart: (app)->
+      _ = app.core.util._
       sb = app.sandboxes.create();
-      _.extend(HullDef, sb);
-      for evt, cbArray of evtPool
-        _.each cbArray, (cb)->
-          app.core.mediator.on evt, cb
-      if !app.config.debug
-        props = ['component', 'templates', 'emit', 'on', 'version', 'track', 'login', 'logout', 'data']
-        props.concat(app.config.expose || [])
-        _h = {}
-        _.map props, (k)->
-          _h[k] = window.Hull[k]
-        window.Hull = _h
+      # _.extend(HullDef, sb);
+      # After app init, call the queued events
 
-  hull = null
-  (config, cb, errcb) ->
-    return hull if hull && hull.app
+  setupApp = (app, api)->
+    app
+      .use(hullApiMiddleware(api))
+      .use('aura-extensions/aura-base64')
+      .use('aura-extensions/aura-cookies')
+      .use('aura-extensions/aura-backbone')
+      .use('aura-extensions/aura-moment')
+      .use('aura-extensions/aura-twitter-text')
+      .use('aura-extensions/hull-reporting')
+      .use('aura-extensions/hull-entities')
+      .use('aura-extensions/hull-utils')
+      .use('aura-extensions/aura-form-serialize')
+      .use('aura-extensions/aura-component-validate-options')
+      .use('aura-extensions/aura-component-require')
+      .use('aura-extensions/hull-component-normalize-id')
+      .use('aura-extensions/hull-component-reporting')
+      .use('lib/client/component/api')
+      .use('lib/client/component/actions')
+      .use('lib/client/component/component')
+      .use('lib/client/component/templates')
+      .use('lib/client/component/datasource')
 
-    config.namespace = 'hull'
-    config.debug = config.debug && { enable: true }
-
-    hull =
-      config: config
-      app: new Aura(config)
-
-    initProcess = hull.app
-        .use(myApp())
-        .use('aura-extensions/aura-handlebars') #TODO Can probably be removed. See the file for details.
-        .use('aura-extensions/aura-backbone')
-        .use('aura-extensions/aura-moment')
-        .use('aura-extensions/aura-twitter-text')
-        .use('aura-extensions/hull-utils')
-        .use('aura-extensions/component-normalize-id')
-        .use('aura-extensions/component-validate-options')
-        .use('aura-extensions/component-require')
-        .use('lib/client/handlebars-helpers')
-        .use('lib/client/helpers')
-        .use('lib/client/entity')
-        .use('lib/client/api')
-        .use('lib/client/templates')
-        .use('lib/client/component')
-        .use('lib/client/api/reporting')
-        .use (app)->
-          afterAppStart: (app)->
-            window.Hull.parse = (el, options={})->
-              app.core.appSandbox.start(el, options)
-        .start({ components: 'body' })
-
-    initProcess.fail (err)->
-      errcb(err) if errcb
-      hull.app.stop()
-      delete hull.app
-      throw err if !errcb
-
-    initProcess.done ()->
-      hull.app.sandbox.emit('hull.init')
-      cb(window.Hull) if cb
-
-    return hull
+  init: (config)->
+    appPromise = HullAPI.init(config)
+    return appPromise if config.apiOnly is true
+    appPromise.then (successResult)->
+      app = new Aura(_.extend config, mediatorInstance: successResult.eventEmitter)
+      deps =
+        api: successResult.raw.api
+        authScope: successResult.raw.authScope
+        remoteConfig: successResult.raw.remoteConfig
+        login: successResult.api.login
+        logout: successResult.api.logout
+      app: setupApp(app, deps)
+      api: successResult
+      components: true
+  success: (appParts)->
+    apiParts = HullAPI.success(appParts.api)
+    booted = apiParts.exports
+    return booted unless appParts.components
+    booted.component = componentRegistrar(define)
+    booted.util.Handlebars = Handlebars
+    booted.define = define
+    booted.parse = (el, options={})->
+      appParts.app.sandbox.start(el, options)
+    appParts.app.start({ components: 'body' }).then ->
+      #TODO populate the models from the remoteConfig
+      booted.on 'hull.auth.login', _.bind(loginHelpers.login, undefined,  appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
+      booted.on 'hull.auth.logout', _.bind(loginHelpers.logout, undefined, appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
+    ,(e)->
+      console.error('Unable to start Aura app:', e)
+      appParts.app.stop()
+    exports: booted
+    context: apiParts.context
+  failure: (error)->
+    console.error(error.message)
+    error

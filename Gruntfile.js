@@ -8,15 +8,13 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
-  grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-hull-dox');
   grunt.loadNpmTasks('grunt-hull-widgets');
   grunt.loadNpmTasks('grunt-s3');
   grunt.loadNpmTasks('grunt-git-describe');
-  grunt.loadNpmTasks('grunt-coverjs');
-  grunt.loadNpmTasks('grunt-plato');
   grunt.loadNpmTasks('grunt-wrap');
+  grunt.loadNpmTasks('grunt-karma');
 
   var clientConfig = grunt.file.readJSON('.grunt/client.json');
   var remoteConfig = grunt.file.readJSON('.grunt/remote.json');
@@ -40,6 +38,12 @@ module.exports = function (grunt) {
       return extension.replace('.js', '');
     });
 
+  var vendorLibs = grunt.file.glob
+    .sync('vendor/**/*.js')
+    .map(function (extension) {
+      return extension.replace('.js', '');
+    });
+
   //Augment the require.js configuation with some computed elements
   var apiRJSConfig = (function () {
     var _c = apiConfig.requireJS;
@@ -55,13 +59,18 @@ module.exports = function (grunt) {
 
   var remoteRJSConfig = (function () {
     var _c = remoteConfig.requireJS;
-    _c.include = _c.include.concat(remoteLibs);
+    _c.include = _c.include.concat(remoteLibs).concat(vendorLibs);
     _c.optimize = grunt.option('dev') ? "none" : "uglify";
     return _c;
   })();
 
 
   var gruntConfig = {
+    karma: {
+      test: {
+        configFile: 'karma.conf.js'
+      }
+    },
     clean: {
       client: {
         src: 'lib/client/**/*'
@@ -70,7 +79,7 @@ module.exports = function (grunt) {
         src: 'lib/remote/**/*'
       },
       reset: {
-        src: ['build', 'lib', 'tmp', 'dist', 'components', 'node_modules']
+        src: ['build', 'lib', 'tmp', 'dist', 'bower_components', 'node_modules']
       }
     },
     dox: {
@@ -87,21 +96,21 @@ module.exports = function (grunt) {
         }
       },
       remote: {
-        files: grunt.file.expandMapping(remoteConfig.srcFiles, 'lib/', {
+        files: grunt.file.expandMapping(remoteConfig.coffeeFiles, 'lib/', {
           rename: function (destBase, destPath) {
             return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
           }
         })
       },
       client: {
-        files: grunt.file.expandMapping(clientConfig.srcFiles, 'lib/', {
+        files: grunt.file.expandMapping(clientConfig.coffeeFiles, 'lib/', {
           rename: function (destBase, destPath) {
             return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
           }
         })
       },
       api: {
-        files: grunt.file.expandMapping(apiConfig.srcFiles, 'lib/', {
+        files: grunt.file.expandMapping(apiConfig.coffeeFiles, 'lib/', {
           rename: function (destBase, destPath) {
             return destBase + destPath.replace(/\.coffee$/, '.js').replace(/^src\//, "");
           }
@@ -143,29 +152,6 @@ module.exports = function (grunt) {
       remote: {
         options: clone(remoteRJSConfig, true)
       },
-      upload: {
-        options: {
-          namespace: 'Hull',
-          paths: {
-            jquery: "empty:",
-            "jquery.ui.widget" : 'bower_components/jquery-file-upload/js/vendor/jquery.ui.widget',
-            "jquery.fileupload" : 'bower_components/jquery-file-upload/js/jquery.fileupload'
-          },
-          include: [
-            'jquery.fileupload'
-          ],
-          out: 'tmp/aura_components/upload/deps/jquery.fileupload.js'
-        }
-      },
-      // registration: {
-      //   options: {
-      //     namespace: 'Hull',
-      //     paths: { h5f: 'aura_components/registration/h5f' },
-      //     shim: { h5f: { exports: 'H5F' } },
-      //     include: ['h5f'],
-      //     out: 'tmp/aura_components/registration/deps.js'
-      //   }
-      // },
       dox: {
         options: {
           namespace: 'Hull',
@@ -176,35 +162,30 @@ module.exports = function (grunt) {
         }
       }
     },
-    mocha: {
-      hull: {
-        src: ["spec/index.html"]
-      }
-    },
     watch: {
       widgets: {
         files: ['aura_components/**/*'],
         tasks: ['dist:widgets']
       },
       remote: {
-        files: remoteConfig.srcFiles,
-        tasks: ['dist:remote', 'do_test']
+        files: remoteConfig.coffeeFiles,
+        tasks: ['dist:remote', 'test']
       },
       api: {
-        files: apiConfig.srcFiles,
-        tasks: ['dist:api', 'do_test']
+        files: apiConfig.coffeeFiles,
+        tasks: ['dist:api', 'test']
       },
       client: {
-        files: [clientConfig.srcFiles, "aura-extensions/**/*.js"],
-        tasks: ['dist:client', 'do_test']
+        files: [clientConfig.coffeeFiles, "aura-extensions/**/*.js"],
+        tasks: ['dist:client', 'test']
       },
       spec: {
         files: ['spec/**/*.js'],
-        tasks: ['mocha']
+        tasks: ['test']
       },
       extensions: {
         files: ['aura-extensions/**/*.js'],
-        tasks: ['dist:client', 'do_test']
+        tasks: ['dist:client', 'test']
       }
     },
     version: {
@@ -229,30 +210,6 @@ module.exports = function (grunt) {
         wrapper: [
           '(function () {', ';define("handlebars", function () {return Handlebars;});})()'
         ]
-      },
-      easyXDM: {
-        src: 'bower_components/easyXDM/easyXDM.js',
-        dest: 'lib/shims',
-        wrapper: [
-          '', ';var _available = window.easyXDM;define("easyXDM", function () {return window.easyXDM.noConflict();});if(!_available){delete window.easyXDM;};'
-        ]
-      }
-    },
-    cover: {
-      compile: {
-        files: {
-          'build/instrumented/*.js' : ['lib/**/*.js']
-        },
-        options: {
-          basePath: 'lib'
-        }
-      }
-    },
-    plato: {
-      develop: {
-        files: {
-          'build/report': ['lib/**/*.js']
-        }
       }
     },
     dist: {
@@ -262,7 +219,7 @@ module.exports = function (grunt) {
       "client-no-underscore": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
       "client-no-backbone": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
       "widgets": ["version", "hull_widgets"],
-      "docs": ['dox', 'cover', 'plato'],
+      "docs": ['dox'],
       "describe": ['describe']
     }
   };
@@ -270,13 +227,12 @@ module.exports = function (grunt) {
   helpers.appendAWSConfig(gruntConfig);
   grunt.initConfig(gruntConfig);
 
-  grunt.registerTask('do_test', ['cover', 'plato', 'mocha']);
-  grunt.registerTask('test', ['dist:api', 'dist:client', 'dist:remote', 'do_test']);
+  grunt.registerTask('test', ['version', 'karma:test']);
   grunt.registerTask('reset', ['clean:reset']);
 
   //These tasks are the only ones needed to be used
   grunt.registerTask('default', 'server');
-  grunt.registerTask('server', ['connect', 'test', 'dist:widgets', 'watch']);
+  grunt.registerTask('server', ['connect', 'dist:remote', 'dist:client', 'dist:api', 'dist:widgets', 'watch']);
   grunt.registerTask('deploy', ['dist', 's3:prod']);
 
   require('./.grunt/customTasks')(grunt);

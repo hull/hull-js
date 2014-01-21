@@ -14,18 +14,19 @@ define ->
 
       headers = {}
 
-      if app.config.services.settings.github_app?.access_token?
-        headers['Authorization'] = "token #{app.config.services.settings.github_app.access_token}"
+      token = app.core.credentials().github?.token
+      headers['Authorization'] = "token #{token}" if token
 
-      request = $.ajax
+      request = app.core.data.ajax
         url: url
         type: req.method
         data: req_data
         headers: headers
 
 
-      request.done((response)-> callback({ response: response, provider: 'github' }))
-      request.fail(errback)
+      request.then (response)->
+        callback({ response: response, provider: 'github' })
+      , errback
 
       return
 

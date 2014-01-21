@@ -1,8 +1,9 @@
 {{> comments/list/form}}
 
+{{comments.length}} comments
 {{#if comments}}
   <ul class="media-list hull-comments__list">
-    {{#comments}}
+    {{#each comments}}
       <li class="media" data-hull-comment-id="{{id}}">
         <div class="pull-left">
           <img class="media-object img-rounded" src="{{user.picture}}" alt="{{user.name}}" width="50" height="50">
@@ -24,7 +25,7 @@
           </div>
         </div>
       </li>
-    {{/comments}}
+    {{/each}}
   </ul>
 {{/if}}
 

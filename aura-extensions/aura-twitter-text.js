@@ -1,12 +1,9 @@
-/*global define:true */
-(function(){
-  define(['twitter_text'],{
-    name: "twttr",
+/*global define:true, require:true */
+define(['bower_components/twitter-text/twitter-text'], function (){
+  return {
     initialize: function(app){
       "use strict";
-      require('twitter_text');
-      var core = app.core, sandbox = app.sandbox;
-      sandbox.util.twttr = window.twttr.txt;
+      app.sandbox.util.twttr = window.twttr.txt;
     }
-  });
-})();
+  };
+});

@@ -6,26 +6,10 @@
 
     <title>Hull App...</title>
 
-    <script src="../bower_components/jquery/jquery.js"></script>
-    <link rel="stylesheet" href="//hullstrap.s3.amazonaws.com/stylesheets/hullstrap.css">
-    <script src="//hullstrap.s3.amazonaws.com/javascripts/hullstrap.js"></script>
-    <script src="../dist/develop/hull.js"></script>
-    <script src="app.js"></script>
+      <script src="../dist/feature/hull_api/hull.api.js"></script>
+      <script src="app.js"></script>
   </head>
   <body>
-
-    <div class="container">
-      <div class="row">
-        <div class="page-header">
-          <h1>Hull.js Components</h1>
-        </div>
-      </div>
-
-      <h4>Comments</h4>
-      <div class="row">
-        <div class="span6" data-hull-component="login/profile@hull"></div>
-        <div class="span6" data-hull-component="comments/list@hull" data-hull-id="app"></div>
-      </div>
-    </div>
+    <div data-hull-component='login/profile@hull'></div>
   </body>
 </html>
