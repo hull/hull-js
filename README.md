@@ -115,7 +115,7 @@ when your component is integrated in the marketplace.
  */
 ```
 
-For instance: 
+For instance:
 
 ```javascript
 /**

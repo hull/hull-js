@@ -47,6 +47,7 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
       catch error
         console.warn 'Invalid Tracking header'
         "Invalid Tracking header"
+    handler.after trackAction
 
     trackHandler = (req, callback, errback)->
       eventName = req.path
