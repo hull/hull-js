@@ -19,7 +19,8 @@
     "almond": "~0.2.7",
     "domready": "",
     "handlebars": "~1.1.2",
-    "requirejs": "2.1.9"
+    "requirejs": "2.1.9",
+    "jquery-jsonp": "hull/jquery-jsonp#b402017ba708388af345f8f560ac4f49c1f68090"
   },
   "devDependencies": {
     "squire": "*"

@@ -1,3 +1,7 @@
+* [125] Handles errors when JSONP requests fail
+
+# 0.8.0
+
 * Adds `Hull.currentUser()` to easily fetch the current connected user of false if not available
 * Handles correctly when the auth popup windows are closed manually
 * Can not do multiple concurrently running calls to `Hull.login()`
