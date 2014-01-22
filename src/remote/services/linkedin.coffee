@@ -1,4 +1,4 @@
-define ['jquery-jsonp', 'underscore', 'lib/utils/promises'], (jsonp, _, promises)->
+define ['jquery-jsonp', 'underscore'], (jsonp, _)->
   initialize: (app)->
     app.core.routeHandlers.linkedin = (req, success, failure)->
       method = req.method.toLowerCase()
