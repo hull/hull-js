@@ -86,8 +86,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       authHelper: (path)->
         win = window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
         _popupInterval = setInterval ->
-          if win.closed
-            onCompleteAuthentication()
+          onCompleteAuthentication() if win?.closed
         , 200
 
       onCompleteAuth: onCompleteAuthentication
