@@ -18,10 +18,10 @@ define ()->
       unless userManager.is(userId) # It changed
         userManager.updateDescription().then (h)->
           userManager.currentUser = h.response
-          app.sandbox.emit 'hull.user.update', h.response
+          app.sandbox.emit 'remote.user.update', h.response
         , (err)->
           userManager.currentUser = {}
-          app.sandbox.emit 'hull.user.update', {}
+          app.sandbox.emit 'remote.user.update', {}
         userManager.updateCredentials().then (h)->
           userManager.currentCredentials = h.response
         , (err)->
