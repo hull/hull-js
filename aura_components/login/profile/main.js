@@ -44,14 +44,10 @@ Hull.component({
       console.error('No Auth services configured. please add one to be able to authenticate users.');
     }
 
-    console.log('Login Compo')
-
   },
 
   beforeRender: function(data) {
     "use strict";
-
-    console.log('beforeRender')
 
     data.authHasFailed = this.authHasFailed;
 

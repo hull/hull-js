@@ -96,7 +96,7 @@ Hull.component({
         throw new TypeError('Unknown storage policy: ', optionValue);
       }
     } else {
-      console.warn('No storage policy declared for the app. Unable to save the pictures.');
+      // console.warn('No storage policy declared for the app. Unable to save the pictures.');
     }
 
     return this.sandbox.config.services.settings[selectedPolicy];
@@ -126,10 +126,8 @@ Hull.component({
 
     _.each(this.uploader_events, function(cb, evt) {
       var n = evt.replace(/^fileupload/, '');
-      console.warn("Wiring up uploader_events", n, evt);
       form.on(evt, function(e,d) {
         var eventName = 'hull.uploads.image.' + n;
-        console.warn("Bah alors ???", eventName)
         emit('hull.upload.image.' + n, { event: e, data: d });
       });
     });
@@ -204,7 +202,6 @@ Hull.component({
   },
 
   onDone: function (e, data) {
-    console.log('onDone')
     this.$el.find('[data-hull-progress]').fadeOut(300, function () {});
     this.$el.find('[data-hull-progress-bar]').css('width', 0);
     this.onUploadDone(data);
