@@ -516,7 +516,6 @@ $.each( { show: "fadeIn", hide: "fadeOut" }, function( method, defaultEffect ) {
 
 
 (function(factory) {
-    console.warn("FileUpload, yo !");
   factory(window.jQuery);
 }(function($) {
     'use strict';
