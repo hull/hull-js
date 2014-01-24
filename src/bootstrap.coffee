@@ -65,10 +65,9 @@ preInit = (isMain, config, cb, errb)->
     _config = _extend {}, config
     _config.namespace = 'hull'
     _config.debug = config.debug && { enable: true }
-    currentFlavour.init(_config).then (args...)->
-      successCb [config, isMain, cb or ->].concat(args)...
-    , (args...)->
-      failureCb [isMain, errb or ->].concat(args)...
+    _success = (args...)-> successCb [config, isMain, cb or ->].concat(args)...
+    _failure = (args...)-> failureCb [isMain, errb or ->].concat(args)...
+    currentFlavour.init(_config).then(_success, _failure).done()
 
 initApi = (config, args...)->
   config.apiOnly = true
@@ -114,9 +113,9 @@ successCb = (config, isMain, success, args...)->
 
 # Wraps the failure callback
 # * Executes the failure behaviour defined by the current flavour
-failureCb = (isMain, failure, args...)->
-  currentFlavour.failure(args...)
-  failure(args...)
+failureCb = (isMain, userFailureFn, err, args...)->
+  currentFlavour.failure(err)
+  userFailureFn([err].concat(args)...)
 
 require ['flavour', 'underscore', 'lib/utils/version'], (flavour, _, version)->
   _hull.version = version
