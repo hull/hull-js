@@ -41,8 +41,8 @@ define [
         eventEmitter: _emitter
 
     failure = (error)->
-      console.error('Unable to start Hull.api', error)
-      error
+      console.error('Unable to start Hull.api', error.message)
+      throw error
 
     init: (config)-> create(config)
     success: (successResult)->
