@@ -1,7 +1,5 @@
 define ->
   (app)->
-    slice = Array.prototype.slice
-
     api = (req, callback, errback) ->
       path = req.path
       path = path.substring(1) if (path[0] == "/")
@@ -22,7 +20,6 @@ define ->
         type: req.method
         data: req_data
         headers: headers
-
 
       request.then (response)->
         callback({ response: response, provider: 'github' })

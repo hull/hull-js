@@ -2,17 +2,17 @@ define ()->
   class UserManager
     constructor: (userDesc=null, userCreds={}, updater)->
       @currentUser = userDesc
-      @currentCredentials = userCreds
+      @currentSettings = userCreds
       @updater = updater
 
     loggedIn: -> @currentUser?
     is: (userId)-> @currentUser?.id == userId
     updateDescription: ()->
       @updater.handle({ url: 'me', nocallback: true })
-    updateCredentials: ()->
-      @updater.handle({ url: 'me/credentials', nocallback: true })
+    updateSettings: ()->
+      @updater.handle({ url: 'app/settings', nocallback: true })
   initialize: (app)->
-    userManager = new UserManager(app.config.data.me, app.config.data.credentials, app.core.handler)
+    userManager = new UserManager(app.config.data.me, app.config.settings, app.core.handler)
     app.core.handler.after (h)->
       userId = h.headers['Hull-User-Id']
       unless userManager.is(userId) # It changed
@@ -22,11 +22,11 @@ define ()->
         , (err)->
           userManager.currentUser = {}
           app.sandbox.emit 'remote.user.update', {}
-        userManager.updateCredentials().then (h)->
-          userManager.currentCredentials = h.response
+        userManager.updateSettings().then (h)->
+          userManager.currentSettings = h.response
         , (err)->
-          userManager.currentCredentials = {}
+          userManager.currentSettings = {}
 
     app.core.currentUser = -> JSON.parse(JSON.stringify(userManager.userDesc)) #TODO Seriously use lodash
-    app.core.credentials = -> JSON.parse(JSON.stringify(userManager.currentCredentials)) #TODO Seriously use lodash
+    app.core.settings = -> JSON.parse(JSON.stringify(userManager.currentSettings)) #TODO Seriously use lodash
 

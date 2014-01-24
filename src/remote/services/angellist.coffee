@@ -8,7 +8,7 @@ define ['jquery-jsonp'], (jsonp)->
       return failure('Can only handle GET requests') unless req.method.toLowerCase() == 'get'
 
       #TODO Double check this
-      req_data.access_token = app.config.services.credentials.angellist_app?.token
+      req_data.access_token = app.core.settings().auth.angellist?.token
 
       request = jsonp
         url: "https://api.angel.co/1/#{path}"
