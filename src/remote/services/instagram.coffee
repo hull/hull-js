@@ -9,7 +9,7 @@ define ['jquery-jsonp', 'lib/remote/services/proxy'], (jsonp, proxyBuilder)->
       path = path.substring(1) if (path[0] == "/")
       requestParams = {}
 
-      instaConfig = app.config.services.settings.instagram_app
+      instaConfig = app.core.settings().auth?.instagram
 
       if method == 'get'
         requestParams =

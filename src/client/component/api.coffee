@@ -157,7 +157,6 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
       sandbox.config.services     = remoteConfig.services
       sandbox.config.entity_id    = data.entity?.id
 
-
       sandbox.isAdmin = ->
         (authScope == 'Account' || sandbox.data.api.model('me').get('is_admin'))
 
