@@ -41,7 +41,11 @@ Hull.component({
   },
 
   beforeRender: function(data) {
-    data.average = data.target.stats.reviews ? data.target.stats.reviews.avg : 0;
+    if (!data.target) {
+      data.average = 0;
+    } else  {
+      data.average = data.target.stats.reviews ? data.target.stats.reviews.avg : 0;
+    }
     data.average = this.normalizeRating(data.average);
     var ratings = [];
     for (var i = 0; i < this.options.max; i) {
@@ -55,7 +59,7 @@ Hull.component({
 
   rate: function(rating) {
     var self = this, rating = this.normalizeRating(rating);
-    this.api.post(this.options.id + '/reviews', { rating: rating }).done(function(res) {
+    this.api(this.options.id + '/reviews', 'post', { rating: rating }).done(function(res) {
       self.sandbox.emit('hull.reviews.' + self.options.id + '.updated', res);
       self.sandbox.emit('hull.ratings.rate.complete', res);
       self.render();
