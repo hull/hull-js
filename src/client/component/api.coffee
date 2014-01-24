@@ -15,20 +15,28 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
 
       hullApi = core.data.hullApi
 
+      _track = (res, headers={})->
+        if headers?
+          hullTrack = headers['Hull-Track']
+          if hullTrack
+            try
+              [eventName, trackParams] = JSON.parse(atob(hullTrack))
+              core.mediator.emit(eventName, trackParams)
+            catch error
+              console.warn 'Error', error
+          if headers['Hull-Auth-Scope']
+            authScope = headers['Hull-Auth-Scope'].split(':')[0]
+
       core.data.api = (args...)->
         dfd = hullApi.api( args...)
-        dfd.then (res, headers={})->
-          if headers?
-            hullTrack = headers['Hull-Track']
-            if hullTrack
-              try
-                [eventName, trackParams] = JSON.parse(atob(hullTrack))
-                core.mediator.emit(eventName, trackParams)
-              catch error
-                console.warn 'Error', error
-            if headers['Hull-Auth-Scope']
-              authScope = headers['Hull-Auth-Scope'].split(':')[0]
+        dfd.then _track
         dfd
+
+      _.each ['get', 'put', 'post', 'delete'], (method)->
+        core.data.api[method] = (args...)->
+          dfd = hullApi.api[method](args...)
+          dfd.then _track
+          dfd
       #
       #
       # Models/Collection related
