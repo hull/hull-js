@@ -1,18 +1,11 @@
-define ['underscore'], (_)->
-  rpc = null
+define ['underscore', 'xdm'], (_, xdm)->
 
   catchAll = (res)->
     console.warn("CatchAll Handler: ", res)
     res
 
   (app)->
-    require:
-      paths:
-        'easyXDM': 'components/easyXDM/easyXDM'
-      shim:
-        easyXDM: { exports: 'easyXDM' }
-
-
+    rpc = null
     initialize: (app)->
       core = app.core
       core.routeHandlers = {}
@@ -27,18 +20,20 @@ define ['underscore'], (_)->
           errback(catchAll(req))
 
       try
-        rpc = new easyXDM.Rpc({
+        rpc = new xdm.Rpc({
           acl: app.config.appDomains
         }, {
-          remote: { message: {}, ready: {} }
+          remote: { message: {}, ready: {}, userUpdate: {} }
           local:  { message: onRemoteMessage }
         })
       catch e
-        rpcFall = new easyXDM.Rpc({},
+        rpcFall = new xdm.Rpc({},
           remote: {message: {}}
         )
         rpcFall.message error: "#{e.message}, please make sure this domain is whitelisted for this app."
 
       true
 
-    afterAppStart: -> rpc.ready(app.config)
+    afterAppStart: (app)->
+      rpc.ready(app.config)
+      app.sandbox.on 'remote.user.update', rpc.userUpdate.bind(rpc)

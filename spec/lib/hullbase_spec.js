@@ -12,7 +12,7 @@ define(function () {
     }
   };
 
-  describe('Hull global wrapper', function () {
+  xdescribe('Hull global wrapper', function () {
     var hullbase;
     before(function (done){
       require(['lib/hullbase'], function (base) {
@@ -21,13 +21,7 @@ define(function () {
       });
     });
 
-    describe("Hull base module", function () {
-      it('should be exposed as window.Hull', function () {
-        hullbase.should.equal(window.Hull);
-      });
-    });
-
-    describe("Creating component", function () {
+    xdescribe("Creating component", function () {
 
       describe("the component definition", function () {
         it("should be an Object literal or a function returning an Object literal", function () {

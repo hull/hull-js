@@ -18,7 +18,7 @@ module.exports = function (grunt) {
       grunt.config.set('cache', t);
       grunt.config.set('expires', new Date(Date.now() + t * 1000).toUTCString());
 
-      grunt.log.writeln('Generated version description for \'' + conf.dest + '\' successfully.');
+      grunt.log.writeln(('Generated version description "' + name + '" for \'' + conf.dest + '\' successfully.').green);
 
       done();
     }

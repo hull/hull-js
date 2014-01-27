@@ -1,5 +1,5 @@
 /*global define:true, describe:true, it:true, sinon:true */
-define(['aura-extensions/component-normalize-id'], function (extension) {
+define(['aura-extensions/hull-component-normalize-id'], function (extension) {
   "use strict";
   var normalizeId = extension.normalizeId;
 
@@ -22,13 +22,13 @@ define(['aura-extensions/component-normalize-id'], function (extension) {
         sandbox: {
           util: {
             entity: {
-              encode: sinon.stub().returns('Did it!');
+              encode: sinon.stub().returns('Did it!')
             }
           }
         }
-      }
+      };
       var normalized= normalizeId.call(that, {id: id});
-      normalized.id.should.eql('Did it');
+      normalized.id.should.eql('Did it!');
     });
 
     it('should generate a hash from the uid as the id', function () {

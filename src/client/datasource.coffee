@@ -90,15 +90,15 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
       if (@def instanceof Backbone.Model || @def instanceof Backbone.Collection)
         dfd.resolve @def
       else if _.isFunction(@def)
-        ret = @def()
+        ret = @def.call()
         if ret?.promise
-          dfd = ret
+          return promises.when(ret)
         else
           dfd.resolve ret
       else
         if /undefined/.test(@def.path)
-          dfd.resolve(false)
-          return dfd.promise()
+          dfd.resolve false
+          return dfd.promise
         transportDfd = @transport(@def)
         transportDfd.then (obj, headers) =>
           if _.isArray(obj)
@@ -108,7 +108,7 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
             dfd.resolve (new Backbone.Model obj)
         , (err)->
           dfd.reject err
-      dfd.promise()
+      dfd.promise
 
     # Is datasource paginable?
     #

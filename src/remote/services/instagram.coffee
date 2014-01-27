@@ -1,6 +1,6 @@
-define ->
+define ['jquery-jsonp', 'lib/remote/services/proxy'], (jsonp, proxyBuilder)->
   (app)->
-    slice = Array.prototype.slice
+    proxy = proxyBuilder {name: 'instagram', path: 'instagram'}, app.core.handler
 
     handler = (req, callback, errback)=>
 
@@ -14,32 +14,15 @@ define ->
       if method == 'get'
         requestParams =
           url: "https://api.instagram.com/v1/" + path
-          dataType: 'jsonp'
           data: _.extend({}, req.params, instaConfig)
-          type: 'get'
-        request = $.ajax(requestParams)
+          callbackParameter: 'callback'
+        request = jsonp(requestParams)
         request.done (response)->
           callback({ response: response.data, provider: 'instagram', pagination: response.pagination })
-        request.fail(errback)
+        request.fail (err)-> errback(err.url)
 
       else
-        url  = "/api/v1/services/instagram/" + path
-        if req.method.toLowerCase() == 'delete'
-          req_data = JSON.stringify(req.params || {})
-        else
-          req_data = req.params
-
-        requestParams =
-          url: url
-          type: req.method
-          data: req_data
-          headers:
-            'Hull-App-Id': app.config.appId
-
-        request = $.ajax(requestParams)
-        request.done (response)->
-          callback({ response: response, provider: 'instagram' })
-        request.fail(errback)
+        proxy(req, callback, errback)
 
       return
 
