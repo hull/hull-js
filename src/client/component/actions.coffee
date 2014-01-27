@@ -36,9 +36,10 @@ define ['underscore'], (_)->
         e.stopImmediatePropagation()
 
     registerActions: ()->
-      @events = if _.isFunction(@events) then @events() else @events
-      @events ?= {}
-      @events["click [data-hull-action]"] = _.bind module.actionHandler, @
+      e = if _.isFunction(@events) then @events() else @events
+      @events = _.defaults({
+        "click [data-hull-action]": _.bind(module.actionHandler, @)
+      }, e)
 
       # Building actions hash
       @actions = if _.isFunction(@actions) then @actions() else @actions
