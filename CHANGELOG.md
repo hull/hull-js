@@ -1,3 +1,7 @@
+* [127] Fix `events` hash usage in components
+
+# 0.8.1
+
 * [125] Handles errors when JSONP requests fail
 
 # 0.8.0
