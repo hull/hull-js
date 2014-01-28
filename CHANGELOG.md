@@ -1,4 +1,6 @@
-* Fix `events` hash usage in components
+* [129] promises returned by `Hull.login()`, `Hull.linkIdentity` are rejected with `error` hash that contains the `reason` of the failure.
+* Adds `Hull.linkIdentity()` and `Hull.unlinkIdentity()`
+* [127] Fixes `events` hash usage in components
 
 # 0.8.1
 
