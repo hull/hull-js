@@ -1,11 +1,12 @@
 define [
+  'underscore'
   'lib/utils/emitter'
   'lib/api/api'
   'lib/api/reporting',
   'lib/utils/entity',
   'lib/utils/config',
   'lib/api/current-user'
-  ], (emitter, api, reporting, entity, configParser, currentUser)->
+  ], (_, emitter, api, reporting, entity, configParser, currentUser)->
 
     create = (config)->
       _emitter = emitter()
@@ -32,6 +33,13 @@ define [
             , (err)->
               _emitter.emit 'hull.auth.fail', err
           logout: api.auth.logout
+          linkIdentity: (provider, opts={}, callback=->)->
+            options = _.extend opts, { mode: 'connect' }
+            created.login provider, options, callback
+          unlinkIdentity: (provider, callback=->)->
+            promise = api.api("me/identities/#{provider}", 'delete').then(api.api.bind(api, 'me'))
+            promise.then callback
+            promise.then _emitter.emit.bind(_emitter, 'hull.auth.login')
           util:
             entity: entity
             eventEmitter: _emitter
