@@ -28,7 +28,7 @@ define [
               console.info "Authentication is in progress. Use `Hull.on('hull.auth.login', fn)` to call `fn` when done."
               return
             api.auth.login(args...).then ()->
-              api.api('me')
+              api.api('me').then ()-> _emitter.emit('hull.auth.login')
             , (err)->
               _emitter.emit 'hull.auth.fail', err
           logout: api.auth.logout
