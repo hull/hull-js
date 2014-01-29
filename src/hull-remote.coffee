@@ -1,4 +1,4 @@
-define ['aura/aura', 'underscore', 'lib/utils/version'], (Aura, _, version)->
+define ['aura/aura', 'underscore', 'lib/utils/version', 'lib/remote/config-normalizer'], (Aura, _, version, ConfigNormalizer)->
 
   availableServices = ['angellist', 'facebook', 'github', 'instagram', 'linkedin', 'soundcloud', 'tumblr', 'twitter']
   isAvailable = _.bind(_.contains, _, availableServices)
@@ -6,6 +6,8 @@ define ['aura/aura', 'underscore', 'lib/utils/version'], (Aura, _, version)->
   hull = null
 
   Hull = (config)->
+    normalizer = new ConfigNormalizer(config)
+    config = normalizer.normalize()
     return hull if hull && hull.app
     hull = { config }
     config.debug ?= false
