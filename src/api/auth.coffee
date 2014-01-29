@@ -78,11 +78,9 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
           onCompleteAuthentication(hash)
       authHelper: (path)->
         w = window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
-        _popupInterval = setInterval ->
-          onCompleteAuthentication({
-            success: false,
-            error: { reason: 'user_cancelled' }
-          }) if w?.closed
+        _popupInterval = w? && setInterval ->
+          if w?.closed
+            onCompleteAuthentication({ success: false, error: { reason: 'user_cancelled' } })
         , 200
       onCompleteAuth: onCompleteAuthentication
 
