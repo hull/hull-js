@@ -19,7 +19,7 @@ Hull.component({
 
   templates: [ 'upload', 'file' ],
 
-  require:['jquery.fileupload'],
+  require:['jquery.ui.widget', 'jquery.fileupload'],
 
   requiredOptions:['storage'],
 
@@ -82,8 +82,8 @@ Hull.component({
     var storagePolicies = [],
         selectedPolicy,
         optionValue = this.options.storage;
-    if (this.sandbox.config.services.types.storage) {
-      storagePolicies = this.sandbox.config.services.types.storage;
+    if (this.sandbox.config.services.storage) {
+      storagePolicies = this.sandbox.util._.keys(this.sandbox.config.services.storage);
     }
     var countPolicies = storagePolicies.length;
     if (countPolicies === 1) {
@@ -101,7 +101,7 @@ Hull.component({
       console.warn('No storage policy declared for the app. Unable to save the pictures.');
     }
 
-    return this.sandbox.config.services.settings[selectedPolicy];
+    return this.sandbox.config.services.storage[selectedPolicy];
   },
 
   beforeRender: function (data) {

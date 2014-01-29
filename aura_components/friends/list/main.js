@@ -99,11 +99,11 @@ Hull.component({
       var valid = (this.loggedIn() || this.getUserId()!=="me");
       auth.provider = valid;
 
-      var authProviders = this.sandbox.config.services.types.auth;
+      var authProviders = this.sandbox.util._.keys(this.sandbox.config.services.auth);
       if (!authProviders || !authProviders.length) {
         deferred.reject(new Error('No auth provider for this app'));
       } else {
-        auth.provider_name = authProviders[0].replace(/_app$/,'');
+        auth.provider_name = authProviders[0];
         deferred.resolve(auth);
       }
 

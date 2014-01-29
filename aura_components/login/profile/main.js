@@ -36,7 +36,7 @@ Hull.component({
       this.render();
     }, this));
 
-    this.authServices = this.sandbox.util._.map(this.sandbox.config.services.types.auth, function(s) {
+    this.authServices = this.sandbox.util._.map(this.sandbox.util._.keys(this.sandbox.config.services.auth), function(s) {
       return s.replace(/_app$/, '');
     });
 
