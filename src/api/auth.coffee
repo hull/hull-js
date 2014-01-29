@@ -80,7 +80,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
         w = window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
         _popupInterval = w? && setInterval ->
           if w?.closed
-            onCompleteAuthentication({ success: false, error: { reason: 'user_cancelled' } })
+            onCompleteAuthentication({ success: false, error: { reason: 'window_closed' } })
         , 200
       onCompleteAuth: onCompleteAuthentication
 
