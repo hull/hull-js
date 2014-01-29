@@ -1,7 +1,8 @@
 define ['underscore'], (_)->
   dirtyClone = (obj)->
     return JSON.parse(JSON.stringify(obj)) unless obj == undefined
-  configParser = (config)->
+  configParser = (config, emitter)->
+    emitter.on('hull.settings.update', (settings)-> config.services = settings) if emitter
     (key)->
       _cursor = config
       return dirtyClone(config) unless key
@@ -12,5 +13,5 @@ define ['underscore'], (_)->
         else
           _cursor = undefined
       dirtyClone(_cursor)
-  (config)->
-    configParser(config)
+  (config, emitter)->
+    configParser(config, emitter)

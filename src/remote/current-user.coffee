@@ -24,8 +24,10 @@ define ()->
           app.sandbox.emit 'remote.user.update', {}
         userManager.updateSettings().then (h)->
           userManager.currentSettings = h.response
+          app.sandbox.emit 'remote.settings.update', h.response
         , (err)->
           userManager.currentSettings = {}
+          app.sandbox.emit 'remote.settings.update', {}
 
     app.core.currentUser = -> JSON.parse(JSON.stringify(userManager.userDesc)) #TODO Seriously use lodash
     app.core.settings = -> JSON.parse(JSON.stringify(userManager.currentSettings)) #TODO Seriously use lodash

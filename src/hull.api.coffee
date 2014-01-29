@@ -15,7 +15,7 @@ define [
         _emitter.on 'hull.auth.logout', ()-> _reporting.track('hull.auth.logout')
 
         created =
-          config: configParser(config)
+          config: configParser(config, _emitter)
           on: _emitter.on
           off: _emitter.off
           emit: _emitter.emit
