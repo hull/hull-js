@@ -2,7 +2,7 @@ define ['jquery-jsonp', 'underscore'], (jsonp, _)->
   initialize: (app)->
     app.core.routeHandlers.linkedin = (req, success, failure)->
       method = req.method.toLowerCase()
-      token = app.core.credentials().linkedin?.token
+      token = app.core.settings().auth?.linkedin?.tokens?.token
 
       return failure('No linkedIn user') unless token
       #TODO Implement when the proxy is available

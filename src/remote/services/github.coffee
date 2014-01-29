@@ -12,7 +12,7 @@ define ->
 
       headers = {}
 
-      token = app.core.credentials().github?.token
+      token = app.core.settings().auth?.github?.tokens?.token
       headers['Authorization'] = "token #{token}" if token
 
       request = app.core.data.ajax
