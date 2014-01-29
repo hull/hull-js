@@ -31,7 +31,7 @@ Hull.component({
             mainIdentity = data.me && data.me.main_identity;
     _.map(_.keys(this.sandbox.config.services.auth), function(s) {
       var availableAction, actionName,
-          name = s.replace(/_app$/, ''),
+          name = s,
           isConnected = !!connected[name],
           canDisconnect = name !== mainIdentity;
       if (!isConnected) {

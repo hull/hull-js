@@ -36,18 +36,16 @@ Hull.component({
       this.render();
     }, this));
 
-    this.authServices = this.sandbox.util._.map(this.sandbox.util._.keys(this.sandbox.config.services.auth), function(s) {
-      return s.replace(/_app$/, '');
-    });
-
-    if (this.sandbox.util._.isEmpty(this.authServices)) {
-      console.error('No Auth services configured. please add one to be able to authenticate users.');
-    }
-
   },
 
   beforeRender: function(data) {
     "use strict";
+
+    this.authServices = this.sandbox.util._.keys(this.sandbox.config.services.auth || {});
+
+    if (this.sandbox.util._.isEmpty(this.authServices)) {
+      console.error('No Auth services configured. please add one to be able to authenticate users.');
+    }
 
     data.authHasFailed = this.authHasFailed;
 

@@ -71,11 +71,8 @@ Hull.component({
     }
   },
 
-  initialize: function() {
-    this.authProviders = this.sandbox.util._.keys(this.sandbox.config.services.auth);
-  },
-
   beforeRender: function(data) {
+    this.authProviders = this.sandbox.util._.keys(this.sandbox.config.services.auth);
     this.template = this.getInitialTemplate();
 
     data.authProviders = this.authProviders;

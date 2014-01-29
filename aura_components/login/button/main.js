@@ -24,15 +24,11 @@ Hull.component({
 
   refreshEvents: ['model.hull.me.change'],
 
-  initialize: function() {
+  beforeRender: function(data) {
     this.authServices = this.sandbox.util._.keys(this.sandbox.config.services.auth);
     if (this.sandbox.util._.isEmpty(this.authServices)) {
       console.error('No Auth services configured. please add one to be able to authenticate users.');
     }
-  },
-
-  beforeRender: function(data) {
-
     // If providers are specified, then use only those. else use all configuredauthServices
     if(this.options.provider){
       data.providers = this.options.provider.replace(' ','').split(',');
