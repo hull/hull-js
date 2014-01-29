@@ -1,7 +1,7 @@
 define [
   'underscore'
-  'lib/utils/emitter'
-  'lib/api/api'
+  'lib/utils/emitter',
+  'lib/api/api',
   'lib/api/reporting',
   'lib/utils/entity',
   'lib/utils/config',
@@ -26,12 +26,20 @@ define [
           currentUser: currentUser(_emitter)
           login: (args...)->
             if (api.auth.isAuthenticating())
-              console.info "Authentication is in progress. Use `Hull.on('hull.auth.login', fn)` to call `fn` when done."
-              return
-            api.auth.login(args...).then ()->
-              api.api('me').then (me)-> _emitter.emit('hull.auth.login', me)
-            , (err)->
-              _emitter.emit 'hull.auth.fail', err
+              return console.info "Authentication is in progress. Use `Hull.on('hull.auth.login', fn)` to call `fn` when done."
+
+            p = api.auth.login(args...)
+
+            p.fail (error)->
+              _emitter.emit('hull.auth.fail', error)
+
+            p2 = p.then ->
+              api.api('me')
+
+            p2.then (user)->
+              _emitter.emit('hull.auth.login', user)
+
+            p2
           logout: api.auth.logout
           linkIdentity: (provider, opts={}, callback=->)->
             options = _.extend opts, { mode: 'connect' }
