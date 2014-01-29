@@ -1,25 +1,19 @@
-if /hull-auth-status-/.test(document.location.hash) &&  window.opener && window.opener.Hull
+hash = try JSON.parse(atob(document.location.hash.replace('#', '')))
+if window.opener && window.opener.Hull && hash?
   try
-    authCbName = document.location.hash.replace('#hull-auth-status-', '')
-    cb = window.opener.__hull_login_status__
-    cb(authCbName)
+    window.opener.__hull_login_status__(hash)
     window.close()
   catch e
-    console.warn("Error: " + e)
+    console.warn('Error: ' + e)
 
 define ['underscore', '../utils/promises', '../utils/version'], (_, promises, version)->
-
   (apiFn, config, authServices=[]) ->
     # Holds the state of the authentication process
     # @type {Promise|Boolean}
     authenticating = null
     _popupInterval = null
 
-
-    # Starts the login process
-    # @throws Error with invalid providerName
-    # @returns {Promise|false}
-    login = (providerName, opts, callback=->)->
+    login = (providerName, opts, callback)->
       return module.isAuthenticating() if module.isAuthenticating()
 
       throw 'The provider name must be a String' unless _.isString(providerName)
@@ -28,12 +22,13 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
 
       authenticating = promises.deferred()
       authenticating.providerName = providerName
-      authenticating.promise.done callback if _.isFunction(callback)
 
       authUrl = module.authUrl(config, providerName, opts)
       module.authHelper(authUrl)
 
-      authenticating.promise
+      p = authenticating.promise
+      p.then(callback) if _.isFunction(callback)
+      p
 
     # Starts the logout process
     # @returns {Promise}
@@ -44,14 +39,15 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
         callback() if _.isFunction(callback)
       promise
 
-    # Callback executed on successful authentication
-    onCompleteAuthentication = (isSuccess)->
+    onCompleteAuthentication = (hash)->
       _auth = authenticating
       return unless authenticating
-      if isSuccess
-        authenticating.resolve {}
+
+      if hash.success
+        authenticating.resolve({})
       else
-        authenticating.reject('Login canceled')
+        authenticating.reject(hash.error)
+
       authenticating = null
       clearInterval(_popupInterval)
       _popupInterval = null
@@ -59,12 +55,13 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
 
     # Generates the complete URL to be reached to validate login
     generateAuthUrl = (config, provider, opts)->
+      module.createCallback()
+
       auth_params = opts || {}
       auth_params.app_id        = config.appId
       # The following is here for backward compatibility. Must be removed at first sight next time
       auth_params.callback_url  = config.callback_url || config.callbackUrl || module.location.toString()
       auth_params.auth_referer  = module.location.toString()
-      auth_params.callback_name = module.createCallback()
       auth_params.version       = version
       querystring = _.map auth_params,(v,k) ->
         encodeURIComponent(k)+'='+encodeURIComponent(v)
@@ -76,19 +73,15 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       location: document.location
       authUrl: generateAuthUrl
       createCallback: ->
-        successToken = "__h__#{Math.random().toString(36).substr(2)}"
-        cbFn = (name)->
-          window.__hull_login_status__ = undefined
-          result = (name == successToken)
-          onCompleteAuthentication.call undefined, result
-        window.__hull_login_status__ = _.bind(cbFn, undefined)
-        successToken
+        window.__hull_login_status__ = (hash) ->
+          window.__hull_login_status__ = null
+          onCompleteAuthentication(hash)
       authHelper: (path)->
-        win = window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
-        _popupInterval = setInterval ->
-          onCompleteAuthentication() if win?.closed
+        w = window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
+        _popupInterval = w? && setInterval ->
+          if w?.closed
+            onCompleteAuthentication({ success: false, error: { reason: 'window_closed' } })
         , 200
-
       onCompleteAuth: onCompleteAuthentication
 
     authModule =

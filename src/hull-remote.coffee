@@ -1,6 +1,6 @@
 define ['aura/aura', 'underscore', 'lib/utils/version'], (Aura, _, version)->
 
-  availableServices = ['angellist', 'facebook', 'github', 'instagram', 'soundcloud', 'tumblr', 'twitter']
+  availableServices = ['angellist', 'facebook', 'github', 'instagram', 'linkedin', 'soundcloud', 'tumblr', 'twitter']
   isAvailable = _.bind(_.contains, _, availableServices)
 
   hull = null

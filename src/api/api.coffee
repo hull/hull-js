@@ -66,6 +66,15 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
 
       onSuccess = (res={})->
         setCurrentUser(res.headers) if res.provider == 'hull'
+        headers = res?.headers
+        if headers? and res.provider == 'hull'
+          hullTrack = headers['Hull-Track']
+          if hullTrack
+            try
+              [eventName, trackParams] = JSON.parse(atob(hullTrack))
+              emitter.emit(eventName, trackParams)
+            catch error
+              false
         callback(res.response)
         deferred.resolve(res.response, res.headers)
       onError = (err={})->

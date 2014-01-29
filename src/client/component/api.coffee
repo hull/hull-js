@@ -180,7 +180,10 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
       # Add a .unlinkIdenity() method to the component sandbox
       sandbox.unlinkIdentity = (provider, callback=->)->
         core.data.api("me/identities/#{provider}", 'delete').then ->
-          app.sandbox.data.api.model('me').fetch().then callback
+          promise = app.sandbox.data.api.model('me').fetch()
+          promise.then (me)-> core.mediator.emit('hull.auth.login', me)
+          promise.then callback
+
 
       # FIXME Does it double with l.247-249?
       for m in ['me', 'app', 'org', 'entity']

@@ -1,11 +1,12 @@
 define [
-  'lib/utils/emitter'
-  'lib/api/api'
+  'underscore'
+  'lib/utils/emitter',
+  'lib/api/api',
   'lib/api/reporting',
   'lib/utils/entity',
   'lib/utils/config',
   'lib/api/current-user'
-  ], (emitter, api, reporting, entity, configParser, currentUser)->
+  ], (_, emitter, api, reporting, entity, configParser, currentUser)->
 
     create = (config)->
       _emitter = emitter()
@@ -25,13 +26,28 @@ define [
           currentUser: currentUser(_emitter)
           login: (args...)->
             if (api.auth.isAuthenticating())
-              console.info "Authentication is in progress. Use `Hull.on('hull.auth.login', fn)` to call `fn` when done."
-              return
-            api.auth.login(args...).then ()->
+              return console.info "Authentication is in progress. Use `Hull.on('hull.auth.login', fn)` to call `fn` when done."
+
+            p = api.auth.login(args...)
+
+            p.fail (error)->
+              _emitter.emit('hull.auth.fail', error)
+
+            p2 = p.then ->
               api.api('me')
-            , (err)->
-              _emitter.emit 'hull.auth.fail', err
+
+            p2.then (user)->
+              _emitter.emit('hull.auth.login', user)
+
+            p2
           logout: api.auth.logout
+          linkIdentity: (provider, opts={}, callback=->)->
+            options = _.extend opts, { mode: 'connect' }
+            created.login provider, options, callback
+          unlinkIdentity: (provider, callback=->)->
+            promise = api.api("me/identities/#{provider}", 'delete').then(api.api.bind(api, 'me'))
+            promise.then callback
+            promise.then _emitter.emit.bind(_emitter, 'hull.auth.login')
           util:
             entity: entity
             eventEmitter: _emitter
