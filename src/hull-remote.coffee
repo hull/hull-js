@@ -1,7 +1,7 @@
 define ['aura/aura', 'underscore', 'lib/utils/version'], (Aura, _, version)->
 
-  unavailableServices = ['linkedin']
-  containsUnavailable = _.bind(_.contains, _, unavailableServices)
+  availableServices = ['angellist', 'facebook', 'github', 'instagram', 'soundcloud', 'tumblr', 'twitter']
+  isAvailable = _.bind(_.contains, _, availableServices)
 
   hull = null
 
@@ -17,7 +17,7 @@ define ['aura/aura', 'underscore', 'lib/utils/version'], (Aura, _, version)->
     hull.app.use('lib/remote/services/hull')
 
     keys = _.keys(config.settings?.auth || [])
-    auth_services = _.reject keys, containsUnavailable
+    auth_services = _.filter keys, isAvailable
 
     _.each auth_services, (value) ->
       hull.app.use "lib/remote/services/#{value}"

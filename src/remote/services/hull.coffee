@@ -74,7 +74,7 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
       analytics = require('analytics')
       analyticsSettings = {}
 
-      analytics.initialize(app.config.settings.analytics? || {})
+      analytics.initialize(app.config.settings.analytics || {})
 
       identify(app.config.data.me) if app.config.data.me?
 
