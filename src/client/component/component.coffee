@@ -41,6 +41,7 @@ define ['underscore', 'lib/utils/q2jQuery', 'lib/client/component/context', 'lib
         @invokeWithCallbacks('initialize', options).then _.bind(->
           @delegateEvents()
           @invokeWithCallbacks 'render'
+          @sandbox.on('hull.settings.update', (conf)=> @sandbox.config.services = conf)
           @sandbox.on(refreshOn, (=> @refresh()), @) for refreshOn in (@refreshEvents || [])
         , @), (err)->
           console.warn('WARNING', err)
