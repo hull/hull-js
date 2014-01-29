@@ -155,14 +155,14 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
       remoteConfig = hullApi.remoteConfig
       data = remoteConfig.data
       app.config.assetsUrl            = remoteConfig.assetsUrl
-      app.config.services             = remoteConfig.services
+      app.config.services             = remoteConfig.settings
       app.components.addSource('hull', remoteConfig.baseUrl + '/aura_components')
       sandbox.config ?= {}
       sandbox.config.debug        = app.config.debug
       sandbox.config.assetsUrl    = remoteConfig.assetsUrl
       sandbox.config.appId        = app.config.appId
       sandbox.config.orgUrl       = app.config.orgUrl
-      sandbox.config.services     = remoteConfig.services
+      sandbox.config.services     = remoteConfig.settings
       sandbox.config.entity_id    = data.entity?.id
 
       sandbox.isAdmin = ->
