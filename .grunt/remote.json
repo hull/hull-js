@@ -1,4 +1,4 @@
-{
+  {
   "coffeeFiles": [
     "src/hullbase.coffee",
     "src/hull.coffee",

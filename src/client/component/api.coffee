@@ -15,20 +15,28 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
 
       hullApi = core.data.hullApi
 
+      _track = (res, headers={})->
+        if headers?
+          hullTrack = headers['Hull-Track']
+          if hullTrack
+            try
+              [eventName, trackParams] = JSON.parse(atob(hullTrack))
+              core.mediator.emit(eventName, trackParams)
+            catch error
+              console.warn 'Error', error
+          if headers['Hull-Auth-Scope']
+            authScope = headers['Hull-Auth-Scope'].split(':')[0]
+
       core.data.api = (args...)->
         dfd = hullApi.api( args...)
-        dfd.then (res, headers={})->
-          if headers?
-            hullTrack = headers['Hull-Track']
-            if hullTrack
-              try
-                [eventName, trackParams] = JSON.parse(atob(hullTrack))
-                core.mediator.emit(eventName, trackParams)
-              catch error
-                console.warn 'Error', error
-            if headers['Hull-Auth-Scope']
-              authScope = headers['Hull-Auth-Scope'].split(':')[0]
+        dfd.then _track
         dfd
+
+      _.each ['get', 'put', 'post', 'delete'], (method)->
+        core.data.api[method] = (args...)->
+          dfd = hullApi.api[method](args...)
+          dfd.then _track
+          dfd
       #
       #
       # Models/Collection related
@@ -173,7 +181,10 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
       # Add a .unlinkIdenity() method to the component sandbox
       sandbox.unlinkIdentity = (provider, callback=->)->
         core.data.api("me/identities/#{provider}", 'delete').then ->
-          app.sandbox.data.api.model('me').fetch().then callback
+          promise = app.sandbox.data.api.model('me').fetch()
+          promise.then (me)-> core.mediator.emit('hull.auth.login', me)
+          promise.then callback
+
 
       # FIXME Does it double with l.247-249?
       for m in ['me', 'app', 'org', 'entity']

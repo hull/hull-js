@@ -76,7 +76,7 @@ define(['squire', 'lib/utils/promises'], function (Squire, promises) {
         }.bind(this), done);
       });
       it('should provide the interface for the API flavour in the "api" key', function () {
-        var expectedKeys = ['currentUser', 'config', 'on', 'api', 'off', 'emit', 'track', 'flag', 'login', 'logout', 'util'];
+        var expectedKeys = ['currentUser', 'config', 'on', 'api', 'off', 'emit', 'track', 'flag', 'login', 'logout', 'util', 'linkIdentity', 'unlinkIdentity'];
         this.flavour.should.have.keys(expectedKeys);
       });
       it('should expose the EventEmitter methods', function () {

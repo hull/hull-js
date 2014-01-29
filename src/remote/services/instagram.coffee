@@ -1,6 +1,5 @@
-define ['lib/remote/services/proxy'], (proxyBuilder)->
+define ['jquery-jsonp', 'lib/remote/services/proxy'], (jsonp, proxyBuilder)->
   (app)->
-    slice = Array.prototype.slice
     proxy = proxyBuilder {name: 'instagram', path: 'instagram'}, app.core.handler
 
     handler = (req, callback, errback)=>
@@ -15,13 +14,12 @@ define ['lib/remote/services/proxy'], (proxyBuilder)->
       if method == 'get'
         requestParams =
           url: "https://api.instagram.com/v1/" + path
-          dataType: 'jsonp'
           data: _.extend({}, req.params, instaConfig)
-          type: 'get'
-        request = $.ajax(requestParams)
+          callbackParameter: 'callback'
+        request = jsonp(requestParams)
         request.done (response)->
           callback({ response: response.data, provider: 'instagram', pagination: response.pagination })
-        request.fail(errback)
+        request.fail (err)-> errback(err.url)
 
       else
         proxy(req, callback, errback)

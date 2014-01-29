@@ -1,3 +1,13 @@
+* [129] promises returned by `Hull.login()`, `Hull.linkIdentity` are rejected with `error` hash that contains the `reason` of the failure.
+* Adds `Hull.linkIdentity()` and `Hull.unlinkIdentity()`
+* [127] Fixes `events` hash usage in components
+
+# 0.8.1
+
+* [125] Handles errors when JSONP requests fail
+
+# 0.8.0
+
 * Adds `Hull.currentUser()` to easily fetch the current connected user of false if not available
 * Handles correctly when the auth popup windows are closed manually
 * Can not do multiple concurrently running calls to `Hull.login()`

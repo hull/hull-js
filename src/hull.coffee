@@ -1,3 +1,5 @@
+throw 'jQuery must be available for components to work' unless window.jQuery
+
 define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars', 'lib/hull.api', 'lib/utils/emitter', 'lib/client/component/registrar', 'lib/helpers/login'], (_, promises, Aura, Handlebars, HullAPI, emitterInstance, componentRegistrar, loginHelpers) ->
 
   hullApiMiddleware = (api)->

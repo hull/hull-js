@@ -13,7 +13,7 @@ Hull.component({
   refreshEvents: ['model.hull.me.change'],
 
   initialize: function() {
-    this.sandbox.on('hull.auth.complete', function() {
+    this.sandbox.on('hull.auth.login', function() {
       this.authHasFailed = false;
       this.render();
     }, this);

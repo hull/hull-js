@@ -9,6 +9,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-symlink');
   grunt.loadNpmTasks('grunt-hull-dox');
   grunt.loadNpmTasks('grunt-hull-widgets');
   grunt.loadNpmTasks('grunt-s3');
@@ -73,10 +74,10 @@ module.exports = function (grunt) {
     },
     clean: {
       client: {
-        src: 'lib/client/**/*'
+        src: ['dist/current', 'lib/client/**/*']
       },
       remote: {
-        src: 'lib/remote/**/*'
+        src: ['dist/current', 'lib/remote/**/*']
       },
       reset: {
         src: ['build', 'lib', 'tmp', 'dist', 'bower_components', 'node_modules']
@@ -203,6 +204,12 @@ module.exports = function (grunt) {
     describe: {
       out: 'dist/<%= PKG_VERSION%>/REVISION'
     },
+    symlink: {
+      current: {
+        dest: "dist/current",
+        src: "dist/<%= PKG_VERSION %>"
+      }
+    },
     wrap: {
       Handlebars: {
         src: 'node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars.js',
@@ -213,9 +220,9 @@ module.exports = function (grunt) {
       }
     },
     dist: {
-      "remote": ['version', 'clean:remote', 'coffee:remote', 'wrap', 'version', 'requirejs:remote'],
-      "client": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client'],
-      "api": ['version', 'clean:client', 'coffee:api', 'wrap', 'version', 'requirejs:api'],
+      "remote": ['version', 'clean:remote', 'coffee:remote', 'wrap', 'version', 'requirejs:remote', 'symlink:current'],
+      "client": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client', 'symlink:current'],
+      "api": ['version', 'clean:client', 'coffee:api', 'wrap', 'version', 'requirejs:api', 'symlink:current'],
       "client-no-underscore": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
       "client-no-backbone": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
       "widgets": ["version", "hull_widgets"],

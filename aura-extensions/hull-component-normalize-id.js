@@ -11,7 +11,7 @@ define(function () {
     },
     normalizeId: function (options) {
       var sandbox = this.sandbox;
-      var prefix = 'entity:'
+      var prefix = 'entity:';
       if (options.id) {
         if (options.id.match('^'+prefix)!==null){
           options.id = sandbox.util.entity.encode(options.id.slice(prefix.length));

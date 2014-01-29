@@ -36,4 +36,4 @@ define ['underscore', 'xdm'], (_, xdm)->
 
     afterAppStart: (app)->
       rpc.ready(app.config)
-      app.sandbox.on 'hull.user.update', rpc.userUpdate.bind(rpc)
+      app.sandbox.on 'remote.user.update', rpc.userUpdate.bind(rpc)
