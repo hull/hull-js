@@ -15,6 +15,14 @@ define [
         _emitter.on 'hull.auth.login', (me)-> _reporting.track('hull.auth.login', me)
         _emitter.on 'hull.auth.logout', ()-> _reporting.track('hull.auth.logout')
 
+        resolveUserPromise = (promise)->
+          promise.then (user)->
+            _emitter.emit('hull.auth.login', user)
+          , (error) ->
+            _emitter.emit('hull.auth.fail', error)
+
+          promise
+
         created =
           config: configParser(config, _emitter)
           on: _emitter.on
@@ -24,18 +32,13 @@ define [
           flag: _reporting.flag
           api: api.api
           currentUser: currentUser(_emitter)
+          signUp: (args...)->
+            resolveUserPromise(api.auth.signUp(args...))
           login: (args...)->
             if (api.auth.isAuthenticating())
               return console.info "Authentication is in progress. Use `Hull.on('hull.auth.login', fn)` to call `fn` when done."
 
-            promise = api.auth.login(args...)
-
-            promise.then (user)->
-              _emitter.emit('hull.auth.login', user)
-            , (error) ->
-              _emitter.emit('hull.auth.fail', error)
-
-            promise
+            resolveUserPromise(api.auth.login(args...))
           logout: api.auth.logout
           linkIdentity: (provider, opts={}, callback=->)->
             options = _.extend opts, { mode: 'connect' }

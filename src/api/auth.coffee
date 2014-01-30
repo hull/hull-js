@@ -11,6 +11,9 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
     authenticating = null
     _popupInterval = null
 
+    signUp = (user) ->
+      apiFn('users', 'post', user)
+
     login = (loginOrProvider, optionsOrPassword, callback) ->
       throw new TypeError("'loginOrProvider' must be a String") unless _.isString(loginOrProvider)
 
@@ -90,6 +93,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       onCompleteAuth: onCompleteAuthentication
 
     authModule =
+      signUp: signUp
       login: login
       logout: logout
       isAuthenticating: module.isAuthenticating
