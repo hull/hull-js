@@ -54,6 +54,9 @@ define ['underscore', 'lib/utils/q2jQuery', 'lib/client/component/context', 'lib
         else
           "Cannot find template '#{tpl}'"
 
+      authServices: ()->
+        @sandbox.util._.reject @sandbox.util._.keys(@sandbox.config.services.auth || {}), (service)-> service == 'hull'
+
       beforeRender: (data)-> data
 
       renderError: ->
