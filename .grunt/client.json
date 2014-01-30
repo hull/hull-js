@@ -52,8 +52,8 @@
       ],
     "out": "dist/<%= PKG_VERSION %>/hull.js",
     "wrap": {
-      "start": "(function(){var require, requirejs, define, root={jQuery: window.jQuery}, HULL_ENV = 'client'; (function () {",
-      "end": ";}).call(root);})();"
+      "startFile": [".grunt/wrappers/start.client.frag"],
+      "endFile": [".grunt/wrappers/end.frag"]
     }
   }
 }
