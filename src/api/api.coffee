@@ -1,4 +1,4 @@
-define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '../api/auth', '../utils/promises', 'lib/api/xdm'], (_, cookie, version, apiParams, authModule, promises, xdm)->
+define ['lib/utils/flash', 'underscore', '../utils/cookies', '../utils/version', '../api/params', '../api/auth', '../utils/promises', 'lib/api/xdm'], (flash, _, cookie, version, apiParams, authModule, promises, xdm)->
   slice = Array.prototype.slice
 
   init : (config={}, emitter)->
@@ -6,8 +6,13 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
 
     # Fail right now if we don't have the required setup
     unless config.orgUrl and config.appId
-      dfd.reject(new ReferenceError 'no organizationURL provided. Can\'t proceed') unless config.orgUrl
-      dfd.reject(new ReferenceError 'no applicationID provided. Can\'t proceed') unless config.appId
+      unless config.orgUrl
+        msg = "No 'orgUrl' parameter passed to Hull.init. Can't proceed."
+      unless config.appId
+        msg = "No 'appId' parameter passed to Hull.init. Can't proceed."
+      if msg
+        flash msg
+        dfd.reject(new ReferenceError msg)
       return dfd.promise
 
     message = null
@@ -55,6 +60,7 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
       rpc = readyObj.rpc
       onRemoteReady readyObj.config
     , (err)->
+      flash(err)
       dfd.reject err
 
     ###

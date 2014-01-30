@@ -16,7 +16,6 @@ define ['domready', 'lib/utils/promises', 'xdm', 'lib/utils/version'], (domready
     deferred = promises.deferred()
 
     onMessage = (e)->
-      console.log('remoteMessage', e)
       if e.error
         deferred.reject e.error
       else

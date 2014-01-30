@@ -35,5 +35,6 @@ define ['underscore', 'xdm'], (_, xdm)->
       true
 
     afterAppStart: (app)->
+      return unless rpc
       rpc.ready(app.config)
       app.sandbox.on 'remote.user.update', rpc.userUpdate.bind(rpc)
