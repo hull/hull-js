@@ -10,9 +10,8 @@ define ['lib/utils/flash', 'underscore', '../utils/cookies', '../utils/version',
         msg = "No 'orgUrl' parameter passed to Hull.init. Can't proceed."
       unless config.appId
         msg = "No 'appId' parameter passed to Hull.init. Can't proceed."
-      if msg
-        flash msg
-        dfd.reject(new ReferenceError msg)
+      flash msg
+      dfd.reject(new ReferenceError msg)
       return dfd.promise
 
     message = null
