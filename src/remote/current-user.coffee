@@ -17,18 +17,20 @@ define ()->
       userId = h.headers['Hull-User-Id']
       unless userManager.is(userId) # It changed
         delete app.core.handler.headers['Hull-Access-Token']
-        userManager.updateDescription().then (h)->
+        p1 = userManager.updateDescription().then (h)->
           userManager.currentUser = h.response
           app.sandbox.emit 'remote.user.update', h.response
         , (err)->
           userManager.currentUser = {}
           app.sandbox.emit 'remote.user.update', {}
-        userManager.updateSettings().then (h)->
+        p2 = p1.then userManager.updateSettings().then((h)->
           userManager.currentSettings = h.response
           app.sandbox.emit 'remote.settings.update', h.response
         , (err)->
           userManager.currentSettings = {}
           app.sandbox.emit 'remote.settings.update', {}
+        )
+        p2
 
     app.core.currentUser = -> JSON.parse(JSON.stringify(userManager.userDesc)) #TODO Seriously use lodash
     app.core.settings = -> JSON.parse(JSON.stringify(userManager.currentSettings)) #TODO Seriously use lodash
