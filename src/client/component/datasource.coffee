@@ -1,4 +1,4 @@
-define ['lib/client/datasource', 'underscore', 'lib/utils/promises', 'lib/utils/q2jQuery', 'string'], (Datasource, _, promises, q2jQuery)->
+define ['lib/client/datasource', 'underscore', 'lib/utils/promises', 'lib/utils/q2jquery', 'string'], (Datasource, _, promises, q2jQuery)->
   module =
     datasourceModel: Datasource
 

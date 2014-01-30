@@ -23,12 +23,18 @@ module.exports = function (grunt) {
       done();
     }
 
-    git.branch(function(branch) {
-      if (['HEAD', 'master'].indexOf(branch) !== -1) {
-        git.tag(write);
-      } else {
-        write(branch);
-      }
-    });
+    if (process.env.CIRCLE_ARTIFACTS) {
+      grunt.config.set("ARTIFACTS_PATH", process.env.CIRCLE_ARTIFACTS);
+      git.short(write);
+    } else {
+      grunt.config.set("ARTIFACTS_PATH", "build");
+      git.branch(function(branch) {
+        if (['HEAD', 'master'].indexOf(branch) !== -1) {
+          git.tag(write);
+        } else {
+          write(branch);
+        }
+      });
+    }
   });
 };

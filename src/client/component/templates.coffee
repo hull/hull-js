@@ -1,4 +1,4 @@
-define ['underscore', 'lib/utils/handlebars', 'lib/utils/promises', 'lib/utils/q2jQuery', 'require'], (_, Handlebars, promises, q2jQuery, require) ->
+define ['underscore', 'lib/utils/handlebars', 'lib/utils/promises', 'lib/utils/q2jquery', 'require'], (_, Handlebars, promises, q2jQuery, require) ->
 
   strategies =
     app: ['hullGlobal', 'meteor', 'sprockets', 'hullDefault']

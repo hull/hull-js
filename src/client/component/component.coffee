@@ -1,4 +1,4 @@
-define ['underscore', 'lib/utils/q2jQuery', 'lib/client/component/context', 'lib/utils/promises'], (_, q2jQuery, Context, promises)->
+define ['underscore', 'lib/utils/q2jquery', 'lib/client/component/context', 'lib/utils/promises'], (_, q2jQuery, Context, promises)->
   _invokeBeforeRender = (data, ctx)->
     dfd = promises.deferred()
     @invokeWithCallbacks('beforeRender', ctx.build(), ctx.errors()).then (_data)=>

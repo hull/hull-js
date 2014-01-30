@@ -16,6 +16,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-git-describe');
   grunt.loadNpmTasks('grunt-wrap');
   grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   var clientConfig = grunt.file.readJSON('.grunt/client.json');
   var remoteConfig = grunt.file.readJSON('.grunt/remote.json');
@@ -228,6 +229,14 @@ module.exports = function (grunt) {
       "widgets": ["version", "hull_widgets"],
       "docs": ['dox'],
       "describe": ['describe']
+    },
+    copy: {
+      artifacts: {
+        expand: true,
+        cwd: 'dist/<%= PKG_VERSION %>',
+        src: ['**'],
+        dest: '<%= ARTIFACTS_PATH %>/'
+      }
     }
   };
 
@@ -241,6 +250,13 @@ module.exports = function (grunt) {
   grunt.registerTask('default', 'server');
   grunt.registerTask('server', ['connect', 'dist:remote', 'dist:client', 'dist:api', 'dist:widgets', 'watch']);
   grunt.registerTask('deploy', ['dist', 's3:prod']);
+
+  var buildSteps = ['version', 'karma:test', 'dist'];
+  if (process.env.CIRCLE_ARTIFACTS) {
+    buildSteps.push('copy:artifacts');
+  }
+
+  grunt.registerTask('build', buildSteps);
 
   require('./.grunt/customTasks')(grunt);
 
