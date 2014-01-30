@@ -28,18 +28,14 @@ define [
             if (api.auth.isAuthenticating())
               return console.info "Authentication is in progress. Use `Hull.on('hull.auth.login', fn)` to call `fn` when done."
 
-            p = api.auth.login(args...)
+            promise = api.auth.login(args...)
 
-            p.fail (error)->
+            promise.then (user)->
+              _emitter.emit('hull.auth.login', user)
+            , (error) ->
               _emitter.emit('hull.auth.fail', error)
 
-            p2 = p.then ->
-              api.api('me')
-
-            p2.then (user)->
-              _emitter.emit('hull.auth.login', user)
-
-            p2
+            promise
           logout: api.auth.logout
           linkIdentity: (provider, opts={}, callback=->)->
             options = _.extend opts, { mode: 'connect' }

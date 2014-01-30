@@ -8,15 +8,25 @@ if window.opener && window.opener.Hull && hash?
 
 define ['underscore', '../utils/promises', '../utils/version'], (_, promises, version)->
   (apiFn, config, authServices=[]) ->
-    # Holds the state of the authentication process
-    # @type {Promise|Boolean}
     authenticating = null
     _popupInterval = null
 
-    login = (providerName, opts, callback)->
+    login = (loginOrProvider, optionsOrPassword, callback) ->
+      throw new TypeError("'loginOrProvider' must be a String") unless _.isString(loginOrProvider)
+
+      if _.isString(optionsOrPassword)
+        promise = apiFn('users/login', 'post', { login: loginOrProvider, password: optionsOrPassword })
+      else
+        promise = loginWithProvider(loginOrProvider, optionsOrPassword).then ->
+          apiFn('me')
+
+      promise.then(callback) if _.isFunction(callback)
+
+      promise
+
+    loginWithProvider = (providerName, opts)->
       return module.isAuthenticating() if module.isAuthenticating()
 
-      throw 'The provider name must be a String' unless _.isString(providerName)
       providerName = providerName.toLowerCase()
       throw "No authentication service #{providerName} configured for the app" unless ~(_.indexOf(authServices, providerName + '_app'))
 
@@ -26,14 +36,9 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       authUrl = module.authUrl(config, providerName, opts)
       module.authHelper(authUrl)
 
-      p = authenticating.promise
-      p.then(callback) if _.isFunction(callback)
-      p
+      authenticating.promise
 
-    # Starts the logout process
-    # @returns {Promise}
-    # @TODO Misses a `dfd.fail`
-    logout = (callback=->)->
+    logout = (callback)->
       promise = apiFn('logout')
       promise.done ->
         callback() if _.isFunction(callback)
