@@ -144,6 +144,10 @@ define ['jquery', 'underscore'], ($, _)->
     headers['Hull-Access-Token'] = accessToken if accessToken
 
     app.core.handler = new handler headers: headers
-    app.core.handler.after (h)->
-      delete app.core.handler.headers['Hull-Access-Token']
-
+  afterAppStart: (app)->
+    app.sandbox.on 'remote.settings.update', (settings)->
+      header = settings.auth?.hull?.credentials?.access_token
+      if header
+        app.core.handler.headers['Hull-Access-Token'] = header
+      else
+        delete app.core.handler.headers['Hull-Access-Token']

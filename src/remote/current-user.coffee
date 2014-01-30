@@ -16,6 +16,7 @@ define ()->
     app.core.handler.after (h)->
       userId = h.headers['Hull-User-Id']
       unless userManager.is(userId) # It changed
+        delete app.core.handler.headers['Hull-Access-Token']
         userManager.updateDescription().then (h)->
           userManager.currentUser = h.response
           app.sandbox.emit 'remote.user.update', h.response

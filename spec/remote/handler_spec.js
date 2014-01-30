@@ -25,7 +25,7 @@ define(['lib/remote/handler', 'jquery'], function(handlerModule, $) {
 
       describe('module', function () {
         it('should expose the Handler and an initializer function', function () {
-          handlerModule.should.have.keys('initialize', 'handler');
+          handlerModule.should.have.keys('initialize', 'handler', 'afterAppStart');
         });
         describe('initializer', function () {
           it('should instantiate a handler and set it in the core', function () {

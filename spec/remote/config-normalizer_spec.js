@@ -20,8 +20,8 @@ define(['lib/remote/config-normalizer'], function (CfgNorm) {
         var config = { fake: {}};
         var tokens = { fake: {a: true}};
         this.normalizer.applyUserCredentials(config, tokens);
-        config.fake.should.contain.keys('tokens');
-        config.fake.tokens.should.eql(tokens.fake);
+        config.fake.should.contain.keys('credentials');
+        config.fake.credentials.should.eql(tokens.fake);
       });
     });
 
