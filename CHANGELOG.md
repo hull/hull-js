@@ -1,4 +1,6 @@
-* [129] promises returned by `Hull.login()`, `Hull.linkIdentity` are rejected with `error` hash that contains the `reason` of the failure.
+* [133] Adds `Hull.signup(user)`
+* [133] Adds `Hull.login(usernameOrEmail, password)`
+* [129] Promises returned by `Hull.login()`, `Hull.linkIdentity` are rejected with `error` hash that contains the `reason` of the failure.
 * Adds `Hull.linkIdentity()` and `Hull.unlinkIdentity()`
 * [127] Fixes `events` hash usage in components
 
