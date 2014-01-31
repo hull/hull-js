@@ -32,8 +32,8 @@ define [
           flag: _reporting.flag
           api: api.api
           currentUser: currentUser(_emitter)
-          signUp: (args...)->
-            resolveUserPromise(api.auth.signUp(args...))
+          signup: (args...)->
+            resolveUserPromise(api.auth.signup(args...))
           login: (args...)->
             if (api.auth.isAuthenticating())
               return console.info "Authentication is in progress. Use `Hull.on('hull.auth.login', fn)` to call `fn` when done."

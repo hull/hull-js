@@ -11,7 +11,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
     authenticating = null
     _popupInterval = null
 
-    signUp = (user) ->
+    signup = (user) ->
       apiFn('users', 'post', user)
 
     login = (loginOrProvider, optionsOrPassword, callback) ->
@@ -93,7 +93,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       onCompleteAuth: onCompleteAuthentication
 
     authModule =
-      signUp: signUp
+      signup: signup
       login: login
       logout: logout
       isAuthenticating: module.isAuthenticating
