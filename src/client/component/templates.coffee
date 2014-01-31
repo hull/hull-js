@@ -18,7 +18,10 @@ define ['underscore', 'lib/utils/handlebars', 'lib/utils/handlebars-helpers', 'l
     compiled
 
   _domTemplate = ($el)->
-    module.domFind($el.get(0)).text() if $el.length
+    return unless $el.length
+    first = $el.get(0)
+    $first = module.domFind(first)
+    $first.text() || $first.html() || first.innerHTML
 
   strategyHandlers =
     dom:
