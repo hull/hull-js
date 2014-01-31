@@ -59,7 +59,6 @@ define ['lib/utils/flash', 'underscore', '../utils/cookies', '../utils/version',
       rpc = readyObj.rpc
       onRemoteReady readyObj.config
     , (err)->
-      flash(err)
       dfd.reject err
 
     ###
