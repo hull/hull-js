@@ -22,6 +22,9 @@ define ['domready', 'lib/utils/promises', 'xdm', 'lib/utils/version'], (domready
       else
         console.warn("RPC Message", arguments)
 
+    settingsUpdate = (currentSettings)->
+      emitter.emit('hull.settings.update', currentSettings)
+
     userUpdate = (currentUser)->
       emitter.emit('hull.auth.login', currentUser) if currentUser
       emitter.emit('hull.auth.logout') unless currentUser
@@ -50,6 +53,6 @@ define ['domready', 'lib/utils/promises', 'xdm', 'lib/utils/version'], (domready
             left: '-20px'
       ,
         remote:  message: {}, ready: {}
-        local:   message: onMessage, ready: readyFn, userUpdate: userUpdate
+        local:   message: onMessage, ready: readyFn, userUpdate: userUpdate, settingsUpdate: settingsUpdate
 
     deferred.promise

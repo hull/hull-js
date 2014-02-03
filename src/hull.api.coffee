@@ -31,7 +31,7 @@ define [
         )
 
         created =
-          config: configParser(config)
+          config: configParser(config, _emitter)
           on: _emitter.on
           off: _emitter.off
           emit: _emitter.emit

@@ -23,7 +23,7 @@ define ['underscore', 'xdm'], (_, xdm)->
         rpc = new xdm.Rpc({
           acl: app.config.appDomains
         }, {
-          remote: { message: {}, ready: {}, userUpdate: {} }
+          remote: { message: {}, ready: {}, userUpdate: {}, settingsUpdate: {} }
           local:  { message: onRemoteMessage }
         })
       catch e
@@ -37,3 +37,4 @@ define ['underscore', 'xdm'], (_, xdm)->
     afterAppStart: (app)->
       rpc.ready(app.config)
       app.sandbox.on 'remote.user.update', rpc.userUpdate.bind(rpc)
+      app.sandbox.on 'remote.settings.update', rpc.settingsUpdate.bind(rpc)

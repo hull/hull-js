@@ -10,6 +10,7 @@
     "baseUrl": ".",
     "preserveLicenseComments": true,
     "paths": {
+      "json2":        "bower_components/json2/json2",
       "aura":         "bower_components/aura/lib",
       "underscore":   "bower_components/underscore/underscore",
       "eventemitter": "bower_components/eventemitter2/lib/eventemitter2",
@@ -26,6 +27,7 @@
       "analytics": { "exports": "analytics" }
     },
     "include": [
+      "json2",
       "requireLib",
       "underscore",
       "xdm",

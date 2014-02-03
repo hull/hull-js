@@ -20,7 +20,8 @@
     "domready": "",
     "handlebars": "~1.1.2",
     "requirejs": "2.1.9",
-    "jquery-jsonp": "hull/jquery-jsonp#b402017ba708388af345f8f560ac4f49c1f68090"
+    "jquery-jsonp": "hull/jquery-jsonp#b402017ba708388af345f8f560ac4f49c1f68090",
+    "json2": "*"
   },
   "devDependencies": {
     "squire": "*"

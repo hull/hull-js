@@ -1,9 +1,9 @@
 /**
  *
  * A packaged Sweepstake game
- * 
+ *
  * A sweepstake is a game where the player finds out immediately if he or she is a winner of one of the prizes the administrators put at stake.
- * 
+ *
  * A player can play once a day provided he or she loses at each attempt. A player that wins the prize will not be allowed to play the game anymore.
  *
  * To create a sweepstake, use the `admin/sweepstake@hull` component which will let you create a sweepstake and add prizes to it.
@@ -71,13 +71,8 @@ Hull.component({
     }
   },
 
-  initialize: function() {
-    this.authProviders = this.sandbox.util._.map(this.sandbox.config.services.types.auth, function(s) {
-      return s.replace(/_app$/, '');
-    });
-  },
-
   beforeRender: function(data) {
+    this.authProviders = this.authServices();
     this.template = this.getInitialTemplate();
 
     data.authProviders = this.authProviders;

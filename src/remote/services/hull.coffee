@@ -74,11 +74,7 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
       analytics = require('analytics')
       analyticsSettings = {}
 
-      _.map app.config.services.types.analytics, (s)->
-        _service = app.config.services.settings[s]
-        analyticsSettings[_service.name] = _service
-
-      analytics.initialize(analyticsSettings)
+      analytics.initialize(app.config.settings.analytics || {})
 
       identify(app.config.data.me) if app.config.data.me?
 

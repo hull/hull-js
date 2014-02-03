@@ -29,9 +29,9 @@ Hull.component({
             authServices = [],
             connected = this.loggedIn() || {},
             mainIdentity = data.me && data.me.main_identity;
-    _.map(this.sandbox.config.services.types.auth, function(s) {
+    _.map(this.authServices(), function(s) {
       var availableAction, actionName,
-          name = s.replace(/_app$/, ''),
+          name = s,
           isConnected = !!connected[name],
           canDisconnect = name !== mainIdentity;
       if (!isConnected) {
