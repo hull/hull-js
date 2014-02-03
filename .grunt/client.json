@@ -14,7 +14,7 @@
     "preserveLicenseComments": true,
     "paths": {
       "jquery":         "empty:",
-      "json3":          "bower_components/json2/json2",
+      "json2":          "bower_components/json2/json2",
       "requireLib":     "bower_components/requirejs/require",
       "underscore":     "bower_components/underscore/underscore",
       "eventemitter":   "bower_components/eventemitter2/lib/eventemitter2",
@@ -37,7 +37,7 @@
       "jquery"    : { "exports": "jquery"}
     },
     "include": [
-      "json3",
+      "json2",
       "requireLib",
       "underscore",
       "string",

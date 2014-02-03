@@ -11,6 +11,7 @@
     "baseUrl": ".",
     "preserveLicenseComments": true,
     "paths": {
+      "json2":          "bower_components/json2/json2",
       "requireLib":     "bower_components/almond/almond",
       "underscore":     "bower_components/underscore/underscore",
       "eventemitter":   "bower_components/eventemitter2/lib/eventemitter2",
@@ -25,6 +26,7 @@
       "underscore": { "exports": "_" }
     },
     "include": [
+      "json2",
       "requireLib",
       "underscore",
       "cookie",
