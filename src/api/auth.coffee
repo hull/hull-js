@@ -89,6 +89,15 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
           onCompleteAuthentication(hash)
       authHelper: (path)->
         w = window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
+
+        # Support for cordova events
+        if window.device?.cordova
+          w?.addEventListener 'loadstart', (event)->
+            hash = try JSON.parse(atob(event.url.split('#')[1]))
+            if hash
+              window.__hull_login_status__(hash)
+              w.close()
+
         _popupInterval = w? && setInterval ->
           if w?.closed
             onCompleteAuthentication({ success: false, error: { reason: 'window_closed' } })
