@@ -31,9 +31,11 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       return module.isAuthenticating() if module.isAuthenticating()
 
       providerName = providerName.toLowerCase()
-      throw "No authentication service #{providerName} configured for the app" unless ~(_.indexOf(authServices, providerName ))
-
       authenticating = promises.deferred()
+      unless ~(_.indexOf(authServices, providerName ))
+        authenticating.reject {reason: "No authentication service #{providerName} configured for the app"}
+        return authenticating.promise
+
       authenticating.providerName = providerName
 
       authUrl = module.authUrl(config, providerName, opts)
