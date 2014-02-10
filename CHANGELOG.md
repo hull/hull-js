@@ -1,5 +1,10 @@
+# 0.8.4
+
 * Fixes Hull when opened from a `target="_blank"` link
 * Bad provider in `Hull.login()` returns a rejected promise
+
+# 0.8.3
+
 * [133] Adds `Hull.signup(user)`
 * [133] Adds `Hull.login(usernameOrEmail, password)`
 * [129] Promises returned by `Hull.login()`, `Hull.linkIdentity` are rejected with `error` hash that contains the `reason` of the failure.
