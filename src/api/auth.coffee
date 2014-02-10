@@ -1,10 +1,8 @@
-hash = try JSON.parse(atob(document.location.hash.replace('#', '')))
-if window.opener && window.opener.Hull && hash?
-  try
+try
+  hash = JSON.parse(atob(document.location.hash.replace('#', '')))
+  if window.opener && window.opener.Hull && window.opener.__hull_login_status__ && hash?
     window.opener.__hull_login_status__(hash)
     window.close()
-  catch e
-    console.warn('Error: ' + e)
 
 define ['underscore', '../utils/promises', '../utils/version'], (_, promises, version)->
   (apiFn, config, authServices=[]) ->
