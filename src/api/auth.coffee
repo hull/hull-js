@@ -33,7 +33,9 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       providerName = providerName.toLowerCase()
       authenticating = promises.deferred()
       unless ~(_.indexOf(authServices, providerName ))
-        authenticating.reject {reason: "No authentication service #{providerName} configured for the app"}
+        authenticating.reject
+          message: "No authentication service #{providerName} configured for the app"
+          reason: 'no_such_service'
         return authenticating.promise
 
       authenticating.providerName = providerName
