@@ -41,17 +41,14 @@ Hull.component({
   beforeRender: function(data) {
     "use strict";
 
-    if (this.sandbox.util._.isEmpty(this.authServices())) {
-      console.error('No Auth services configured. please add one to be able to authenticate users.');
-    }
-
     data.authHasFailed = this.authHasFailed;
+    var authServices = this.authServices() || [];
 
     // If providers are specified, then use only those. else use all configuredauthServices
     if(this.options.provider){
       data.providers = this.options.provider.replace(' ','').split(',');
     } else {
-      data.providers = this.authServices() || [];
+      data.providers = authServices;
     }
 
     // If I'm logged in, then create an array of logged In providers
@@ -64,7 +61,7 @@ Hull.component({
     // Create an array of logged out providers.
     data.loggedOut = this.sandbox.util._.difference(data.providers, data.loggedInProviders);
     data.matchingProviders = this.sandbox.util._.intersection(data.providers.concat('email'), data.loggedInProviders);
-    data.authServices = this.authServices();
+    data.authServices = authServices;
 
     return data;
   },
