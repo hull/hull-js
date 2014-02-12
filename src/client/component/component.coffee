@@ -79,8 +79,10 @@ define ['underscore', 'lib/utils/q2jQuery', 'lib/client/component/context', 'lib
       loggedIn: =>
         return false unless @sandbox.data.api.model('me').id?
         identities = {}
-        _.map @sandbox.data.api.model('me').get("identities"), (i)->
+        me = @sandbox.data.api.model('me')
+        _.map me.get("identities"), (i)->
           identities[i.provider] = i
+        identities.email ?= {} if me.get('main_identity') == 'email'
         identities
 
       getTemplate: (tpl, data)=>
