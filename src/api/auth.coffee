@@ -1,10 +1,8 @@
-hash = try JSON.parse(atob(document.location.hash.replace('#', '')))
-if window.opener && window.opener.Hull && hash?
-  try
+try
+  hash = JSON.parse(atob(document.location.hash.replace('#', '')))
+  if window.opener && window.opener.Hull && window.opener.__hull_login_status__ && hash?
     window.opener.__hull_login_status__(hash)
     window.close()
-  catch e
-    console.warn('Error: ' + e)
 
 define ['underscore', '../utils/promises', '../utils/version'], (_, promises, version)->
   (apiFn, config, authServices=[]) ->
@@ -31,9 +29,13 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       return module.isAuthenticating() if module.isAuthenticating()
 
       providerName = providerName.toLowerCase()
-      throw "No authentication service #{providerName} configured for the app" unless ~(_.indexOf(authServices, providerName ))
-
       authenticating = promises.deferred()
+      unless ~(_.indexOf(authServices, providerName ))
+        authenticating.reject
+          message: "No authentication service #{providerName} configured for the app"
+          reason: 'no_such_service'
+        return authenticating.promise
+
       authenticating.providerName = providerName
 
       authUrl = module.authUrl(config, providerName, opts)
