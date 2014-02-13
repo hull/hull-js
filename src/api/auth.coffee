@@ -5,6 +5,14 @@ try
     window.close()
 
 define ['underscore', '../utils/promises', '../utils/version'], (_, promises, version)->
+  handleUserPromise = (promise)->
+    promise.then (user)->
+      _emitter.emit('hull.auth.login', user)
+    , (error) ->
+      _emitter.emit('hull.auth.fail', error)
+
+    promise
+
   (apiFn, config, authServices=[]) ->
     authenticating = null
     _popupInterval = null
@@ -21,9 +29,10 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
         promise = loginWithProvider(loginOrProvider, optionsOrPassword).then ->
           apiFn('me')
 
-      promise.then(callback) if _.isFunction(callback)
+      mePromise = promise.then(-> handleUserPromise(apiFn('me')))
+      mePromise.then(callback) if _.isFunction(callback)
 
-      promise
+      mePromise
 
     loginWithProvider = (providerName, opts)->
       return module.isAuthenticating() if module.isAuthenticating()
