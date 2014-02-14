@@ -1,3 +1,5 @@
+* [134] Compatibility with Cordova
+
 # 0.8.4
 
 * Fixes Hull when opened from a `target="_blank"` link
