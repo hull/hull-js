@@ -13,3 +13,4 @@ app/app.js
 /build
 
 /grunt-aws.json
+/local_components
