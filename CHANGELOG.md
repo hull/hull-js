@@ -1,3 +1,5 @@
+* Adds a console polyfill
+
 # 0.8.5
 
 * [134] Compatibility with Cordova
