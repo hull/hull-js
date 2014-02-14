@@ -11,6 +11,21 @@ define ['jquery', 'underscore'], ($, _)->
 
     accessToken     = app.config.access_token
     originalUserId  = app.config.data?.me?.id
+    currentUserId   = originalUserId
+
+    refreshCredentials = ->
+      if currentUserId
+        req = $.ajax
+          url: '/api/v1/me/credentials',
+          type: 'get'
+          contentType: 'application/json'
+          dataType: 'json'
+          headers: { 'Hull-App-Id': config.appId }
+        req.done (creds={})->
+          accessToken = creds.hull?.access_token
+          config.data.credentials = creds
+      else
+        config.data.credentials = {}
 
     identify = (me) ->
       return unless me
@@ -62,6 +77,11 @@ define ['jquery', 'underscore'], ($, _)->
           memo[name] = value if value?
           memo
         , {}
+
+        if request.status && request.status < 300 && currentUserId != headers['Hull-User-Id']
+          console.warn("Refresh my stuff...")
+          currentUserId = headers['Hull-User-Id']
+          refreshCredentials()
 
         if accessToken && originalUserId && originalUserId != headers['Hull-User-Id']
           # Reset token if the user has changed...

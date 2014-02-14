@@ -10,6 +10,7 @@
       "easyXDM":            "bower_components/easyXDM/easyXDM",
       "requireLib":         "bower_components/requirejs/require",
       "jquery":             "bower_components/jquery/jquery",
+      "jquery-jsonp":       "bower_components/jquery-jsonp/src/jquery.jsonp",
       "text":               "bower_components/requirejs-text/text",
       "analytics":          "bower_components/analytics/analytics",
       "base64":             "bower_components/base64/base64"
@@ -22,6 +23,7 @@
     "include": [
       "requireLib",
       "jquery",
+      "jquery-jsonp",
       "underscore",
       "eventemitter",
       "easyXDM",

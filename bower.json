@@ -15,7 +15,8 @@
     "underscore.string": "2.3.1",
     "jquery.cookie": "latest",
     "twitter-text": "1.6.1",
-    "jquery.serializeJSON": "1.0.1"
+    "jquery.serializeJSON": "1.0.1",
+    "jquery-jsonp": "hull/jquery-jsonp#b402017ba708388af345f8f560ac4f49c1f68090"
   },
   "devDependencies": {
     "JSCovReporter": "git://github.com/TwoApart/JSCovReporter.git"
