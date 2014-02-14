@@ -33,7 +33,12 @@ define [
           api: api.api
           currentUser: currentUser(_emitter)
           signup: (args...)->
-            api.auth.signup(args...)
+            signupPromise = api.auth.signup(args...)
+            signupPromise.then (me)->
+              _emitter.emit('hull.auth.login', me)
+            , (err)->
+              _emitter.emit('hull.auth.fail', err)
+            signupPromise
           login: (args...)->
             if (api.auth.isAuthenticating())
               return console.info "Authentication is in progress. Use `Hull.on('hull.auth.login', fn)` to call `fn` when done."
