@@ -16,6 +16,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-git-describe');
   grunt.loadNpmTasks('grunt-wrap');
   grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-bump');
 
   var clientConfig = grunt.file.readJSON('.grunt/client.json');
   var remoteConfig = grunt.file.readJSON('.grunt/remote.json');
@@ -217,6 +218,17 @@ module.exports = function (grunt) {
         wrapper: [
           '(function () {', ';define("handlebars", function () {return Handlebars;});})()'
         ]
+      }
+    },
+    bump: {
+      options: {
+        files: ['package.json', 'bower.json'],
+        commit: true,
+        commitMessage: 'Release %VERSION%',
+        commitFiles: ['-a'],
+        createTag: true,
+        tagName: '%VERSION%',
+        tagMessage: 'Release %VERSION%',
       }
     },
     dist: {
