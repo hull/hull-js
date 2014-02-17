@@ -66,10 +66,10 @@ Create the file `.grunt/grunt-aws.json`, with the following content :
 
 # Creating a release
 
-* `git flow release start 0.x.x`
-* Bump versions in `bower.json` and `package.json` files
-* `git flow release finish 0.x.x`
-*
+* Update `CHANGELOG.md`
+* `grunt bump:[major|minor|patch]`
+* `git checkout %VERSION%`
+* `grunt deploy`
 
 
 
