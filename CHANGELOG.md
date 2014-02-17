@@ -1,3 +1,6 @@
+# 0.8.6
+
+* Prevents Q from complaining about missing handlers
 * Adds a console polyfill
 
 # 0.8.5
