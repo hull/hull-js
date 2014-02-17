@@ -1,6 +1,6 @@
 {
   "name": "hull-js",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-s3": "0.2.0-alpha",
@@ -27,7 +27,8 @@
     "karma-chai": "0.0.2",
     "karma-chai-sinon": "0.1.0",
     "karma-spec-reporter": "0.0.6",
-    "semver": "~2.2.1"
+    "semver": "~2.2.1",
+    "grunt-bump": "0.0.13"
   },
   "scripts": {
     "postinstall": "$(npm bin)/bower install",
