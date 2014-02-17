@@ -229,6 +229,7 @@ module.exports = function (grunt) {
         createTag: true,
         tagName: '%VERSION%',
         tagMessage: 'Release %VERSION%',
+        push: false
       }
     },
     dist: {
