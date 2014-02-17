@@ -25,6 +25,7 @@ define [
           promise
 
         noCurentUserDeferred = promises.deferred()
+        noCurentUserDeferred.promise.fail(->)
         noCurentUserDeferred.reject(
           reason: 'no_current_user',
           message: 'User must be logged in to perform this action'
