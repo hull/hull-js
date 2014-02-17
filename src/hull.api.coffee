@@ -17,6 +17,7 @@ define [
         _emitter.on 'hull.auth.logout', ()-> _reporting.track('hull.auth.logout')
 
         noCurentUserDeferred = promises.deferred()
+        noCurentUserDeferred.promise.fail(->)
         noCurentUserDeferred.reject(
           reason: 'no_current_user',
           message: 'User must be logged in to perform this action'
