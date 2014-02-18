@@ -17,7 +17,14 @@ define ['underscore', 'xdm'], (_, xdm)->
         if _.isFunction handler
           handler(req, callback, errback)
         else
-          errback(catchAll(req))
+          [__, provider, namespace] = req.provider.match(/^(admin)\@([a-z0-9_\-]+)$/i)
+          if provider && namespace
+            req.provider = provider
+            req.namespace = namespace
+            handler = core.routeHandlers['admin']
+            handler(req, callback, errback)
+          else
+            errback(catchAll(req))
 
       try
         rpc = new xdm.Rpc({
