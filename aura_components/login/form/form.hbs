@@ -1,0 +1,38 @@
+<div class="alert" data-hull-alert-message style="display:none"></div>
+{{#if loggedIn}}
+  {{#if validationErrors}}
+    <h4>Validation Errors</h4>
+    <form class="form-validations">
+
+    {{#if validationErrors.email}}
+      {{#if currentUser.email}}
+      A confirmation email has been sent to {{currentUser.email}}...
+      <a class="btn btn-link" data-hull-action='resetPassword'>Oops... Looks like i did not get it, please send me another one...</a>
+      <a class="btn btn-link" data-hull-action='resendConfirmation'>Can you please send me my confirmation email again ?</a>
+      {{else}}
+        <h2 class="form-signin-heading">Please set your email to complete your registration</h2>
+        <input name="email" type="email" class="form-control" placeholder="Email" required autofocus>
+      {{/if}}
+    {{/if}}
+    {{#if validationErrors.username}}
+        <h2 class="form-signin-heading">Please set your username to complete your registration</h2>
+        <input name="username" type="text" class="form-control" placeholder="Username" required autofocus>
+    {{/if}}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Complete my profile</button>
+    </form>
+  {{else}}
+  Hey {{currentUser.name}}, you can <a class='btn-link' data-hull-action='logout'>Logout</a> now...
+  {{/if}}
+{{else}}
+<form class="form-signin" role="form">
+  <h2 class="form-signin-heading">Please sign in</h2>
+  <input name="login" type="text" class="form-control" placeholder="Username or Email" required autofocus>
+  <input name="password" type="password" class="form-control" placeholder="Password" required>
+  <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+  <div>
+    <a class="btn btn-link"  data-hull-action='resetPassword'>Oops... I think i forgot my password</a>
+    <a class="btn btn-link" data-hull-action='resendConfirmation'>Can you please send me my confirmation email again ?</a>
+  </div>
+</form>
+<div data-hull-component="login/button@hull"></div>
+{{/if}}
