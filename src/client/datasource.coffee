@@ -77,6 +77,7 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
     parse: (bindings) ->
       unless (@def instanceof Backbone.Model || @def instanceof Backbone.Collection)
         @def.path = parseURI(@def.path, bindings) unless _.isFunction(@def)
+        @def.provider = parseURI(@def.provider, bindings) unless _.isFunction(@def)
 
     #
     # Send the requests.
