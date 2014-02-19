@@ -34,10 +34,6 @@ define [
           currentUser: currentUser(_emitter)
           signup: (args...)->
             signupPromise = api.auth.signup(args...)
-            signupPromise.then (me)->
-              _emitter.emit('hull.auth.login', me)
-            , (err)->
-              _emitter.emit('hull.auth.fail', err)
             signupPromise
           login: (args...)->
             if (api.auth.isAuthenticating())

@@ -5,12 +5,16 @@ try
     window.close()
 
 define ['underscore', '../utils/promises', '../utils/version'], (_, promises, version)->
-  (apiFn, config, authServices=[]) ->
+  (apiFn, config, emitter, authServices=[]) ->
     authenticating = null
     _popupInterval = null
 
     signup = (user) ->
-      apiFn('users', 'post', user)
+      apiFn('users', 'post', user).then (me)->
+        emitter.emit('hull.auth.login', me)
+      , (err)->
+        emitter.emit('hull.auth.fail', err.message)
+
 
     login = (loginOrProvider, optionsOrPassword, callback) ->
       throw new TypeError("'loginOrProvider' must be a String") unless _.isString(loginOrProvider)
@@ -22,7 +26,14 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
           apiFn('me')
 
       mePromise = promise.then(-> apiFn('me'))
-      mePromise.then(callback) if _.isFunction(callback)
+      evtPromise = mePromise.then((me)->
+        emitter.emit('hull.auth.login', me)
+        me
+      , (err)->
+        emitter.emit('hull.auth.fail', err)
+        err
+      )
+      evtPromise.then(callback) if _.isFunction(callback)
 
       mePromise
 
@@ -44,11 +55,13 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
 
       authenticating.promise
 
+
     logout = (callback)->
       promise = apiFn('logout')
       promise.done ->
         callback() if _.isFunction(callback)
-      promise
+      promise.then ()->
+        emitter.emit('hull.auth.logout')
 
     onCompleteAuthentication = (hash)->
       _auth = authenticating
@@ -57,7 +70,9 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       if hash.success
         authenticating.resolve({})
       else
-        authenticating.reject(hash.error)
+        error = new Error('Login failed')
+        error.reason = hash.error.reason
+        authenticating.reject(error)
 
       authenticating = null
       clearInterval(_popupInterval)
