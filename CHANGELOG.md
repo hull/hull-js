@@ -1,3 +1,5 @@
+* Version-fix of domready to maintain backward-compatibility
+
 # 0.8.6
 
 * Prevents Q from complaining about missing handlers
