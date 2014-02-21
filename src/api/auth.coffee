@@ -12,8 +12,10 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
     signup = (user) ->
       apiFn('users', 'post', user).then (me)->
         emitter.emit('hull.auth.login', me)
+        me
       , (err)->
         emitter.emit('hull.auth.fail', err.message)
+        throw err
 
 
     login = (loginOrProvider, optionsOrPassword, callback) ->
