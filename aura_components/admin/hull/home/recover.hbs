@@ -1,0 +1,26 @@
+{{#if messages.length}}
+<div class="alert alert-success messages">
+  {{#messages}}
+    {{.}}
+  {{/messages}}
+</div>
+{{/if}}
+{{#if errors.length}}
+<div class="alert alert-danger errors">
+  {{#errors}}
+    {{.}}
+  {{/errors}}
+</div>
+{{/if}}
+<form action="#">
+  <div class="control-group email required">
+    <div class="controls">
+      <input autofocus="autofocus" class="string email required input-block-level" type="email" name="email" id="email" placeholder="Email address" size="50" value="">
+    </div>
+  </div>
+  <div class="control-group">
+    <input class="btn btn btn-secondary btn-large btn-block" data-hull-action="doRecoverPassword" type="submit" name="submit" id="submit" value="Recover my password">
+  </div>
+</form>
+<a class="btn btn-link" data-hull-action="showLogin">Back to Login page</a>
+

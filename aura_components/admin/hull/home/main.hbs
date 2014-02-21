@@ -10,6 +10,13 @@
   <div class="or-separator">
     <span>or</span>
   </div>
+  {{#if errors.length}}
+  <div class="alert alert-danger errors">
+    {{#errors}}
+      {{.}}
+    {{/errors}}
+  </div>
+  {{/if}}
   <form action="#">
     <div class="control-group email required">
       <div class="controls">
@@ -31,14 +38,8 @@
   </form>
   {{#unless wantsSignup}}
     <a class="btn btn-link" data-hull-action="showSignup">No Account? Signup here</a>
+    <a class="btn btn-link pull-right" data-hull-action="toggleTemplate" data-hull-template="recover">Password lost ?</a>
   {{else}}
     <a class="btn btn-link" data-hull-action="showLogin">Already Signed up? Login here</a>
   {{/unless}}
-  {{#if errors.length}}
-  <span class="alert alert-danger pull-right errors">
-    {{#errors}}
-      {{.}}
-    {{/errors}}
-  </span>
-  {{/if}}
 {{/if}}
