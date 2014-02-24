@@ -6,6 +6,11 @@ Hull.component({
     this.errors = [];
     this.messages = [];
     this.sandbox.on('hull.auth.login', this.redirectIfApproved);
+    var self = this;
+    this.sandbox.on('hull.auth.fail', function (err) {
+      self.errors.push(err.message);
+      self.refresh();
+    });
   },
   redirectIfApproved: function (me) {
     if (me.approved) {
