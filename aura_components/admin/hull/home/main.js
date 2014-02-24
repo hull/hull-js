@@ -16,6 +16,7 @@ Hull.component({
     showLogin: function () {
       this.clearMessages();
       this.wantsSignup = false;
+      this.template = 'main';
       this.refresh();
     },
     showSignup: function () {
