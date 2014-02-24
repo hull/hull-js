@@ -35,9 +35,8 @@ Hull.component({
       var formData = this.getFormData();
       this.sandbox.login(formData.email, formData.password).then(
         this.redirectIfApproved,
-        function (err) {
-          self.errors.push(err.message);
-      }).then(function () {
+        function () {}
+      ).then(function () {
         self.refresh();
       });
     },
