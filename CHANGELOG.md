@@ -1,3 +1,10 @@
+# 0.8.8
+
+* Sends way less data to `hull.auth.login` tracking
+* Updates Aura to avoid error-swallowing
+
+# 0.8.7
+
 * Version-fix of domready to maintain backward-compatibility
 
 # 0.8.6
