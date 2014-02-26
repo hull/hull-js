@@ -1,27 +1,20 @@
 define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
   (app)->
-
-    browserId = app.core.cookies.get('_bid')
-    if !browserId
-      browserId = app.core.util.uuid()
-      year    = new Date().getFullYear() + 10
-      expires = year + "-01-01"
-      app.core.cookies.set('_bid', browserId, {
-        domain: document.location.host
-        expire: expires
-        secure: true
+    createOrRefreshUuid = (key, expires) ->
+      uuid = app.core.cookies.get(key) || app.core.util.uuid()
+      app.core.cookies.set(key, uuid, {
+        domain: document.location.host,
+        expires: expires
       })
 
-    # Change expire date each time...
-    sessionId = app.core.cookies.get('_sid')
-    if !sessionId?
-      sessionId = app.core.util.uuid()
-      expires    = new Date().getTime + 60 * 30 * 1000
-      app.core.cookies.set('_sid', sessionId, {
-        domain: document.location.host
-        expire: expires
-        secure: true
-      })
+      uuid
+
+    getBrowserId = ->
+      year = new Date().getFullYear() + 10
+      createOrRefreshUuid('_bid', new Date(year, 0, 1))
+
+    getSessionId = ->
+      createOrRefreshUuid('_sid', 30 * 60)
 
     identify = (me) ->
       return unless me
