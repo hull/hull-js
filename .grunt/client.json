@@ -29,7 +29,8 @@
       "aura":           "bower_components/aura/lib",
       "domready":       "bower_components/domready/ready",
       "flavour":        "lib/hull",
-      "moment":         "bower_components/moment/moment"
+      "moment":         "bower_components/moment/moment",
+      "purl":           "bower_components/purl/purl"
     },
     "shim": {
       "backbone":   { "exports": "Backbone", "deps": ["underscore", "jquery"] },
@@ -42,6 +43,7 @@
       "underscore",
       "string",
       "cookie",
+      "purl",
       "base64",
       "backbone",
       "text",

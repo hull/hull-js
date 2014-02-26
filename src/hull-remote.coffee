@@ -13,11 +13,17 @@ define ['aura/aura', 'underscore', 'lib/utils/version', 'lib/remote/config-norma
     config.debug ?= false
     config.components = false
     hull.app = Aura(config)
+    hull.app.use('aura-extensions/aura-cookies')
+    hull.app.use('aura-extensions/aura-purl')
+    hull.app.use('aura-extensions/aura-uuid')
     hull.app.use('lib/remote/services')
     hull.app.use('lib/remote/handler')
     hull.app.use('lib/remote/current-user')
     hull.app.use('lib/remote/services/hull')
 
+    hull.app.use (a)->
+      window._internal_app = a
+      
     keys = _.keys(config.settings?.auth || [])
     auth_services = _.filter keys, isAvailable
 

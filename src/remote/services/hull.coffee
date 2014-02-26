@@ -1,5 +1,28 @@
 define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
   (app)->
+
+    browserId = app.core.cookies.get('_bid')
+    if !browserId
+      browserId = app.core.util.uuid()
+      year    = new Date().getFullYear() + 10
+      expires = year + "-01-01"
+      app.core.cookies.set('_bid', browserId, {
+        domain: document.location.host
+        expire: expires
+        secure: true
+      })
+
+    # Change expire date each time...
+    sessionId = app.core.cookies.get('_sid')
+    if !sessionId?
+      sessionId = app.core.util.uuid()
+      expires    = new Date().getTime + 60 * 30 * 1000
+      app.core.cookies.set('_sid', sessionId, {
+        domain: document.location.host
+        expire: expires
+        secure: true
+      })
+
     identify = (me) ->
       return unless me
       identified = !!me.id?
@@ -71,6 +94,7 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
         base64:    'components/base64/base64'
 
     initialize: (app)->
+
       analytics = require('analytics')
       settings = app.config.settings.analytics || {}
       analyticsSettings = {}
