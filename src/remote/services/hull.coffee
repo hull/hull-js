@@ -16,6 +16,10 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
     getSessionId = ->
       createOrRefreshUuid('_sid', 30 * 60)
 
+    initInfo =
+      url: app.config.data.request.url.href
+      path: app.config.data.request.url.path
+      referrer: app.config.data.request.referrer?.href
     identify = (me) ->
       return unless me
       identified = !!me.id?
@@ -53,6 +57,7 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
       return unless event
       params.hull_app_id    = app.config?.appId
       params.hull_app_name  = app.config?.data?.app?.name
+      _.defaults params, initInfo
       require('analytics').track(event, params)
 
     trackAction = (response)->
