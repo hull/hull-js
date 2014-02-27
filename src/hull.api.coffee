@@ -34,6 +34,7 @@ define [
           message: 'User must be logged in to perform this action'
         )
 
+        config.services = api.remoteConfig.settings
         created =
           config: configParser(config, _emitter)
           on: _emitter.on
