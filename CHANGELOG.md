@@ -1,3 +1,5 @@
+* Fixes votes/button component
+
 # 0.8.9
 
 * Sends BrowserId and SessionId to tracking calls
