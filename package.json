@@ -28,7 +28,8 @@
     "karma-chai-sinon": "0.1.0",
     "karma-spec-reporter": "0.0.6",
     "semver": "~2.2.1",
-    "grunt-bump": "0.0.13"
+    "grunt-bump": "0.0.13",
+    "grunt-invalidate-cloudfront": "~0.1.4"
   },
   "scripts": {
     "postinstall": "$(npm bin)/bower install",
