@@ -11,7 +11,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
 
     signup = (user) ->
       apiFn('users', 'post', user).then (me)->
-        emitter.emit('hull.auth.login', me)
+        emitter.emit('hull.auth.login', me, provider: 'email')
         me
       , (err)->
         emitter.emit('hull.auth.fail', err.message)
@@ -22,22 +22,29 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       throw new TypeError("'loginOrProvider' must be a String") unless _.isString(loginOrProvider)
 
       if _.isString(optionsOrPassword)
-        promise = apiFn('users/login', 'post', { login: loginOrProvider, password: optionsOrPassword })
+        promise = apiFn('users/login', 'post', { login: loginOrProvider, password: optionsOrPassword }).then ->
+          provider: 'email'
+        , (err)->
+          throw err
       else
-        promise = loginWithProvider(loginOrProvider, optionsOrPassword).then ->
-          apiFn('me')
+        promise = loginWithProvider(loginOrProvider, optionsOrPassword)
 
-      mePromise = promise.then(-> apiFn('me'))
-      evtPromise = mePromise.then((me)->
-        emitter.emit('hull.auth.login', me)
-        me
+      mePromise = promise.then (obj)->
+        apiFn('me').then (me)->
+          [me, obj]
+        , (err)->
+          throw err
+
+      evtPromise = mePromise.spread((me, provider)->
+        emitter.emit('hull.auth.login', me, provider)
+        [me, provider]
       , (err)->
         emitter.emit('hull.auth.fail', err)
         err
       )
-      evtPromise.then(callback) if _.isFunction(callback)
+      evtPromise.spread(callback) if _.isFunction(callback)
 
-      mePromise
+      mePromise.spread (me, provider)-> me
 
     loginWithProvider = (providerName, opts)->
       return module.isAuthenticating() if module.isAuthenticating()
@@ -70,7 +77,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       return unless authenticating
 
       if hash.success
-        authenticating.resolve({})
+        authenticating.resolve(provider: authenticating.providerName)
       else
         error = new Error('Login failed')
         error.reason = hash.error.reason
