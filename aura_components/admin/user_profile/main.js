@@ -16,15 +16,27 @@ Hull.component({
   ],
 
   options:{
-    id:'me'
+    id:''
   },
 
   datasources: {
     user: function() {
-      if (this.options.id) { return this.api(this.options.id, { fields: 'user.profiles' }); }
+      if (this.options.id) {
+        return this.api({
+          provider: 'admin@' + this.options.namespace,
+          path: this.options.id
+        }, {
+          fields: 'user.profiles'
+        });
+      }
     },
     badges: function() {
-      if (this.options.id) {  return this.api(this.options.id + "/badges"); }
+      if (this.options.id) {
+        return this.api({
+          provider: 'admin@' + this.options.namespace,
+          path: this.options.id + '/badges'
+        });
+      }
     }
   },
 
@@ -78,7 +90,10 @@ Hull.component({
   promoteUser: function(role) {
     var method = role === 'admin' ? 'post' : 'delete';
     var self = this;
-    this.api('admins/' + this.data.user.id, method).then(function() {
+    this.api({
+      provider: 'admin@' + this.options.namespace,
+      path: 'admins/' + this.data.user.id
+    }, method).then(function() {
       self.render();
     });
   }

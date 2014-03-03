@@ -78,6 +78,7 @@ preInit = (isMain, config, cb, errb)->
     _success = (args...)-> successCb [config, isMain, cb or ->].concat(args)...
     _failure = (args...)-> failureCb [isMain, errb or ->].concat(args)...
     currentFlavour.init(_config).then(_success, _failure).done()
+    console.info("Hull.js version \"#{_hull.version}\" started")
 
 initApi = (config, args...)->
   config.apiOnly = true

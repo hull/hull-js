@@ -20,6 +20,7 @@ define ['aura/aura', 'underscore', 'lib/utils/version', 'lib/remote/config-norma
     hull.app.use('lib/remote/handler')
     hull.app.use('lib/remote/current-user')
     hull.app.use('lib/remote/services/hull')
+    hull.app.use('lib/remote/services/admin')
 
     hull.app.use (a)->
       window._internal_app = a

@@ -5,25 +5,46 @@ try
     window.close()
 
 define ['underscore', '../utils/promises', '../utils/version'], (_, promises, version)->
-  (apiFn, config, authServices=[]) ->
+  (apiFn, config, emitter, authServices=[]) ->
     authenticating = null
     _popupInterval = null
 
     signup = (user) ->
-      apiFn('users', 'post', user)
+      apiFn('users', 'post', user).then (me)->
+        emitter.emit('hull.auth.login', me, provider: 'email')
+        me
+      , (err)->
+        emitter.emit('hull.auth.fail', err.message)
+        throw err
+
 
     login = (loginOrProvider, optionsOrPassword, callback) ->
       throw new TypeError("'loginOrProvider' must be a String") unless _.isString(loginOrProvider)
 
       if _.isString(optionsOrPassword)
-        promise = apiFn('users/login', 'post', { login: loginOrProvider, password: optionsOrPassword })
+        promise = apiFn('users/login', 'post', { login: loginOrProvider, password: optionsOrPassword }).then ->
+          provider: 'email'
+        , (err)->
+          throw err
       else
-        promise = loginWithProvider(loginOrProvider, optionsOrPassword).then ->
-          apiFn('me')
+        promise = loginWithProvider(loginOrProvider, optionsOrPassword)
 
-      promise.then(callback) if _.isFunction(callback)
+      mePromise = promise.then (obj)->
+        apiFn('me').then (me)->
+          [me, obj]
+        , (err)->
+          throw err
 
-      promise
+      evtPromise = mePromise.spread((me, provider)->
+        emitter.emit('hull.auth.login', me, provider)
+        [me, provider]
+      , (err)->
+        emitter.emit('hull.auth.fail', err)
+        err
+      )
+      evtPromise.spread(callback) if _.isFunction(callback)
+
+      mePromise.spread (me, provider)-> me
 
     loginWithProvider = (providerName, opts)->
       return module.isAuthenticating() if module.isAuthenticating()
@@ -43,20 +64,24 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
 
       authenticating.promise
 
+
     logout = (callback)->
       promise = apiFn('logout')
       promise.done ->
         callback() if _.isFunction(callback)
-      promise
+      promise.then ()->
+        emitter.emit('hull.auth.logout')
 
     onCompleteAuthentication = (hash)->
       _auth = authenticating
       return unless authenticating
 
       if hash.success
-        authenticating.resolve({})
+        authenticating.resolve(provider: authenticating.providerName)
       else
-        authenticating.reject(hash.error)
+        error = new Error('Login failed')
+        error.reason = hash.error.reason
+        authenticating.reject(error)
 
       authenticating = null
       clearInterval(_popupInterval)

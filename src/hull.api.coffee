@@ -13,19 +13,13 @@ define [
       _emitter = emitter()
       api.init(config, _emitter).then (api)->
         _reporting = reporting.init(api)
-        _emitter.on 'hull.auth.login', (me)->
+        _emitter.on 'hull.auth.login', (me, context)->
           #TODO Add the provider used to login
           providers = _.pluck me.identities, 'provider'
-          _reporting.track 'hull.auth.login', providers: providers
+          _reporting.track 'hull.auth.login',
+            providers: providers
+            loginProvider: context.provider
         _emitter.on 'hull.auth.logout', ()-> _reporting.track('hull.auth.logout')
-
-        handleUserPromise = (promise)->
-          promise.then (user)->
-            _emitter.emit('hull.auth.login', user)
-          , (error) ->
-            _emitter.emit('hull.auth.fail', error)
-
-          promise
 
         noCurentUserDeferred = promises.deferred()
         noCurentUserDeferred.promise.fail(->)
@@ -45,12 +39,13 @@ define [
           api: api.api
           currentUser: currentUser(_emitter)
           signup: (args...)->
-            handleUserPromise(api.auth.signup(args...))
+            signupPromise = api.auth.signup(args...)
+            signupPromise
           login: (args...)->
             if (api.auth.isAuthenticating())
               return console.info "Authentication is in progress. Use `Hull.on('hull.auth.login', fn)` to call `fn` when done."
 
-            handleUserPromise(api.auth.login(args...))
+            api.auth.login(args...)
           logout: api.auth.logout
           linkIdentity: (provider, options = {}, callback)->
             return noCurentUserDeferred.promise unless created.currentUser()
