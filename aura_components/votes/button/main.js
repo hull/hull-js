@@ -25,7 +25,9 @@ Hull.component({
   },
 
   beforeRender: function(data) {
-    data.votesSum = data.target.stats.votes.sum || 0;
+    data.targetName = data.target.name || data.target.uid || data.target.id;
+    var votes = data.target.stats.votes || {};
+    data.votesSum = votes.sum || 0;
 
     if (data.credits === false) { return; }
 
