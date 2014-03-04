@@ -1,3 +1,4 @@
+* Encodes URI at remote init
 * Fixes votes/button component
 
 # 0.8.9
