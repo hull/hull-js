@@ -10,11 +10,7 @@ Hull.component({
       e.preventDefault();
       this.alertMessage(false);
       var signinData = this.sandbox.dom.getFormData(e.target);
-      this.sandbox.login(signinData.login, signinData.password).then(function(user) {
-        console.warn("Yeah, welcome...", user.name)
-      }, function(err) {
-        console.warn("Bah alors ?", err);
-      });
+      this.sandbox.login(signinData.login, signinData.password);
     },
 
     'submit .form-validations': function(e) {
@@ -26,12 +22,12 @@ Hull.component({
       }, function(err) {
         self.alertMessage(err.message);
       });
-    },
+    }
   },
 
   actions: {
     resetPassword: function() {
-      var email = this.$('input[name="login"]').val()
+      var email = this.$('input[name="login"]').val();
       this.requestEmail(email, 'request_password_reset');
     },
     resendConfirmation: function() {
@@ -54,7 +50,6 @@ Hull.component({
 
   initialize: function() {
     this.sandbox.on('hull.auth.fail', function(err) {
-      console.warn("Auth failed...", err);
       this.alertMessage(err.message || err.reason);
     }, this);
   },
@@ -78,13 +73,12 @@ Hull.component({
   beforeRender: function(data) {
     if (data.validationStatus && !data.validationStatus.valid && data.validationStatus.validations) {
       data.validationErrors = {};
-      for (key in data.validationStatus.validations) {
+      for (var key in data.validationStatus.validations) {
         if (!data.validationStatus.validations[key]) {
-          data.validationErrors[key] = { key: key, message: this.validationMessages[key] };
+          data.validationErrors[key] = true;
         }
       }
     }
-    console.warn("DATA: ", data);
   },
 
   alertMessage: function(message) {
@@ -95,10 +89,5 @@ Hull.component({
     } else {
       $alertMsg.hide();
     }
-  },
-
-  validationMessages: {
-    username: "You must pick a username to continue",
-    email: "You must validate your email to continue"
   }
 });
