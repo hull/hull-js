@@ -27,7 +27,8 @@ Hull.component({
 
   actions: {
     resetPassword: function() {
-      var email = this.$('input[name="login"]').val();
+      var $inputLogin = this.$('[data-hull-input-login]');
+      var email = $inputLogin.val();
       this.requestEmail(email, 'request_password_reset');
     },
     resendConfirmation: function() {
@@ -35,7 +36,7 @@ Hull.component({
       if (Hull.currentUser()) {
         email = Hull.currentUser().email;
       } else {
-        email = this.$('input[name="login"]').val();
+        email = $inputLogin.val();
       }
       this.requestEmail(email, 'request_confirmation_email');
     }
