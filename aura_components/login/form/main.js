@@ -32,6 +32,7 @@ Hull.component({
       this.requestEmail(email, 'request_password_reset');
     },
     resendConfirmation: function() {
+      var $inputLogin = this.$('[data-hull-input-login]');
       var email;
       if (Hull.currentUser()) {
         email = Hull.currentUser().email;
