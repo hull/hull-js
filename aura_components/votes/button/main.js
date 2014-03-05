@@ -25,7 +25,9 @@ Hull.component({
   },
 
   beforeRender: function(data) {
-    data.votesSum = data.target.stats.votes.sum || 0;
+    data.targetName = data.target.name || data.target.uid || data.target.id;
+    var votes = data.target.stats.votes || {};
+    data.votesSum = votes.sum || 0;
 
     if (data.credits === false) { return; }
 
@@ -36,7 +38,7 @@ Hull.component({
 
     if(data.credits.votes.remaining === 0) {
       data.noRemainingPeriod = true;
-    } else if(data.credits.votes.max_per_object === data.credits.votes.credited[data.target.id]) {
+    } else if (data.credits.votes.max_per_object && data.credits.votes.max_per_object === data.credits.votes.credited[data.target.id]) {
       data.noRemainingObject = true;
     } else {
       data.canVote = true;
@@ -48,7 +50,6 @@ Hull.component({
       if(this.working) return;
 
       this.working = true;
-
       this.api(this.options.id + '/votes', 'post').then(this.sandbox.util._.bind(function() {
         this.working = false;
         this.render();

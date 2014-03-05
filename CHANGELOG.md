@@ -1,3 +1,10 @@
+* Fixes votes/button component
+
+# 0.8.9
+
+* Sends BrowserId and SessionId to tracking calls
+* Sends referrer, url and path to tracking calls
+
 # 0.8.8
 
 * Sends way less data to `hull.auth.login` tracking

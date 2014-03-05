@@ -17,6 +17,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-wrap');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-bump');
+  grunt.loadNpmTasks('grunt-invalidate-cloudfront');
 
   var clientConfig = grunt.file.readJSON('.grunt/client.json');
   var remoteConfig = grunt.file.readJSON('.grunt/remote.json');
@@ -245,6 +246,7 @@ module.exports = function (grunt) {
   };
 
   helpers.appendAWSConfig(gruntConfig);
+  helpers.cloudFrontConfig(gruntConfig);
   grunt.initConfig(gruntConfig);
 
   grunt.registerTask('test', ['version', 'karma:test']);
