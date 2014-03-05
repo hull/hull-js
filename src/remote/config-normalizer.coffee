@@ -19,6 +19,7 @@ define ['underscore'], (_)->
         config[k].credentials = c
     normalize: ()->
       @config.settings = @sortServicesByType @config.services.settings, @config.services.types
+      @config.settings.auth ?= {}
       @applyUserCredentials @config.settings.auth, @config.data.credentials
       @config
 
