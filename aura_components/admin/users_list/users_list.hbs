@@ -42,10 +42,12 @@
               <h5 class="media-heading">
                 <span class="name">{{name}}</span>
                 {{#if email}} <small class="email">{{email}}</small> {{/if}}
+
               </h5>
 
               <ul class="unstyled">
                 <li><strong>Created: </strong>{{fromNow created_at}}</li>
+                {{#if username}}<li><strong>Username:</strong> {{username}}</li>{{/if}}
                 {{#if identities}}
                   <li class="provider"><strong>Provider: </strong>
                     {{#identities}}

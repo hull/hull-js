@@ -14,9 +14,17 @@
 
       <div class="admin-infos">
         <dl>
+          {{#if user.email}}
+            <dt>Email</dt>
+            <dd>{{user.email}}</dd>
+          {{/if}}
+          {{#if user.username}}
+            <dt>Username</dt>
+            <dd>{{user.username}}</dd>
+          {{/if}}
           {{#each user.identities}}
             <dt>{{humanize provider}}:</dt>
-            <dd>{{email}} – Created {{fromNow created_at}}</dd>
+            <dd>{{#if login}}{{login}}{{else}}{{email}}{{/if}}</dd>
           {{/each}}
         </dl>
       </div>
