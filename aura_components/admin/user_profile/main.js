@@ -15,10 +15,6 @@ Hull.component({
     'user_profile'
   ],
 
-  options:{
-    id:''
-  },
-
   datasources: {
     user: function() {
       if (this.options.id) {
