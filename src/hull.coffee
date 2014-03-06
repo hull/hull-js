@@ -68,5 +68,5 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
     exports: booted
     context: apiParts.context
   failure: (error)->
-    console.error(error.message)
+    console.error(error.message || error)
     error

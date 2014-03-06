@@ -42,6 +42,7 @@ define ['underscore', 'xdm'], (_, xdm)->
       true
 
     afterAppStart: (app)->
+      return throw 'Unable to start Hull.' unless rpc
       rpc.ready(app.config)
       app.sandbox.on 'remote.user.update', rpc.userUpdate.bind(rpc)
       app.sandbox.on 'remote.settings.update', rpc.settingsUpdate.bind(rpc)
