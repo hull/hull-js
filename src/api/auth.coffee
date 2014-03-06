@@ -24,11 +24,9 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       if _.isString(optionsOrPassword)
         promise = apiFn('users/login', 'post', { login: loginOrProvider, password: optionsOrPassword })
       else
-        promise = loginWithProvider(loginOrProvider, optionsOrPassword).then ->
-          apiFn('me')
-
-      mePromise = promise.then(-> apiFn('me'))
-      evtPromise = mePromise.then((me)->
+        promise = loginWithProvider(loginOrProvider, optionsOrPassword).then(-> apiFn('me'))
+      
+      evtPromise = promise.then((me)->
         emitter.emit('hull.auth.login', me)
         me
       , (err)->
@@ -37,7 +35,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       )
       evtPromise.then(callback) if _.isFunction(callback)
 
-      mePromise
+      promise
 
     loginWithProvider = (providerName, opts)->
       return module.isAuthenticating() if module.isAuthenticating()
