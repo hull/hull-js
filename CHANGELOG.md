@@ -1,3 +1,9 @@
+* Adds Hull.ready(fn) for fn to be called as soon as Hull has finished loading
+* Fixes Hull.parse
+
+# 0.8.10
+
+* Encodes URI at remote init
 * Fixes votes/button component
 
 # 0.8.9

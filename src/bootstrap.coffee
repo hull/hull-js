@@ -90,6 +90,7 @@ initMain = (config, args...)->
 _hull = window.Hull =
   on:         createPool 'on'
   track:      createPool 'track'
+  ready:      createPool 'ready'
   init:       initMain
 
 _hull.init.api = initApi
@@ -102,8 +103,11 @@ _hull.component =  createPool 'component' if ENV=="client"
 # * Replays the track events
 successCb = (config, isMain, success, args...)->
   extension = currentFlavour.success(args...)
+  context = extension.context
   _config = _extend {}, config
-  _final = _extend({}, _hull, extension.exports)
+  _final = _extend {}, _hull, extension.exports,
+    ready: (fn)->
+      fn(_final, context.me, context.app, context.org)
 
   if isMain
     window.Hull = _final
@@ -113,6 +117,7 @@ successCb = (config, isMain, success, args...)->
   else
     delete _final.component #FIXME hackish
 
+  rerun('ready', _final)
   # Execute Hull.init callback
   _final.emit('hull.init', _final, extension.context.me, extension.context.app, extension.context.org)
 
