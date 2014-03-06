@@ -19,14 +19,6 @@ define [
           _reporting.track 'hull.auth.login', providers: providers
         _emitter.on 'hull.auth.logout', ()-> _reporting.track('hull.auth.logout')
 
-        handleUserPromise = (promise)->
-          promise.then (user)->
-            _emitter.emit('hull.auth.login', user)
-          , (error) ->
-            _emitter.emit('hull.auth.fail', error)
-
-          promise
-
         noCurentUserDeferred = promises.deferred()
         noCurentUserDeferred.promise.fail(->)
         noCurentUserDeferred.reject(
@@ -45,12 +37,13 @@ define [
           api: api.api
           currentUser: currentUser(_emitter)
           signup: (args...)->
-            handleUserPromise(api.auth.signup(args...))
+            signupPromise = api.auth.signup(args...)
+            signupPromise
           login: (args...)->
             if (api.auth.isAuthenticating())
               return console.info "Authentication is in progress. Use `Hull.on('hull.auth.login', fn)` to call `fn` when done."
 
-            handleUserPromise(api.auth.login(args...))
+            api.auth.login(args...)
           logout: api.auth.logout
           linkIdentity: (provider, options = {}, callback)->
             return noCurentUserDeferred.promise unless created.currentUser()
