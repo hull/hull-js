@@ -1,6 +1,5 @@
 define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '../api/auth', '../utils/promises', 'lib/api/xdm'], (_, cookie, version, apiParams, authModule, promises, xdm)->
   slice = Array.prototype.slice
-
   init : (config={}, emitter)->
     dfd = promises.deferred()
 
@@ -10,10 +9,66 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
       dfd.reject(new ReferenceError 'no applicationID provided. Can\'t proceed') unless config.appId
       return dfd.promise
 
-    message = null
+    #
+    # Emits a tracking event if
+    # * the Hull-Track header is available in the response
+    # * the provider of the request is hull
+    #
+    emitTrackEvent = (res)->
+      headers = res?.headers
+      if headers? and res.provider == 'hull'
+        hullTrack = headers['Hull-Track']
+        if hullTrack
+          try
+            [eventName, trackParams] = JSON.parse(atob(hullTrack))
+            emitter.emit(eventName, trackParams)
+          catch error
+            false
+
+    #
+    # Sets or unsets the authentication cookies if
+    # the required headers are available and valid
+    #
+    setCurrentUser = (headers={})->
+      return unless config.appId
+      cookieName = "hull_#{config.appId}"
+      if headers && headers['Hull-User-Id'] && headers['Hull-User-Sig']
+        val = btoa(JSON.stringify(headers))
+        cookie.set(cookieName, val, path: "/")
+      else
+        cookie.remove(cookieName, path: "/")
+
+    #
+    # Sends the message described by @params to xdm
+    # @param {Object} contains the provider, uri and parameters for the message
+    # @param {Function} optional a success callback
+    # @param {Function} optional an error callback
+    # @return {Promise}
+    #
+    message = (params, callback, errback)->
+      console.error("Api not initialized yet") unless rpc
+      deferred = promises.deferred()
+
+      onSuccess = (res={})->
+        setCurrentUser(res.headers) if res.provider == 'hull'
+        emitTrackEvent(res)
+        callback(res.response)
+        #FIXME Headers are not passed. Promises resolve to a single value
+        deferred.resolve(res.response, res.headers)
+      onError = (err={})->
+        errback(err.message)
+        deferred.reject(err.message)
+      rpc.message params, onSuccess, onError
+      deferred.promise
+
+    #
     # Main method to request the API
+    #
     api = -> message.apply(undefined, apiParams.parse(slice.call(arguments)))
-    # Method-specific function
+
+    #
+    # HTTP Method-specific function
+    #
     _.each ['get', 'post', 'put', 'delete'], (method)->
       api[method] = ()->
         args = apiParams.parse (slice.call(arguments))
@@ -24,15 +79,6 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
     # No need to be exposed, IMO
     api.parseRoute = apiParams.parse
 
-    setCurrentUser = (headers={})->
-      return unless config.appId
-      cookieName = "hull_#{config.appId}"
-      if headers && headers['Hull-User-Id'] && headers['Hull-User-Sig']
-        val = btoa(JSON.stringify(headers))
-        cookie.set(cookieName, val, path: "/")
-      else
-        cookie.remove(cookieName, path: "/")
-
     rpc = null
     # This will be executed exactly Once. The next call will be immediately resolved.
     onRemoteReady = (remoteObj)->
@@ -41,46 +87,13 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
       data = remoteConfig.data
       setCurrentUser(data.headers)
 
-      authScope = data.headers['Hull-Auth-Scope'].split(":")[0] if data.headers?['Hull-Auth-Scope']
-
       auth: authModule(api, config, emitter, _.keys(remoteConfig.settings.auth || {}))
       remoteConfig: remoteConfig
-      authScope: authScope or ''
       api: api
       init: ()-> dfd.promise
 
     xdm(config, emitter)
       .then(onRemoteReady)
       .then(dfd.resolve, dfd.reject)
-
-    ###
-    # Sends the message described by @params to xdm
-    # @param {Object} contains the provider, uri and parameters for the message
-    # @param {Function} optional a success callback
-    # @param {Function} optional an error callback
-    # @return {Promise}
-    ###
-    message = (params, callback, errback)->
-      console.error("Api not initialized yet") unless rpc
-      deferred = promises.deferred()
-
-      onSuccess = (res={})->
-        setCurrentUser(res.headers) if res.provider == 'hull'
-        headers = res?.headers
-        if headers? and res.provider == 'hull'
-          hullTrack = headers['Hull-Track']
-          if hullTrack
-            try
-              [eventName, trackParams] = JSON.parse(atob(hullTrack))
-              emitter.emit(eventName, trackParams)
-            catch error
-              false
-        callback(res.response)
-        deferred.resolve(res.response, res.headers)
-      onError = (err={})->
-        errback(err.message)
-        deferred.reject(err.message)
-      rpc.message params, onSuccess, onError
-      deferred.promise
 
     dfd.promise

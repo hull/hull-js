@@ -29,7 +29,6 @@ define ['jquery', 'underscore'], ($, _)->
 
   handler = class Handler
     RESPONSE_HEADERS = [
-      'Hull-Auth-Scope',
       'Hull-Track',
       'Hull-User-Id',
       'Hull-User-Sig',

@@ -98,7 +98,7 @@ define(['squire', 'lib/utils/promises'], function (Squire, promises) {
     it('should resolve to the API object', function (done) {
       var that = this;
       _buildApiMock(this, _initApi.bind(undefined, this, function () {
-        that.apiObj.should.have.keys('auth', 'remoteConfig', 'authScope', 'api', 'init');
+        that.apiObj.should.have.keys('auth', 'remoteConfig', 'api', 'init');
         done();
       }));
 
@@ -163,27 +163,6 @@ define(['squire', 'lib/utils/promises'], function (Squire, promises) {
   });
 
   describe('Authentication-related features', function () {
-    describe('defines auth Scope', function () {
-      it('should provide an empty authScope without the header', function (done) {
-        var data = { headers: { } };
-        var that = this;
-        var _after = function () {
-          that.apiObj.authScope.should.eql('');
-          done();
-        };
-        _buildApiMock(this, _initApi.bind(undefined, this, _after, data));
-      });
-      it('should provide an authScope if the header is available', function (done) {
-        var data = { headers: { 'Hull-Auth-Scope': 'Youpi:Super' } };
-        var that = this;
-        var _after = function () {
-          that.apiObj.authScope.should.eql('Youpi');
-          done();
-        }
-        _buildApiMock(this, _initApi.bind(undefined, this, _after, data));
-      });
-    })
-
     describe(' authentication cookie', function () {
       it('should not set a cookie if the response does not contain required headers', function (done) {
         var data = { headers: { } };

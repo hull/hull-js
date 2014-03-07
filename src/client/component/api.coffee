@@ -24,9 +24,6 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
               core.mediator.emit(eventName, trackParams)
             catch error
               console.warn 'Error', error
-          if headers['Hull-Auth-Scope']
-            authScope = headers['Hull-Auth-Scope'].split(':')[0]
-
       core.data.api = (args...)->
         dfd = hullApi.api( args...)
         dfd.then _track
@@ -144,7 +141,6 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
 
       sandbox = app.sandbox
 
-      authScope = hullApi.authScope
       remoteConfig = hullApi.remoteConfig
       data = remoteConfig.data
       app.config.assetsUrl            = remoteConfig.assetsUrl
@@ -159,7 +155,7 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
       sandbox.config.entity_id    = data.entity?.id
 
       sandbox.isAdmin = ->
-        (authScope == 'Account' || sandbox.data.api.model('me').get('is_admin'))
+        !!sandbox.data.api.model('me').get('is_admin')
 
       sandbox.login = hullApi.login
       # Add a .logout() method to the component sandbox, and emit events when logout is complete
