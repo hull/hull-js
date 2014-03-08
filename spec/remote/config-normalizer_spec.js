@@ -45,5 +45,24 @@ define(['lib/remote/config-normalizer'], function (CfgNorm) {
         }
       });
     });
+    it('should handle empty auth config with email credentials', function () {
+      var testConfig = { ex: 'value' };
+      this.normalizer.config = {
+        settings: {},
+        data: {
+          credentials: {
+            hull: testConfig
+          }
+        },
+        services: {
+          settings: {},
+          types: {}
+        }
+      };
+      this.normalizer.normalize();
+      this.normalizer.config.settings.should.contain.key('auth');
+      this.normalizer.config.settings.auth.should.contain.key('hull');
+      this.normalizer.config.settings.auth.hull.should.be.eql({ credentials: testConfig });
+    });
   });
 });

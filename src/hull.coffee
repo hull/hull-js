@@ -60,7 +60,7 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
     booted.util.Handlebars = Handlebars
     booted.define = define
     booted.parse = (el, options={})->
-      appParts.app.sandbox.start(el, options)
+      appParts.app.core.appSandbox.start(el, options)
     appParts.app.start({ components: 'body' }).then ->
       #TODO populate the models from the remoteConfig
       booted.on 'hull.auth.login', _.bind(loginHelpers.login, undefined,  appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
@@ -71,5 +71,5 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
     exports: booted
     context: apiParts.context
   failure: (error)->
-    console.error(error.message)
+    console.error(error.message || error)
     error

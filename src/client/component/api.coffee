@@ -94,23 +94,16 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
           core.mediator.emit(eventName, { eventName: eventName, model: model, changes: args[1]?.changes })
         model._id = attrs._id
         models[attrs._id] = model #caching
-        if model.id
-          model._fetched = true
-        else
-          model._fetched = false
-          model.fetch
-            success: ->
-              model._fetched = true
         model
 
       core.data.api.model = (attrs)->
         rawFetch(attrs, false)
 
-      rawFetch = (attrs, raw)->
+      rawFetch = (attrs, raw=false)->
         attrs = { _id: attrs } if _.isString(attrs)
         attrs._id = attrs.path unless attrs._id
         throw new Error('A model must have an identifier...') unless attrs?._id?
-        models[attrs._id] || setupModel(attrs, raw || false)
+        models[attrs._id] || setupModel(attrs, raw)
 
       generateModel = (attrs, raw) ->
         _Model = if raw then RawModel else Model
@@ -185,7 +178,6 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
           promise.then callback
 
 
-      # FIXME Does it double with l.247-249?
       for m in ['me', 'app', 'org', 'entity']
         attrs = data[m]
         if attrs
@@ -195,12 +187,6 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
 
     afterAppStart: (app)->
       core    = app.core
-
-      #TODO, Restores me/app/org in base: (ie, Hull.*)
-      rawFetch('me', true);
-      rawFetch('app', true);
-      rawFetch('org', true);
-
       core.mediator.on 'hull.auth.*', clearModelsCache
 
   module

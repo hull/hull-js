@@ -8,7 +8,7 @@ define ['domready', 'lib/utils/promises', 'xdm', 'lib/utils/version'], (domready
     remoteUrl += "&uid=#{config.uid}"   if config.uid
     remoteUrl += "&access_token=#{config.appSecret}" if config.appSecret
     remoteUrl += "&user_hash=#{config.userHash}" if config.userHash != undefined
-    remoteUrl += "&r=#{document.referrer}"
+    remoteUrl += "&r=#{encodeURIComponent(document.referrer)}"
     remoteUrl
 
   (config, emitter)->
@@ -26,9 +26,8 @@ define ['domready', 'lib/utils/promises', 'xdm', 'lib/utils/version'], (domready
     settingsUpdate = (currentSettings)->
       emitter.emit('hull.settings.update', currentSettings)
 
+    # TODO Remove ?
     userUpdate = (currentUser)->
-      emitter.emit('hull.auth.login', currentUser) if currentUser
-      emitter.emit('hull.auth.logout') unless currentUser
 
     readyFn = (remoteConfig)->
       window.clearTimeout(timeout)

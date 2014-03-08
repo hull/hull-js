@@ -43,7 +43,7 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
 
       authScope = data.headers['Hull-Auth-Scope'].split(":")[0] if data.headers?['Hull-Auth-Scope']
 
-      auth: authModule(api, config, _.keys(remoteConfig.settings.auth || {}))
+      auth: authModule(api, config, emitter, _.keys(remoteConfig.settings.auth || {}))
       remoteConfig: remoteConfig
       authScope: authScope or ''
       api: api

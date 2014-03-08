@@ -17,7 +17,14 @@ define ['underscore', 'xdm'], (_, xdm)->
         if _.isFunction handler
           handler(req, callback, errback)
         else
-          errback(catchAll(req))
+          [__, provider, namespace] = req.provider.match(/^(admin)\@([a-z0-9_\-]+)$/i)
+          if provider && namespace
+            req.provider = provider
+            req.namespace = namespace
+            handler = core.routeHandlers['admin']
+            handler(req, callback, errback)
+          else
+            errback(catchAll(req))
 
       try
         rpc = new xdm.Rpc({
@@ -35,6 +42,7 @@ define ['underscore', 'xdm'], (_, xdm)->
       true
 
     afterAppStart: (app)->
+      return throw 'Unable to start Hull.' unless rpc
       rpc.ready(app.config)
       app.sandbox.on 'remote.user.update', rpc.userUpdate.bind(rpc)
       app.sandbox.on 'remote.settings.update', rpc.settingsUpdate.bind(rpc)
