@@ -94,13 +94,16 @@ _hull = window.Hull =
 _hull.init.api = initApi
 
 _hull.component =  createPool 'component' if ENV=="client"
+_hull.extension =  createPool 'extension' if ENV=="client"
 
 # Wraps the success callback
 # * Extends the global object
 # * Reinjects events in the live app from the pool
 # * Replays the track events
 successCb = (config, isMain, success, args...)->
-  extension = currentFlavour.success(args...)
+  presuccess = currentFlavour.presuccess(args...)
+  rerun('extension', presuccess.exports) if ENV=="client"
+  extension = currentFlavour.success(presuccess, args...)
   _config = _extend {}, config
   _final = _extend({}, _hull, extension.exports)
 

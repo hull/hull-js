@@ -1,6 +1,6 @@
 throw 'jQuery must be available for components to work' unless window.jQuery
 
-define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars', 'lib/hull.api', 'lib/utils/emitter', 'lib/client/component/registrar', 'lib/helpers/login'], (_, promises, Aura, Handlebars, HullAPI, emitterInstance, componentRegistrar, loginHelpers) ->
+define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars', 'lib/hull.api', 'lib/utils/emitter', 'lib/client/component/registrar', 'lib/client/extension/registrar', 'lib/helpers/login'], (_, promises, Aura, Handlebars, HullAPI, emitterInstance, componentRegistrar, extensionRegistrar, loginHelpers) ->
 
   hullApiMiddleware = (api)->
     name: 'Hull'
@@ -49,8 +49,11 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
       app: setupApp(app, deps)
       api: successResult
       components: true
-  success: (appParts)->
+  presuccess: (appParts)->
     apiParts = HullAPI.success(appParts.api)
+    apiParts.exports.extension = extensionRegistrar(appParts.app)
+    apiParts
+  success: (apiParts, appParts)->
     booted = apiParts.exports
     return booted unless appParts.components
     booted.component = componentRegistrar(define)
