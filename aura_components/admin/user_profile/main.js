@@ -68,7 +68,7 @@ Hull.component({
     deleteBadge: function(e, action) {
       var self = this;
       if (confirm("Sure ?")) {
-        this.api(action.data.id, 'delete', function(res) {
+        this.api({path: action.data.id, provider: 'admin@' + this.options.namespace}, 'delete', function(res) {
           self.render();
         });
       }

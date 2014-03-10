@@ -1,3 +1,4 @@
+* Fixes admin/user_profile component to delete badge with Admin API
 * Adds Hull.ready(fn) for fn to be called as soon as Hull has finished loading
 * Fixes Hull.parse
 
