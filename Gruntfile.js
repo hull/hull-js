@@ -18,6 +18,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-bump');
   grunt.loadNpmTasks('grunt-invalidate-cloudfront');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
 
   var clientConfig = grunt.file.readJSON('.grunt/client.json');
   var remoteConfig = grunt.file.readJSON('.grunt/remote.json');
@@ -90,6 +91,12 @@ module.exports = function (grunt) {
         baseDir: 'aura_components',
         src: 'aura_components/**/main.js',
         dest: 'dist/<%= PKG_VERSION %>/docs'
+      }
+    },
+    cssmin: {
+      minify: {
+        src: 'aura_components/login/shopify/style.css',
+        dest: 'dist/<%= PKG_VERSION %>/aura_components/login/shopify/style.min.css'
       }
     },
     coffee: {
@@ -168,7 +175,7 @@ module.exports = function (grunt) {
     watch: {
       widgets: {
         files: ['aura_components/**/*'],
-        tasks: ['dist:widgets']
+        tasks: ['dist:widgets', 'cssmin']
       },
       remote: {
         files: remoteConfig.coffeeFiles,
@@ -254,7 +261,7 @@ module.exports = function (grunt) {
 
   //These tasks are the only ones needed to be used
   grunt.registerTask('default', 'server');
-  grunt.registerTask('server', ['connect', 'dist:remote', 'dist:client', 'dist:api', 'dist:widgets', 'watch']);
+  grunt.registerTask('server', ['connect', 'dist:remote', 'dist:client', 'dist:api', 'dist:widgets', 'cssmin', 'watch']);
   grunt.registerTask('deploy', ['dist', 's3:prod']);
 
   require('./.grunt/customTasks')(grunt);

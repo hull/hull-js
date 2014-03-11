@@ -1,48 +1,86 @@
 Hull.component({
-  templates: [
-    'default',
-    'icons'
-  ],
+  templates: ['default'],
 
   refreshEvents: ['model.hull.me.change'],
 
+  linkTagInjected: false,
+
   initialize: function() {
+    this.isLoading = false;
+
+    this.sandbox.on('hull.shopify.loading.start', this.startLoading, this);
+    this.sandbox.on('hull.shopify.loading.stop', this.stopLoading, this);
+
     this.injectLinkTag();
   },
 
+  startLoading: function() {
+    if (this.isLoading) { return; }
+
+    this.$el.addClass('hull-loading');
+    this.isLoading = true;
+  },
+
+  stopLoading: function() {
+    if (!this.isLoading) { return; }
+
+    this.$el.removeClass('hull-loading');
+    this.isLoading = false;
+  },
+
   beforeRender: function(data) {
-    this.template = this.options.theme || 'default';
+    var _ = this.sandbox.util._;
+
+    this.template = this.options.theme && _.contains(this.templates, this.options.theme) ? this.options.theme : 'default';
 
     var classes = [];
     classes.push('hull-theme-' + this.template);
     classes.push('hull-' + (this.options.inline ? 'inline' : 'block'));
-
+    if (this.isLoading) { classes.push('hull-loading'); }
     data.classes = classes.join(' ');
 
-    data.providers = this.authServices() || [];
-    // If I'm logged in, then create an array of logged In providers
-    if(this.loggedIn()){
-      data.loggedInProviders = this.sandbox.util._.keys(this.loggedIn());
-    } else {
-      data.loggedInProviders = [];
-    }
+    var l = this.loggedIn();
+    data.providers = _.reduce(this.authServices(), function(m, p) {
+      m[p] = !!l[p];
+      return m;
+    }, {});
 
-    // Create an array of logged out providers.
-    data.loggedOut = this.sandbox.util._.difference(data.providers, data.loggedInProviders);
-    data.matchingProviders = this.sandbox.util._.intersection(data.providers, data.loggedInProviders);
-    data.authServices = this.authServices();
+    data.isLoading = this.isLoading;
 
-    return data;
+    data.showLinkIdentity = this.options.showLinkIdentity !== false;
   },
 
   injectLinkTag: function() {
-    if (this.options.injectLinkTag === false) { return; }
+    if (this.linkTagInjected || this.options.injectLinkTag === false) { return; }
 
     var e = document.createElement('link');
-    // TODO How to not hardcode this url?
-    e.href = 'https://js.hull.dev/dist/shopify.css';
+    e.href = this.options.baseUrl + '/style.min.css';
     e.rel = 'stylesheet';
 
     document.getElementsByTagName('head')[0].appendChild(e);
+
+    this.linkTagInjected = true;
+  },
+
+  callAndStartLoading: function(methodName, provider) {
+    this.startLoading();
+
+    this.$el.addClass('hull-' + methodName);
+
+    var self = this;
+    this.sandbox[methodName](provider).fail(function(error) {
+      // TODO Handle `error`.
+      self.stopLoading();
+    });
+  },
+
+  actions: {
+    _login: function(event, action) {
+      this.callAndStartLoading('login', action.data.provider);
+    },
+
+    _logout: function(event, action) {
+      this.callAndStartLoading('logout', action.data.provider);
+    }
   }
 });

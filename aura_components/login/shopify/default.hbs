@@ -1,13 +1,31 @@
 <div class="hull-social {{classes}}">
-  {{#if matchingProviders}}
-    <a href="#" data-hull-action="logout">Sign Out</a>
-  {{else}}
-    {{#if loggedOut}}
-      {{#loggedOut}}
-        <button data-hull-action="login" data-hull-provider="{{.}}" class="hull-btn hull-btn-{{.}}">
-          <i class="hull-icon hull-icon-{{.}}"></i> Sign In with {{classify .}}
+  <button class="hull-loader">
+    Loading...
+  </button>
+
+  <div class="hull-social-container">
+    {{#if loggedIn}}
+      <a href="#" data-hull-action="_logout">Sign Out</a>
+
+      {{#if showLinkIdentity}}
+        {{#each providers}}
+          {{#if this}}
+            <button class="hull-btn hull-btn-{{@key}}" data-hull-action="unlinkIdentity" data-hull-provider="{{@key}}">
+              <i class="hull-icon hull-icon-{{@key}}"></i> Unlink your {{classify @key}} account
+            </button>
+          {{else}}
+            <button class="hull-btn hull-btn-{{@key}}" data-hull-action="linkIdentity" data-hull-provider="{{@key}}">
+              <i class="hull-icon hull-icon-{{@key}}"></i> Link your {{classify @key}} account
+            </button>
+          {{/if}}
+        {{/each}}
+      {{/if}}
+    {{else}}
+      {{#each providers}}
+        <button class="hull-btn hull-btn-{{@key}}" data-hull-action="_login" data-hull-provider="{{@key}}">
+          <i class="hull-icon hull-icon-{{@key}}"></i> Sign In with {{classify @key}}
         </button>
-      {{/loggedOut}}
+      {{/each}}
     {{/if}}
-  {{/if}}
+  </div>
 </div>
