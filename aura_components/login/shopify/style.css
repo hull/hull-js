@@ -131,22 +131,6 @@
 }
 
 /**
- * data-hull-theme="icons"
- */
-
-.hull-theme-icons .hull-btn {
-  padding: 10px;
-}
-
-.hull-theme-icons .hull-icon {
-  font-size: 26px;
-  height: 26px;
-  text-align: center;
-  width: 26px;
-  line-height: 26px;
-}
-
-/**
  * data-hull-inline="true"
  */
 
