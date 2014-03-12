@@ -69,7 +69,6 @@ Hull.component({
 
     var self = this;
     this.sandbox[methodName](provider).fail(function(error) {
-      // TODO Handle `error`.
       self.stopLoading();
     });
   },
