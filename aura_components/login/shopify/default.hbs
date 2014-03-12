@@ -1,0 +1,35 @@
+<div class="hull-social {{classes}}">
+  <div class="hull-error-container"></div>
+
+  <button class="hull-loader">
+    Loading...
+  </button>
+
+  <div class="hull-social-container">
+    {{#if loggedIn}}
+      <a href="#" data-hull-action="_logout">Sign Out</a>
+
+      {{#if showLinkIdentity}}
+        {{#each providers}}
+          {{#if this}}
+            {{#if this.isUnlinkable}}
+              <button class="hull-btn hull-btn-{{@key}}" data-hull-action="_unlinkIdentity" data-hull-provider="{{@key}}">
+                <i class="hull-icon hull-icon-{{@key}}"></i> Unlink your {{classify @key}} account
+              </button>
+            {{/if}}
+          {{else}}
+            <button class="hull-btn hull-btn-{{@key}}" data-hull-action="_linkIdentity" data-hull-provider="{{@key}}">
+              <i class="hull-icon hull-icon-{{@key}}"></i> Link your {{classify @key}} account
+            </button>
+          {{/if}}
+        {{/each}}
+      {{/if}}
+    {{else}}
+      {{#each providers}}
+        <button class="hull-btn hull-btn-{{@key}}" data-hull-action="_login" data-hull-provider="{{@key}}">
+          <i class="hull-icon hull-icon-{{@key}}"></i> Sign In with {{classify @key}}
+        </button>
+      {{/each}}
+    {{/if}}
+  </div>
+</div>

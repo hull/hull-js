@@ -6,7 +6,8 @@ define ['domready', 'lib/utils/promises', 'xdm', 'lib/utils/version'], (domready
     remoteUrl = "#{config.orgUrl}/api/v1/#{config.appId}/remote.html?v=#{version}"
     remoteUrl += "&js=#{config.jsUrl}"  if config.jsUrl
     remoteUrl += "&uid=#{config.uid}"   if config.uid
-    remoteUrl += "&access_token=#{config.appSecret}" if config.appSecret
+    accessToken = config.accessToken || config.appSecret
+    remoteUrl += "&access_token=#{accessToken}" if accessToken?
     remoteUrl += "&user_hash=#{config.userHash}" if config.userHash != undefined
     remoteUrl += "&r=#{encodeURIComponent(document.referrer)}"
     remoteUrl
