@@ -1,4 +1,6 @@
 <div class="hull-social {{classes}}">
+  <div class="hull-error-container"></div>
+
   <button class="hull-loader">
     Loading...
   </button>
@@ -10,11 +12,13 @@
       {{#if showLinkIdentity}}
         {{#each providers}}
           {{#if this}}
-            <button class="hull-btn hull-btn-{{@key}}" data-hull-action="unlinkIdentity" data-hull-provider="{{@key}}">
-              <i class="hull-icon hull-icon-{{@key}}"></i> Unlink your {{classify @key}} account
-            </button>
+            {{#if this.isUnlinkable}}
+              <button class="hull-btn hull-btn-{{@key}}" data-hull-action="_unlinkIdentity" data-hull-provider="{{@key}}">
+                <i class="hull-icon hull-icon-{{@key}}"></i> Unlink your {{classify @key}} account
+              </button>
+            {{/if}}
           {{else}}
-            <button class="hull-btn hull-btn-{{@key}}" data-hull-action="linkIdentity" data-hull-provider="{{@key}}">
+            <button class="hull-btn hull-btn-{{@key}}" data-hull-action="_linkIdentity" data-hull-provider="{{@key}}">
               <i class="hull-icon hull-icon-{{@key}}"></i> Link your {{classify @key}} account
             </button>
           {{/if}}

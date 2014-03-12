@@ -41,13 +41,15 @@ Hull.component({
 
     var l = this.loggedIn();
     data.providers = _.reduce(this.authServices(), function(m, p) {
-      m[p] = !!l[p];
+      m[p] = !!l[p] && { isUnlinkable: l && data.me.main_identity !== p };
       return m;
     }, {});
 
-    data.isLoading = this.isLoading;
-
     data.showLinkIdentity = this.options.showLinkIdentity !== false;
+  },
+
+  afterRender: function() {
+    this.$errorContainer = this.$('.hull-error-container');
   },
 
   injectLinkTag: function() {
@@ -62,15 +64,27 @@ Hull.component({
     this.linkTagInjected = true;
   },
 
-  callAndStartLoading: function(methodName, provider) {
+  callAndStartLoading: function(methodName, provider, handleSuccess) {
+    this.$errorContainer.html('');
+
     this.startLoading();
 
     this.$el.addClass('hull-' + methodName);
 
     var self = this;
-    this.sandbox[methodName](provider).fail(function(error) {
+    this.sandbox[methodName](provider).then(function() {
+      if (handleSuccess) { self.stopLoading(); }
+    }, function(error) {
+      self.showErrorMessage(error.message);
       self.stopLoading();
     });
+  },
+
+  showErrorMessage: function(message) {
+    if (this.options.showErrors === false) { return; }
+
+    var $error = $(document.createElement('p')).addClass('hull-error').text(message);
+    this.$errorContainer.html($error);
   },
 
   actions: {
@@ -80,6 +94,14 @@ Hull.component({
 
     _logout: function(event, action) {
       this.callAndStartLoading('logout', action.data.provider);
+    },
+
+    _linkIdentity: function(event, action) {
+      this.callAndStartLoading('linkIdentity', action.data.provider, true);
+    },
+
+    _unlinkIdentity: function(event, action) {
+      this.callAndStartLoading('unlinkIdentity', action.data.provider, true);
     }
   }
 });
