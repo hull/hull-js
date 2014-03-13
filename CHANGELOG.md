@@ -1,3 +1,19 @@
+# 0.8.14
+
+* Updates custom jQuery to 1.11.0 in remote to avoid IE8 errors
+
+# 0.8.13
+
+* Allow AccessToken in Hull.init
+* Enhances login and admin/registration components
+
+# 0.8.12
+
+* Reduces the number of API calls at init
+* Better errors when init fails
+
+# 0.8.11
+
 * Fixes admin/user_profile component to delete badge with Admin API
 * Adds Hull.ready(fn) for fn to be called as soon as Hull has finished loading
 * Fixes Hull.parse
