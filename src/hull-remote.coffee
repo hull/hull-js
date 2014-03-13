@@ -21,7 +21,7 @@ define ['aura/aura', 'underscore', 'lib/utils/version', 'lib/remote/config-norma
     hull.app.use('lib/remote/current-user')
     hull.app.use('lib/remote/services/hull')
     hull.app.use('lib/remote/services/admin')
-      
+
     keys = _.keys(config.settings?.auth || [])
     auth_services = _.filter keys, isAvailable
 
