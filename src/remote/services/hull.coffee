@@ -79,7 +79,6 @@ define ['jquery', 'underscore'], ($, _)->
         , {}
 
         if request.status && request.status < 300 && currentUserId != headers['Hull-User-Id']
-          console.warn("Refresh my stuff...")
           currentUserId = headers['Hull-User-Id']
           refreshCredentials()
 
@@ -90,7 +89,6 @@ define ['jquery', 'underscore'], ($, _)->
         callback({ response: response, headers: headers, provider: 'hull' }) if _.isFunction(callback)
 
         trackAction(request, response)
-
 
       request.fail(errback)
 

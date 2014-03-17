@@ -31,6 +31,8 @@ define(['spec/support/spec_helper', 'aura/aura', 'components/underscore/undersco
     }
   };
 
+  easyXDMMock.Rpc.prototype.userUpdate = function (conf, successCb, errorCb) {};
+
   easyXDMMock.Rpc.prototype.message = function (conf, successCb, errorCb) {
     var cb;
     if (conf.error) {

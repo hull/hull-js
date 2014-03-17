@@ -44,6 +44,8 @@ define ['underscore', 'lib/hullbase', 'lib/api', 'lib/utils/promises', 'lib/api/
               dfd = obj.api[key] args...
               dfd.then _trackIfHeader
               dfd
+          core.mediator.on 'hull.login', ()-> obj.rpc.userUpdate('login')
+          core.mediator.on 'hull.logout', ()-> obj.rpc.userUpdate('logout')
 
           #
           #

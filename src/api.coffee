@@ -64,12 +64,13 @@ define ['jquery', 'underscore', 'lib/utils/version', 'lib/api/params', 'lib/api/
         remoteConfig: remoteConfig
         authScope: authScope or ''
         api: api
+        rpc: rpc
 
     url = buildRemoteUrl(config)
     rpc = new easyXDM.Rpc({
       remote: url
     }, {
-      remote: { message: {}, ready: {} }
+      remote: { message: {}, ready: {}, userUpdate: {} }
       local:  { message: onRemoteMessage, ready: onRemoteReady }
     })
 

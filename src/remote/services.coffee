@@ -14,6 +14,15 @@ define ['underscore'], (_)->
 
 
     initialize: (app)->
+      userUpdate = (str)->
+        handler = core.routeHandlers.hull
+        if str == 'login'
+          handler { path: 'me/credentials', method: 'get' }, (res)-> 
+            app.config.data.credentials = res.response
+          , (err)->
+            console.error(err)
+        else if str == 'login'
+          app.config.data.credentials = {}
       core = app.core
       core.routeHandlers = {}
 
@@ -31,7 +40,7 @@ define ['underscore'], (_)->
           acl: app.config.appDomains
         }, {
           remote: { message: {}, ready: {} }
-          local:  { message: onRemoteMessage }
+          local:  { message: onRemoteMessage, userUpdate: userUpdate }
         })
       catch e
         rpcFall = new easyXDM.Rpc({},
