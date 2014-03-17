@@ -26,6 +26,9 @@ define ['jquery', 'underscore'], ($, _)->
           config.data.credentials = creds
       else
         config.data.credentials = {}
+        dfd = $.Deferred()
+        dfd.resolve {}
+        dfd.promise()
 
     identify = (me) ->
       return unless me
@@ -69,9 +72,7 @@ define ['jquery', 'underscore'], ($, _)->
         dataType: 'json'
         headers: request_headers
 
-      request.done (response)->
-        identify(_.clone(response)) if url == '/api/v1/me'
-
+      req2 = request.then (res)->
         headers = _.reduce RESPONSE_HEADER, (memo, name) ->
           value = request.getResponseHeader(name)
           memo[name] = value if value?
@@ -80,7 +81,17 @@ define ['jquery', 'underscore'], ($, _)->
 
         if request.status && request.status < 300 && currentUserId != headers['Hull-User-Id']
           currentUserId = headers['Hull-User-Id']
-          refreshCredentials()
+        refreshCredentials().then ()->
+          res
+
+      req2.done (response)->
+        headers = _.reduce RESPONSE_HEADER, (memo, name) ->
+          value = request.getResponseHeader(name)
+          memo[name] = value if value?
+          memo
+        , {}
+
+        identify(_.clone(response)) if url == '/api/v1/me'
 
         if accessToken && originalUserId && originalUserId != headers['Hull-User-Id']
           # Reset token if the user has changed...
