@@ -27,8 +27,8 @@ define ['domready', 'lib/utils/promises', 'xdm', 'lib/utils/version'], (domready
     settingsUpdate = (currentSettings)->
       emitter.emit('hull.settings.update', currentSettings)
 
-    # TODO Remove ?
     userUpdate = (currentUser)->
+      emitter.emit('hull.user.update', currentUser)
 
     readyFn = (remoteConfig)->
       window.clearTimeout(timeout)
