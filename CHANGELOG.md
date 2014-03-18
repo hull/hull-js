@@ -1,3 +1,5 @@
+* Fixes thre login window size because of a nasty FB message
+
 # 0.8.15
 
 * Guest login with lazy actions

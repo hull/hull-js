@@ -25,7 +25,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
         promise = apiFn('users/login', 'post', { login: loginOrProvider, password: optionsOrPassword })
       else
         promise = loginWithProvider(loginOrProvider, optionsOrPassword).then(-> apiFn('me'))
-      
+
       evtPromise = promise.then((me)->
         emitter.emit('hull.auth.login', me)
         me
@@ -103,7 +103,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
           window.__hull_login_status__ = null
           onCompleteAuthentication(hash)
       authHelper: (path)->
-        w = window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
+        w = window.open(path, "_auth", 'location=0,status=0,width=1030,height=600')
 
         # Support for cordova events
         if window.device?.cordova
