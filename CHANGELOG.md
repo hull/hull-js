@@ -1,3 +1,7 @@
+# 0.8.15
+
+* Guest login with lazy actions
+
 # 0.8.14
 
 * Updates custom jQuery to 1.11.0 in remote to avoid IE8 errors
