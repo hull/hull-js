@@ -92,6 +92,8 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
           args = slice.call(arguments)
           eventName = ("model.hull." + model._id + '.' + 'change')
           core.mediator.emit(eventName, { eventName: eventName, model: model, changes: args[1]?.changes })
+        model.on 'sync', ->
+          core.mediator.emit('hull.auth.update', model.attributes) if model._id == 'me'
         model._id = attrs._id
         models[attrs._id] = model #caching
         model

@@ -77,7 +77,7 @@ define ['underscore', 'lib/utils/q2jQuery', 'lib/client/component/context', 'lib
         ctx
 
       loggedIn: =>
-        return false unless @sandbox.data.api.model('me').id?
+        return false unless @sandbox.data.api.model('me').get('id')?
         identities = {}
         me = @sandbox.data.api.model('me')
         _.map me.get("identities"), (i)->

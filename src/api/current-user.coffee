@@ -5,7 +5,7 @@ define ()->
       _currentUser = me
     emitter.on 'hull.auth.login', (me)->
       _currentUser = me
-    emitter.on 'hull.user.update', (me)->
+    emitter.on 'hull.auth.update', (me)->
       unless _currentUser?.id
         if me.id
           emitter.emit 'hull.auth.login', me
