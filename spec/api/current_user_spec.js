@@ -19,7 +19,7 @@ define(['lib/api/current-user'], function (currentUserFn) {
       this.femit.on.should.have.been.calledWith('hull.init');
       this.femit.on.should.have.been.calledWith('hull.auth.login');
       this.femit.on.should.have.been.calledWith('hull.auth.logout');
-      this.femit.on.should.have.been.calledWith('hull.user.update');
+      this.femit.on.should.have.been.calledWith('hull.auth.update');
     });
 
     describe('Listening to changes', function () {
