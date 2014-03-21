@@ -45,10 +45,12 @@ Hull.component({
         votes = {
           down: reviews.distribution['-1'] || 0,
           up: reviews.distribution['1'] || 0
-        }
+        };
       }
     }
-    data.myVote = data.myReview.rating;
+    if (data.myReview) {
+      data.myVote = data.myReview.rating;
+    }
     data.votes = votes;
     return data;
   },
