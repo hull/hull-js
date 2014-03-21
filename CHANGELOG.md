@@ -1,3 +1,13 @@
+* Fixes deploy and CSS minification
+* Fixes ratings/vote component
+* Fixes build in CircleCI by specifying a newer Node.js version
+
+# 0.8.17
+
+* Fixes overlapping events
+
+# 0.8.16
+
 * Fixes thre login window size because of a nasty FB message
 
 # 0.8.15
