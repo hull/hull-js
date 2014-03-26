@@ -150,8 +150,15 @@ define(['lib/client/component/actions'], function (actionModule) {
           hullOption1: true,
           hullOption2: true,
           vendorOption: true,
+          'vendor-another-option': true,
           'hull-another-option': true
-        }).should.have.keys(['option1', 'option2', 'vendorOption', 'anotherOption']);
+        }).should.have.keys([
+          'option1',
+          'option2',
+          'vendorOption',
+          'vendorAnotherOption',
+          'anotherOption'
+        ]);
       });
     });
 
