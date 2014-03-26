@@ -1,16 +1,16 @@
 define ['underscore', 'lib/client/component/context'], (_, Context)->
-  _invokeBeforeRender = (data, ctx)->
-    dfd = $.Deferred()
-    @invokeWithCallbacks('beforeRender', ctx.build(), ctx.errors()).then (_data)=>
-      data = _.extend({}, @data, _data || ctx.build(), data)
-      dfd.resolve data
-    , (err)->
-      console.error(err)
-      dfd.reject err
-    dfd
-
 
   (app)->
+    _invokeBeforeRender = (data, ctx)->
+      dfd = app.core.data.deferred()
+      @invokeWithCallbacks('beforeRender', ctx.build(), ctx.errors()).then (_data)=>
+        data = _.extend({}, @data, _data || ctx.build(), data)
+        dfd.resolve data
+      , (err)->
+        console.error(err)
+        dfd.reject err
+      dfd.promise()
+
     debug = false
 
     class HullComponent extends app.core.mvc.View
