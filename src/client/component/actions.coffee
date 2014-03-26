@@ -22,7 +22,7 @@ define ['underscore'], (_)->
       formattedData
 
     actionHandler: (e)->
-      source  = @sandbox.dom.find(e.currentTarget)
+      source  = $(e.currentTarget)
       action  = source.data("hull-action")
       data = module.formatActionData(source.data())
       try

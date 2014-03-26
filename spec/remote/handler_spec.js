@@ -110,10 +110,8 @@ define(['lib/remote/handler', 'jquery'], function(handlerModule, $) {
             h.response.status.should.equal(400)
             h.response.message.should.equal('ooops')
           })
-
-          $.when(p1, p2, p3).always(function() {
-            done();
-          });
+          var _done = function() { done(); }
+          $.when(p1, p2, p3).then(_done, _done);
         });
 
         describe('when the number of requests is to damn high', function() {
@@ -156,9 +154,8 @@ define(['lib/remote/handler', 'jquery'], function(handlerModule, $) {
             p2.fail(f);
             p3.fail(f);
 
-            $.when(p1, p2, p3).always(function() {
-              done();
-            });
+            var _done = function() { done(); }
+            $.when(p1, p2, p3).then(_done, _done);
           });
         });
       });
