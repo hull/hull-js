@@ -1,4 +1,12 @@
 define ->
+  RESPONSE_HEADERS = [
+    'Hull-Auth-Scope',
+    'Hull-Track',
+    'Hull-User-Id',
+    'Hull-User-Sig',
+    'Link'
+  ]
+
   (app)->
     api = (req, callback, errback) ->
       path = req.path
@@ -21,8 +29,19 @@ define ->
         data: req_data
         headers: headers
 
-      request.then (response)->
-        callback({ response: response, provider: 'admin' })
+      request.then (response, status, xhr)->
+        # Refactor, 3 duplicates
+        # @see handler.coffee
+        headers = _.reduce RESPONSE_HEADERS, (memo, name) ->
+          value = xhr.getResponseHeader(name)
+          memo[name] = value if value?
+          memo
+        , {}
+
+        callback
+          response: response
+          provider: 'admin'
+          headers: headers
       , errback
 
       return
