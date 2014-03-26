@@ -146,7 +146,12 @@ define(['lib/client/component/actions'], function (actionModule) {
 
     describe("getting the action data", function () {
       it('should return a camelized name without the app prefix', function () {
-        this.module.formatActionData({hullOption1: true, hullOption2: true}).should.have.keys(['option1', 'option2']);
+        this.module.formatActionData({
+          hullOption1: true,
+          hullOption2: true,
+          vendorOption: true,
+          'hull-another-option': true
+        }).should.have.keys(['option1', 'option2', 'vendorOption', 'anotherOption']);
       });
     });
 
