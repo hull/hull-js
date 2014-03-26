@@ -4,7 +4,7 @@
   "main": "./lib/hull.js",
   "dependencies": {
     "jquery": "1.10.*",
-    "aura": "hull/aura#95faca93c56606f01f6b31004c2ff8ddafaf1276",
+    "aura": "hull/aura#53603fa2f5fa562038367715328ec188e475c97d",
     "backbone": "0.9.9",
     "analytics": "hull/analytics#1.0.8-hull",
     "cookies-js": "0.3.1",
