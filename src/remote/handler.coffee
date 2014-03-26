@@ -79,7 +79,8 @@ define ['jquery', 'underscore'], ($, _)->
 
         deferred.resolve(response: r, headers: headers, request: request)
       , (xhr) ->
-        deferred.reject(response: xhr.responseJSON, headers: {}, request: request)
+        responseJSON = xhr.responseJSON || JSON.parse(xhr.responseText)
+        deferred.reject(response: responseJSON, headers: {}, request: request)
 
     handleMultiple: (requests) ->
       @ajax({
@@ -103,7 +104,8 @@ define ['jquery', 'underscore'], ($, _)->
             deferred.resolve(h)
       , (xhr) ->
         for request in requests
-          request[1].reject(response: xhr.responseJSON, headers: {}, request: request)
+          responseJSON = xhr.responseJSON || JSON.parse(xhr.responseText)
+          request[1].reject(response: responseJSON, headers: {}, request: request)
 
     after: (fn)->
       @afterCallbacks.push fn

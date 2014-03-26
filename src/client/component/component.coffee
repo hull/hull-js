@@ -1,16 +1,16 @@
-define ['underscore', 'lib/utils/q2jQuery', 'lib/client/component/context', 'lib/utils/promises'], (_, q2jQuery, Context, promises)->
-  _invokeBeforeRender = (data, ctx)->
-    dfd = promises.deferred()
-    @invokeWithCallbacks('beforeRender', ctx.build(), ctx.errors()).then (_data)=>
-      data = _.extend({}, @data, _data || ctx.build(), data)
-      dfd.resolve data
-    , (err)->
-      console.error(err)
-      dfd.reject err
-    q2jQuery dfd.promise
-
+define ['underscore', 'lib/client/component/context'], (_, Context)->
 
   (app)->
+    _invokeBeforeRender = (data, ctx)->
+      dfd = app.core.data.deferred()
+      @invokeWithCallbacks('beforeRender', ctx.build(), ctx.errors()).then (_data)=>
+        data = _.extend({}, @data, _data || ctx.build(), data)
+        dfd.resolve data
+      , (err)->
+        console.error(err)
+        dfd.reject err
+      dfd.promise()
+
     debug = false
 
     class HullComponent extends app.core.mvc.View
@@ -103,18 +103,17 @@ define ['underscore', 'lib/utils/q2jQuery', 'lib/client/component/context', 'lib
       # afterRender
       # Start nested components...
       render: (tpl, data)=>
-        @invokeWithCallbacks('buildContext', new Context())
-        .then(_.bind(_invokeBeforeRender, @, data))
-        .then (data)=>
-          @invokeWithCallbacks 'doRender', tpl, data
-          _.defer(@afterRender.bind(@, data))
-          _.defer((-> @sandbox.start(@$el, { reset: true })).bind(@))
-          @isInitialized = true;
-          # debugger
-          @emitLifecycleEvent('render')
-        , (err)=>
-          console.error(err.message)
-          @renderError(err)
+        __ctx = new Context()
+        @invokeWithCallbacks('buildContext', __ctx).then =>
+          _invokeBeforeRender.call(@, data, __ctx).then (data)=>
+            @invokeWithCallbacks 'doRender', tpl, data
+            _.defer(=> @afterRender.call(@, data))
+            _.defer(=> @sandbox.start(@$el, { reset: true }))
+            @isInitialized = true;
+            @emitLifecycleEvent('render')
+          , (err)=>
+            console.error(err.message)
+            @renderError(err)
       emitLifecycleEvent: (name)->
         @sandbox.emit("hull.#{@componentName.replace('/','.')}.#{name}",{cid:@cid})
 

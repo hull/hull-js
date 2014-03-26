@@ -1,4 +1,8 @@
 define ['underscore'], (_)->
+  camelize = (str)->
+    str.replace /(?:^|[-_])(\w)/g, (m, c)->
+      (c && c.toUpperCase()) || ''
+
   module =
     initialize: (app)->
       app.components.before 'initialize', module.registerActions
@@ -16,7 +20,8 @@ define ['underscore'], (_)->
       formattedData = {}
       for k,v of data
         do ->
-          key = k.replace(/^hull/, "")
+          key = k.replace(/^hull(-)?/, "")
+          key = camelize(key)
           key = key.charAt(0).toLowerCase() + key.slice(1)
           formattedData[key] = v
       formattedData
