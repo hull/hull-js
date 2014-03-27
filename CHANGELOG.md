@@ -1,3 +1,11 @@
+# 0.8.19
+
+* Enhances compatibility down to jQuery 1.5 for components
+* Updates Aura
+* Improves styling for [Shopify](https://apps.shopify.com/hull-social-login) shops
+
+# 0.8.18
+
 * Fixes deploy and CSS minification
 * Fixes ratings/vote component
 * Fixes build in CircleCI by specifying a newer Node.js version
