@@ -69,7 +69,9 @@
   opacity: .1;
 }
 
-.hull-btn {
+.hull-btn,
+.hull-btn:hover,
+.hull-btn:active {
   background-image: none;
   border-radius: 4px;
   padding: 10px 12px;
@@ -90,6 +92,7 @@
   -moz-transition: all 0.5s ease;
   -ms-transition: all 0.5s ease;
   transition: all 0.5s ease;
+  text-shadow: none;
 }
 
 .hull-btn-facebook {
