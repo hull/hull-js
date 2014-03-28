@@ -36,22 +36,24 @@ Hull.component({
   initialize: function() {
     this.query = {};
     this.currentQuery = {};
-    this.injectLinkTag();
+    this.injectLinkTag(this.options.baseUrl + '/ladda-themeless.min.css');
+    this.injectLinkTag(this.options.baseUrl + '/userlist.min.css');
   },
 
   /**
    *  @FIXME Duplicated from aura_components/login/shopify/main.js
    **/
-  injectLinkTag: function() {
-    if (this.linkTagInjected || this.options.injectLinkTag === false) { return; }
+  injectedLinkTags: {},
+  injectLinkTag: function(url) {
+    if (this.injectedLinkTags[url]) { return; }
 
     var e = document.createElement('link');
-    e.href = this.options.baseUrl + '/ladda-themeless.min.css';
+    e.href = url;
     e.rel = 'stylesheet';
 
     document.getElementsByTagName('head')[0].appendChild(e);
 
-    this.linkTagInjected = true;
+    this.injectedLinkTags[url] = true;
   },
 
   beforeRender: function(data){
@@ -68,6 +70,7 @@ Hull.component({
       Approved: { action: 'filterApproved', isActive: this.query.approved === true },
       Unapproved: { action: 'filterUnapproved', isActive: this.query.approved === false }
     };
+    data.users = this.prepareUserData(data.users);
   },
 
   afterRender: function() {
@@ -80,6 +83,25 @@ Hull.component({
     this.sandbox.util._.each(this.$('.ladda-button'), function (btn) {
       var lbtn = Ladda.create(btn);
       dom(btn).data('ladda', lbtn);
+    });
+  },
+
+  prepareUserData: function (userArray) {
+    var map = this.sandbox.util._.map;
+    var self = this;
+    return map(userArray, function (user) {
+      if (!user.picture) {
+        user.picture = self.options.baseUrl + '/avatar.png';
+      }
+      var providers = [user.main_identity];
+      map(user.identities, function (identity) {
+        var provider = identity.provider;
+        if (providers.indexOf(provider) === -1) {
+          providers.push(provider);
+        }
+      });
+      user.providers = providers;
+      return user;
     });
   },
 

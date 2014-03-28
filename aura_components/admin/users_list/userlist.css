@@ -1,0 +1,31 @@
+.table.userlist thead th {
+  border-bottom: 1px solid #ccc;
+}
+.table.userlist tbody td {
+  vertical-align: bottom;
+  border-top: 0;
+}
+.table.userlist td img {
+  height: 50px;
+  border-radius: 50%;
+}
+.table.userlist td.providers {
+  vertical-align: middle;
+}
+.table.userlist td.providers i {
+  font-size: 30px;
+}
+
+[data-hull-component="admin/users_list@hull"] .btn {
+  background-image: none;
+}
+
+.form-search .input-append .btn.squared {
+  -webkit-border-radius: 0 4px 4px 0;
+  -moz-border-radius: 0 4px 4px 0;
+  border-radius: 0 4px 4px 0;
+}
+
+nav.pagination {
+  overflow: auto;
+}
