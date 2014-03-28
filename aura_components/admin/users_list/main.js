@@ -93,6 +93,9 @@ Hull.component({
       if (!user.picture) {
         user.picture = self.options.baseUrl + '/avatar.png';
       }
+      if (!user.name && user.main_identity.toLowerCase() === 'guest') {
+        user.name = 'Guest user';
+      }
       var providers = [user.main_identity];
       map(user.identities, function (identity) {
         var provider = identity.provider;
