@@ -18,6 +18,8 @@ Hull.component({
 
   refreshEvents: ['model.hull.me.change'],
 
+  require: ['spin.min', 'ladda.min'],
+
   renderError: function(err) {
     if (err.message.status === 401) {
       this.html('You are not authorized to list users');
@@ -34,6 +36,22 @@ Hull.component({
   initialize: function() {
     this.query = {};
     this.currentQuery = {};
+    this.injectLinkTag();
+  },
+
+  /**
+   *  @FIXME Duplicated from aura_components/login/shopify/main.js
+   **/
+  injectLinkTag: function() {
+    if (this.linkTagInjected || this.options.injectLinkTag === false) { return; }
+
+    var e = document.createElement('link');
+    e.href = this.options.baseUrl + '/ladda-themeless.min.css';
+    e.rel = 'stylesheet';
+
+    document.getElementsByTagName('head')[0].appendChild(e);
+
+    this.linkTagInjected = true;
   },
 
   beforeRender: function(data){
@@ -58,12 +76,18 @@ Hull.component({
       e.preventDefault();
       this.search($searchForm.find('.js-hull-users-search-query').val());
     }, this));
+    var dom = this.sandbox.dom.find;
+    this.sandbox.util._.each(this.$('.ladda-button'), function (btn) {
+      var lbtn = Ladda.create(btn);
+      dom(btn).data('ladda', lbtn);
+    });
   },
 
   actions: {
     nextPage: function() {
       var datasource = this.datasources.users;
       if (!datasource.isLast()) {
+        this.$('[data-hull-action=nextPage].ladda-button').data('ladda').start();
         datasource.next();
         this.render();
       }
@@ -72,6 +96,7 @@ Hull.component({
     previousPage: function() {
       var datasource = this.datasources.users;
       if (!datasource.isFirst()) {
+        this.$('[data-hull-action=previousPage].ladda-button').data('ladda').start();
         datasource.previous();
         this.render();
       }

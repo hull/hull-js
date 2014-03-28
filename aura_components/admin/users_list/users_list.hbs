@@ -72,10 +72,14 @@
 {{#if showPagination}}
   <p>
     {{#if showPreviousButton}}
-      <button data-hull-action='previousPage' class="btn">← Previous</button>
+    <button data-hull-action='previousPage' class="btn ladda-button" data-spinner-color="#333" data-style="expand-left">
+      <span class="ladda-label">← Previous</span>
+    </button>
     {{/if}}
     {{#if showNextButton}}
-      <button data-hull-action='nextPage' class="btn">Next →</button>
+    <button data-hull-action='nextPage' class="btn ladda-button" data-spinner-color="#333" data-style="expand-left">
+      <span class="ladda-label">Next →</span>
+    </button>
     {{/if}}
   </p>
 {{/if}}
