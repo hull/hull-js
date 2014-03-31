@@ -18,7 +18,7 @@ Hull.component({
 
   refreshEvents: ['model.hull.me.change'],
 
-  require: ['spin.min', 'ladda.min'],
+  require: ['spin.min', 'ladda.min', 'bootstrap-modal', 'bootstrap-modalmanager'],
 
   renderError: function(err) {
     if (err.message.status === 401) {
@@ -38,6 +38,7 @@ Hull.component({
     this.currentQuery = {};
     this.injectLinkTag(this.options.baseUrl + '/ladda-themeless.min.css');
     this.injectLinkTag(this.options.baseUrl + '/userlist.min.css');
+    this.injectLinkTag(this.options.baseUrl + '/bootstrap-modal.min.css');
   },
 
   /**
@@ -90,9 +91,6 @@ Hull.component({
     var map = this.sandbox.util._.map;
     var self = this;
     return map(userArray, function (user) {
-      if (!user.picture) {
-        user.picture = self.options.baseUrl + '/avatar.png';
-      }
       if (!user.name && user.main_identity.toLowerCase() === 'guest') {
         user.name = 'Guest user';
       }

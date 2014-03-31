@@ -46,6 +46,12 @@ Hull.component({
     data.userHasProfiles = !this.sandbox.util._.isEmpty(data.user.profiles);
   },
 
+  afterRender: function () {
+    if (this.options.id) {
+      this.sandbox.emit('hull.admin.user_profile.available');
+    }
+  },
+
   actions: {
     promote: function(e, action) {
       this.promoteUser(action.data.role);
@@ -77,7 +83,9 @@ Hull.component({
 
   renderUser: function(id) {
     var displayedUser = this.data.user;
-    if (displayedUser && displayedUser.id === id) { return; }
+    if (displayedUser && displayedUser.id === id) {
+      this.sandbox.emit('hull.admin.user_profile.available');
+    }
     this.options.id = id;
     this.user = id;
     this.render();

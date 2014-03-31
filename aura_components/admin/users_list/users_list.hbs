@@ -39,6 +39,7 @@
       <th>Signed in since</th>
       <th>Visits</th>
       <th>Login providers</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -46,7 +47,7 @@
       {{#each users}}
         <tr>
           <td>
-            <img src="{{picture}}" width="50" height="50" alt="{{name}}" class="picture"/>
+            <div data-hull-component="admin/user_avatar@hull" data-hull-avatar="{{picture}}"></div>
           </td>
           <td>
             {{#if name}}
@@ -64,9 +65,8 @@
             {{#stats}}
               {{#if sign_in_count}}
                 <strong>{{sign_in_count}}</strong> visits
-                <div>
-                  <small>Last: <strong>xx/yy/zz</strong></small>
-                </div>
+                <br>
+                <small>Last: <strong>xx/yy/zz</strong></small>
               {{else}}
                 No visits yet
               {{/if}}
@@ -74,8 +74,11 @@
           </td>
           <td class="providers">
             {{#each providers}}
-            <i class="icon-{{.}}"></i> 
+            <i class="icon-{{.}}"></i>
             {{/each}}
+          </td>
+          <td>
+            <a data-hull-id="{{id}}" data-hull-action="selectUser" href="#">details</a>
           </td>
         </tr>
       {{/each}}

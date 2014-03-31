@@ -1,10 +1,8 @@
 {{#if user}}
   <div class="media user-header">
-    {{#if user.picture}}
-      <div class="pull-left">
-        <img class='img-rounded' src="{{user.picture}}" width="50" height="50"/>
-      </div>
-    {{/if}}
+    <div class="pull-left">
+      <div data-hull-component="admin/user_avatar@hull" data-hull-avatar={{user.picture}}></div>
+    </div>
 
     <div class='media-body'>
       <h4 class='media-heading'>
