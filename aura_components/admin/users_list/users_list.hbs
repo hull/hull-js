@@ -62,15 +62,13 @@
             <strong>{{fromNow created_at}}</strong>
           </td>
           <td>
-            {{#stats}}
-              {{#if sign_in_count}}
-                <strong>{{sign_in_count}}</strong> visits
-                <br>
-                <small>Last: <strong>xx/yy/zz</strong></small>
-              {{else}}
-                No visits yet
-              {{/if}}
-            {{/stats}}
+            {{#if stats.sign_in_count}}
+              <strong>{{stats.sign_in_count}}</strong> visits
+              <br>
+              <small>Last: <strong>{{fromNow last_seen_at}}</strong></small>
+            {{else}}
+              No visits yet
+            {{/if}}
           </td>
           <td class="providers">
             {{#each providers}}
