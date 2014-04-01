@@ -1,40 +1,56 @@
 {{#if user}}
-  <div class="media user-header">
-    <div class="pull-left">
-      <div data-hull-component="admin/user_avatar@hull" data-hull-avatar={{user.picture}}></div>
-    </div>
+  <div class="user-header admin-infos">
 
     <div class='media-body'>
-      <h4 class='media-heading'>
-        {{user.name}}
-        <small class="muted">{{user.email}}</small>
-      </h4>
-
+      <div class="avatar pull-right">
+        <div data-hull-component="admin/user_avatar@hull" data-hull-avatar={{user.picture}}></div>
+      </div>
+      <header class="name">
+        <h4>{{user.name}}</h4>
+      </header>
       <div class="admin-infos">
         <dl>
-          {{#if user.email}}
             <dt>Email</dt>
             <dd>{{user.email}}</dd>
-          {{/if}}
-          {{#if user.username}}
             <dt>Username</dt>
             <dd>{{user.username}}</dd>
-          {{/if}}
-          {{#each user.identities}}
-            <dt>{{humanize provider}}:</dt>
-            <dd>{{#if login}}{{login}}{{else}}{{email}}{{/if}}</dd>
-          {{/each}}
+            <dt>Signed up</dt>
+            <dd>{{fromNow user.created_at}}</dd>
         </dl>
       </div>
-
     </div>
-
   </div>
 
   <div class="row-fluid">
-
     <div class="cell-6">
-
+      <div class="admin-infos">
+        <header>
+          <h5>Identities</h5>
+        </header>
+        <dl>
+        {{#if isGuest}}
+          <dt>Guest user</dt>
+          <dd><i class="icon-check"></i></dd>
+        {{/if}}
+        {{#if isEmail}}
+          <dt>Email</dt>
+          <dd>
+            <a href="mailto:{{user.email}}">{{user.email}}</a>
+          </dd>
+        {{/if}}
+        {{#key_value identities}}
+          <dt>{{humanize key}}</dt>
+          <dd>
+            {{#if value.login}}{{value.login}}{{/if}}
+            {{#if value.email}}
+              (<a href="mailto:{{value.email}}">{{value.email}}</a>)
+            {{/if}}
+          </dd>
+        {{/key_value}}
+        </dl>
+      </div>
+    </div>
+    <div class="cell-6">
       <div class="admin-infos admin-infos-permissions">
         <header>
           <h5>Permissions</h5>

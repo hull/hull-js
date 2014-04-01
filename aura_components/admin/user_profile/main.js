@@ -38,12 +38,41 @@ Hull.component({
 
   initialize: function() {
     this.sandbox.on('hull.user.select', this.renderUser, this);
+    this.injectLinkTag(this.options.baseUrl + '/main.min.css');
+  },
+
+  /**
+   *  @FIXME Duplicated from aura_components/login/shopify/main.js
+   **/
+  injectedLinkTags: {},
+  injectLinkTag: function(url) {
+    if (this.injectedLinkTags[url]) { return; }
+
+    var e = document.createElement('link');
+    e.href = url;
+    e.rel = 'stylesheet';
+
+    document.getElementsByTagName('head')[0].appendChild(e);
+
+    this.injectedLinkTags[url] = true;
   },
 
   beforeRender: function(data){
     if (!data.user) { return; }
 
     data.userHasProfiles = !this.sandbox.util._.isEmpty(data.user.profiles);
+    data.user.name = data.user.name || 'Unknown name';
+    data.user.email = data.user.email || 'Unknown email';
+    data.user.username = data.user.username || 'No username';
+    data.isEmail = data.user.main_identity === 'email';
+    data.isGuest = data.user.main_identity === 'guest';
+    data.identities = {};
+    this.sandbox.util._.each(data.user.identities, function (identity) {
+      data.identities[identity.provider] = {
+        login: identity.login,
+        email: identity.email
+      };
+    });
   },
 
   afterRender: function () {
