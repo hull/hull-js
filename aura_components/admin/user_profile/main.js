@@ -67,10 +67,12 @@ Hull.component({
     data.isEmail = data.user.main_identity === 'email';
     data.isGuest = data.user.main_identity === 'guest';
     data.identities = {};
+    var self = this;
     this.sandbox.util._.each(data.user.identities, function (identity) {
       data.identities[identity.provider] = {
         login: identity.login,
-        email: identity.email
+        email: identity.email,
+        profile: self.profileForIdentity(identity.provider, identity)
       };
     });
   },
@@ -81,6 +83,19 @@ Hull.component({
     }
   },
 
+  profileForIdentity: function (provider, identity) {
+    switch (provider.toLowerCase()) {
+      case 'facebook':
+        return 'http://www.facebook.com/' + (identity.uid || identity.login);
+        break;
+      case 'linkedin':
+        return 'http://www.linkedin.com/profile/view?id=' + identity.uid;
+        break;
+      case 'twitter':
+        return 'https://twitter.com/intent/user?user_id=' + identity.uid;
+        break;
+    }
+  },
   actions: {
     promote: function(e, action) {
       this.promoteUser(action.data.role);

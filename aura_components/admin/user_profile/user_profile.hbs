@@ -40,10 +40,13 @@
         {{/if}}
         {{#key_value identities}}
           <dt>{{humanize key}}</dt>
-          <dd>
+          <dd class="social-details">
             {{#if value.login}}{{value.login}}{{/if}}
+            {{#if value.profile}}
+              <a href="{{value.profile}}" target="blank">Profile</a>
+            {{/if}}
             {{#if value.email}}
-              (<a href="mailto:{{value.email}}">{{value.email}}</a>)
+              <a href="mailto:{{value.email}}">Email</a>
             {{/if}}
           </dd>
         {{/key_value}}

@@ -5,3 +5,6 @@
 [data-hull-component="admin/user_profile@hull"] .user-header .name {
   margin-top: 9px;
 }
+[data-hull-component="admin/user_profile@hull"] .social-details a {
+  margin-left: 15px;
+}
