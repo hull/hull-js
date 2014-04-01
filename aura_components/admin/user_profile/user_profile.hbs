@@ -91,9 +91,18 @@
           <dd>{{json value}}</dd>
         </dl>
       {{/key_value}}
-
     </div>
-
+    <div class="cell-6 admin-infos">
+        <header>
+          <h5>Extra</h5>
+        </header>
+      {{#key_value user.extra}}
+        <dl>
+          <dt>{{humanize key}}</dt>
+          <dd>{{json value}}</dd>
+        </dl>
+      {{/key_value}}
+    </div>
   </div>
 
   {{#unless org.public}}
@@ -112,7 +121,7 @@
     <div class="admin-infos">
       {{#each user.profiles}}
         <header>
-          <h5>{{@key}}:</h5>
+          <h5>Application "{{@key}}":</h5>
         </header>
         <dl>
           {{#each this}}
