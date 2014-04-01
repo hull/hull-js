@@ -65,7 +65,16 @@
             {{#if stats.sign_in_count}}
               Total: <strong>{{stats.sign_in_count}}</strong>
               <br>
-              <small>Latest: <strong>{{fromNow last_seen_at}}</strong></small>
+              <small>
+                Latest:
+                <strong>
+                  {{#if last_seen_at}}
+                    {{fromNow last_seen_at}}
+                  {{else}}
+                    {{fromNow created_at}}
+                  {{/if}}
+                </strong>
+              </small>
             {{else}}
               No visits yet
             {{/if}}
