@@ -18,7 +18,7 @@ Hull.component({
 
   refreshEvents: ['model.hull.me.change'],
 
-  require: ['spin.min', 'ladda.min', 'bootstrap-modal', 'bootstrap-modalmanager'],
+  require: ['spin.min', 'ladda.min', 'bootstrap-modal', 'bootstrap-modalmanager', 'datagrid'],
 
   renderError: function(err) {
     if (err.message.status === 401) {
@@ -39,6 +39,8 @@ Hull.component({
     this.injectLinkTag(this.options.baseUrl + '/ladda-themeless.min.css');
     this.injectLinkTag(this.options.baseUrl + '/userlist.min.css');
     this.injectLinkTag(this.options.baseUrl + '/bootstrap-modal.min.css');
+    this.injectLinkTag(this.options.baseUrl + '/fuelux.min.css');
+    this.injectLinkTag(this.options.baseUrl + '/fuelux-responsive.min.css');
   },
 
   /**
@@ -71,7 +73,6 @@ Hull.component({
       Approved: { action: 'filterApproved', isActive: this.query.approved === true },
       Unapproved: { action: 'filterUnapproved', isActive: this.query.approved === false }
     };
-    data.users = this.prepareUserData(data.users);
   },
 
   afterRender: function() {
@@ -85,25 +86,118 @@ Hull.component({
       var lbtn = Ladda.create(btn);
       dom(btn).data('ladda', lbtn);
     });
+
+
+    var self = this;
+    var datasource = {
+      columns: function () {
+        return [{
+          property: 'picture',
+          label: '',
+          sortable: false,
+          render: function (value, row) {
+            return $('<div>')
+              .attr('data-hull-component', 'admin/user_avatar@hull')
+              .attr('data-hull-avatar', value);
+          }
+        }, {
+          property: 'name',
+          label: 'Name',
+          sortable: true,
+          render: function (name, row) {
+            if (!name && row.main_identity.toLowerCase() === 'guest') {
+              name = 'Guest user';
+            }
+            var email = row.email || ''
+            var $name = $('<p class="name">').text(name);
+            var $email = $('<span class="email">');
+            var $emailAnchor = $('<a>').attr('href', 'mailto:' + email).text(email);
+            if (name) {
+              if (!email) $email.hide();
+              return [$name.text(name), $email.append($emailAnchor)];
+            } else {
+              return $name.html($emailAnchor);
+            }
+          }
+        }, {
+          property: 'created_at',
+          label: 'Signed up since',
+          sortable: true,
+          render: function (value, row) {
+            return self.sandbox.util.moment(value).fromNow();
+          }
+        }, {
+          property: 'stats',
+          label: 'Visits',
+          sortable: false,
+          render: function (stats, row) {
+            var signInCount = 1 + parseInt(stats.sign_in_count || 0);
+            var $total = $('<p>')
+              .text('Total: ')
+              .append($('<strong>').text(signInCount));
+            var $latest = $('<small>').text('Latest: ').append($('<strong>').text(self.sandbox.util.moment(row.last_seen_at || row.created_at).fromNow()));
+
+            return [$total, $latest];
+          }
+        }, {
+          property: 'identities',
+          label: 'Identities',
+          sortable: false,
+          render: function (value, row) {
+            var providers = self.getLoginProviders(row);
+            return self.sandbox.util._.map(providers, function (provider) {
+              return $('<i>').addClass('icon-' + provider);
+            });
+          }
+        }];
+      },
+      data: function (options, callback) {
+        var ds = self.datasources.users;
+        ds.def.params.page = (options.pageIndex || 0) + 1;
+        ds.def.params.per_page = options.pageSize || 30;
+        ds.fetch().then(function (obj) {
+          var payload = {
+            data: obj.toJSON(),
+            start: (ds.def.params.page - 1) * ds.def.params.per_page + 1,
+            end: (ds.def.params.page - 1) * ds.def.params.per_page + obj.length,
+            count: 55,
+            pages: 2,
+            page: ds.def.params.page
+          };
+          callback(payload);
+        })
+      }
+    };
+    var $table = self.$el.find('.datagrid');
+    $table.datagrid({
+      dataSource: datasource,
+      enableSelect: true,
+      primaryKey: 'id',
+    }).on('loaded', function () {
+      $table.find('a').on('click', function (e) {
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+      });
+      Hull.parse(self.$el);
+    }).on('itemSelected', function (evt, row) {
+      self.sandbox.emit('hull.user.select', row.id);
+    });
+
+
+
   },
 
-  prepareUserData: function (userArray) {
+  getLoginProviders: function (user) {
     var map = this.sandbox.util._.map;
     var self = this;
-    return map(userArray, function (user) {
-      if (!user.name && user.main_identity.toLowerCase() === 'guest') {
-        user.name = 'Guest user';
+    var providers = [user.main_identity];
+    map(user.identities, function (identity) {
+      var provider = identity.provider;
+      if (providers.indexOf(provider) === -1) {
+        providers.push(provider);
       }
-      var providers = [user.main_identity];
-      map(user.identities, function (identity) {
-        var provider = identity.provider;
-        if (providers.indexOf(provider) === -1) {
-          providers.push(provider);
-        }
-      });
-      user.providers = providers;
-      return user;
     });
+    return providers;
   },
 
   actions: {
