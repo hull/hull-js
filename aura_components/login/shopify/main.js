@@ -5,8 +5,20 @@ Hull.component({
 
   linkTagInjected: false,
 
+  defaultErrorMessages: {
+    identityTakenMessage: 'This "{{provider}}" account is already linked to another User',
+    emailTakenMessage: '"{{email}}" is already taken',
+    authFailedMessage: 'You did not fully authorize or "{{provider}}" app is not well configured',
+    windowClosedMessage: 'Authorization window has been closed'
+  },
+
   initialize: function() {
     this.isLoading = false;
+
+    this.errorMessages = this.sandbox.util._.reduce(this.defaultErrorMessages, function(memo, v, k) {
+      memo[k] = Hull.util.Handlebars.compile(this.options[k] || v);
+      return memo;
+    }, {}, this);
 
     this.sandbox.on('hull.shopify.loading.start', this.startLoading, this);
     this.sandbox.on('hull.shopify.loading.stop', this.stopLoading, this);
@@ -75,7 +87,10 @@ Hull.component({
     this.sandbox[methodName](provider).then(function() {
       if (handleSuccess) { self.stopLoading(); }
     }, function(error) {
-      self.showErrorMessage(error.message);
+      var t = self.errorMessages[self.sandbox.util._.string.camelize(error.reason + '_message')];
+      var message = t ? t(self.sandbox.util._.extend({ provider: provider }, error)) : (error.message || self.options.fallbackMessage);
+
+      self.showErrorMessage(message);
       self.stopLoading();
     });
   },
