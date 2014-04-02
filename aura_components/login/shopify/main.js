@@ -6,7 +6,7 @@ Hull.component({
   linkTagInjected: false,
 
   defaultErrorMessages: {
-    identityTakenMessage: '"{{provider}}" identity is already linked to another User',
+    identityTakenMessage: 'This "{{provider}}" identity is already linked to another User',
     emailTakenMessage: '"{{email}}" is already taken',
     authFailedMessage: 'You did not fully authorize or "{{provider}}" app is not well configured',
     windowClosedMessage: 'Authorization window has been closed'
