@@ -140,7 +140,7 @@ Hull.component({
             return [$total, $latest];
           }
         }, {
-          property: 'identities',
+          property: 'main_identity',
           label: 'Identities',
           sortable: false,
           render: function (value, row) {
@@ -155,6 +155,9 @@ Hull.component({
         var ds = self.datasources.users;
         ds.def.params.page = (options.pageIndex || 0) + 1;
         ds.def.params.per_page = options.pageSize || 30;
+        if (options.sortProperty) {
+          ds.sort(options.sortProperty, (options.sortDirection || '').toUpperCase())
+        }
         ds.fetch().then(function (obj) {
           var payload = {
             data: obj.toJSON(),
