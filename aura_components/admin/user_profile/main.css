@@ -1,10 +1,36 @@
 [data-hull-component="admin/user_profile@hull"] .avatar {
   margin-right: 10px;
+  margin-top: 4px;
 }
 
-[data-hull-component="admin/user_profile@hull"] .user-header .name {
-  margin-top: 9px;
+[data-hull-component="admin/user_profile@hull"] header.name {
+  margin: 18px -25px;
+  border-top: 1px solid #008cdd;
+  border-bottom: 1px solid #008cdd;
+  padding-left: 33px;
+  background: rgba(0, 140, 221, 0.05);
 }
+
+[data-hull-component="admin/user_profile@hull"] header.name h4 {
+  margin: 3px 0 0;
+}
+
 [data-hull-component="admin/user_profile@hull"] .social-details a {
   margin-left: 15px;
+}
+[data-hull-component="admin/user_profile@hull"] header {
+  padding: 3px 8px;
+  border-bottom: 1px solid #CCC;
+  color: #008cdd;
+  background: none;
+}
+
+[data-hull-component="admin/user_profile@hull"] header h3 {
+  padding: 3px 0;
+  margin: 0;
+}
+
+[data-hull-component="admin/user_profile@hull"] header h3,
+[data-hull-component="admin/user_profile@hull"] header h4 {
+  color: #5A5A5A;
 }
