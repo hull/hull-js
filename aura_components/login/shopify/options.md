@@ -37,7 +37,7 @@ Shopify Component Options
 *String*, default to:
 
 ```
-'This "{{provider}}" identity is already linked to another User'
+'This "{{provider}}" account is already linked to another User'
 ```
 
 ### `data-email-taken-message`
