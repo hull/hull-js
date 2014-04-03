@@ -50,3 +50,6 @@ nav.pagination {
 .fuelux .datagrid tfoot {
   background: white;
 }
+.fuelux .datagrid thead .search-header th {
+  cursor: default;
+}

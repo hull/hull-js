@@ -1,5 +1,13 @@
+[data-hull-component="admin/user_profile@hull"] .close-modal {
+  margin-top: 30px;
+}
+
+[data-hull-component="admin/user_profile@hull"] .close-modal a {
+  text-decoration: none;
+}
+
 [data-hull-component="admin/user_profile@hull"] .avatar {
-  margin-right: 10px;
+  margin-right: 12px;
   margin-top: 15px;
 }
 

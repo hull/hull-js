@@ -1,6 +1,14 @@
 {{#if user}}
-  <div class="avatar pull-right">
+  <div class="avatar pull-left">
     <div data-hull-component="admin/user_avatar@hull" data-hull-avatar={{user.picture}}></div>
+  </div>
+  <div data-dismiss="modal" class="pull-right close-modal">
+    <a href="#">
+      <small>
+        <i class="icon-error"></i>
+        Close
+      </small>
+    </a>
   </div>
   <header class="name">
     <h3>{{user.name}}</h3>
