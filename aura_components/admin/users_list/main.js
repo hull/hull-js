@@ -155,12 +155,21 @@ Hull.component({
         var ds = self.datasources.users;
         ds.def.params.page = (options.pageIndex || 0) + 1;
         ds.def.params.per_page = options.pageSize || 30;
-        self.track('hull.admin.users_list.pageview', {
+        var trackingData = {
           page: ds.def.params.page,
           user_id: self.data.me.id
-        });
+        };
         if (options.sortProperty) {
-          ds.sort(options.sortProperty, (options.sortDirection || '').toUpperCase())
+          var direction = options.sortDirection || '';
+          trackingData.sortProperty = options.sortProperty;
+          trackingData.sortDirection = direction;
+        }
+        self.sandbox.track('hull.admin.users_list.pageview', trackingData);
+        if (options.sortProperty) {
+          var sortChanged = ds.sort(trackingData.sortProperty, trackingData.sortDirection);
+          if (sortChanged) {
+            self.sandbox.track('hull.admin.users_list.sort', trackingData);
+          }
         }
         ds.fetch().then(function (obj) {
           var payload = {
@@ -172,7 +181,7 @@ Hull.component({
             page: ds.def.params.page
           };
           callback(payload);
-        })
+        });
       }
     };
     var $table = self.$el.find('.datagrid');

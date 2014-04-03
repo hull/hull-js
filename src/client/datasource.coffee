@@ -151,7 +151,11 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
     # @param {String} field the field to sort the datasource by.
     # @param {String} direction default to `"ASC"`. Can be `"DESC"` or `"ASC"`
     sort: (field, direction = 'ASC') ->
-      @def.params.order_by = field + ' ' + direction
+      direction = direction.toUpperCase()
+      currentSort = @def.params.order_by
+      newSort = field + ' ' + direction
+      @def.params.order_by = newSort
+      currentSort != newSort
 
     where: (query, extend = false) ->
       if extend
