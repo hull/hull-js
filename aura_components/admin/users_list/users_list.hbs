@@ -1,124 +1,8 @@
-<!-- <div class="btn&#45;group pull&#45;right"> -->
-<!--   <a class="btn btn&#45;small dropdown&#45;toggle" data&#45;toggle="dropdown" href="#"> -->
-<!--     Sort by <span class="caret"></span> -->
-<!--   </a> -->
-<!--   <ul class="dropdown&#45;menu"> -->
-<!--     <li><a href="#" data&#45;hull&#45;action="sort" data&#45;hull&#45;field="created_at" data&#45;hull&#45;direction="desc">Created At</a></li> -->
-<!--     <li><a href="#" data&#45;hull&#45;action="sort" data&#45;hull&#45;field="name">Name</a></li> -->
-<!--     <li><a href="#" data&#45;hull&#45;action="sort" data&#45;hull&#45;field="email">Email</a></li> -->
-<!--     <li><a href="#" data&#45;hull&#45;action="sort" data&#45;hull&#45;field="stats.sign_in_count" data&#45;hull&#45;direction="desc">Sign In Count</a></li> -->
-<!--   </ul> -->
-<!-- </div> -->
-<!--  -->
-<!-- {{#unless org.public}} -->
-<!--   <div class="btn&#45;group pull&#45;right users&#45;filters" data&#45;toggle="buttons&#45;radio"> -->
-<!--     {{#each filters}} -->
-<!--       <button type="button" class="btn btn&#45;small {{#if isActive}}active{{/if}}" data&#45;hull&#45;action="{{action}}">{{@key}}</button> -->
-<!--     {{/each}} -->
-<!--   </div> -->
-<!-- {{/unless}} -->
-<!--  -->
-<!-- <form class="form form&#45;search js&#45;hull&#45;users&#45;search"> -->
-<!--   <div class="input&#45;append"> -->
-<!--     <input type="text" class="js&#45;hull&#45;users&#45;search&#45;query" placeholder="Search by email" value="{{currentQuery.email}}"> -->
-<!--     <button type="submit" class="btn squared">Search</button> -->
-<!--     {{#if currentQuery.email}} -->
-<!--       <a href="#" data&#45;hull&#45;action="resetSearch" class="btn btn&#45;link"> -->
-<!--         <i class="icon&#45;error"></i> -->
-<!--         Clear -->
-<!--       </a> -->
-<!--     {{/if}} -->
-<!--   </div> -->
-<!-- </form> -->
-<!--  -->
-<!-- <table class="userlist table table&#45;hover"> -->
-<!--   <thead> -->
-<!--     <tr> -->
-<!--       <th>Avatar</th> -->
-<!--       <th>Name</th> -->
-<!--       <th>Signed in since</th> -->
-<!--       <th>Visits</th> -->
-<!--       <th>Login providers</th> -->
-<!--       <th></th> -->
-<!--     </tr> -->
-<!--   </thead> -->
-<!--   <tbody> -->
-<!--     {{#if users}} -->
-<!--       {{#each users}} -->
-<!--         <tr> -->
-<!--           <td> -->
-<!--             <div data&#45;hull&#45;component="admin/user_avatar@hull" data&#45;hull&#45;avatar="{{picture}}"></div> -->
-<!--           </td> -->
-<!--           <td> -->
-<!--             {{#if name}} -->
-<!--               <span class="name">{{name}}</span> -->
-<!--               {{#if email}}<div><small class="email"><a href="mailto:{{email}}">{{email}}</a></small></div> {{/if}} -->
-<!--             {{else}} -->
-<!--             <span class="name"><a href="mailto:{{email}}">{{email}}</a></span> -->
-<!--             {{/if}} -->
-<!--           </td> -->
-<!--           <td> -->
-<!--             Signed up -->
-<!--             <strong>{{fromNow created_at}}</strong> -->
-<!--           </td> -->
-<!--           <td> -->
-<!--             {{#if stats.sign_in_count}} -->
-<!--               Total: <strong>{{stats.sign_in_count}}</strong> -->
-<!--               <br> -->
-<!--               <small> -->
-<!--                 Latest: -->
-<!--                 <strong> -->
-<!--                   {{#if last_seen_at}} -->
-<!--                     {{fromNow last_seen_at}} -->
-<!--                   {{else}} -->
-<!--                     {{fromNow created_at}} -->
-<!--                   {{/if}} -->
-<!--                 </strong> -->
-<!--               </small> -->
-<!--             {{else}} -->
-<!--               No visits yet -->
-<!--             {{/if}} -->
-<!--           </td> -->
-<!--           <td class="providers"> -->
-<!--             {{#each providers}} -->
-<!--             <i class="icon&#45;{{.}}"></i> -->
-<!--             {{/each}} -->
-<!--           </td> -->
-<!--           <td> -->
-<!--             <a data&#45;hull&#45;id="{{id}}" data&#45;hull&#45;action="selectUser" href="#">details</a> -->
-<!--           </td> -->
-<!--         </tr> -->
-<!--       {{/each}} -->
-<!--     {{else}} -->
-<!--     <tr> -->
-<!--       <td colspan="6"> -->
-<!--         <p class="muted text&#45;center">There is no user that match your criteria</p> -->
-<!--       </td> -->
-<!--     </tr> -->
-<!--     {{/if}} -->
-<!--   </tbody> -->
-<!-- </table> -->
-<!--  -->
-<!-- {{#if showPagination}} -->
-<!--   <nav class="pagination clear"> -->
-<!--     {{#if showPreviousButton}} -->
-<!--     <button data&#45;hull&#45;action='previousPage' class="btn ladda&#45;button" data&#45;spinner&#45;color="#333" data&#45;style="expand&#45;left"> -->
-<!--       <span class="ladda&#45;label">← Previous</span> -->
-<!--     </button> -->
-<!--     {{/if}} -->
-<!--     {{#if showNextButton}} -->
-<!--     <button data&#45;hull&#45;action='nextPage' class="btn ladda&#45;button pull&#45;right" data&#45;spinner&#45;color="#333" data&#45;style="expand&#45;right"> -->
-<!--       <span class="ladda&#45;label">Next →</span> -->
-<!--     </button> -->
-<!--     {{/if}} -->
-<!--   </nav> -->
-<!-- {{/if}} -->
-
 <div class="fuelux">
 <table id="MyGrid" class="table datagrid">
   <thead>
-    <tr>
-      <th>
+    <tr class="search-header">
+      <th colspan="5">
         <div class="datagrid-header-left">
           <div class="input-append search datagrid-search">
             <input type="text" class="input-medium" placeholder="Search">
@@ -138,20 +22,20 @@
               <span class="grid-end"></span> of
               <span class="grid-count"></span>
             </span>
-            <div class="select grid-pagesize" data-resize="auto">
-              <button type="button" data-toggle="dropdown" class="btn dropdown-toggle">
-                <span class="dropdown-label"></span>
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu">
-                <li data-value="5" data-selected="true"><a href="#">5</a></li>
-                <li data-value="10"><a href="#">10</a></li>
-                <li data-value="20"><a href="#">20</a></li>
-                <li data-value="50"><a href="#">50</a></li>
-                <li data-value="100"><a href="#">100</a></li>
-              </ul>
-            </div>
-            <span>Per Page</span>
+            <!-- <div class="select grid&#45;pagesize" data&#45;resize="auto"> -->
+            <!--   <button type="button" data&#45;toggle="dropdown" class="btn dropdown&#45;toggle"> -->
+            <!--     <span class="dropdown&#45;label"></span> -->
+            <!--     <span class="caret"></span> -->
+            <!--   </button> -->
+            <!--   <ul class="dropdown&#45;menu"> -->
+            <!--     <li data&#45;value="5" data&#45;selected="true"><a href="#">5</a></li> -->
+            <!--     <li data&#45;value="20"><a href="#">20</a></li> -->
+            <!--     <li data&#45;value="30"><a href="#">30</a></li> -->
+            <!--     <li data&#45;value="50"><a href="#">50</a></li> -->
+            <!--     <li data&#45;value="100"><a href="#">100</a></li> -->
+            <!--   </ul> -->
+            <!-- </div> -->
+            <!-- <span>Per Page</span> -->
           </div>
         </div>
         <div class="datagrid-footer-right" style="display:none;">
@@ -159,11 +43,11 @@
             <button type="button" class="btn grid-prevpage"><i class="icon-arrow-left"></i></button>
             <span>Page</span>
 
-            <div class="input-append dropdown combobox">
-              <input class="span1" type="text">
-              <button type="button" class="btn" data-toggle="dropdown"><i class="caret"></i></button>
-              <ul class="dropdown-menu"></ul>
-            </div>
+            <!-- <div class="input&#45;append dropdown combobox"> -->
+              <input disabled="disabled" class="span1" type="text">
+            <!--   <button type="button" class="btn" data&#45;toggle="dropdown"><i class="caret"></i></button> -->
+            <!--   <ul class="dropdown&#45;menu"></ul> -->
+            <!-- </div> -->
             <span>of <span class="grid-pages"></span></span>
             <button type="button" class="btn grid-nextpage"><i class="icon-arrow-right"></i></button>
           </div>

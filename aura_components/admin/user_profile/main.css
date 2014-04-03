@@ -1,14 +1,19 @@
 [data-hull-component="admin/user_profile@hull"] .avatar {
   margin-right: 10px;
-  margin-top: 4px;
+  margin-top: 15px;
 }
 
 [data-hull-component="admin/user_profile@hull"] header.name {
   margin: 18px -25px;
-  border-top: 1px solid #008cdd;
-  border-bottom: 1px solid #008cdd;
+  border-bottom: 1px solid rgba(0,140,221,.4);
   padding-left: 33px;
   background: rgba(0, 140, 221, 0.05);
+}
+
+[data-hull-component="admin/user_profile@hull"] header.name:first-of-type {
+  margin-top: 0;
+  padding-top: 15px;
+  padding-bottom: 15px;
 }
 
 [data-hull-component="admin/user_profile@hull"] header.name h4 {
@@ -32,5 +37,6 @@
 
 [data-hull-component="admin/user_profile@hull"] header h3,
 [data-hull-component="admin/user_profile@hull"] header h4 {
-  color: #5A5A5A;
+  color: #5A5A6A;
 }
+

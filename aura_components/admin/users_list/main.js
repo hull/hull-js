@@ -37,10 +37,10 @@ Hull.component({
     this.query = {};
     this.currentQuery = {};
     this.injectLinkTag(this.options.baseUrl + '/ladda-themeless.min.css');
-    this.injectLinkTag(this.options.baseUrl + '/userlist.min.css');
     this.injectLinkTag(this.options.baseUrl + '/bootstrap-modal.min.css');
     this.injectLinkTag(this.options.baseUrl + '/fuelux.min.css');
     this.injectLinkTag(this.options.baseUrl + '/fuelux-responsive.min.css');
+    this.injectLinkTag(this.options.baseUrl + '/userlist.min.css');
   },
 
   /**
@@ -155,6 +155,10 @@ Hull.component({
         var ds = self.datasources.users;
         ds.def.params.page = (options.pageIndex || 0) + 1;
         ds.def.params.per_page = options.pageSize || 30;
+        self.track('hull.admin.users_list.pageview', {
+          page: ds.def.params.page,
+          user_id: self.data.me.id
+        });
         if (options.sortProperty) {
           ds.sort(options.sortProperty, (options.sortDirection || '').toUpperCase())
         }
@@ -184,6 +188,7 @@ Hull.component({
       Hull.parse(self.$el);
     }).on('itemSelected', function (evt, row) {
       self.sandbox.emit('hull.user.select', row.id);
+      $table.datagrid('clearSelectedItems');
     });
 
 
