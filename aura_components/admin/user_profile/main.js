@@ -80,6 +80,10 @@ Hull.component({
   afterRender: function () {
     if (this.options.id) {
       this.sandbox.emit('hull.admin.user_profile.available');
+      this.track('hull.admin.user_profile.show', {
+        target_user_id: this.options.id,
+        user_id: this.data.me.id
+      });
     }
   },
 
