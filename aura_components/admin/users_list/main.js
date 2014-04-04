@@ -29,7 +29,10 @@ Hull.component({
   datasources: {
     users: {
       provider: 'admin@:namespace',
-      path: 'users'
+      path: 'users/search',
+      params: {
+        search: ''
+      }
     }
   },
 
@@ -77,10 +80,14 @@ Hull.component({
           var direction = options.sortDirection || '';
           trackingData.sortProperty = options.sortProperty;
           trackingData.sortDirection = direction;
-          var sortChanged = ds.sort(trackingData.sortProperty, trackingData.sortDirection);
-          if (sortChanged) {
+          var oldSort = ds.def.params.order;
+          ds.def.params.order = {};
+          ds.def.params.order[options.sortProperty] = direction.toLowerCase();
+          if (oldSort[options.sortProperty] !== direction.toLowerCase()) {
             self.sandbox.track('hull.admin.users_list.sort', trackingData);
           }
+        } else {
+          ds.def.params.order = { 'created_at': 'desc' };
         }
         if (options.search) {
           self.sandbox.track('hull.admin.users_list.search', {
@@ -88,24 +95,24 @@ Hull.component({
             search: options.search
           });
 
-          var whereParams = {};
-          whereParams.email = options.search;
-          ds.where(whereParams);
+          ds.def.params.search = options.search;
           trackingData.search = options.search;
         } else {
-          ds.where({});
+          ds.def.params.search = '*';
+          ds.def.params.page = 1;
         }
         ds.def.params.page = (options.pageIndex || 0) + 1;
         ds.def.params.per_page = options.pageSize || 30;
         self.sandbox.track('hull.admin.users_list.pageview', trackingData);
         ds.fetch().then(function (obj) {
+          var data = obj.get('data');
           var payload = {
-            data: obj.toJSON(),
-            start: (ds.def.params.page - 1) * ds.def.params.per_page + 1,
-            end: (ds.def.params.page - 1) * ds.def.params.per_page + obj.length,
-            count: 55,
-            pages: 2,
-            page: ds.def.params.page
+            data: data,
+            start: (obj.get('pagination').page - 1) * obj.get('pagination').per_page + 1,
+            end: (obj.get('pagination').page - 1) * obj.get('pagination').per_page + data.length,
+            count: obj.get('total'),
+            pages: obj.get('pagination').pages,
+            page: obj.get('pagination').page
           };
           callback(payload);
         });
