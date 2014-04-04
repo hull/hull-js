@@ -19,6 +19,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-bump');
   grunt.loadNpmTasks('grunt-invalidate-cloudfront');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   var clientConfig = grunt.file.readJSON('.grunt/client.json');
   var remoteConfig = grunt.file.readJSON('.grunt/remote.json');
@@ -95,8 +96,19 @@ module.exports = function (grunt) {
     },
     cssmin: {
       minify: {
-        src: 'aura_components/login/shopify/style.css',
-        dest: 'dist/<%= PKG_VERSION %>/aura_components/login/shopify/style.min.css'
+        expand: true,
+        src: 'aura_components/**/*.css',
+        dest: 'dist/<%= PKG_VERSION %>/',
+        ext: '.min.css'
+      }
+    },
+    copy: {
+      assets: {
+        files: [{
+          expand: true,
+          src: ['aura_components/**/*.png'],
+          dest: 'dist/<%= PKG_VERSION %>/'
+        }],
       }
     },
     coffee: {
@@ -175,7 +187,7 @@ module.exports = function (grunt) {
     watch: {
       widgets: {
         files: ['aura_components/**/*'],
-        tasks: ['dist:widgets', 'cssmin']
+        tasks: ['dist:widgets', 'cssmin', 'copy']
       },
       remote: {
         files: remoteConfig.coffeeFiles,
@@ -242,7 +254,7 @@ module.exports = function (grunt) {
     },
     dist: {
       "remote": ['version', 'clean:remote', 'coffee:remote', 'wrap', 'version', 'requirejs:remote', 'symlink:current'],
-      "client": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client', 'cssmin', 'symlink:current'],
+      "client": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client', 'cssmin', 'copy', 'symlink:current'],
       "api": ['version', 'clean:client', 'coffee:api', 'wrap', 'version', 'requirejs:api', 'symlink:current'],
       "client-no-underscore": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
       "client-no-backbone": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],

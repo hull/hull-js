@@ -1,42 +1,62 @@
 {{#if user}}
-  <div class="media user-header">
-    {{#if user.picture}}
-      <div class="pull-left">
-        <img class='img-rounded' src="{{user.picture}}" width="50" height="50"/>
-      </div>
-    {{/if}}
-
-    <div class='media-body'>
-      <h4 class='media-heading'>
-        {{user.name}}
-        <small class="muted">{{user.email}}</small>
-      </h4>
-
-      <div class="admin-infos">
-        <dl>
-          {{#if user.email}}
-            <dt>Email</dt>
-            <dd>{{user.email}}</dd>
-          {{/if}}
-          {{#if user.username}}
-            <dt>Username</dt>
-            <dd>{{user.username}}</dd>
-          {{/if}}
-          {{#each user.identities}}
-            <dt>{{humanize provider}}:</dt>
-            <dd>{{#if login}}{{login}}{{else}}{{email}}{{/if}}</dd>
-          {{/each}}
-        </dl>
-      </div>
-
-    </div>
-
+  <div class="avatar pull-left">
+    <div data-hull-component="admin/user_avatar@hull" data-hull-avatar={{user.picture}}></div>
+  </div>
+  <div data-dismiss="modal" class="pull-right close-modal">
+    <a href="#">
+      <small>
+        <i class="icon-error"></i>
+        Close
+      </small>
+    </a>
+  </div>
+  <header class="name">
+    <h3>{{user.name}}</h3>
+  </header>
+  <div class="admin-infos">
+    <dl>
+        <dt>Email</dt>
+        <dd>{{user.email}}</dd>
+        <dt>Username</dt>
+        <dd>{{user.username}}</dd>
+        <dt>Signed up</dt>
+        <dd>{{fromNow user.created_at}}</dd>
+    </dl>
   </div>
 
   <div class="row-fluid">
-
     <div class="cell-6">
-
+      <div class="admin-infos">
+        <header>
+          <h5>Identities</h5>
+        </header>
+        <dl>
+        {{#if isGuest}}
+          <dt>Guest user</dt>
+          <dd><i class="icon-check"></i></dd>
+        {{/if}}
+        {{#if isEmail}}
+          <dt>Email</dt>
+          <dd>
+            <a href="mailto:{{user.email}}">{{user.email}}</a>
+          </dd>
+        {{/if}}
+        {{#key_value identities}}
+          <dt>{{humanize key}}</dt>
+          <dd class="social-details">
+            {{#if value.login}}{{value.login}}{{/if}}
+            {{#if value.profile}}
+              <a href="{{value.profile}}" target="blank">Profile</a>
+            {{/if}}
+            {{#if value.email}}
+              <a href="mailto:{{value.email}}">Email</a>
+            {{/if}}
+          </dd>
+        {{/key_value}}
+        </dl>
+      </div>
+    </div>
+    <div class="cell-6">
       <div class="admin-infos admin-infos-permissions">
         <header>
           <h5>Permissions</h5>
@@ -74,9 +94,18 @@
           <dd>{{json value}}</dd>
         </dl>
       {{/key_value}}
-
     </div>
-
+    <div class="cell-6 admin-infos">
+        <header>
+          <h5>Extra</h5>
+        </header>
+      {{#key_value user.extra}}
+        <dl>
+          <dt>{{humanize key}}</dt>
+          <dd>{{json value}}</dd>
+        </dl>
+      {{/key_value}}
+    </div>
   </div>
 
   {{#unless org.public}}
@@ -91,11 +120,13 @@
 
 
   {{#if userHasProfiles}}
-    <h3>Profiles</h3>
+    <header class="name">
+      <h4>Profiles</h4>
+    </header>
     <div class="admin-infos">
       {{#each user.profiles}}
         <header>
-          <h5>{{@key}}:</h5>
+          <h5>Application "{{@key}}":</h5>
         </header>
         <dl>
           {{#each this}}
@@ -108,33 +139,35 @@
   {{/if}}
 
   {{#if badges}}
-  <h3>Badges</h3>
-  {{#badges}}
-  <div class="admin-infos">
     <header>
-      <h5>
-        <small class="pull-right">
-          <a class="btn-link" data-hull-action="deleteBadge" data-hull-id="{{id}}">
-            <i class="icon-trash"></i> delete
-          </a>
-        </small>
-        [{{achievement_type}}] {{achievement_name}}
-      </h5>
+      <h4>Badges</h4>
     </header>
-    <dl>
-      <dt>created_at:</dt>
-      <dd>{{created_at}}</dd>
-      <dt>updated_at:</dt>
-      <dd>{{updated_at}}</dd>
-      <dt>Score:</dt>
-      <dd>{{score}}</dd>
-      <dt>Best Score:</dt>
-      <dd>{{best_score}}</dd>
-      <dt># attempts:</dt>
-      <dd>{{stats.attempts}}</dd>
-    </dl>
-  </div>
-  {{/badges}}
+    {{#badges}}
+    <div class="admin-infos">
+      <header>
+        <h5>
+          <small class="pull-right">
+            <a class="btn-link" data-hull-action="deleteBadge" data-hull-id="{{id}}">
+              <i class="icon-trash"></i> delete
+            </a>
+          </small>
+          [{{achievement_type}}] {{achievement_name}}
+        </h5>
+      </header>
+      <dl>
+        <dt>created_at:</dt>
+        <dd>{{created_at}}</dd>
+        <dt>updated_at:</dt>
+        <dd>{{updated_at}}</dd>
+        <dt>Score:</dt>
+        <dd>{{score}}</dd>
+        <dt>Best Score:</dt>
+        <dd>{{best_score}}</dd>
+        <dt># attempts:</dt>
+        <dd>{{stats.attempts}}</dd>
+      </dl>
+    </div>
+    {{/badges}}
   {{/if}}
 
 {{else}}

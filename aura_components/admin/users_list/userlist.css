@@ -1,0 +1,55 @@
+.table.userlist thead th {
+  border-bottom: 1px solid #ccc;
+}
+.table.userlist tbody td {
+  vertical-align: bottom;
+  border-top: 0;
+}
+.table.userlist td.providers i {
+  font-size: 20px;
+}
+
+[data-hull-component="admin/users_list@hull"] .btn {
+  background-image: none;
+}
+
+.form-search .input-append .btn.squared {
+  -webkit-border-radius: 0 4px 4px 0;
+  -moz-border-radius: 0 4px 4px 0;
+  border-radius: 0 4px 4px 0;
+}
+
+nav.pagination {
+  overflow: auto;
+}
+
+.fuelux .datagrid img {
+  width: 50px;
+  height: 50px;
+}
+
+.fuelux .datagrid tfoot .datagrid-footer-right .grid-pager > span,
+.fuelux .datagrid tfoot .datagrid-footer-right .grid-pager > button {
+  top: 0;
+}
+
+.fuelux .grid-pager input[type="text"] {
+  margin-bottom: 0;
+}
+
+.fuelux .selectWrap {
+  left: 0;
+}
+
+.fuelux .datagrid .btn {
+  background-image: none;
+  box-shadow: none;
+}
+
+.fuelux .datagrid thead .search-header,
+.fuelux .datagrid tfoot {
+  background: white;
+}
+.fuelux .datagrid thead .search-header th {
+  cursor: default;
+}

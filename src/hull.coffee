@@ -23,6 +23,7 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
       .use('aura-extensions/aura-twitter-text')
       .use('aura-extensions/hull-reporting')
       .use('aura-extensions/hull-entities')
+      .use('aura-extensions/hull-helpers')
       .use('aura-extensions/hull-utils')
       .use('aura-extensions/aura-form-serialize')
       .use('aura-extensions/aura-component-validate-options')

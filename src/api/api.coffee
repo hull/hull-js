@@ -12,7 +12,10 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
 
     message = null
     # Main method to request the API
-    api = -> message.apply(undefined, apiParams.parse(slice.call(arguments)))
+    api = (args)-> 
+      params = apiParams.parse(slice.call(arguments))
+      params[0].completeResponse = true if args?.completeResponse
+      message.apply(undefined, params)
     # Method-specific function
     _.each ['get', 'post', 'put', 'delete'], (method)->
       api[method] = ()->
@@ -76,6 +79,7 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
             catch error
               false
         callback(res.response)
+        return deferred.resolve({response: res.response, headers: headers}) if params.completeResponse
         deferred.resolve(res.response, res.headers)
       onError = (err={})->
         errback(err.message)
