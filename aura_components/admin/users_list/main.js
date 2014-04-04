@@ -67,15 +67,44 @@ Hull.component({
   },
 
   afterRender: function() {
+    var $table = this.$el.find('.datagrid');
+    var $btns = $table.find('.period button');
+    $btns.filter('.default').addClass('active');
+    $btns.on('click', function (e) {
+      $(this).button('toggle');
+      $table.datagrid('reload');
+    });
     var self = this;
     var datasource = {
       columns: this.sandbox.util._.bind(this.columnConfig, this),
       data: function (options, callback) {
+        var period = self.$el.find('button.active').prop('value');
         var ds = self.datasources.users;
         var trackingData = {
           page: ds.def.params.page,
           user_id: self.data.me.id
         };
+        if (period === 'all') {
+          ds.def.params.where = undefined;
+        } else {
+          var moment = self.sandbox.util.moment().startOf('day');
+          switch(period) {
+            case 'day':
+              moment.subtract('days', 1);
+              break;
+            case 'week':
+              moment.subtract('weeks', 1)
+              break;
+            case 'month':
+              moment.subtract('months', 1);
+              break;
+          }
+          ds.def.params.where = {
+            created_at: {
+              gte: moment.toDate().toISOString()
+            }
+          }
+        }
         if (options.sortProperty) {
           var direction = options.sortDirection || '';
           trackingData.sortProperty = options.sortProperty;
@@ -118,7 +147,6 @@ Hull.component({
         });
       }
     };
-    var $table = self.$el.find('.datagrid');
     $table.datagrid({
       dataSource: datasource,
       enableSelect: true,
