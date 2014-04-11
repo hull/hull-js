@@ -7,7 +7,9 @@
 
   <div class="hull-social-container">
     {{#if loggedIn}}
-      <a href="#" data-hull-action="_logout">Sign Out</a>
+      {{#if showSignOut}}
+        <a href="#" data-hull-action="_logout">Sign Out</a>
+      {{/if}}
 
       {{#if showLinkIdentity}}
         {{#each providers}}

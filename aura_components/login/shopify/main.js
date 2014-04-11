@@ -5,18 +5,19 @@ Hull.component({
 
   linkTagInjected: false,
 
-  defaultErrorMessages: {
+  defaultMessages: {
     identityTakenMessage: 'This "{{provider}}" account is already linked to another User.',
     emailTakenMessage: '"{{email}}" is already taken.',
     authFailedMessage: 'You did not fully authorize or "{{provider}}" app is not well configured.',
     windowClosedMessage: 'Authorization window has been closed.',
-    customerExistsMessage: '"{{email}}" is already associated with an account... Please <a href="/account/login">log in with your password</a>. If you have forgotten your password, you can <a href="/account/login#recover">reset your password here</a>.'
+    customerExistsMessage: '"{{email}}" is already associated with an account... Please <a href="/account/login">log in with your password</a>. If you have forgotten your password, you can <a href="/account/login#recover">reset your password here</a>.',
+    fallbackMessage: 'Bummer, something went wrong during authentication.'
   },
 
   initialize: function() {
     this.isLoading = false;
 
-    this.errorMessages = this.sandbox.util._.reduce(this.defaultErrorMessages, function(memo, v, k) {
+    this.messageTemplates = this.sandbox.util._.reduce(this.defaultMessages, function(memo, v, k) {
       memo[k] = Hull.util.Handlebars.compile(this.options[k] || v);
       return memo;
     }, {}, this);
@@ -59,6 +60,7 @@ Hull.component({
     }, {});
 
     data.showLinkIdentity = this.options.showLinkIdentity !== false;
+    data.showSignOut = this.options.showSignOut !== false;
   },
 
   afterRender: function() {
@@ -88,8 +90,8 @@ Hull.component({
     this.sandbox[methodName](provider).then(function() {
       if (handleSuccess) { self.stopLoading(); }
     }, function(error) {
-      var t = self.errorMessages[self.sandbox.util._.string.camelize(error.reason + '_message')];
-      var message = t ? t(self.sandbox.util._.extend({ provider: provider }, error)) : self.options.fallbackMessage;
+      var t = self.messageTemplates[self.sandbox.util._.string.camelize(error.reason + '_message')] || self.messageTemplates.fallbackMessage;
+      var message = t(self.sandbox.util._.extend({ provider: provider }, error));
 
       self.showErrorMessage(message);
       self.stopLoading();
