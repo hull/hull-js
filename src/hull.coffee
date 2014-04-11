@@ -43,7 +43,6 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
       app = new Aura(_.extend config, mediatorInstance: successResult.eventEmitter)
       deps =
         api: successResult.raw.api
-        authScope: successResult.raw.authScope
         remoteConfig: successResult.raw.remoteConfig
         login: successResult.api.login
         logout: successResult.api.logout
