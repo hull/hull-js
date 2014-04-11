@@ -7,6 +7,9 @@ define ()->
 
     loggedIn: -> @currentUser?
     is: (userId)-> @currentUser?.id == userId
+    isUserUpdate: (user)->
+      return unless user
+      @is(user.id) && @currentUser?.updated_at != user.updated_at
     updateDescription: ()->
       @updater.handle({ url: 'me', nocallback: true })
     updateSettings: ()->
@@ -15,7 +18,7 @@ define ()->
     userManager = new UserManager(app.config.data.me, app.config.settings, app.core.handler)
     app.core.handler.after (h)->
       userId = h.headers['Hull-User-Id']
-      unless userManager.is(userId) # It changed
+      if !userManager.is(userId) # It changed
         delete app.core.handler.headers['Hull-Access-Token']
         p1 = userManager.updateDescription().then (h)->
           userManager.currentUser = h.response
@@ -31,6 +34,12 @@ define ()->
           app.sandbox.emit 'remote.settings.update', {}
         )
         p2
+      else if userManager.isUserUpdate(h.response)
+        userManager.currentUser = h.response
+        app.sandbox.emit 'remote.user.update', userManager.currentUser
+        
+
+
 
     app.core.currentUser = -> JSON.parse(JSON.stringify(userManager.userDesc)) #TODO Seriously use lodash
     app.core.settings = -> JSON.parse(JSON.stringify(userManager.currentSettings)) #TODO Seriously use lodash
