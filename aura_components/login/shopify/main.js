@@ -6,10 +6,11 @@ Hull.component({
   linkTagInjected: false,
 
   defaultErrorMessages: {
-    identityTakenMessage: 'This "{{provider}}" account is already linked to another User',
-    emailTakenMessage: '"{{email}}" is already taken',
-    authFailedMessage: 'You did not fully authorize or "{{provider}}" app is not well configured',
-    windowClosedMessage: 'Authorization window has been closed'
+    identityTakenMessage: 'This "{{provider}}" account is already linked to another User.',
+    emailTakenMessage: '"{{email}}" is already taken.',
+    authFailedMessage: 'You did not fully authorize or "{{provider}}" app is not well configured.',
+    windowClosedMessage: 'Authorization window has been closed.',
+    customerExistsMessage: '"{{email}}" is already associated with an account... Please <a href="/account/login">log in with your password</a>. If you have forgotten your password, you can <a href="/account/login#recover">reset your password here</a>.'
   },
 
   initialize: function() {
@@ -88,7 +89,7 @@ Hull.component({
       if (handleSuccess) { self.stopLoading(); }
     }, function(error) {
       var t = self.errorMessages[self.sandbox.util._.string.camelize(error.reason + '_message')];
-      var message = t ? t(self.sandbox.util._.extend({ provider: provider }, error)) : (error.message || self.options.fallbackMessage);
+      var message = t ? t(self.sandbox.util._.extend({ provider: provider }, error)) : self.options.fallbackMessage;
 
       self.showErrorMessage(message);
       self.stopLoading();
@@ -98,7 +99,7 @@ Hull.component({
   showErrorMessage: function(message) {
     if (this.options.showErrors === false) { return; }
 
-    var $error = $(document.createElement('p')).addClass('hull-error').text(message);
+    var $error = $(document.createElement('p')).addClass('hull-error').html(message);
     this.$errorContainer.html($error);
   },
 
