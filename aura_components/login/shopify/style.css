@@ -41,7 +41,14 @@
   border: 1px solid #EBCCD1;
   color: #A94442;
   border-radius: 4px;
-  padding: 5px;
+  padding: 10px;
+}
+
+.hull-error a,
+.hull-error a:hover {
+  color: #A94442;
+  text-decoration: underline;
+  opacity: 1;
 }
 
 .hull-loader {
