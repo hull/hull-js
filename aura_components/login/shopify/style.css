@@ -31,7 +31,8 @@
   margin: 0;
 }
 
-.hull-error-container {
+.hull-social div.hull-error-container {
+  margin-bottom: 10px;
 }
 
 .hull-error {
