@@ -1,3 +1,7 @@
+# 0.8.21
+
+* Updates Hull.currentUser() on user change #150
+
 # 0.8.19
 
 * Enhances compatibility down to jQuery 1.5 for components
