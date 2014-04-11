@@ -100,8 +100,11 @@ define ['lib/utils/promises', 'underscore', 'backbone'], (promises, _, Backbone)
         if /undefined/.test(@def.path)
           dfd.resolve false
           return dfd.promise
+        @def.completeResponse = true
         transportDfd = @transport(@def)
-        transportDfd.then (obj, headers) =>
+        transportDfd.then (res) =>
+          obj = res.response
+          headers = res.headers
           if _.isArray(obj)
             @paginationLinks = parseLinkHeader(headers['Link']) if headers?.Link
             dfd.resolve (new Backbone.Collection obj)

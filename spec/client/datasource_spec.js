@@ -1,13 +1,18 @@
 /*global define:true */
-define(['lib/client/datasource'], function (Datasource) {
+define(['lib/client/datasource', 'promises'], function (Datasource, promises) {
 
   "use strict";
   /*jshint devel: true, browser: true */
   /*global describe:true, it:true, before: true, sinon: true, define: true */
 
-  var api = function () {};
+  var api;
 
   describe("Datasources", function () {
+    beforeEach(function () {
+      api = sinon.spy(function () {
+        return promises.defer().promise;
+      });
+    })
     it('Datasource should be a prototype', function () {
       Datasource.should.be.a('function');
       Datasource.prototype.should.be.a('object');
@@ -26,16 +31,17 @@ define(['lib/client/datasource'], function (Datasource) {
       });
 
       it('should throw an error when no transport is provided', function () {
-        var fn1 = function () { new Datasource('abc', api); };
-        fn1.should.throw;
+        var fn1 = function () { new Datasource('abc'); };
+        fn1.should.throw(TypeError);
       });
 
       it('should throw an error when the transport is not a function', function () {
         var fn1 = function () { new Datasource('abc', ''); };
         var fn2 = function () { new Datasource('abc', {}); };
         var fn3 = function () { new Datasource('abc', function () {}); };
-        fn1.should.throw;
-        fn2.should.not.throw;
+        fn1.should.throw(TypeError);
+        fn2.should.not.throw();
+        fn3.should.not.throw(TypeError);
       });
 
       describe("With a string", function () {
@@ -127,6 +133,22 @@ define(['lib/client/datasource'], function (Datasource) {
         }, api).def.params;
 
         params.should.eql({ foo: 'baz' });
+      });
+    });
+
+    describe("Requesting", function () {
+      it('should use the transport to fetch data', function () {
+        var ds = new Datasource('hop', api);
+        ds.fetch();
+        api.should.have.been.called;
+      });
+      it('should require a complete response', function () {
+        var ds = new Datasource('hop', api);
+        ds.fetch();
+        api.should.have.been.calledOnce;
+        var args = api.args[0];
+        args[0].should.contain.key('completeResponse');
+        args[0].completeResponse.should.eql(true);
       });
     });
   });
