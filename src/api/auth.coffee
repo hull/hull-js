@@ -13,6 +13,7 @@ define ['jquery', 'underscore', 'lib/utils/promises', 'lib/utils/version'], ($, 
     # Holds the state of the authentication process
     # @type {Promise|Boolean}
     authenticating = false
+    _popupInterval = null
 
 
     # Starts the login process
@@ -50,6 +51,8 @@ define ['jquery', 'underscore', 'lib/utils/promises', 'lib/utils/version'], ($, 
       else
         authenticating.reject('Login canceled')
       authenticating = false
+      clearInterval(_popupInterval)
+      _popupInterval = null
 
     # Generates the complete URL to be reached to validate login
     generateAuthUrl = (config, provider, opts)->
@@ -75,7 +78,19 @@ define ['jquery', 'underscore', 'lib/utils/promises', 'lib/utils/version'], ($, 
           onCompleteAuthentication.call undefined, result
         window.__hull_login_status__ = _.bind(cbFn, undefined)
         successToken
-      authHelper: (path)-> window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
+      authHelper: (path)->
+        w = window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
+        if window.device?.cordova
+          w?.addEventListener 'loadstart', (event)->
+            hash = try JSON.parse(atob(event.url.split('#')[1]))
+            if hash
+              window.__hull_login_status__(hash)
+              w.close()
+
+        _popupInterval = w? && setInterval ->
+          if w?.closed
+            onCompleteAuthentication(false)
+        , 200
       onCompleteAuth: onCompleteAuthentication
     api =
       login: login
