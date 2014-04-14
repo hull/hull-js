@@ -145,7 +145,11 @@ define ['jquery', 'underscore'], ($, _)->
     accessToken = app.config.access_token
     headers['Hull-Access-Token'] = accessToken if accessToken
 
-    app.core.handler = new handler headers: headers
+    app.core.handler = new handler
+      headers: headers,
+      min: app.config.batching?.min
+      max: app.config.batching?.max
+      delay: app.config.batching?.delay
   afterAppStart: (app)->
     app.sandbox.on 'remote.settings.update', (settings)->
       header = settings.auth?.hull?.credentials?.access_token
