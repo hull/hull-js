@@ -95,8 +95,10 @@ module.exports = function (grunt) {
     },
     cssmin: {
       minify: {
-        src: 'aura_components/login/shopify/style.css',
-        dest: 'dist/<%= PKG_VERSION %>/aura_components/login/shopify/style.min.css'
+        expand: true,
+        src: 'aura_components/**/*.css',
+        dest: 'dist/<%= PKG_VERSION %>/',
+        ext: '.min.css'
       }
     },
     coffee: {

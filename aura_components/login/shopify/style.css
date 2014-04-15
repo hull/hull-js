@@ -133,11 +133,7 @@
   border-color: #c23629;
 }
 
-/**
- * data-hull-theme="default"
- */
-
-.hull-theme-default .hull-btn .hull-icon {
+.hull-btn .hull-icon {
   margin-right: 5px;
 }
 
