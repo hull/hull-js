@@ -23,11 +23,11 @@
 .hull-checkout-dropdown {
   position: relative;
   width: 260px !important;
-  border: 1px solid #e3e3e3;
+  border: 1px solid #d5d5d5;
   padding: 20px 0 0 0;
   background: #fff;
   border-radius: 5px;
-  margin-bottom: 20px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
 }
 
 .hull-checkout-dropdown::before,
@@ -127,6 +127,8 @@ a.hull-checkout-regular:active {
 .hull-checkout button.hull-btn,
 .hull-checkout button.hull-btn:hover,
 .hull-checkout button.hull-btn:active {
+  padding: 0;
+  margin: 0;
   text-decoration: none;
   font-weight: normal;
   width: 100%;

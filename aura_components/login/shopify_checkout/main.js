@@ -52,7 +52,7 @@ Hull.component({
   leave: function() {
     var self = this;
     this.timer = setTimeout(function() {
-      //self.hide();
+      self.hide();
     }, 200);
   },
 
@@ -77,7 +77,7 @@ Hull.component({
     if (offset.top - $(window).scrollTop() >= this.$dropdown.outerHeight()) {
       this.$dropdown.addClass('hull-dropdown-above');
       this.$dropdown.removeClass('hull-dropdown-behind');
-      css.top = offset.top - this.$dropdown.outerHeight() - 10;
+      css.top = offset.top - this.$dropdown.outerHeight(true) - 10 - parseInt($('html').css('marginTop'), 10);
     } else {
       this.$dropdown.addClass('hull-dropdown-behind');
       this.$dropdown.removeClass('hull-dropdown-above');
