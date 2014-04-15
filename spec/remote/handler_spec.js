@@ -158,6 +158,38 @@ define(['lib/remote/handler', 'jquery'], function(handlerModule, $) {
             $.when(p1, p2, p3).then(_done, _done);
           });
         });
+
+        describe('batching config', function () {
+          it('should provide sensible defaults', function () {
+            var app = {
+              config: {
+                appId: ''
+              },
+              core: {}
+            };
+            var handler = handlerModule.initialize(app);
+            handler.options.min.should.be.at.least(0);
+            handler.options.max.should.be.at.least(0);
+            handler.options.delay.should.be.at.least(0);
+          });
+          it('should be overridable', function () {
+            var app = {
+              config: {
+                appId: '',
+                batching: {
+                  min: 8,
+                  max: 9,
+                  delay: 10
+                }
+              },
+              core: {}
+            };
+            var handler = handlerModule.initialize(app);
+            handler.options.min.should.be.eql(8);
+            handler.options.max.should.be.eql(9);
+            handler.options.delay.should.be.eql(10);
+          });
+        });
       });
     });
   });
