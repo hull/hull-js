@@ -15,6 +15,20 @@ Shopify Component Options
 
 - If set to `true` user will see a link that allow him to sign out.
 
+### `data-show-errors`
+
+*Boolean*, default to `true`.
+
+- If set to `false`, error message are not displayed. The theme developer have to handle error messsage manualy.
+
+### `data-redirect-to`
+
+*String*, default to:
+
+```
+'/account'
+```
+
 ## Style
 
 ### `data-inject-link-tag`
@@ -30,13 +44,33 @@ Shopify Component Options
 - If set to `false` buttons are stacked.
 - If set to `true` buttons are displayed on one line.
 
-## Error message
+## Action messages
 
-### `data-show-errors`
+### `data-sign-in-message`
 
-*Boolean*, default to `true`.
+*String*, default to:
 
-- If set to `false`, error message are not displayed. The theme developer have to handle error messsage manualy.
+```
+'Sign In with {{provider}}'
+```
+
+### `data-link-message`
+
+*String*, default to:
+
+```
+'Link your {{provider}} account'
+```
+
+### `data-unlink-message`
+
+*String*, default to:
+
+```
+'Unlink your {{provider}} account'
+```
+
+## Error messages
 
 ### `data-identity-taken-message`
 

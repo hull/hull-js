@@ -7,8 +7,8 @@ Hull.component({
 
   defaultMessages: {
     signInMessage: 'Sign In with {{provider}}',
-    linkMessage: 'Unlink your {{provider}} account',
-    unlinkMessage: 'Link your {{provider}} account',
+    linkMessage: 'Link your {{provider}} account',
+    unlinkMessage: 'Unlink your {{provider}} account',
     identityTakenMessage: 'This "{{provider}}" account is already linked to another User.',
     emailTakenMessage: '"{{email}}" is already taken.',
     authFailedMessage: 'You did not fully authorize or "{{provider}}" app is not well configured.',
