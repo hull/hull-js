@@ -22,8 +22,10 @@ Hull.component({
   initialize: function() {
     this.isLoading = false;
 
-    if (this.options.reloadOnLogin !== false) {
-      this.sandbox.on('hull.auth.login', function() { document.location.reload(); }, this);
+    if (this.options.redirectOnLogin !== false) {
+      this.sandbox.on('hull.auth.login', function() { 
+        document.location = this.options.redirectTo || "/account";
+      }, this);
     }
 
     this.sandbox.on('hull.shopify.loading.start', this.startLoading, this);

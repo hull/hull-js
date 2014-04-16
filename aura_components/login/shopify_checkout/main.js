@@ -6,7 +6,7 @@ Hull.component({
   linkTagInjected: false,
 
   initialize: function() {
-    this.$target = $(this.options.target || '#checkout');
+    this.$target = $(this.options.target || 'input[name="checkout"],#checkout');
 
     if (this.$target.length !== 1) {
       throw new Error('');
