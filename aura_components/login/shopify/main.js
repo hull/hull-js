@@ -22,12 +22,6 @@ Hull.component({
   initialize: function() {
     this.isLoading = false;
 
-    if (this.options.redirectOnLogin !== false) {
-      this.sandbox.on('hull.auth.login', function() { 
-        document.location = this.options.redirectTo || "/account";
-      }, this);
-    }
-
     this.sandbox.on('hull.shopify.loading.start', this.startLoading, this);
     this.sandbox.on('hull.shopify.loading.stop', this.stopLoading, this);
 
@@ -61,7 +55,12 @@ Hull.component({
 
   actions: {
     _login: function(event, action) {
-      this.callAndStartLoading('login', action.data.provider);
+      var p = this.callAndStartLoading('login', action.data.provider);
+
+      if (this.options.redirectOnLogin !== false) {
+        var location = this.options.redirectTo || '/account';
+        p.done(function() { document.location = location; });
+      }
     },
 
     _logout: function(event, action) {
@@ -85,7 +84,9 @@ Hull.component({
     this.$el.addClass('hull-' + methodName);
 
     var self = this;
-    this.sandbox[methodName](provider).then(function() {
+    var p = this.sandbox[methodName](provider);
+
+    p.then(function() {
       if (handleSuccess) { self.stopLoading(); }
     }, function(error) {
       var _ = self.sandbox.util._;
@@ -97,6 +98,8 @@ Hull.component({
       self.showErrorMessage(message);
       self.stopLoading();
     });
+
+    return p;
   },
 
   startLoading: function() {
