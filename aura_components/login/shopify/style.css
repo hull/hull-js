@@ -31,7 +31,8 @@
   margin: 0;
 }
 
-.hull-error-container {
+.hull-social div.hull-error-container {
+  margin-bottom: 10px;
 }
 
 .hull-error {
@@ -40,7 +41,14 @@
   border: 1px solid #EBCCD1;
   color: #A94442;
   border-radius: 4px;
-  padding: 5px;
+  padding: 10px;
+}
+
+.hull-error a,
+.hull-error a:hover {
+  color: #A94442;
+  text-decoration: underline;
+  opacity: 1;
 }
 
 .hull-loader {
@@ -125,11 +133,7 @@
   border-color: #c23629;
 }
 
-/**
- * data-hull-theme="default"
- */
-
-.hull-theme-default .hull-btn .hull-icon {
+.hull-btn .hull-icon {
   margin-right: 5px;
 }
 

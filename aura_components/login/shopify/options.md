@@ -9,6 +9,12 @@ Shopify Component Options
 
 - If set to `true` user will see a button that allow him to link other social identity.
 
+### `data-show-sign-out`
+
+*Boolean*, default to `true`.
+
+- If set to `true` user will see a link that allow him to sign out.
+
 ## Style
 
 ### `data-inject-link-tag`
@@ -37,7 +43,7 @@ Shopify Component Options
 *String*, default to:
 
 ```
-'This "{{provider}}" account is already linked to another User'
+'This "{{provider}}" account is already linked to another User.'
 ```
 
 ### `data-email-taken-message`
@@ -53,7 +59,7 @@ Shopify Component Options
 *String*, default to:
 
 ```
-'You did not fully authorize or "{{provider}}" app is not well configured'
+'You did not fully authorize or "{{provider}}" app is not well configured.'
 ```
 
 ### `data-window-closed-message`
@@ -61,10 +67,22 @@ Shopify Component Options
 *String*, default to:
 
 ```
-'Authorization window has been closed'
+'Authorization window has been closed.'
+```
+
+### `data-customer-exists-message`
+
+*String*, default to:
+
+```
+'"{{email}}" is already associated with an account... Please <a href="/account/login">log in with your password</a>. If you have forgotten your password, you can <a href="/account/login#recover">reset your password here</a>.'
 ```
 
 ### `data-fallback-message`
 
-*String*, default to the error message sent by the server. (Most of the time is `'Login failed'`).
+*String*, default to:
+
+```
+'Bummer, something went wrong during authentication.'
+```
 

@@ -71,7 +71,8 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
         authenticating.resolve({})
       else
         error = new Error('Login failed')
-        error.reason = hash.error.reason
+        for k, v of hash.error
+          error[k] = v
         authenticating.reject(error)
 
       authenticating = null
