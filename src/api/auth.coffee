@@ -9,13 +9,19 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
     authenticating = null
     _popupInterval = null
 
+    loginComplete = (me)->
+      emitter.emit('hull.auth.login', me)
+      unless me?.stats?.sign_in_count?
+        emitter.emit('hull.auth.create', me)
+      me
+
+    loginFailed = (err)->
+      emitter.emit('hull.auth.fail', err)
+      throw err
+      err
+
     signup = (user) ->
-      apiFn('users', 'post', user).then (me)->
-        emitter.emit('hull.auth.login', me)
-        me
-      , (err)->
-        emitter.emit('hull.auth.fail', err.message)
-        throw err
+      apiFn('users', 'post', user).then loginComplete, loginFailed
 
 
     login = (loginOrProvider, optionsOrPassword, callback) ->
@@ -26,13 +32,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       else
         promise = loginWithProvider(loginOrProvider, optionsOrPassword).then(-> apiFn('me'))
 
-      evtPromise = promise.then((me)->
-        emitter.emit('hull.auth.login', me)
-        me
-      , (err)->
-        emitter.emit('hull.auth.fail', err)
-        err
-      )
+      evtPromise = promise.then loginComplete, loginFailed
       evtPromise.then(callback) if _.isFunction(callback)
 
       promise

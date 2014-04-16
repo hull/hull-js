@@ -13,10 +13,13 @@ define [
       _emitter = emitter()
       api.init(config, _emitter).then (api)->
         _reporting = reporting.init(api)
+        _emitter.on 'hull.auth.create', (me)->
+          providers = _.pluck me.identities, 'provider'
+          _reporting.track 'hull.auth.create', providers: providers, main_identity: me.main_identity
         _emitter.on 'hull.auth.login', (me)->
           #TODO Add the provider used to login
           providers = _.pluck me.identities, 'provider'
-          _reporting.track 'hull.auth.login', providers: providers
+          _reporting.track 'hull.auth.login', providers: providers, main_identity: me.main_identity
         _emitter.on 'hull.auth.logout', ()-> _reporting.track('hull.auth.logout')
 
         noCurentUserDeferred = promises.deferred()
