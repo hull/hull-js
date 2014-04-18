@@ -35,7 +35,7 @@ Shopify Component Options
 
 *Boolean*, default to `true`.
 
-- If set to `false` css stylesheet will not be injected into the shop. This options is usefull for theme developer that want to have complete control over css.
+- If set to `false` css stylesheet will not be injected into the shop. This options is useful for theme developer that want to have complete control over css.
 
 ### `data-inline`
 
