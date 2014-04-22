@@ -109,6 +109,8 @@
 .hull-checkout a:active {
   opacity: 1;
   text-decoration: none;
+  text-shadow: none;
+  box-shadow: none;
 }
 
 a.hull-checkout-regular,
@@ -127,6 +129,7 @@ a.hull-checkout-regular:active {
 .hull-checkout button.hull-btn,
 .hull-checkout button.hull-btn:hover,
 .hull-checkout button.hull-btn:active {
+  opacity: 1;
   padding: 0;
   margin: 0;
   text-decoration: none;
@@ -151,6 +154,7 @@ a.hull-checkout-regular:active {
   -ms-transition: all 0.5s ease;
   transition: all 0.5s ease;
   text-shadow: none;
+  box-shadow: none;
 }
 
 .hull-checkout button.hull-btn:hover {
