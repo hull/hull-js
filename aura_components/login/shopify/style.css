@@ -19,6 +19,7 @@
 .hull-icon-facebook:before { content: "\f09a"; }
 .hull-icon-twitter:before { content: "\f099"; }
 .hull-icon-google:before { content: "\f0d5"; }
+.hull-icon-instagram:before { content: "\f16d"; }
 
 .hull-social {
   margin: 0;
@@ -118,6 +119,16 @@
   border-color: #da4333;
 }
 
+.hull-btn-instagram {
+  background-color: #3f729b;
+  border-color: #2B597E;
+}
+
+.hull-btn-facebook:hover {
+  background-color: #2f4783;
+  border-color: #273c6f;
+}
+
 .hull-btn-facebook:hover {
   background-color: #2f4783;
   border-color: #273c6f;
@@ -131,6 +142,11 @@
 .hull-btn-google:hover {
   background-color: #d63c2e;
   border-color: #c23629;
+}
+
+.hull-btn-instagram:hover {
+  background-color: #38668B;
+  border-color: #264F71;
 }
 
 .hull-btn .hull-icon {
