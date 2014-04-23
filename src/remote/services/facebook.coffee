@@ -41,21 +41,13 @@ define ['lib/utils/promises', 'underscore'], (promises, _) ->
     window.fbAsyncInit = ()->
       FB.init app.config.settings.auth.facebook
       dfd.resolve({})
-    dfd.promise.then(->
-      _.each fbPool, (args)->
-        api.apply(undefined, args)
-      _.each fqlPool, (args)->
-        fql.apply(undefined, args)
-    ).done()
     app.core.routeHandlers.fql = ()->
-      if dfd.promise.isPending()
-        fqlPool.push [].slice.call(arguments)
-      else
-        fql.apply(undefined, arguments)
+      args = arguments
+      dfd.promise.then ()->
+        fql.apply(undefined, args)
       undefined
     app.core.routeHandlers.facebook = ()->
-      if dfd.promise.isPending()
-        fbPool.push [].slice.call(arguments)
-      else
-        api.apply(undefined, arguments)
+      args = arguments
+      dfd.promise.then ()->
+        api.apply(undefined, args)
       undefined
