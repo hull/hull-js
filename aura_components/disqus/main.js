@@ -52,8 +52,20 @@ Hull.component({
   ductTape: function () {
     var $div = $('<div>');
     $div.appendTo(this.$w);
-    console.log(this.$w);
     $div.height(39).width(300).css({position: 'absolute', top: 0, right: 0, background: 'white'});
 
+    this.$w.find('.blocker').remove();
+    if (this.loggedIn()) {
+      return;
+    }
+    var $div = $('<div>').addClass('blocker');
+    $div.appendTo(this.$w);
+    $div.height(39).width(300).css({
+      position: 'absolute',
+      top: 90,
+      width: '100%',
+      background: 'rgba(255, 255, 255, .9)',
+      height: 50
+    });
   }
 });
