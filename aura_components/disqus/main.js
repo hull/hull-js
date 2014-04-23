@@ -13,11 +13,16 @@ Hull.component({
         window.location.hash = "";
       }
     }
+
+    var $w = $('<div>').css('position', 'relative');
+    this.$el.wrap($w);
+    this.$w = this.$el.parent();
   },
   doRender: function () {
     var config = { reload: true };
     this.configureDisqus(config, 'config');
     window.DISQUS && DISQUS.reset(config);
+    this.ductTape();
   },
   configureDisqus: function (container, property) {
     //TODO The following needs to be fixed
@@ -28,10 +33,8 @@ Hull.component({
     container.disqus_shortname = shortName;
     if (this.loggedIn()) {
       var remote_auth_s3 = pageConfig.remote_auth_s3 || {};
-      this.$el.show();
     } else {
       var remote_auth_s3 = {};
-      this.$el.hide();
     }
     container[property] = function () {
       this.page.remote_auth_s3 = remote_auth_s3;
@@ -40,5 +43,17 @@ Hull.component({
         logout: window.location + '#logout'
       }
     }
+  },
+  /**
+   *
+   * "If you can't make it, fake it"
+   *
+   */
+  ductTape: function () {
+    var $div = $('<div>');
+    $div.appendTo(this.$w);
+    console.log(this.$w);
+    $div.height(39).width(300).css({position: 'absolute', top: 0, right: 0, background: 'white'});
+
   }
 });
