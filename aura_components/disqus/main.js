@@ -27,9 +27,8 @@ Hull.component({
         api_key = pageConfig.api_key;
     container.disqus_shortname = shortName;
     if (this.loggedIn()) {
-      var remote_auth_s3 = {};
-      this.$el.show();
       var remote_auth_s3 = pageConfig.remote_auth_s3 || {};
+      this.$el.show();
     } else {
       var remote_auth_s3 = {};
       this.$el.hide();
