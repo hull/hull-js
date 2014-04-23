@@ -13,6 +13,16 @@
 # to replay them if the app has loaded correctly
 #
 
+unless window.console and console.log
+  (->
+    noop = ->
+
+    methods = ["assert", "clear", "count", "debug", "dir", "dirxml", "error", "exception", "group", "groupCollapsed", "groupEnd", "info", "log", "markTimeline", "profile", "profileEnd", "markTimeline", "table", "time", "timeEnd", "timeStamp", "trace", "warn"]
+    length = methods.length
+    console = window.console = {}
+    console[methods[length]] = noop  while length--
+  )()
+
 
 #
 # Utilities
@@ -68,6 +78,7 @@ preInit = (isMain, config, cb, errb)->
     _success = (args...)-> successCb [config, isMain, cb or ->].concat(args)...
     _failure = (args...)-> failureCb [isMain, errb or ->].concat(args)...
     currentFlavour.init(_config).then(_success, _failure).done()
+    console.info("Hull.js version \"#{_hull.version}\" started")
 
 initApi = (config, args...)->
   config.apiOnly = true
@@ -79,6 +90,7 @@ initMain = (config, args...)->
 _hull = window.Hull =
   on:         createPool 'on'
   track:      createPool 'track'
+  ready:      createPool 'ready'
   init:       initMain
 
 _hull.init.api = initApi
@@ -91,8 +103,11 @@ _hull.component =  createPool 'component' if ENV=="client"
 # * Replays the track events
 successCb = (config, isMain, success, args...)->
   extension = currentFlavour.success(args...)
+  context = extension.context
   _config = _extend {}, config
-  _final = _extend({}, _hull, extension.exports)
+  _final = _extend {}, _hull, extension.exports,
+    ready: (fn)->
+      fn(_final, context.me, context.app, context.org)
 
   if isMain
     window.Hull = _final
@@ -102,6 +117,7 @@ successCb = (config, isMain, success, args...)->
   else
     delete _final.component #FIXME hackish
 
+  rerun('ready', _final)
   # Execute Hull.init callback
   _final.emit('hull.init', _final, extension.context.me, extension.context.app, extension.context.org)
 

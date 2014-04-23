@@ -25,7 +25,10 @@ Hull.component({
   },
 
   datasources: {
-    users: 'users'
+    users: {
+      provider: 'admin@:namespace',
+      path: 'users'
+    }
   },
 
   initialize: function() {

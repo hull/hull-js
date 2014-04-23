@@ -5,6 +5,17 @@ define ()->
       _currentUser = me
     emitter.on 'hull.auth.login', (me)->
       _currentUser = me
+    emitter.on 'hull.auth.update', (me)->
+      unless _currentUser?.id
+        if me.id
+          emitter.emit 'hull.auth.login', me
+      else
+        if _currentUser.id == me.id
+          _currentUser = me
+        else unless me?.id
+          emitter.emit 'hull.auth.logout'
+        else
+          emitter.emit 'hull.auth.login', me
     emitter.on 'hull.auth.logout', ()->
       _currentUser = false
     ()-> _currentUser

@@ -4,7 +4,7 @@
 
 Checkout
 
-    git@github.com:hull/hull-js.git
+    git clone git@github.com:hull/hull-js.git
 
 First, install grunt and bower
 
@@ -26,8 +26,10 @@ A boilerplate app is located in the `app` folder. Here's how to use it:
 ```
 cp app/app.example.js app/app.js
 grunt
-open http://localhost:3001/app
 ```
+
+Grunt will automatically start a server. When it is done, you can point your
+browser to [http://localhost:3001/app](http://localhost:3001/app)
 
 __Note__: You must configure `app/app.js` with the settings of your app,
 as found in your account at [https://accounts.hullapp.io](https://accounts.hullapp.io).
@@ -36,23 +38,11 @@ as found in your account at [https://accounts.hullapp.io](https://accounts.hulla
 
 * `dist`: Builds and executes the tests
 * `server` (default task): `dist` + starts a static HTTP server for local use
-* `deploy`: `dist` + [Additional flavors](http://hull.io/docs/hull_js/#flavors) + S3 upload (see below)
-
-# Deploying to S3 :
-
-We use S3 internally. A grunt task to deploy in S3 is provided.
-If you want to deploy to S3 too, follow these instructions:
-
-Create the file `.grunt/grunt-aws.json`, with the following content :
-
-    {
-      "key":"YOUR_AWS_KEY",
-      "secret":"YOUR_AWS_SECRET",
-      "bucket":"YOUR_AWS_BUCKET" // Without the "s3.amazonaws.com" part
-    }
-
+* `deploy`: `dist` + [Additional flavors](http://hull.io/docs/hull_js/#flavors) + S3 upload (see MAINTENANCE.md)
 
 # Developing locally (force @hull components to be fetched locally)
+
+Modify `app/index.html` as follows:
 
     <script src="http://localhost/dist/%%CURRENT_VERSION%%/hull.js"></script>
     <script>
@@ -62,15 +52,6 @@ Create the file `.grunt/grunt-aws.json`, with the following content :
         jsUrl: 'http://localhost/dist'
       });
     </script>
-
-
-# Creating a release
-
-* `git flow release start 0.x.x`
-* Bump versions in `bower.json` and `package.json` files
-* `git flow release finish 0.x.x`
-*
-
 
 
 # Contributing

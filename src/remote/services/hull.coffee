@@ -1,5 +1,27 @@
 define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
   (app)->
+    createOrRefreshUuid = (key, expires) ->
+      uuid = app.core.cookies.get(key) || app.core.util.uuid()
+      app.core.cookies.set(key, uuid, {
+        domain: document.location.host,
+        expires: expires
+      })
+
+      uuid
+
+    getBrowserId = ->
+      year = new Date().getFullYear() + 10
+      createOrRefreshUuid('_bid', new Date(year, 0, 1))
+
+    getSessionId = ->
+      createOrRefreshUuid('_sid', 30 * 60)
+
+    initInfo =
+      url: app.config.data.request.url.href
+      path: app.config.data.request.url.path
+      referrer: app.config.data.request.referrer?.href
+      browser_id: getBrowserId()
+      session_id: getSessionId()
     identify = (me) ->
       return unless me
       identified = !!me.id?
@@ -37,6 +59,7 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
       return unless event
       params.hull_app_id    = app.config?.appId
       params.hull_app_name  = app.config?.data?.app?.name
+      _.defaults params, initInfo
       require('analytics').track(event, params)
 
     trackAction = (response)->
@@ -71,14 +94,14 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
         base64:    'components/base64/base64'
 
     initialize: (app)->
+
       analytics = require('analytics')
+      settings = app.config.settings.analytics || {}
       analyticsSettings = {}
+      _.each settings, (s)->
+        analyticsSettings[s.name] = s
 
-      _.map app.config.services.types.analytics, (s)->
-        _service = app.config.services.settings[s]
-        analyticsSettings[_service.name] = _service
-
-      analytics.initialize(analyticsSettings)
+      analytics.initialize analyticsSettings
 
       identify(app.config.data.me) if app.config.data.me?
 

@@ -1,3 +1,5 @@
+throw 'jQuery must be available for components to work' unless window.jQuery
+
 define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars', 'lib/hull.api', 'lib/utils/emitter', 'lib/client/component/registrar', 'lib/helpers/login'], (_, promises, Aura, Handlebars, HullAPI, emitterInstance, componentRegistrar, loginHelpers) ->
 
   hullApiMiddleware = (api)->
@@ -21,6 +23,7 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
       .use('aura-extensions/aura-twitter-text')
       .use('aura-extensions/hull-reporting')
       .use('aura-extensions/hull-entities')
+      .use('aura-extensions/hull-helpers')
       .use('aura-extensions/hull-utils')
       .use('aura-extensions/aura-form-serialize')
       .use('aura-extensions/aura-component-validate-options')
@@ -55,10 +58,11 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
     booted.util.Handlebars = Handlebars
     booted.define = define
     booted.parse = (el, options={})->
-      appParts.app.sandbox.start(el, options)
+      appParts.app.core.appSandbox.start(el, options)
     appParts.app.start({ components: 'body' }).then ->
       #TODO populate the models from the remoteConfig
       booted.on 'hull.auth.login', _.bind(loginHelpers.login, undefined,  appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
+      booted.on 'hull.auth.update', _.bind(loginHelpers.update, undefined,  appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
       booted.on 'hull.auth.logout', _.bind(loginHelpers.logout, undefined, appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
     ,(e)->
       console.error('Unable to start Aura app:', e)
@@ -66,5 +70,5 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
     exports: booted
     context: apiParts.context
   failure: (error)->
-    console.error(error.message)
+    console.error(error.message || error)
     error

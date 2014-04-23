@@ -79,7 +79,8 @@ define ['jquery', 'underscore'], ($, _)->
 
         deferred.resolve(response: r, headers: headers, request: request)
       , (xhr) ->
-        deferred.reject(response: xhr.responseJSON, headers: {}, request: request)
+        responseJSON = xhr.responseJSON || JSON.parse(xhr.responseText)
+        deferred.reject(response: responseJSON, headers: {}, request: request)
 
     handleMultiple: (requests) ->
       @ajax({
@@ -103,7 +104,8 @@ define ['jquery', 'underscore'], ($, _)->
             deferred.resolve(h)
       , (xhr) ->
         for request in requests
-          request[1].reject(response: xhr.responseJSON, headers: {}, request: request)
+          responseJSON = xhr.responseJSON || JSON.parse(xhr.responseText)
+          request[1].reject(response: responseJSON, headers: {}, request: request)
 
     after: (fn)->
       @afterCallbacks.push fn
@@ -143,7 +145,12 @@ define ['jquery', 'underscore'], ($, _)->
     accessToken = app.config.access_token
     headers['Hull-Access-Token'] = accessToken if accessToken
 
-    app.core.handler = new handler headers: headers
-    app.core.handler.after (h)->
-      delete app.core.handler.headers['Hull-Access-Token']
-
+    options = _.extend({}, app.config.batching || {}, headers: headers)
+    app.core.handler = new handler(options)
+  afterAppStart: (app)->
+    app.sandbox.on 'remote.settings.update', (settings)->
+      header = settings.auth?.hull?.credentials?.access_token
+      if header
+        app.core.handler.headers['Hull-Access-Token'] = header
+      else
+        delete app.core.handler.headers['Hull-Access-Token']

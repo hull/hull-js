@@ -1,57 +1,80 @@
-if /hull-auth-status-/.test(document.location.hash) &&  window.opener && window.opener.Hull
-  try
-    authCbName = document.location.hash.replace('#hull-auth-status-', '')
-    cb = window.opener.__hull_login_status__
-    cb(authCbName)
+try
+  hash = JSON.parse(atob(document.location.hash.replace('#', '')))
+  if window.opener && window.opener.Hull && window.opener.__hull_login_status__ && hash?
+    window.opener.__hull_login_status__(hash)
     window.close()
-  catch e
-    console.warn("Error: " + e)
 
 define ['underscore', '../utils/promises', '../utils/version'], (_, promises, version)->
-
-  (apiFn, config, authServices=[]) ->
-    # Holds the state of the authentication process
-    # @type {Promise|Boolean}
+  (apiFn, config, emitter, authServices=[]) ->
     authenticating = null
     _popupInterval = null
 
+    loginComplete = (me)->
+      emitter.emit('hull.auth.login', me)
+      unless me?.stats?.sign_in_count?
+        emitter.emit('hull.auth.create', me)
+      me
 
-    # Starts the login process
-    # @throws Error with invalid providerName
-    # @returns {Promise|false}
-    login = (providerName, opts, callback=->)->
+    loginFailed = (err)->
+      emitter.emit('hull.auth.fail', err)
+      throw err
+      err
+
+    signup = (user) ->
+      apiFn('users', 'post', user).then loginComplete, loginFailed
+
+
+    login = (loginOrProvider, optionsOrPassword, callback) ->
+      throw new TypeError("'loginOrProvider' must be a String") unless _.isString(loginOrProvider)
+
+      if _.isString(optionsOrPassword)
+        promise = apiFn('users/login', 'post', { login: loginOrProvider, password: optionsOrPassword })
+      else
+        promise = loginWithProvider(loginOrProvider, optionsOrPassword).then(-> apiFn('me'))
+
+      evtPromise = promise.then loginComplete, loginFailed
+      evtPromise.then(callback) if _.isFunction(callback)
+
+      promise
+
+    loginWithProvider = (providerName, opts)->
       return module.isAuthenticating() if module.isAuthenticating()
 
-      throw 'The provider name must be a String' unless _.isString(providerName)
       providerName = providerName.toLowerCase()
-      throw "No authentication service #{providerName} configured for the app" unless ~(_.indexOf(authServices, providerName + '_app'))
-
       authenticating = promises.deferred()
+      unless ~(_.indexOf(authServices, providerName ))
+        authenticating.reject
+          message: "No authentication service #{providerName} configured for the app"
+          reason: 'no_such_service'
+        return authenticating.promise
+
       authenticating.providerName = providerName
-      authenticating.promise.done callback if _.isFunction(callback)
 
       authUrl = module.authUrl(config, providerName, opts)
       module.authHelper(authUrl)
 
       authenticating.promise
 
-    # Starts the logout process
-    # @returns {Promise}
-    # @TODO Misses a `dfd.fail`
-    logout = (callback=->)->
+
+    logout = (callback)->
       promise = apiFn('logout')
       promise.done ->
         callback() if _.isFunction(callback)
-      promise
+      promise.then ()->
+        emitter.emit('hull.auth.logout')
 
-    # Callback executed on successful authentication
-    onCompleteAuthentication = (isSuccess)->
+    onCompleteAuthentication = (hash)->
       _auth = authenticating
       return unless authenticating
-      if isSuccess
-        authenticating.resolve {}
+
+      if hash.success
+        authenticating.resolve({})
       else
-        authenticating.reject('Login canceled')
+        error = new Error('Login failed')
+        for k, v of hash.error
+          error[k] = v
+        authenticating.reject(error)
+
       authenticating = null
       clearInterval(_popupInterval)
       _popupInterval = null
@@ -59,12 +82,13 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
 
     # Generates the complete URL to be reached to validate login
     generateAuthUrl = (config, provider, opts)->
+      module.createCallback()
+
       auth_params = opts || {}
       auth_params.app_id        = config.appId
       # The following is here for backward compatibility. Must be removed at first sight next time
       auth_params.callback_url  = config.callback_url || config.callbackUrl || module.location.toString()
       auth_params.auth_referer  = module.location.toString()
-      auth_params.callback_name = module.createCallback()
       auth_params.version       = version
       querystring = _.map auth_params,(v,k) ->
         encodeURIComponent(k)+'='+encodeURIComponent(v)
@@ -76,22 +100,28 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       location: document.location
       authUrl: generateAuthUrl
       createCallback: ->
-        successToken = "__h__#{Math.random().toString(36).substr(2)}"
-        cbFn = (name)->
-          window.__hull_login_status__ = undefined
-          result = (name == successToken)
-          onCompleteAuthentication.call undefined, result
-        window.__hull_login_status__ = _.bind(cbFn, undefined)
-        successToken
+        window.__hull_login_status__ = (hash) ->
+          window.__hull_login_status__ = null
+          onCompleteAuthentication(hash)
       authHelper: (path)->
-        win = window.open(path, "_auth", 'location=0,status=0,width=990,height=600')
-        _popupInterval = setInterval ->
-          onCompleteAuthentication() if win?.closed
-        , 200
+        w = window.open(path, "_auth", 'location=0,status=0,width=1030,height=600')
 
+        # Support for cordova events
+        if window.device?.cordova
+          w?.addEventListener 'loadstart', (event)->
+            hash = try JSON.parse(atob(event.url.split('#')[1]))
+            if hash
+              window.__hull_login_status__(hash)
+              w.close()
+
+        _popupInterval = w? && setInterval ->
+          if w?.closed
+            onCompleteAuthentication({ success: false, error: { reason: 'window_closed' } })
+        , 200
       onCompleteAuth: onCompleteAuthentication
 
     authModule =
+      signup: signup
       login: login
       logout: logout
       isAuthenticating: module.isAuthenticating

@@ -28,7 +28,7 @@ define(['squire', 'lib/utils/promises'], function (Squire, promises) {
     var apiConf = { appId: 'abcd', orgUrl: '1234' };
     var promise = that.apiMod.init(apiConf);
     promise.then(function (obj) { that.apiObj = obj; after(); });
-    that.rpcMock.resolve({rpc: that.xdmMock, config: {data: data || {}, services: {types: {}}}});
+    that.rpcMock.resolve({rpc: that.xdmMock, config: {data: data || {}, settings: {}}});
   };
 
   describe('basic module', function () {
@@ -43,7 +43,6 @@ define(['squire', 'lib/utils/promises'], function (Squire, promises) {
       this.apiMod.init.should.be.a('function');
     });
   });
-
 
   describe('configuration validation', function () {
     beforeEach(function (done) {
@@ -92,9 +91,9 @@ define(['squire', 'lib/utils/promises'], function (Squire, promises) {
       var promise = this.apiMod.init(this.apiConf);
       promise.then(
         function (obj) { obj.should.be.a('object'); done(); },
-        function () { done('should not have been called'); }
+        function (err) { done(err); }
       );
-      this.rpcMock.resolve({rpc: {}, config: {data: {}, services: {types: {}}}});
+      this.rpcMock.resolve({rpc: {}, config: {data: {}, settings: {}}});
     });
     it('should resolve to the API object', function (done) {
       var that = this;

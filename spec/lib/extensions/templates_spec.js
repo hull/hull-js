@@ -43,12 +43,14 @@ define(['squire', 'jquery'], function(Squire, jquery) {
       this.compileStub = sinon.stub().returns(42);
       this.templateStub = sinon.stub().returns(123);
       this.registerPartialStub = sinon.stub();
+      this.registerHelperStub = sinon.stub();
       this.requireStub = sinon.stub();
       injector.mock({
         'lib/utils/handlebars': {
           compile: this.compileStub,
           template: this.templateStub,
-          registerPartial: this.registerPartialStub
+          registerPartial: this.registerPartialStub,
+          registerHelper: this.registerHelperStub
         }
       }).require(['lib/client/component/templates'], function (module) {
         that.module = module;

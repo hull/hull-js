@@ -10,8 +10,14 @@ define(['lib/utils/config', 'underscore'], function (config, _) {
 
   describe('sage config getter', function () {
     before(function () {
+      this.fakeEmitter = {
+        on: sinon.spy()
+      };
       this.testConfig = { a: "test", b: { c: "nested" } }
-      this.configGetter = config(this.testConfig);
+      this.configGetter = config(this.testConfig, this.fakeEmitter);
+    });
+    it('should add a listener', function () {
+      this.fakeEmitter.on.should.have.been.calledWith('hull.settings.update');
     });
     it('should return a clone of the initial config object', function () {
       this.configGetter().should.eql(this.testConfig);

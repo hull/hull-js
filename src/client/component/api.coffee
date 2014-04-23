@@ -92,25 +92,20 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
           args = slice.call(arguments)
           eventName = ("model.hull." + model._id + '.' + 'change')
           core.mediator.emit(eventName, { eventName: eventName, model: model, changes: args[1]?.changes })
+        model.on 'sync', ->
+          core.mediator.emit('hull.auth.update', model.attributes) if model._id == 'me'
         model._id = attrs._id
         models[attrs._id] = model #caching
-        if model.id
-          model._fetched = true
-        else
-          model._fetched = false
-          model.fetch
-            success: ->
-              model._fetched = true
         model
 
       core.data.api.model = (attrs)->
         rawFetch(attrs, false)
 
-      rawFetch = (attrs, raw)->
+      rawFetch = (attrs, raw=false)->
         attrs = { _id: attrs } if _.isString(attrs)
         attrs._id = attrs.path unless attrs._id
         throw new Error('A model must have an identifier...') unless attrs?._id?
-        models[attrs._id] || setupModel(attrs, raw || false)
+        models[attrs._id] || setupModel(attrs, raw)
 
       generateModel = (attrs, raw) ->
         _Model = if raw then RawModel else Model
@@ -155,16 +150,15 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
       remoteConfig = hullApi.remoteConfig
       data = remoteConfig.data
       app.config.assetsUrl            = remoteConfig.assetsUrl
-      app.config.services             = remoteConfig.services
+      app.config.services             = remoteConfig.settings
       app.components.addSource('hull', remoteConfig.baseUrl + '/aura_components')
       sandbox.config ?= {}
       sandbox.config.debug        = app.config.debug
       sandbox.config.assetsUrl    = remoteConfig.assetsUrl
       sandbox.config.appId        = app.config.appId
       sandbox.config.orgUrl       = app.config.orgUrl
-      sandbox.config.services     = remoteConfig.services
+      sandbox.config.services     = remoteConfig.settings
       sandbox.config.entity_id    = data.entity?.id
-
 
       sandbox.isAdmin = ->
         (authScope == 'Account' || sandbox.data.api.model('me').get('is_admin'))
@@ -181,9 +175,11 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
       # Add a .unlinkIdenity() method to the component sandbox
       sandbox.unlinkIdentity = (provider, callback=->)->
         core.data.api("me/identities/#{provider}", 'delete').then ->
-          app.sandbox.data.api.model('me').fetch().then callback
+          promise = app.sandbox.data.api.model('me').fetch()
+          promise.then (me)-> core.mediator.emit('hull.auth.login', me)
+          promise.then callback
 
-      # FIXME Does it double with l.247-249?
+
       for m in ['me', 'app', 'org', 'entity']
         attrs = data[m]
         if attrs
@@ -193,12 +189,6 @@ define ['underscore', 'lib/utils/promises'], (_, promises) ->
 
     afterAppStart: (app)->
       core    = app.core
-
-      #TODO, Restores me/app/org in base: (ie, Hull.*)
-      rawFetch('me', true);
-      rawFetch('app', true);
-      rawFetch('org', true);
-
       core.mediator.on 'hull.auth.*', clearModelsCache
 
   module

@@ -4,7 +4,7 @@ define(function() {
   return {
     require: {
       paths: {
-        string: 'bower_components/underscore.string/lib/underscore.string',
+        string: 'bower_components/underscore.string/lib/underscore.string'
       },
       shim: {
         string: { deps: ['underscore'] }

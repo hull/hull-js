@@ -22,7 +22,7 @@ Hull.component({
   },
 
   afterRender: function(data) {
-    this.$fieldsJSON = this.$('[data-hull-field="field"]');
+    this.$fieldsJSON = this.$('[data-hull-field="fields"]');
     this.$fieldsJSON.val(JSON.stringify(data.fields, null, 2));
   },
 

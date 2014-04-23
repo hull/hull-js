@@ -1,3 +1,93 @@
+# 0.8.21
+
+* Updates Hull.currentUser() on user change #150
+
+# 0.8.19
+
+* Enhances compatibility down to jQuery 1.5 for components
+* Updates Aura
+* Improves styling for [Shopify](https://apps.shopify.com/hull-social-login) shops
+
+# 0.8.18
+
+* Fixes deploy and CSS minification
+* Fixes ratings/vote component
+* Fixes build in CircleCI by specifying a newer Node.js version
+
+# 0.8.17
+
+* Fixes overlapping events
+
+# 0.8.16
+
+* Fixes thre login window size because of a nasty FB message
+
+# 0.8.15
+
+* Guest login with lazy actions
+
+# 0.8.14
+
+* Updates custom jQuery to 1.11.0 in remote to avoid IE8 errors
+
+# 0.8.13
+
+* Allow AccessToken in Hull.init
+* Enhances login and admin/registration components
+
+# 0.8.12
+
+* Reduces the number of API calls at init
+* Better errors when init fails
+
+# 0.8.11
+
+* Fixes admin/user_profile component to delete badge with Admin API
+* Adds Hull.ready(fn) for fn to be called as soon as Hull has finished loading
+* Fixes Hull.parse
+
+# 0.8.10
+
+* Encodes URI at remote init
+* Fixes votes/button component
+
+# 0.8.9
+
+* Sends BrowserId and SessionId to tracking calls
+* Sends referrer, url and path to tracking calls
+
+# 0.8.8
+
+* Sends way less data to `hull.auth.login` tracking
+* Updates Aura to avoid error-swallowing
+
+# 0.8.7
+
+* Version-fix of domready to maintain backward-compatibility
+
+# 0.8.6
+
+* Prevents Q from complaining about missing handlers
+* Adds a console polyfill
+
+# 0.8.5
+
+* [134] Compatibility with Cordova
+
+# 0.8.4
+
+* Fixes Hull when opened from a `target="_blank"` link
+* Bad provider in `Hull.login()` returns a rejected promise
+
+# 0.8.3
+
+* [133] Adds `Hull.signup(user)`
+* [133] Adds `Hull.login(usernameOrEmail, password)`
+* [129] Promises returned by `Hull.login()`, `Hull.linkIdentity` are rejected with `error` hash that contains the `reason` of the failure.
+* Adds `Hull.linkIdentity()` and `Hull.unlinkIdentity()`
+
+# 0.8.2
+
 * [127] Fix `events` hash usage in components
 
 # 0.8.1

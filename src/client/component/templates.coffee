@@ -1,4 +1,4 @@
-define ['underscore', 'lib/utils/handlebars', 'lib/utils/promises', 'lib/utils/q2jQuery', 'require'], (_, Handlebars, promises, q2jQuery, require) ->
+define ['underscore', 'lib/utils/handlebars', 'lib/utils/handlebars-helpers', 'lib/utils/promises', 'lib/utils/q2jQuery', 'require'], (_, Handlebars, hbsHelpers, promises, q2jQuery, require) ->
 
   strategies =
     app: ['hullGlobal', 'meteor', 'sprockets', 'hullDefault']
@@ -18,7 +18,10 @@ define ['underscore', 'lib/utils/handlebars', 'lib/utils/promises', 'lib/utils/q
     compiled
 
   _domTemplate = ($el)->
-    module.domFind($el.get(0)).text() if $el.length
+    return unless $el.length
+    first = $el.get(0)
+    $first = module.domFind(first)
+    $first.text() || $first.html() || first.innerHTML
 
   strategyHandlers =
     dom:
@@ -106,6 +109,7 @@ define ['underscore', 'lib/utils/handlebars', 'lib/utils/promises', 'lib/utils/q
         dfd.reject err
       dfd.promise
     initialize: (app) ->
+      Handlebars.registerHelper(k, v) for k,v of hbsHelpers(app)
       module.domFind = app.core.dom.find
       app.components.before 'initialize', ->
         promise = module.load(@templates, @ref, @el).then (tpls)=>

@@ -9,12 +9,16 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-symlink');
   grunt.loadNpmTasks('grunt-hull-dox');
   grunt.loadNpmTasks('grunt-hull-widgets');
   grunt.loadNpmTasks('grunt-s3');
   grunt.loadNpmTasks('grunt-git-describe');
   grunt.loadNpmTasks('grunt-wrap');
   grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-bump');
+  grunt.loadNpmTasks('grunt-invalidate-cloudfront');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
 
   var clientConfig = grunt.file.readJSON('.grunt/client.json');
   var remoteConfig = grunt.file.readJSON('.grunt/remote.json');
@@ -73,10 +77,10 @@ module.exports = function (grunt) {
     },
     clean: {
       client: {
-        src: 'lib/client/**/*'
+        src: ['dist/current', 'lib/client/**/*']
       },
       remote: {
-        src: 'lib/remote/**/*'
+        src: ['dist/current', 'lib/remote/**/*']
       },
       reset: {
         src: ['build', 'lib', 'tmp', 'dist', 'bower_components', 'node_modules']
@@ -87,6 +91,14 @@ module.exports = function (grunt) {
         baseDir: 'aura_components',
         src: 'aura_components/**/main.js',
         dest: 'dist/<%= PKG_VERSION %>/docs'
+      }
+    },
+    cssmin: {
+      minify: {
+        expand: true,
+        src: 'aura_components/**/*.css',
+        dest: 'dist/<%= PKG_VERSION %>/',
+        ext: '.min.css'
       }
     },
     coffee: {
@@ -165,7 +177,7 @@ module.exports = function (grunt) {
     watch: {
       widgets: {
         files: ['aura_components/**/*'],
-        tasks: ['dist:widgets']
+        tasks: ['dist:widgets', 'cssmin']
       },
       remote: {
         files: remoteConfig.coffeeFiles,
@@ -203,6 +215,12 @@ module.exports = function (grunt) {
     describe: {
       out: 'dist/<%= PKG_VERSION%>/REVISION'
     },
+    symlink: {
+      current: {
+        dest: "dist/current",
+        src: "dist/<%= PKG_VERSION %>"
+      }
+    },
     wrap: {
       Handlebars: {
         src: 'node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars.js',
@@ -212,10 +230,22 @@ module.exports = function (grunt) {
         ]
       }
     },
+    bump: {
+      options: {
+        files: ['package.json', 'bower.json'],
+        commit: true,
+        commitMessage: 'Release %VERSION%',
+        commitFiles: ['-a'],
+        createTag: true,
+        tagName: '%VERSION%',
+        tagMessage: 'Release %VERSION%',
+        push: false
+      }
+    },
     dist: {
-      "remote": ['version', 'clean:remote', 'coffee:remote', 'wrap', 'version', 'requirejs:remote'],
-      "client": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client'],
-      "api": ['version', 'clean:client', 'coffee:api', 'wrap', 'version', 'requirejs:api'],
+      "remote": ['version', 'clean:remote', 'coffee:remote', 'wrap', 'version', 'requirejs:remote', 'symlink:current'],
+      "client": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client', 'cssmin', 'symlink:current'],
+      "api": ['version', 'clean:client', 'coffee:api', 'wrap', 'version', 'requirejs:api', 'symlink:current'],
       "client-no-underscore": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
       "client-no-backbone": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
       "widgets": ["version", "hull_widgets"],
@@ -225,6 +255,7 @@ module.exports = function (grunt) {
   };
 
   helpers.appendAWSConfig(gruntConfig);
+  helpers.cloudFrontConfig(gruntConfig);
   grunt.initConfig(gruntConfig);
 
   grunt.registerTask('test', ['version', 'karma:test']);

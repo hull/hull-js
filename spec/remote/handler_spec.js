@@ -25,7 +25,7 @@ define(['lib/remote/handler', 'jquery'], function(handlerModule, $) {
 
       describe('module', function () {
         it('should expose the Handler and an initializer function', function () {
-          handlerModule.should.have.keys('initialize', 'handler');
+          handlerModule.should.have.keys('initialize', 'handler', 'afterAppStart');
         });
         describe('initializer', function () {
           it('should instantiate a handler and set it in the core', function () {
@@ -110,10 +110,8 @@ define(['lib/remote/handler', 'jquery'], function(handlerModule, $) {
             h.response.status.should.equal(400)
             h.response.message.should.equal('ooops')
           })
-
-          $.when(p1, p2, p3).always(function() {
-            done();
-          });
+          var _done = function() { done(); }
+          $.when(p1, p2, p3).then(_done, _done);
         });
 
         describe('when the number of requests is to damn high', function() {
@@ -156,9 +154,40 @@ define(['lib/remote/handler', 'jquery'], function(handlerModule, $) {
             p2.fail(f);
             p3.fail(f);
 
-            $.when(p1, p2, p3).always(function() {
-              done();
-            });
+            var _done = function() { done(); }
+            $.when(p1, p2, p3).then(_done, _done);
+          });
+        });
+
+        describe('batching config', function () {
+          it('should provide sensible defaults', function () {
+            var app = {
+              config: {
+                appId: ''
+              },
+              core: {}
+            };
+            var handler = handlerModule.initialize(app);
+            handler.options.min.should.be.at.least(0);
+            handler.options.max.should.be.at.least(0);
+            handler.options.delay.should.be.at.least(0);
+          });
+          it('should be overridable', function () {
+            var app = {
+              config: {
+                appId: '',
+                batching: {
+                  min: 8,
+                  max: 9,
+                  delay: 10
+                }
+              },
+              core: {}
+            };
+            var handler = handlerModule.initialize(app);
+            handler.options.min.should.be.eql(8);
+            handler.options.max.should.be.eql(9);
+            handler.options.delay.should.be.eql(10);
           });
         });
       });

@@ -24,23 +24,15 @@ Hull.component({
 
   refreshEvents: ['model.hull.me.change'],
 
-  initialize: function() {
-    this.authServices = this.sandbox.util._.map(this.sandbox.config.services.types.auth, function(s) {
-      return s.replace(/_app$/, '');
-    });
-
-    if (this.sandbox.util._.isEmpty(this.authServices)) {
+  beforeRender: function(data) {
+    if (this.sandbox.util._.isEmpty(this.authServices())) {
       console.error('No Auth services configured. please add one to be able to authenticate users.');
     }
-  },
-
-  beforeRender: function(data) {
-
     // If providers are specified, then use only those. else use all configuredauthServices
     if(this.options.provider){
       data.providers = this.options.provider.replace(' ','').split(',');
     } else {
-      data.providers = this.authServices || [];
+      data.providers = this.authServices() || [];
     }
 
     // If I'm logged in, then create an array of logged In providers
@@ -54,7 +46,7 @@ Hull.component({
     // Create an array of logged out providers.
     data.loggedOut = this.sandbox.util._.difference(data.providers, data.loggedInProviders);
     data.matchingProviders = this.sandbox.util._.intersection(data.providers, data.loggedInProviders);
-    data.authServices = this.authServices;
+    data.authServices = this.authServices();
 
     return data;
   }

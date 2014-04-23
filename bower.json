@@ -1,10 +1,10 @@
 {
   "name": "hull-js",
-  "version": "0.8.1",
+  "version": "0.8.24",
   "main": "./lib/hull.js",
   "dependencies": {
     "jquery": "1.10.*",
-    "aura": "hull/aura#895497cf0140ea65fda4f68befecc592c304f335",
+    "aura": "hull/aura#28f8475389ff5f3cdad493b98768ac5c684e0103",
     "backbone": "0.9.9",
     "analytics": "hull/analytics#1.0.8-hull",
     "cookies-js": "0.3.1",
@@ -17,10 +17,12 @@
     "form2js": "*",
     "xdm.js": "~1.0.1",
     "almond": "~0.2.7",
-    "domready": "",
+    "domready": "0.3.x",
     "handlebars": "~1.1.2",
     "requirejs": "2.1.9",
-    "jquery-jsonp": "hull/jquery-jsonp#b402017ba708388af345f8f560ac4f49c1f68090"
+    "jquery-jsonp": "hull/jquery-jsonp#b402017ba708388af345f8f560ac4f49c1f68090",
+    "json2": "*",
+    "purl" : "2.3.1"
   },
   "devDependencies": {
     "squire": "*"

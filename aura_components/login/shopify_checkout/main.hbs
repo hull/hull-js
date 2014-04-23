@@ -1,0 +1,18 @@
+{{#unless loggedIn}}
+  <div class="hull-checkout hull-checkout-dropdown">
+    <div class="hull-checkout-section hull-checkout-section-quick">
+      <h3 class="hull-checkout-title" style="color: {{options.mainColor}};">Quick Checkout</h3>
+      <p class="hull-checkout-subtitle">Fill-in my details with</p>
+      <div data-hull-component="login/shopify@hull"
+           data-hull-sign-in-message="\{{provider}}"
+           data-hull-redirect-on-login="false"
+           data-hull-show-link-identity="false"
+           data-hull-show-sign-out="false"
+           data-hull-show-loader="false"
+           data-hull-inject-link-tag="false"></div>
+    </div>
+    <div class="hull-checkout-section hull-checkout-section-regular">
+      <a class="hull-checkout-regular" href="#" data-hull-action="checkout">Regular checkout</a>
+    </div>
+  </div>
+{{/unless}}

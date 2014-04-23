@@ -33,29 +33,25 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
       else
         cookie.remove(cookieName, path: "/")
 
+    rpc = null
     # This will be executed exactly Once. The next call will be immediately resolved.
-    onRemoteReady = (remoteConfig)->
+    onRemoteReady = (remoteObj)->
+      rpc = remoteObj.rpc
+      remoteConfig = remoteObj.config
       data = remoteConfig.data
       setCurrentUser(data.headers)
 
       authScope = data.headers['Hull-Auth-Scope'].split(":")[0] if data.headers?['Hull-Auth-Scope']
 
-      apiConnection =
-        auth: authModule(api, config, remoteConfig.services.types.auth)
-        remoteConfig: remoteConfig
-        authScope: authScope or ''
-        api: api
-        init: ()-> dfd.promise
+      auth: authModule(api, config, emitter, _.keys(remoteConfig.settings.auth || {}))
+      remoteConfig: remoteConfig
+      authScope: authScope or ''
+      api: api
+      init: ()-> dfd.promise
 
-      dfd.resolve apiConnection
-      true
-
-    rpc = null
-    xdm(config, emitter).then (readyObj)->
-      rpc = readyObj.rpc
-      onRemoteReady readyObj.config
-    , (err)->
-      dfd.reject err
+    xdm(config, emitter)
+      .then(onRemoteReady)
+      .then(dfd.resolve, dfd.reject)
 
     ###
     # Sends the message described by @params to xdm
@@ -70,6 +66,15 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
 
       onSuccess = (res={})->
         setCurrentUser(res.headers) if res.provider == 'hull'
+        headers = res?.headers
+        if headers? and res.provider == 'hull'
+          hullTrack = headers['Hull-Track']
+          if hullTrack
+            try
+              [eventName, trackParams] = JSON.parse(atob(hullTrack))
+              emitter.emit(eventName, trackParams)
+            catch error
+              false
         callback(res.response)
         deferred.resolve(res.response, res.headers)
       onError = (err={})->
