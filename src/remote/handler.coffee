@@ -33,6 +33,7 @@ define ['jquery', 'underscore'], ($, _)->
       'Hull-Track',
       'Hull-User-Id',
       'Hull-User-Sig',
+      'X-Hits-Count',
       'Link'
     ]
 
