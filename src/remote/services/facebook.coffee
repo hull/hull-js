@@ -1,4 +1,4 @@
-define ->
+define ['lib/utils/promises', 'underscore'], (promises, _) ->
 
   slice = Array.prototype.slice
 
@@ -22,19 +22,25 @@ define ->
 
   api = ensureLoggedIn (req, callback, errback) ->
     path = req.path
-    FB.api path, req.method, req.params, resp(req, callback, (msg, res)-> res.time = new Date(); callback(res))
-
-  fql = ensureLoggedIn (req, callback, errback) ->
-    FB.api({ method: 'fql.query', query: req.params.query }, resp(req, callback, errback))
-
-  # The actual extension...
-  require:
-    paths:
-      facebook: "https://connect.facebook.net/en_US/all"
-    shim:
-      facebook: { exports: 'FB' }
+    if path == 'fql.query'
+      FB.api({ method: 'fql.query', query: req.params.query }, resp(req, callback, errback))
+    else
+      FB.api path, req.method, req.params, resp(req, callback, (msg, res)-> res.time = new Date(); callback(res))
+    
 
   initialize: (app)->
-    FB.init app.config.settings.auth.facebook
-    app.core.routeHandlers.fql = fql
-    app.core.routeHandlers.facebook = api
+    fb = document.createElement 'script'
+    fb.type = 'text/javascript'
+    fb.async = true
+    fb.src =  "https://connect.facebook.net/en_US/all.js"
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(fb);
+
+    dfd = promises.deferred()
+    window.fbAsyncInit = ()->
+      FB.init app.config.settings.auth.facebook
+      dfd.resolve({})
+    app.core.routeHandlers.facebook = ()->
+      args = arguments
+      dfd.promise.then ()->
+        api.apply(undefined, args)
+      undefined
