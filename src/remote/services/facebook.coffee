@@ -22,10 +22,11 @@ define ['lib/utils/promises', 'underscore'], (promises, _) ->
 
   api = ensureLoggedIn (req, callback, errback) ->
     path = req.path
-    FB.api path, req.method, req.params, resp(req, callback, (msg, res)-> res.time = new Date(); callback(res))
-
-  fql = ensureLoggedIn (req, callback, errback) ->
-    FB.api({ method: 'fql.query', query: req.params.query }, resp(req, callback, errback))
+    if path == 'fql.query'
+      FB.api({ method: 'fql.query', query: req.params.query }, resp(req, callback, errback))
+    else
+      FB.api path, req.method, req.params, resp(req, callback, (msg, res)-> res.time = new Date(); callback(res))
+    
 
   initialize: (app)->
     fb = document.createElement 'script'
@@ -34,18 +35,10 @@ define ['lib/utils/promises', 'underscore'], (promises, _) ->
     fb.src =  "https://connect.facebook.net/en_US/all.js"
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(fb);
 
-    fbPool = []
-    fqlPool = []
-
     dfd = promises.deferred()
     window.fbAsyncInit = ()->
       FB.init app.config.settings.auth.facebook
       dfd.resolve({})
-    app.core.routeHandlers.fql = ()->
-      args = arguments
-      dfd.promise.then ()->
-        fql.apply(undefined, args)
-      undefined
     app.core.routeHandlers.facebook = ()->
       args = arguments
       dfd.promise.then ()->
