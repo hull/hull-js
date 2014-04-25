@@ -19,6 +19,7 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
     initInfo =
       url: app.config.data.request.url.href
       path: app.config.data.request.url.path
+      $referrer: app.config.data.request.referrer?.href
       referrer: app.config.data.request.referrer?.href
       browser_id: getBrowserId()
       session_id: getSessionId()
