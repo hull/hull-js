@@ -19,6 +19,7 @@
 .hull-icon-facebook:before { content: "\f09a"; }
 .hull-icon-twitter:before { content: "\f099"; }
 .hull-icon-google:before { content: "\f0d5"; }
+.hull-icon-instagram:before { content: "\f16d"; }
 
 .hull-checkout-dropdown {
   position: relative;
@@ -109,6 +110,8 @@
 .hull-checkout a:active {
   opacity: 1;
   text-decoration: none;
+  text-shadow: none;
+  box-shadow: none;
 }
 
 a.hull-checkout-regular,
@@ -127,6 +130,7 @@ a.hull-checkout-regular:active {
 .hull-checkout button.hull-btn,
 .hull-checkout button.hull-btn:hover,
 .hull-checkout button.hull-btn:active {
+  opacity: 1;
   padding: 0;
   margin: 0;
   text-decoration: none;
@@ -151,6 +155,7 @@ a.hull-checkout-regular:active {
   -ms-transition: all 0.5s ease;
   transition: all 0.5s ease;
   text-shadow: none;
+  box-shadow: none;
 }
 
 .hull-checkout button.hull-btn:hover {
@@ -165,6 +170,7 @@ a.hull-checkout-regular:active {
 .hull-checkout button.hull-btn-facebook { color: #3a5898; }
 .hull-checkout button.hull-btn-twitter { color: #55acee; }
 .hull-checkout button.hull-btn-google { color: #db4c3f; }
+.hull-checkout button.hull-btn-instagram { color: #3f729b; }
 
 .hull-checkout button.hull-btn-facebook:hover,
 .hull-checkout button.hull-btn-facebook:active {
@@ -179,6 +185,11 @@ a.hull-checkout-regular:active {
 .hull-checkout button.hull-btn-google:hover,
 .hull-checkout button.hull-btn-google:active {
   color: #c23629;
+}
+
+.hull-checkout button.hull-btn-instagram:hover,
+.hull-checkout button.hull-btn-instagram:active {
+  color: #2B597E;
 }
 
 .hull-checkout .hull-error {
