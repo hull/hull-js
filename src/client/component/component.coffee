@@ -26,8 +26,7 @@ define ['underscore', 'lib/client/component/context'], (_, Context)->
         @refresh ?= _.throttle((-> @invokeWithCallbacks 'render' ), 200)
         @componentName = options.name
 
-        for k, v of @options
-          options[k] ||= v
+        options[k] ?= v for k, v of @options
 
         unless @className?
           @className = "hull-component"
