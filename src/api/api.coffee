@@ -75,8 +75,9 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
               emitter.emit(eventName, trackParams)
             catch error
               false
-        callback(res.response)
-        deferred.resolve(res.response, res.headers)
+              
+        callback(res.response, res.headers)
+        deferred.resolve(res.response)
       onError = (err={})->
         errback(err.message)
         deferred.reject(err.message)
