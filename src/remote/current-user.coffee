@@ -21,8 +21,10 @@ define ()->
       if !userManager.is(userId) # It changed
         delete app.core.handler.headers['Hull-Access-Token']
         p1 = userManager.updateDescription().then (h)->
+          previousUserId = userManager.currentUser?.id
           userManager.currentUser = h.response
-          app.sandbox.emit 'remote.user.update', h.response
+          hasChanged = previousUserId != h.response?.id
+          app.sandbox.emit 'remote.user.update', h.response if hasChanged
         , (err)->
           userManager.currentUser = {}
           app.sandbox.emit 'remote.user.update', {}
@@ -37,7 +39,7 @@ define ()->
       else if userManager.isUserUpdate(h.response)
         userManager.currentUser = h.response
         app.sandbox.emit 'remote.user.update', userManager.currentUser
-        
+
 
 
 
