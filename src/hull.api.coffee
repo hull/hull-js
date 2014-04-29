@@ -6,8 +6,9 @@ define [
   'lib/api/reporting',
   'lib/utils/entity',
   'lib/utils/config',
-  'lib/api/current-user'
-  ], (_, promises, emitter, api, reporting, entity, configParser, currentUser)->
+  'lib/api/current-user',
+  'lib/traits/base'
+  ], (_, promises, emitter, api, reporting, entity, configParser, currentUser, Traits)->
 
     create = (config)->
       _emitter = emitter()
@@ -65,6 +66,7 @@ define [
           util:
             entity: entity
             eventEmitter: _emitter
+          trait: Traits.setup(api.api).build
         created.api.create = create
         raw: api
         api: created

@@ -6,6 +6,7 @@
     "src/hull.api.coffee",
     "src/utils/**/*.coffee",
     "src/client/**/*.coffee",
+    "src/traits/**/*.coffee",
     "src/helpers/**/*.coffee",
     "src/api/**/*.coffee"
   ],
