@@ -33,7 +33,7 @@ define(['lib/remote/config-normalizer'], function (CfgNorm) {
       };
       var types = {
         auth: ['fb_app', 'abc'],
-        other: ['mp']
+        other: ['mp', 'np_stuff']
       };
       this.normalizer.sortServicesByType(settings, types).should.eql({
         auth: {
@@ -41,7 +41,8 @@ define(['lib/remote/config-normalizer'], function (CfgNorm) {
           abc: {}
         },
         other: {
-          mp: {}
+          mp: {},
+          np: {}
         }
       });
     });
