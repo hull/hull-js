@@ -6,16 +6,27 @@ Hull.component({
   linkTagInjected: false,
 
   initialize: function() {
-    this.$target = $(this.options.target || 'input[name="checkout"],#checkout');
-
-    if (this.$target.length !== 1) {
-      throw new Error('');
+    if (this.options.target != null) {
+      this.$target = $(this.options.target);
+      if (this.$target.length !== 1) {
+        this.error('"' + this.options.target + '" selector must match only one element. (matched: ' + this.$target.length + ')');
+      }
+    } else {
+      var $input = $('input[name="checkout"]');
+      this.$target = $input.length ? $input : $('#checkout');
+      if (this.$target.length !== 1) {
+        this.error('Default selectors does not match any element');
+      }
     }
 
     this.sandbox.on('hull.auth.login', this.targetClick, this);
     this.sandbox.on('hull.auth.fail', this.targetClick, this);
 
     this.injectLinkTag();
+  },
+
+  error: function(message) {
+    window.console && console.error && console.error(message);
   },
 
   beforeRender: function() {
