@@ -23,6 +23,7 @@
 
 .hull-checkout-dropdown {
   position: relative;
+  z-index: 20000;
   width: 260px !important;
   border: 1px solid #d5d5d5;
   padding: 20px 0 0 0;
