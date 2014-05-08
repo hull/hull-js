@@ -1,3 +1,8 @@
+# 0.8.30
+
+* enforce contentType: 'application/json' for all non GET ajax requests from admin provider
+
+
 # 0.8.29
 
 * enforce dataType: 'json' for all non GET ajax requests from admin provider
