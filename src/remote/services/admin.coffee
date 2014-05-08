@@ -19,6 +19,7 @@ define ->
         url: url
         type: req.method
         data: req_data
+        contentType: 'application/json'
         dataType: 'json'
         headers: headers
 
