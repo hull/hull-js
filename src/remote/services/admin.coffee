@@ -6,7 +6,7 @@ define ->
       top_domain = document.location.host.split('.')
       top_domain.shift()
       url  = "#{document.location.protocol}//#{req.namespace}.#{top_domain.join('.')}/api/v1/" + path
-      if req.method.toLowerCase() == 'delete'
+      if req.method.toLowerCase() != 'get'
         req_data = JSON.stringify(req.params || {})
       else
         req_data = req.params
@@ -19,6 +19,7 @@ define ->
         url: url
         type: req.method
         data: req_data
+        dataType: 'json'
         headers: headers
 
       request.then (response)->
