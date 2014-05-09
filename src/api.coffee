@@ -7,6 +7,7 @@ define ['jquery', 'underscore', 'lib/utils/version', 'lib/api/params', 'lib/api/
     remoteUrl = "#{config.orgUrl}/api/v1/#{config.appId}/remote.html?v=#{version}"
     remoteUrl += "&js=#{config.jsUrl}"  if config.jsUrl
     remoteUrl += "&uid=#{config.uid}"   if config.uid
+    remoteUrl += "&debug_remote=true"   if config.debugRemote
     remoteUrl += "&access_token=#{config.appSecret}" if config.appSecret
     remoteUrl += "&user_hash=#{config.userHash}" if config.userHash != undefined
     remoteUrl
