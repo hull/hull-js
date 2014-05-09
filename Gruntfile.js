@@ -121,7 +121,7 @@ module.exports = function (grunt) {
         options: (function (c) {
           c.paths.underscore = 'empty:';
           c.paths.backbone = 'empty:';
-          c.out = c.out.replace('hull.js', 'hull.no-backbone.js');
+          c.out = c.out.replace('hull.debug.js', 'hull.no-backbone.js');
           c.wrap.start = c.wrap.start + ";root._ = window._;";
           c.wrap.start = c.wrap.start + ";root.Backbone = window.Backbone;";
           return c;
@@ -130,7 +130,7 @@ module.exports = function (grunt) {
       "client-no-underscore": {
         options: (function (c) {
           c.paths.underscore = 'empty:';
-          c.out = c.out.replace('hull.js', 'hull.no-underscore.js');
+          c.out = c.out.replace('hull.debug.js', 'hull.no-underscore.js');
           c.wrap.start = c.wrap.start + ";root._ = window._;";
           return c;
         })(clone(clientRJSConfig, true))
