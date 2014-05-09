@@ -8,6 +8,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-hull-dox');
@@ -43,20 +44,20 @@ module.exports = function (grunt) {
   //Augment the require.js configuation with some computed elements
   var apiRJSConfig = (function () {
     var _c = apiConfig.requireJS;
-    _c.optimize = grunt.option('dev') ? "none" : "uglify";
+    _c.optimize = "none";
     return _c;
   })();
   var clientRJSConfig = (function () {
     var _c = clientConfig.requireJS;
     _c.include = _c.include.concat(auraExtensions).concat(clientLibs);
-    _c.optimize = grunt.option('dev') ? "none" : "uglify";
+    _c.optimize = "none";
     return _c;
   })();
 
   var remoteRJSConfig = (function () {
     var _c = remoteConfig.requireJS;
     _c.include = _c.include.concat(remoteLibs);
-    _c.optimize = grunt.option('dev') ? "none" : "uglify";
+    _c.optimize = "none";
     return _c;
   })();
 
@@ -157,15 +158,6 @@ module.exports = function (grunt) {
           out: 'tmp/aura_components/upload/deps/jquery.fileupload.js'
         }
       },
-      // registration: {
-      //   options: {
-      //     namespace: 'Hull',
-      //     paths: { h5f: 'aura_components/registration/h5f' },
-      //     shim: { h5f: { exports: 'H5F' } },
-      //     include: ['h5f'],
-      //     out: 'tmp/aura_components/registration/deps.js'
-      //   }
-      // },
       dox: {
         options: {
           namespace: 'Hull',
@@ -255,10 +247,30 @@ module.exports = function (grunt) {
         }
       }
     },
+
+    uglify: {
+      options: {},
+      api: {
+        files: {
+          'dist/<%= PKG_VERSION %>/hull.api.js' : ['dist/<%= PKG_VERSION%>/hull.api.debug.js']
+        }
+      },
+      client: {
+        files: {
+          'dist/<%= PKG_VERSION%>/hull.js' : ['dist/<%= PKG_VERSION%>/hull.debug.js']
+        }
+      },
+      remote: {
+        files: {
+          'dist/<%= PKG_VERSION%>/hull-remote.js' : ['dist/<%= PKG_VERSION%>/hull-remote.debug.js']
+        }
+      }
+    },
+
     dist: {
-      "remote": ['version', 'clean:remote', 'coffee:remote', 'wrap', 'version', 'requirejs:remote'],
-      "client": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client'],
-      "api": ['version', 'clean:client', 'coffee:api', 'wrap', 'version', 'requirejs:api'],
+      "remote": ['version', 'clean:remote', 'coffee:remote', 'wrap', 'version', 'requirejs:remote', 'uglify:remote'],
+      "client": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client', 'uglify:client'],
+      "api": ['version', 'clean:client', 'coffee:api', 'wrap', 'version', 'requirejs:api', 'uglify:api'],
       "client-no-underscore": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
       "client-no-backbone": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
       "widgets": ["version", "hull_widgets"],

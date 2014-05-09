@@ -36,6 +36,6 @@
       "lib/hull",
       "lib/hull-remote"
     ],
-    "out": "dist/<%= PKG_VERSION %>/hull-remote.js"
+    "out": "dist/<%= PKG_VERSION %>/hull-remote.debug.js"
   }
 }

@@ -68,7 +68,7 @@ Hull.component({
 
   beforeRender: function(data) {
     this.sandbox.util._.each(data.comments, function(c) {
-      c.isDeletable = (c.user.id === data.me.id);
+      c.isDeletable = (c.user && c.user.id === data.me.id);
       return c;
     }, this);
     return data;
