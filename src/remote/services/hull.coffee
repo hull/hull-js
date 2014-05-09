@@ -13,8 +13,9 @@ define ['jquery', 'underscore'], ($, _)->
     originalUserId  = app.config.data?.me?.id
     currentUserId   = originalUserId
 
-    refreshCredentials = ->
-      if currentUserId
+    refreshCredentials = (_userId)->
+      if _userId && currentUserId != _userId
+        currentUserId = _userId
         req = $.ajax
           url: '/api/v1/me/credentials',
           type: 'get'
@@ -25,7 +26,10 @@ define ['jquery', 'underscore'], ($, _)->
           accessToken = creds.hull?.access_token
           config.data.credentials = creds
       else
-        config.data.credentials = {}
+        unless _userId
+          currentUserId = _userId
+          config.data.credentials = {}
+          accessToken = undefined
         dfd = $.Deferred()
         dfd.resolve {}
         dfd.promise()
@@ -79,10 +83,7 @@ define ['jquery', 'underscore'], ($, _)->
           memo
         , {}
 
-        if request.status && request.status < 300 && currentUserId != headers['Hull-User-Id']
-          currentUserId = headers['Hull-User-Id']
-        refreshCredentials().then ()->
-          res
+        refreshCredentials(headers['Hull-User-Id']).then -> res
 
       req2.done (response)->
         headers = _.reduce RESPONSE_HEADER, (memo, name) ->
