@@ -34,7 +34,7 @@
       "domready",
       "lib/bootstrap"
       ],
-    "out": "dist/<%= PKG_VERSION %>/hull.api.js",
+    "out": "dist/<%= PKG_VERSION %>/hull.api.debug.js",
     "wrap": {
       "start": "(function(){var require, requirejs, define, root={}, HULL_ENV='api'; (function () {",
       "end": ";}).call(root);})();"
