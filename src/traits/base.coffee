@@ -1,18 +1,17 @@
 define ['underscore'], (_)->
-
   class Trait
     constructor: (@api, @name, @value)->
       @api ||= ->
       @set(@value) unless _.isUndefined(@value)
 
     inc: (step = 1)->
-      @api('me/traits', 'put', { name: @name, op: "inc", value: step } )
+      @api('me/traits', 'put', { name: @name, operation: 'inc', value: step } )
 
     dec: (step = 1)->
-      @api('me/traits', 'put', { name: @name, op: "dec", value: step } )
+      @api('me/traits', 'put', { name: @name, operation: 'dec', value: step } )
 
-    set: (val)->
-      @api('me/traits', 'put', { name: @name, op: "set", value : val } )
+    set: (value)->
+      @api('me/traits', 'put', { name: @name, operation: 'set', value: value } )
 
   config =
     api: null
