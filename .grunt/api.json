@@ -5,6 +5,7 @@
     "src/hull.api.coffee",
     "src/api/**/*.coffee",
     "src/utils/**/*.coffee",
+    "src/traits/**/*.coffee",
     "src/helpers/**/*.coffee"
   ],
   "requireJS": {
