@@ -20,6 +20,7 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
       url: app.config.data.request.url.href
       path: app.config.data.request.url.path
       referrer: app.config.data.request.referrer?.href
+      referring_domain: app.config.data.request.referrer?.host
       browser_id: getBrowserId()
       session_id: getSessionId()
     identify = (me) ->
