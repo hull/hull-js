@@ -20,6 +20,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-bump');
   grunt.loadNpmTasks('grunt-invalidate-cloudfront');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   var clientConfig = grunt.file.readJSON('.grunt/client.json');
   var remoteConfig = grunt.file.readJSON('.grunt/remote.json');
@@ -74,6 +75,29 @@ module.exports = function (grunt) {
     karma: {
       test: {
         configFile: 'karma.conf.js'
+      }
+    },
+    copy: {
+      api: {
+        files: [{
+          expand: false,
+          src: ['dist/<%= PKG_VERSION%>/hull.api.debug.js'],
+          dest: 'dist/<%= PKG_VERSION%>/hull.api.js'
+        }]
+      },
+      client: {
+        files: [{
+          expand: false,
+          src: ['dist/<%= PKG_VERSION%>/hull.debug.js'],
+          dest: 'dist/<%= PKG_VERSION%>/hull.js'
+        }]
+      },
+      remote: {
+        files: [{
+          expand: false,
+          src: ['dist/<%= PKG_VERSION%>/hull-remote.debug.js'],
+          dest: 'dist/<%= PKG_VERSION%>/hull-remote.js'
+        }]
       }
     },
     uglify: {
@@ -272,6 +296,8 @@ module.exports = function (grunt) {
       "describe": ['describe']
     }
   };
+
+  helpers.updateDistTask(gruntConfig, !!grunt.option('dev'));
 
   helpers.appendAWSConfig(gruntConfig);
   helpers.cloudFrontConfig(gruntConfig);
