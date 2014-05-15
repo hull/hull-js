@@ -71,6 +71,19 @@ module.exports = function (grunt) {
           }]
         }
       };
+    },
+    updateDistTask: function (config, isDev) {
+      config = config.dist;
+      if (!isDev || !config) return;
+
+      var subKeys = ['remote', 'api', 'client'];
+      subKeys.forEach(function (key) {
+        var subTask = config[key];
+        var lookedUpName = 'uglify:' + key;
+        var lookedUpIdx = subTask.indexOf(lookedUpName);
+        if (lookedUpIdx === -1) return;
+        subTask.splice(lookedUpIdx, 1, 'copy:' + key);
+      });
     }
   };
 };

@@ -45,6 +45,6 @@
       "aura-extensions/aura-purl",
       "aura-extensions/aura-uuid"
     ],
-    "out": "dist/<%= PKG_VERSION %>/hull-remote.js"
+    "out": "dist/<%= PKG_VERSION %>/hull-remote.debug.js"
   }
 }
