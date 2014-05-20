@@ -52,4 +52,5 @@ define ['underscore', 'xdm'], (_, xdm)->
       app.sandbox.on 'remote.settings.update', rpc.settingsUpdate.bind(rpc)
       app.sandbox.on 'remote.iframe.show', -> rpc.show()
       app.sandbox.on 'remote.iframe.hide', -> rpc.hide()
+      $('html').on 'click', (e)-> rpc.hide()
 
