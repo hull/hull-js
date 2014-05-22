@@ -1,5 +1,6 @@
 define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
   (app)->
+
     createOrRefreshUuid = (key, expires) ->
       uuid = app.core.cookies.get(key) || app.core.util.uuid()
       app.core.cookies.set(key, uuid, {
@@ -56,8 +57,43 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
         error(h.response)
       return
 
+
+    class TrackEventMatcher
+
+      constructor: (cfg)->
+        if cfg == false || cfg?.ignore?
+          @mode = 'ignore'
+          @_initMatchers(cfg.ignore)
+        else if !cfg?
+          @mode = 'match_all'
+        else
+          @mode = 'match'
+          @_initMatchers(cfg?.only || cfg)
+
+      _initMatchers: (m)->
+        m = [m] if _.isString(m)
+        @matchers = _.map _.compact(m), (c)-> 
+          _c = c.toString()
+          if /^\/.*\/$/.test(_c)
+            new RegExp(_c.slice(1,-1))
+          else
+            _c
+
+      weTrackIt: (event)->
+        return false unless event?
+        return true if @mode == 'match_all'
+        ret = _.some _.map @matchers, (m)->
+          if _.isFunction(m.test)
+            m.test(event)
+          else
+            m == event
+        if @mode == 'ignore'
+          return !ret
+        else
+          return ret
+
     doTrack = (event, params={})->
-      return unless event
+      return unless app.core.trackMatcher.weTrackIt(event)
       params.hull_app_id    = app.config?.appId
       params.hull_app_name  = app.config?.data?.app?.name
       _.defaults params, initInfo
@@ -69,9 +105,8 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
         [eventName, trackParams] = JSON.parse(atob(track))
         doTrack(eventName, trackParams)
       catch error
-        console.warn 'Invalid Tracking header'
         "Invalid Tracking header"
-    handler.after trackAction
+    handler.after trackAction 
 
     trackHandler = (req, callback, errback)->
       eventName = req.path
@@ -84,9 +119,9 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
         data: req.params
       promise.then (h)->
         h.provider = 't'
-        callback(h)
+        callback && callback(h)
       , (err)->
-        errback(err.response)
+        errback && errback(err.response)
       return
 
     require:
@@ -95,6 +130,8 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
         base64:    'components/base64/base64'
 
     initialize: (app)->
+
+      app.core.trackMatcher = new TrackEventMatcher(app.core.clientConfig.track)
 
       analytics = require('analytics')
       settings = app.config.settings.analytics || {}

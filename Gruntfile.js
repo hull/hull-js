@@ -304,8 +304,14 @@ module.exports = function (grunt) {
   helpers.appendAWSConfig(gruntConfig);
   helpers.cloudFrontConfig(gruntConfig);
   grunt.initConfig(gruntConfig);
+  
+  if (grunt.option('dev')) {
+    grunt.registerTask('test', ['version']);
+  } else {
+    grunt.registerTask('test', ['version', 'karma:test']); 
+  }
 
-  grunt.registerTask('test', ['version', 'karma:test']);
+  grunt.registerTask('test', ['version']);
   grunt.registerTask('reset', ['clean:reset']);
 
   //These tasks are the only ones needed to be used

@@ -34,6 +34,9 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
         cookie.remove(cookieName, path: "/")
 
     rpc = null
+    api.clearToken = ->
+      rpc.clearUserToken() 
+
     # This will be executed exactly Once. The next call will be immediately resolved.
     onRemoteReady = (remoteObj)->
       rpc = remoteObj.rpc
