@@ -38,7 +38,7 @@ define ['domready', 'lib/utils/promises', 'xdm', 'lib/utils/version', 'underscor
     getClientConfig = -> config
 
 
-    hiddenFrameStyle = 
+    hiddenFrameStyle =
       top: '-20px'
       left: '-20px'
       bottom: 'auto'
@@ -90,11 +90,11 @@ define ['domready', 'lib/utils/promises', 'xdm', 'lib/utils/version', 'underscor
             left: '-20px'
             overflow: 'hidden'
       ,
-        remote:  message: {}, ready: {}
+        remote:  message: {}, ready: {}, clearUserToken: {}
         local:
-          message: onMessage, 
-          ready: readyFn, 
-          userUpdate: userUpdate, 
+          message: onMessage
+          ready: readyFn
+          userUpdate: userUpdate
           settingsUpdate: settingsUpdate
           getClientConfig: getClientConfig
           show: showIframe

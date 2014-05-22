@@ -30,7 +30,9 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       if _.isString(optionsOrPassword)
         promise = apiFn('users/login', 'post', { login: loginOrProvider, password: optionsOrPassword })
       else
-        promise = loginWithProvider(loginOrProvider, optionsOrPassword).then(-> apiFn('me'))
+        promise = loginWithProvider(loginOrProvider, optionsOrPassword).then ->
+          apiFn.clearToken()
+          apiFn('me')
 
       evtPromise = promise.then loginComplete, loginFailed
       evtPromise.then(callback) if _.isFunction(callback)

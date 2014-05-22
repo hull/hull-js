@@ -26,12 +26,14 @@ define ['underscore', 'xdm'], (_, xdm)->
           else
             errback(catchAll(req))
 
+      clearUserToken = ->
+        core.handler.headers['Hull-Access-Token'] = undefined
       try
         rpc = new xdm.Rpc({
           acl: app.config.appDomains
         }, {
           remote: { message: {}, ready: {}, userUpdate: {}, settingsUpdate: {}, getClientConfig: {}, show: {}, hide: {} }
-          local:  { message: onRemoteMessage }
+          local:  { message: onRemoteMessage, clearUserToken: clearUserToken }
         })
         rpc.getClientConfig (cfg)->
           core.clientConfig = cfg
