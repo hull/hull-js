@@ -1,12 +1,11 @@
 define ['underscore', 'xdm'], (_, xdm)->
 
-  catchAll = (res)->
-    console.warn("CatchAll Handler: ", res)
-    res
+  catchAll = (res)-> res
 
   (app)->
     rpc = null
     initialize: (app)->
+      dfd = $.Deferred()
       core = app.core
       core.routeHandlers = {}
 
@@ -14,6 +13,7 @@ define ['underscore', 'xdm'], (_, xdm)->
         throw new Error("Path not recognized #{JSON.stringify(req)}") unless req.path
 
         handler = core.routeHandlers[req.provider]
+        
         if _.isFunction handler
           handler(req, callback, errback)
         else
@@ -26,23 +26,33 @@ define ['underscore', 'xdm'], (_, xdm)->
           else
             errback(catchAll(req))
 
+      clearUserToken = ->
+        core.handler.headers['Hull-Access-Token'] = undefined
       try
         rpc = new xdm.Rpc({
           acl: app.config.appDomains
         }, {
-          remote: { message: {}, ready: {}, userUpdate: {}, settingsUpdate: {} }
-          local:  { message: onRemoteMessage }
+          remote: { message: {}, ready: {}, userUpdate: {}, settingsUpdate: {}, getClientConfig: {}, show: {}, hide: {} }
+          local:  { message: onRemoteMessage, clearUserToken: clearUserToken }
         })
+        rpc.getClientConfig (cfg)->
+          core.clientConfig = cfg
+          dfd.resolve(cfg)
       catch e
+        dfd.reject(e)
         rpcFall = new xdm.Rpc({},
           remote: {message: {}}
         )
         rpcFall.message error: "#{e.message}, please make sure this domain is whitelisted for this app."
 
-      true
+      dfd.promise()
 
     afterAppStart: (app)->
       return throw 'Unable to start Hull.' unless rpc
       rpc.ready(app.config)
       app.sandbox.on 'remote.user.update', rpc.userUpdate.bind(rpc)
       app.sandbox.on 'remote.settings.update', rpc.settingsUpdate.bind(rpc)
+      app.sandbox.on 'remote.iframe.show', -> rpc.show()
+      app.sandbox.on 'remote.iframe.hide', -> rpc.hide()
+      $('html').on 'click', (e)-> rpc.hide()
+

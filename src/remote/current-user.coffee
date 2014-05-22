@@ -37,7 +37,7 @@ define ()->
       else if userManager.isUserUpdate(h.response)
         userManager.currentUser = h.response
         app.sandbox.emit 'remote.user.update', userManager.currentUser
-        
+
 
 
 
