@@ -4,8 +4,9 @@ define ['lib/utils/promises', 'underscore'], (promises, _) ->
 
   showIframe = ->
   hideIframe = ->
-
   uiHandlers = {}
+  trackHandler = ->
+  utils = {}
 
   ensureLoggedIn = (base) ->
     ->
@@ -35,10 +36,19 @@ define ['lib/utils/promises', 'underscore'], (promises, _) ->
       prms.method = path.replace(/^ui\./, '')
       showIframe()
       cb = resp(req, callback, errback, true)
-      uiHandler = uiHandlers[path]
+      uiHandler = uiHandlers[path] || ->
+      trackParams = { ui_request_id: utils?.uuid?() || (new Date()).getTime() }
+      trackHandler({ path: "facebook.#{req.path}.open", params: _.extend({}, req.params, trackParams) })
       _.delay ->
         FB.ui prms, (response)->
-          uiHandler(req, response) if _.isFunction(uiHandler)
+          path = "facebook.#{req.path}."
+          if response.error_code
+            path += "error"
+          else
+            path += "success"
+
+          trackHandler({ path: "facebook.#{req.path}.error", params: _.extend({}, response, trackParams) })
+          uiHandler(req, response)
           cb(response)
       , 100
     else
@@ -75,6 +85,11 @@ define ['lib/utils/promises', 'underscore'], (promises, _) ->
       opts = { path: 'services/facebook/apprequests', method: 'post', params: res }
       noop = ->
       app.core.routeHandlers.hull(opts, noop, noop)
-      
+    
+    uiHandlers['ui.share'] = (req, res)->
+      opts = { path: 'services/facebook/share', method: 'post', params: res }
+      noop = ->
+      app.core.routeHandlers.hull(opts, noop, noop)
 
-
+    trackHandler = app.core.routeHandlers.track
+    utils = app.core.util

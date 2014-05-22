@@ -106,7 +106,7 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
         doTrack(eventName, trackParams)
       catch error
         "Invalid Tracking header"
-    handler.after trackAction
+    handler.after trackAction 
 
     trackHandler = (req, callback, errback)->
       eventName = req.path
@@ -119,9 +119,9 @@ define ['jquery', 'underscore', '../handler'], ($, _, Handler)->
         data: req.params
       promise.then (h)->
         h.provider = 't'
-        callback(h)
+        callback && callback(h)
       , (err)->
-        errback(err.response)
+        errback && errback(err.response)
       return
 
     require:
