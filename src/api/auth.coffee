@@ -10,9 +10,10 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
     _popupInterval = null
 
     loginComplete = (me)->
-      emitter.emit('hull.auth.login', me)
-      unless me?.stats?.sign_in_count?
-        emitter.emit('hull.auth.create', me)
+      emitter.once 'hull.settings.update', ->
+        emitter.emit('hull.auth.login', me)
+        unless me?.stats?.sign_in_count?
+          emitter.emit('hull.auth.create', me)
       me
 
     loginFailed = (err)->
@@ -28,7 +29,9 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       throw new TypeError("'loginOrProvider' must be a String") unless _.isString(loginOrProvider)
 
       if _.isString(optionsOrPassword)
-        promise = apiFn('users/login', 'post', { login: loginOrProvider, password: optionsOrPassword })
+        promise = apiFn('users/login', 'post', { login: loginOrProvider, password: optionsOrPassword }).then ->
+          apiFn.clearToken()
+          apiFn('me')
       else
         promise = loginWithProvider(loginOrProvider, optionsOrPassword).then ->
           apiFn.clearToken()
