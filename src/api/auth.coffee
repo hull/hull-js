@@ -10,11 +10,21 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
     _popupInterval = null
 
     loginComplete = (me)->
-      emitter.once 'hull.settings.update', ->
+      dfd = promises.deferred()
+      promise = dfd.promise
+      promise.then ->
         emitter.emit('hull.auth.login', me)
         unless me?.stats?.sign_in_count?
           emitter.emit('hull.auth.create', me)
-      me
+      , (err)->
+        emitter.emit('hull.auth.fail', err)
+      emitter.once 'hull.settings.update', ->
+        # user has been set, settings have been update. Yay!
+        dfd.resolve me
+      # Setup a delay to launch rejection
+      rejectable = _.bind(dfd.reject, dfd)
+      _.delay rejectable, 30000, new Error('Timeout for login')
+      promise
 
     loginFailed = (err)->
       emitter.emit('hull.auth.fail', err)
