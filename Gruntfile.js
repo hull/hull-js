@@ -304,19 +304,14 @@ module.exports = function (grunt) {
   helpers.appendAWSConfig(gruntConfig);
   helpers.cloudFrontConfig(gruntConfig);
   grunt.initConfig(gruntConfig);
-  
-  if (grunt.option('dev')) {
-    grunt.registerTask('test', ['version']);
-  } else {
-    grunt.registerTask('test', ['version', 'karma:test']); 
-  }
 
-  grunt.registerTask('test', ['version']);
+  grunt.registerTask('test', ['version', 'karma:test']);
+
   grunt.registerTask('reset', ['clean:reset']);
 
   //These tasks are the only ones needed to be used
   grunt.registerTask('default', 'server');
-  grunt.registerTask('server', ['connect', 'dist:remote', 'dist:client', 'dist:api', 'dist:widgets', 'watch']);
+  grunt.registerTask('server', ['connect', 'dist:remote', 'dist:client', 'test', 'dist:api', 'dist:widgets', 'watch']);
   grunt.registerTask('deploy', ['dist', 's3:prod']);
 
   require('./.grunt/customTasks')(grunt);
