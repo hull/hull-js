@@ -12,7 +12,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-symlink');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-hull-dox');
-  grunt.loadNpmTasks('grunt-hull-widgets');
+  grunt.loadNpmTasks('grunt-hull-components');
   grunt.loadNpmTasks('grunt-s3');
   grunt.loadNpmTasks('grunt-git-describe');
   grunt.loadNpmTasks('grunt-wrap');
@@ -249,13 +249,15 @@ module.exports = function (grunt) {
       template: "define(function () { return '<%= PKG_VERSION %>';});",
       dest: 'lib/utils/version.js'
     },
-    hull_widgets: {
-      hull: {
+    hull_components: {
+      options: {
+        optimize: !grunt.option('dev'),
+        config: {}
+      },
+      all: {
         src: 'aura_components',
-        before: [],
-        dest: 'dist/<%= PKG_VERSION%>',
-        optimize: !grunt.option('dev')
-      }
+        dest: 'dist/<%= PKG_VERSION%>/aura_components'
+      },
     },
     describe: {
       out: 'dist/<%= PKG_VERSION%>/REVISION'
@@ -293,7 +295,7 @@ module.exports = function (grunt) {
       "api": ['version', 'clean:client', 'coffee:api', 'wrap', 'version', 'requirejs:api', 'uglify:api', 'symlink:current'],
       "client-no-underscore": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
       "client-no-backbone": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
-      "widgets": ["version", "hull_widgets"],
+      "widgets": ["version", "hull_components:all"],
       "docs": ['dox'],
       "describe": ['describe']
     }
