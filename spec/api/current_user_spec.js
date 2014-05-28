@@ -64,11 +64,6 @@ define(['lib/api/current-user'], function (currentUserFn) {
             this.updateListener({});
             expect(this.userFn()).to.be.false;
           });
-          it('should delegate to login if the update has id', function () {
-            var user = { id: 'yop' };
-            this.updateListener(user);
-            this.femit.emit.should.have.been.calledWith('hull.auth.login', user);
-          });
         });
         describe('when there is a current user', function () {
           beforeEach(function () {
