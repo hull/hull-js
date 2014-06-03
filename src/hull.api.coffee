@@ -65,7 +65,6 @@ define [
             promise
           util:
             entity: entity
-            eventEmitter: _emitter
           trait: Traits.setup(api.api).build
         created.api.create = create
         raw: api
