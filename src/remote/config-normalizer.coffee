@@ -1,7 +1,9 @@
 define ['underscore'], (_)->
 
   flattenSettings = (settings, name)->
-    [name.replace(/_app$/, ''), settings[name] || {}]
+    nameArray = name.split('_')
+    nameArray.pop() if nameArray.length > 1
+    [nameArray.join('_'), settings[name] || {}]
 
   class ConfigNormalizer
     constructor: (cfg)->
