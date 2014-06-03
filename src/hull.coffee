@@ -58,7 +58,7 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
     booted = apiParts.exports
     return booted unless appParts.components
     booted.component = componentRegistrar(define)
-    booted.util.Handlebars = Handlebars
+    booted.util = appParts.app.sandboxes.create().util
     booted.define = define
     booted.parse = (el, options={})->
       appParts.app.core.appSandbox.start(el, options)
