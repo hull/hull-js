@@ -13,7 +13,7 @@ define ['underscore', 'xdm'], (_, xdm)->
         throw new Error("Path not recognized #{JSON.stringify(req)}") unless req.path
 
         handler = core.routeHandlers[req.provider]
-        
+
         if _.isFunction handler
           handler(req, callback, errback)
         else

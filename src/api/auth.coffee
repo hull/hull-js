@@ -10,10 +10,21 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
     _popupInterval = null
 
     loginComplete = (me)->
-      emitter.emit('hull.auth.login', me)
-      unless me?.stats?.sign_in_count?
-        emitter.emit('hull.auth.create', me)
-      me
+      dfd = promises.deferred()
+      promise = dfd.promise
+      promise.then ->
+        emitter.emit('hull.auth.login', me)
+        unless me?.stats?.sign_in_count?
+          emitter.emit('hull.auth.create', me)
+      , (err)->
+        emitter.emit('hull.auth.fail', err)
+      emitter.once 'hull.settings.update', ->
+        # user has been set, settings have been update. Yay!
+        dfd.resolve me
+      # Setup a delay to launch rejection
+      rejectable = _.bind(dfd.reject, dfd)
+      _.delay rejectable, 30000, new Error('Timeout for login')
+      promise
 
     loginFailed = (err)->
       emitter.emit('hull.auth.fail', err)
@@ -28,7 +39,9 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       throw new TypeError("'loginOrProvider' must be a String") unless _.isString(loginOrProvider)
 
       if _.isString(optionsOrPassword)
-        promise = apiFn('users/login', 'post', { login: loginOrProvider, password: optionsOrPassword })
+        promise = apiFn('users/login', 'post', { login: loginOrProvider, password: optionsOrPassword }).then ->
+          apiFn.clearToken()
+          apiFn('me')
       else
         promise = loginWithProvider(loginOrProvider, optionsOrPassword).then ->
           apiFn.clearToken()
