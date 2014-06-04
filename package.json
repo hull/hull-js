@@ -15,7 +15,7 @@
     "grunt-contrib-watch": "0.5.3",
     "grunt-contrib-symlink": "0.2.0",
     "grunt-hull-dox": "git://github.com/hull/grunt-hull-dox.git",
-    "grunt-hull-widgets": "0.7.0",
+    "grunt-hull-components": "0.2.0-beta",
     "bower": "1.3.1",
     "grunt-wrap": "0.2.0",
     "git-rev": "0.2.1",
