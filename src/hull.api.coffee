@@ -19,6 +19,7 @@ define [
           _reporting.track 'hull.auth.create', providers: providers, main_identity: me.main_identity
         _emitter.on 'hull.auth.login', (me, provider)->
           providers = _.pluck me.identities, 'provider'
+          provider = provider || me.main_identity
           _reporting.track 'hull.auth.login', { provider: provider, providers: providers, main_identity: me.main_identity }
         _emitter.on 'hull.auth.logout', ()-> _reporting.track('hull.auth.logout')
 
