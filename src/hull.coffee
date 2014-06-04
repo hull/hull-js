@@ -26,6 +26,7 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
       .use('aura-extensions/hull-helpers')
       .use('aura-extensions/hull-utils')
       .use('aura-extensions/aura-form-serialize')
+      .use('aura-extensions/aura-purl')
       .use('aura-extensions/aura-component-validate-options')
       .use('aura-extensions/aura-component-require')
       .use('aura-extensions/hull-component-normalize-id')
@@ -57,6 +58,7 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
     booted = apiParts.exports
     return booted unless appParts.components
     booted.component = componentRegistrar(define)
+    booted.util = appParts.app.sandbox.util
     booted.util.Handlebars = Handlebars
     booted.define = define
     booted.parse = (el, options={})->

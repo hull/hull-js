@@ -152,7 +152,7 @@ Hull.component({
     this._templates = this._templates || {};
 
     if (!this._templates[key]) {
-      this._templates[key] = Hull.util.Handlebars.compile(this.options[key] || this.defaultMessages[key]);
+      this._templates[key] = this.sandbox.util.Handlebars.compile(this.options[key] || this.defaultMessages[key]);
     }
 
     return this._templates[key](locals);
