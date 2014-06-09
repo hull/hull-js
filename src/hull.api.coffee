@@ -66,6 +66,7 @@ define [
           util:
             entity: entity
           trait: Traits.setup(api.api).build
+          traits: Traits.setup(api.api).many
         created.api.create = create
         raw: api
         api: created
