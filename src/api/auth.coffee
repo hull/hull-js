@@ -9,11 +9,11 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
     authenticating = null
     _popupInterval = null
 
-    loginComplete = (me)->
+    loginComplete = (provider, me)->
       dfd = promises.deferred()
       promise = dfd.promise
       promise.then ->
-        emitter.emit('hull.auth.login', me)
+        emitter.emit('hull.auth.login', me, provider)
         unless me?.stats?.sign_in_count?
           emitter.emit('hull.auth.create', me)
       , (err)->
@@ -31,8 +31,10 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       throw err
       err
 
+    emailLoginComplete = _.bind(loginComplete, undefined, 'email')
+
     signup = (user) ->
-      apiFn('users', 'post', user).then loginComplete, loginFailed
+      apiFn('users', 'post', user).then emailLoginComplete, loginFailed
 
 
     login = (loginOrProvider, optionsOrPassword, callback) ->
@@ -42,12 +44,13 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
         promise = apiFn('users/login', 'post', { login: loginOrProvider, password: optionsOrPassword }).then ->
           apiFn.clearToken()
           apiFn('me')
+        evtPromise = promise.then emailLoginComplete, loginFailed
       else
         promise = loginWithProvider(loginOrProvider, optionsOrPassword).then ->
           apiFn.clearToken()
           apiFn('me')
+        evtPromise = promise.then _.bind(loginComplete, undefined, loginOrProvider), loginFailed
 
-      evtPromise = promise.then loginComplete, loginFailed
       evtPromise.then(callback) if _.isFunction(callback)
 
       promise
