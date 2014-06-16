@@ -11,7 +11,7 @@ define [
   ], (_, promises, emitter, api, reporting, entity, configParser, currentUser, Traits)->
 
     create = (config)->
-      _emitter = emitter()
+      _emitter = emitter(!!config.debug?.enable?)
       api.init(config, _emitter).then (api)->
         _reporting = reporting.init(api)
         _emitter.on 'hull.auth.create', (me)->

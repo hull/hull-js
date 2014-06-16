@@ -7,8 +7,11 @@ define ['underscore', 'eventemitter'], (_, EventEmitter2)->
         try
           throw new Error()
         catch e
-          stack = e.stack
-        fn.apply(@, args.concat({ eventName: evt, stack: stack }))
+          stack = e.stack.split('\n')
+          stack.shift()
+          stack = _.map stack, (s)->
+            s.trim()
+        fn.apply(@, args.concat({ eventName: evt, stack: stack.join('\n') }))
     'onAny': null
     'offAny': null
     'once': null
@@ -20,7 +23,7 @@ define ['underscore', 'eventemitter'], (_, EventEmitter2)->
     'emit': null
     'setMaxListeners': null
 
-  ()->
+  (debug)->
     _ee = new EventEmitter2
       wildcard: true
       delimiter: '.'
@@ -28,6 +31,6 @@ define ['underscore', 'eventemitter'], (_, EventEmitter2)->
       maxListeners: 100
     ee = {}
     for name, method of methods
-      method = _ee[name] unless method
+      method = _ee[name] unless method and debug
       ee[name] = _.bind(method, _ee)
     ee
