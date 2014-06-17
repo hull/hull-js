@@ -65,8 +65,7 @@ define [
             promise
           util:
             entity: entity
-          trait: Traits.setup(api.api).build
-          traits: Traits.setup(api.api).many
+          traits: Traits.setup(api.api)
         created.api.create = create
         raw: api
         api: created
