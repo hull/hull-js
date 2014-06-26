@@ -12,7 +12,7 @@ define(['lib/api/current-user'], function (currentUserFn) {
       this.userFn.should.be.a('function');
     });
     it('should by default return an empty currentUser', function () {
-      expect(this.userFn()).to.be.false;
+      expect(this.userFn()).to.be.null;
     });
 
     it('should add listeners to hull events', function () {
@@ -55,14 +55,14 @@ define(['lib/api/current-user'], function (currentUserFn) {
 
       it('should delete the currentUser value on `hull.login`', function () {
         this.logoutListener();
-        expect(this.userFn()).to.be.false;
+        expect(this.userFn()).to.be.null;
       });
 
       describe('Updating the user', function () {
         describe('When there is no current User', function () {
           it('should not change if the update has no id', function () {
             this.updateListener({});
-            expect(this.userFn()).to.be.false;
+            expect(this.userFn()).to.be.null;
           });
           it('should not delegate to login if the update has id', function () {
             var user = { id: 'yop' };
