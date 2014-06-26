@@ -50,19 +50,21 @@ define(['squire', 'lib/utils/promises'], function (Squire, promises) {
         ret.should.contain.property('then');
         ret.then.should.be.a('function');
       });
+    });
+    describe('initialising the flavour 2', function () {
       it('should resolve to a description of the flavour', function (done) {
         var ret = this.hullApi.init({});
-        var rawApi = { api: function () {}, auth: { logout: function () {} }, remoteConfig: {} };
-        this.apiDeferred.resolve(rawApi);
+        var rawApi = { api: function () {}, auth: { logout: function () {} }, remoteConfig: { data: {}} };
         ret.then(function (flavour) {
           flavour.should.be.an('object');
           var expectedKeys = ['raw', 'api', 'eventEmitter'];
-          flavour.should.have.keys(expectedKeys);
+          flavour.should.contain.keys(expectedKeys);
           flavour.raw.should.eql(rawApi);
           flavour.eventEmitter.should.eql(this.emitterMock);
           flavour.api.should.be.an('object');
           done();
         }.bind(this), done);
+        this.apiDeferred.resolve(rawApi);
       });
     });
     describe('interface of the API flavour', function () {

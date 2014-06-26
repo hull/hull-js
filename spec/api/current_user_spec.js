@@ -1,13 +1,17 @@
-define(['lib/api/current-user'], function (currentUserFn) {
+define(['lib/api/current-user'], function (currentUser) {
   describe('Logging in, out and updating the current user', function () {
     beforeEach(function () {
       this.femit = {
         emit: sinon.spy(),
         on: sinon.spy()
       };
-      this.userFn = currentUserFn(this.femit);
+      this.userFn = currentUser(this.femit).getter;
     });
 
+    it('built object should be an object', function () {
+      currentUser(this.femit).should.be.a('object');
+      currentUser(this.femit).should.have.keys('getter', 'update');
+    });
     it('should return a function', function () {
       this.userFn.should.be.a('function');
     });

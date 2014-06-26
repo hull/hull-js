@@ -15,4 +15,5 @@ define ()->
           emitter.emit 'hull.auth.login', me
     emitter.on 'hull.auth.logout', ()->
       _currentUser = null
-    ()-> _currentUser
+    getter: ()-> _currentUser
+    update: (user)-> _currentUser = user
