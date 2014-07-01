@@ -41,13 +41,14 @@ define ['lib/utils/promises', 'underscore'], (promises, _) ->
       trackHandler({ path: "facebook.#{req.path}.open", params: _.extend({}, req.params, trackParams) })
       _.delay ->
         FB.ui prms, (response)->
+          
           path = "facebook.#{req.path}."
-          if response.error_code
+          if !response || response.error_code
             path += "error"
           else
             path += "success"
 
-          trackHandler({ path: "facebook.#{req.path}.error", params: _.extend({}, response, trackParams) })
+          trackHandler({ path: path, params: _.extend({}, response, trackParams) })
           uiHandler(req, response)
           cb(response)
       , 100
@@ -90,6 +91,8 @@ define ['lib/utils/promises', 'underscore'], (promises, _) ->
       opts = { path: 'services/facebook/share', method: 'post', params: res }
       noop = ->
       app.core.routeHandlers.hull(opts, noop, noop)
+
+    uiHandlers['ui.feed'] = uiHandlers['ui.share']
 
     trackHandler = app.core.routeHandlers.track
     utils = app.core.util
