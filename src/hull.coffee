@@ -59,6 +59,7 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
     return booted unless appParts.components
     booted.component = componentRegistrar(define)
     appParts.app.sandbox.currentUser = apiParts.exports.currentUser
+    appParts.app.sandbox.promises = promises
     booted.util = appParts.app.sandbox.util
     booted.util.Handlebars = Handlebars
     booted.define = define
