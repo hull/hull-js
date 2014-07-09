@@ -1,6 +1,15 @@
 throw 'jQuery must be available for components to work' unless window.jQuery
 
-define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars', 'lib/hull.api', 'lib/utils/emitter', 'lib/client/component/registrar', 'lib/helpers/login'], (_, promises, Aura, Handlebars, HullAPI, emitterInstance, componentRegistrar, loginHelpers) ->
+define [
+  'underscore',
+  'lib/utils/promises',
+  'aura/aura',
+  'lib/utils/handlebars',
+  'lib/hull.api',
+  'lib/utils/emitter',
+  'lib/client/component/registrar',
+  'lib/helpers/login'
+], (_, promises, Aura, Handlebars, HullAPI, emitterInstance, componentRegistrar, loginHelpers) ->
 
   hullApiMiddleware = (api)->
     name: 'Hull'
@@ -60,7 +69,7 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
     booted.component = componentRegistrar(define)
     appParts.app.sandbox.currentUser = apiParts.exports.currentUser
     appParts.app.sandbox.promises = promises
-    booted.util = appParts.app.sandbox.util
+    booted.util = _.extend appParts.app.sandbox.util, apiParts.exports.util
     booted.util.Handlebars = Handlebars
     booted.define = define
     booted.parse = (el, options={})->

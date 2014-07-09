@@ -5,10 +5,11 @@ define [
   'lib/api/api',
   'lib/api/reporting',
   'lib/utils/entity',
+  'lib/utils/string',
   'lib/utils/config',
   'lib/api/current-user',
   'lib/traits/base'
-  ], (_, promises, emitter, api, reporting, entity, configParser, currentUser, Traits)->
+  ], (_, promises, emitter, api, reporting, entity, stringUtils, configParser, currentUser, Traits)->
 
     create = (config)->
       _emitter = emitter()
@@ -65,6 +66,7 @@ define [
             promise
           util:
             entity: entity
+            string: stringUtils
           trait: Traits.setup(api.api).build
         created.api.create = create
         raw: api
