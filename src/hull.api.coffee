@@ -31,6 +31,7 @@ define [
         )
 
         config.services = api.remoteConfig.settings
+        _currentUser = currentUser(_emitter)
         created =
           config: configParser(config, _emitter)
           on: _emitter.on
@@ -39,7 +40,7 @@ define [
           track: _reporting.track
           flag: _reporting.flag
           api: api.api
-          currentUser: currentUser(_emitter)
+          currentUser: _currentUser.getter
           signup: (args...)->
             signupPromise = api.auth.signup(args...)
             signupPromise
@@ -70,6 +71,7 @@ define [
         raw: api
         api: created
         eventEmitter: _emitter
+        currentUser: _currentUser
 
     failure = (error)->
       console.error('Unable to start Hull.api', error.message)
@@ -77,9 +79,11 @@ define [
 
     init: (config)-> create(config)
     success: (successResult)->
+      data = successResult.raw.remoteConfig.data
+      successResult.currentUser.update(data.me) if data?.me
       exports: successResult.api
       context:
-        me: successResult.raw.remoteConfig.data.me
-        app: successResult.raw.remoteConfig.data.app
-        org: successResult.raw.remoteConfig.data.org
+        me: data?.me
+        app: data?.app
+        org: data?.org
     failure: failure

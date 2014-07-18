@@ -93,7 +93,7 @@ getTrackConfig = (cfg)->
   stringify = (a)->
 
   ret = switch (Object.prototype.toString.call(cfg).match(/^\[object (.*)\]$/)[1])
-    when "Object" 
+    when "Object"
       if cfg.only?
         { only: (m.toString() for m in cfg.only) }
       else if cfg.ignore?
@@ -134,7 +134,11 @@ successCb = (config, isMain, success, args...)->
   else
     delete _final.component #FIXME hackish
 
-  rerun('ready', _final)
+  if ENV == 'client'
+    _final.on 'hull.app.ready', ->
+      rerun('ready', _final)
+  else
+    rerun('ready', _final)
   # Execute Hull.init callback
   _final.emit('hull.init', _final, extension.context.me, extension.context.app, extension.context.org)
 
@@ -155,4 +159,3 @@ require ['flavour', 'underscore', 'lib/utils/version'], (flavour, _, version)->
   _extend = _.extend
   currentFlavour = flavour
   lock.unlock()
-

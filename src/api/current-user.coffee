@@ -1,6 +1,6 @@
 define ()->
   (emitter)->
-    _currentUser = false
+    _currentUser = null
     emitter.on 'hull.init', (hull, me, app, org)->
       _currentUser = me
     emitter.on 'hull.auth.login', (me)->
@@ -14,5 +14,6 @@ define ()->
         else
           emitter.emit 'hull.auth.login', me
     emitter.on 'hull.auth.logout', ()->
-      _currentUser = false
-    ()-> _currentUser
+      _currentUser = null
+    getter: ()-> _currentUser
+    update: (user)-> _currentUser = user

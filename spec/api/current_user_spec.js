@@ -1,18 +1,22 @@
-define(['lib/api/current-user'], function (currentUserFn) {
+define(['lib/api/current-user'], function (currentUser) {
   describe('Logging in, out and updating the current user', function () {
     beforeEach(function () {
       this.femit = {
         emit: sinon.spy(),
         on: sinon.spy()
       };
-      this.userFn = currentUserFn(this.femit);
+      this.userFn = currentUser(this.femit).getter;
     });
 
+    it('built object should be an object', function () {
+      currentUser(this.femit).should.be.a('object');
+      currentUser(this.femit).should.have.keys('getter', 'update');
+    });
     it('should return a function', function () {
       this.userFn.should.be.a('function');
     });
     it('should by default return an empty currentUser', function () {
-      expect(this.userFn()).to.be.false;
+      expect(this.userFn()).to.be.null;
     });
 
     it('should add listeners to hull events', function () {
@@ -55,14 +59,14 @@ define(['lib/api/current-user'], function (currentUserFn) {
 
       it('should delete the currentUser value on `hull.login`', function () {
         this.logoutListener();
-        expect(this.userFn()).to.be.false;
+        expect(this.userFn()).to.be.null;
       });
 
       describe('Updating the user', function () {
         describe('When there is no current User', function () {
           it('should not change if the update has no id', function () {
             this.updateListener({});
-            expect(this.userFn()).to.be.false;
+            expect(this.userFn()).to.be.null;
           });
           it('should not delegate to login if the update has id', function () {
             var user = { id: 'yop' };

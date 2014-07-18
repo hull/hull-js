@@ -66,6 +66,7 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
     booted.parse = (el, options={})->
       appParts.app.core.appSandbox.start(el, options)
     appParts.app.start({ components: 'body' }).then ->
+      booted.emit('hull.app.ready')
       #TODO populate the models from the remoteConfig
       booted.on 'hull.auth.login', _.bind(loginHelpers.login, undefined,  appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
       booted.on 'hull.auth.update', _.bind(loginHelpers.update, undefined,  appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
