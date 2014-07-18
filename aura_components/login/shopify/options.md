@@ -1,6 +1,18 @@
 Shopify Component Options
 =========================
 
+You can customize your login buttons by adding options to your snippet.
+
+```html
+<div data-hull-component="login/shopify@hull">Loading Social Login...</div>;
+```
+
+This is the default snippet. Let's say we want to change the 'Sign In with Facebook' to 'Connect with Facebook'. To do that we need to set the `data-sign-in-message` to `Connect with {{provider}}`.
+
+```html
+<div data-hull-component="login/shopify@hull" data-sign-in-message="Connect with {{provider}}">Loading Social Login...</div>;
+```
+
 ## Core
 
 ### `data-show-link-identity`
