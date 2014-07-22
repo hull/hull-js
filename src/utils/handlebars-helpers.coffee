@@ -15,6 +15,21 @@ define ['underscore', 'moment'], (_, moment)->
 
 
     ###*
+     * Fallback Helper for falsy values.
+     *
+     *      user.picture = undefined
+     *
+     *     <img src="{{or user.picture 'http://placehold.it/200x200'}}"/>
+     *     => <img src="http://placehold.it/200x200"/>
+     *
+     * @param  {String} value         Anything
+     * @param  {String} fallback
+     * @return {String}              value if value is truthy, otherwise fallback
+    ###
+    HandlebarsHelpers.or = (first, second) -> first || second
+
+
+    ###*
      * Generates an image representation for a social object.
      *
      *     <img src="{{imageUrl "4bb5c26bacb93e0000000007" 'small' 'http://placehold.it/200x200'}}"/>
@@ -89,8 +104,11 @@ define ['underscore', 'moment'], (_, moment)->
      * @param  {Object} obj Any javascript object
      * @return {String}     A String dump of the object
     ###
-    HandlebarsHelpers.json = (obj)->
-      JSON.stringify obj
+    HandlebarsHelpers.json = (obj, pretty)->
+      if (pretty)
+        JSON.stringify obj, null, 2
+      else
+        JSON.stringify obj
 
 
     ###*

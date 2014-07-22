@@ -10,8 +10,9 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-symlink');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-hull-dox');
-  grunt.loadNpmTasks('grunt-hull-widgets');
+  grunt.loadNpmTasks('grunt-hull-components');
   grunt.loadNpmTasks('grunt-s3');
   grunt.loadNpmTasks('grunt-git-describe');
   grunt.loadNpmTasks('grunt-wrap');
@@ -19,6 +20,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-bump');
   grunt.loadNpmTasks('grunt-invalidate-cloudfront');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   var clientConfig = grunt.file.readJSON('.grunt/client.json');
   var remoteConfig = grunt.file.readJSON('.grunt/remote.json');
@@ -51,20 +53,20 @@ module.exports = function (grunt) {
   //Augment the require.js configuation with some computed elements
   var apiRJSConfig = (function () {
     var _c = apiConfig.requireJS;
-    _c.optimize = grunt.option('dev') ? "none" : "uglify";
+    _c.optimize = 'none';
     return _c;
   })();
   var clientRJSConfig = (function () {
     var _c = clientConfig.requireJS;
     _c.include = _c.include.concat(auraExtensions).concat(clientLibs);
-    _c.optimize = grunt.option('dev') ? "none" : "uglify";
+    _c.optimize = 'none';
     return _c;
   })();
 
   var remoteRJSConfig = (function () {
     var _c = remoteConfig.requireJS;
     _c.include = _c.include.concat(remoteLibs).concat(vendorLibs);
-    _c.optimize = grunt.option('dev') ? "none" : "uglify";
+    _c.optimize = 'none';
     return _c;
   })();
 
@@ -73,6 +75,47 @@ module.exports = function (grunt) {
     karma: {
       test: {
         configFile: 'karma.conf.js'
+      }
+    },
+    copy: {
+      api: {
+        files: [{
+          expand: false,
+          src: ['dist/<%= PKG_VERSION%>/hull.api.debug.js'],
+          dest: 'dist/<%= PKG_VERSION%>/hull.api.js'
+        }]
+      },
+      client: {
+        files: [{
+          expand: false,
+          src: ['dist/<%= PKG_VERSION%>/hull.debug.js'],
+          dest: 'dist/<%= PKG_VERSION%>/hull.js'
+        }]
+      },
+      remote: {
+        files: [{
+          expand: false,
+          src: ['dist/<%= PKG_VERSION%>/hull-remote.debug.js'],
+          dest: 'dist/<%= PKG_VERSION%>/hull-remote.js'
+        }]
+      }
+    },
+    uglify: {
+      options: {},
+      api: {
+        files: {
+          'dist/<%= PKG_VERSION%>/hull.api.js' : ['dist/<%= PKG_VERSION%>/hull.api.debug.js']
+        }
+      },
+      client: {
+        files: {
+          'dist/<%= PKG_VERSION%>/hull.js' : ['dist/<%= PKG_VERSION%>/hull.debug.js']
+        }
+      },
+      remote: {
+        files: {
+          'dist/<%= PKG_VERSION%>/hull-remote.js' : ['dist/<%= PKG_VERSION%>/hull-remote.debug.js']
+        }
       }
     },
     clean: {
@@ -141,17 +184,19 @@ module.exports = function (grunt) {
         options: (function (c) {
           c.paths.underscore = 'empty:';
           c.paths.backbone = 'empty:';
-          c.out = c.out.replace('hull.js', 'hull.no-backbone.js');
+          c.out = c.out.replace('hull.debug.js', 'hull.no-backbone.js');
           c.wrap.start = c.wrap.start + ";root._ = window._;";
           c.wrap.start = c.wrap.start + ";root.Backbone = window.Backbone;";
+          c.optimize = "uglify";
           return c;
         })(clone(clientRJSConfig, true))
       },
       "client-no-underscore": {
         options: (function (c) {
           c.paths.underscore = 'empty:';
-          c.out = c.out.replace('hull.js', 'hull.no-underscore.js');
+          c.out = c.out.replace('hull.debug.js', 'hull.no-underscore.js');
           c.wrap.start = c.wrap.start + ";root._ = window._;";
+          c.optimize = "uglify";
           return c;
         })(clone(clientRJSConfig, true))
       },
@@ -175,9 +220,9 @@ module.exports = function (grunt) {
       }
     },
     watch: {
-      widgets: {
+      components: {
         files: ['aura_components/**/*'],
-        tasks: ['dist:widgets', 'cssmin']
+        tasks: ['dist:components', 'cssmin']
       },
       remote: {
         files: remoteConfig.coffeeFiles,
@@ -204,13 +249,15 @@ module.exports = function (grunt) {
       template: "define(function () { return '<%= PKG_VERSION %>';});",
       dest: 'lib/utils/version.js'
     },
-    hull_widgets: {
-      hull: {
-        src: 'aura_components',
-        before: [],
-        dest: 'dist/<%= PKG_VERSION%>',
+    hull_components: {
+      options: {
         optimize: !grunt.option('dev')
-      }
+      },
+      hull: {
+      sourceName: "hull",
+        src: 'aura_components',
+        dest: 'dist/<%= PKG_VERSION%>/aura_components'
+      },
     },
     describe: {
       out: 'dist/<%= PKG_VERSION%>/REVISION'
@@ -243,27 +290,30 @@ module.exports = function (grunt) {
       }
     },
     dist: {
-      "remote": ['version', 'clean:remote', 'coffee:remote', 'wrap', 'version', 'requirejs:remote', 'symlink:current'],
-      "client": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client', 'cssmin', 'symlink:current'],
-      "api": ['version', 'clean:client', 'coffee:api', 'wrap', 'version', 'requirejs:api', 'symlink:current'],
+      "remote": ['version', 'clean:remote', 'coffee:remote', 'wrap', 'version', 'requirejs:remote', 'uglify:remote', 'symlink:current'],
+      "client": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client', 'uglify:client', 'cssmin', 'symlink:current'],
+      "api": ['version', 'clean:client', 'coffee:api', 'wrap', 'version', 'requirejs:api', 'uglify:api', 'symlink:current'],
       "client-no-underscore": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-underscore'],
       "client-no-backbone": ['version', 'clean:client', 'coffee:client', 'wrap', 'version', 'requirejs:client-no-backbone'],
-      "widgets": ["version", "hull_widgets"],
+      "components": ["version", "hull_components:hull"],
       "docs": ['dox'],
       "describe": ['describe']
     }
   };
+
+  helpers.updateDistTask(gruntConfig, !!grunt.option('dev'));
 
   helpers.appendAWSConfig(gruntConfig);
   helpers.cloudFrontConfig(gruntConfig);
   grunt.initConfig(gruntConfig);
 
   grunt.registerTask('test', ['version', 'karma:test']);
+
   grunt.registerTask('reset', ['clean:reset']);
 
   //These tasks are the only ones needed to be used
   grunt.registerTask('default', 'server');
-  grunt.registerTask('server', ['connect', 'dist:remote', 'dist:client', 'dist:api', 'dist:widgets', 'watch']);
+  grunt.registerTask('server', ['connect', 'dist:remote', 'dist:client', 'test', 'dist:api', 'dist:components', 'watch']);
   grunt.registerTask('deploy', ['dist', 's3:prod']);
 
   require('./.grunt/customTasks')(grunt);

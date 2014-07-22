@@ -7,14 +7,11 @@
 
     <title>Hull App...</title>
     <script src="//code.jquery.com/jquery-1.8.3.js"></script>
-    <script src="../dist/current/hull.js"></script>
+    <script src="//js.hull.dev/dist/current/hull.js"></script>
     <script src="app.js"></script>
   </head>
   <body>
-    <div class="container">
-      <a id="trigger" class="btn" href="#">Hello</a>
-      <div data-hull-component='login/shopify_checkout@hull'
-        data-hull-target="#trigger" data-hull-main-color="#50b2da"></div>
-    </div>
+    <div data-hull-component="login/profile@hull"></div>
+    <div data-hull-component="login/form@hull"></div>
   </body>
 </html>

@@ -14,6 +14,7 @@ Hull.component({
     authFailedMessage: 'You did not fully authorize or "{{provider}}" app is not well configured.',
     windowClosedMessage: 'Authorization window has been closed.',
     customerExistsMessage: '"{{email}}" is already associated with an account... Please <a href="/account/login">log in with your password</a>. If you have forgotten your password, you can <a href="/account/login#recover">reset your password here</a>.',
+    disabledCustomerMessage: 'An email has been sent to {{email}}, please click the link included to verify your email address.',
     fallbackMessage: 'Bummer, something went wrong during authentication.'
   },
 
@@ -151,7 +152,7 @@ Hull.component({
     this._templates = this._templates || {};
 
     if (!this._templates[key]) {
-      this._templates[key] = Hull.util.Handlebars.compile(this.options[key] || this.defaultMessages[key]);
+      this._templates[key] = this.sandbox.util.Handlebars.compile(this.options[key] || this.defaultMessages[key]);
     }
 
     return this._templates[key](locals);

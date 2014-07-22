@@ -9,30 +9,48 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
     authenticating = null
     _popupInterval = null
 
-    loginComplete = (me)->
-      emitter.emit('hull.auth.login', me)
-      unless me?.stats?.sign_in_count?
-        emitter.emit('hull.auth.create', me)
-      me
+    loginComplete = (provider, me)->
+      dfd = promises.deferred()
+      promise = dfd.promise
+      promise.then ->
+        emitter.emit('hull.auth.login', me, provider)
+        unless me?.stats?.sign_in_count?
+          emitter.emit('hull.auth.create', me)
+      , (err)->
+        emitter.emit('hull.auth.fail', err)
+      emitter.once 'hull.settings.update', ->
+        # user has been set, settings have been update. Yay!
+        dfd.resolve me
+      # Setup a delay to launch rejection
+      rejectable = _.bind(dfd.reject, dfd)
+      _.delay rejectable, 30000, new Error('Timeout for login')
+      promise
 
     loginFailed = (err)->
       emitter.emit('hull.auth.fail', err)
       throw err
       err
 
+    emailLoginComplete = _.bind(loginComplete, undefined, 'email')
+
     signup = (user) ->
-      apiFn('users', 'post', user).then loginComplete, loginFailed
+      apiFn('users', 'post', user).then emailLoginComplete, loginFailed
 
 
     login = (loginOrProvider, optionsOrPassword, callback) ->
       throw new TypeError("'loginOrProvider' must be a String") unless _.isString(loginOrProvider)
 
       if _.isString(optionsOrPassword)
-        promise = apiFn('users/login', 'post', { login: loginOrProvider, password: optionsOrPassword })
+        promise = apiFn('users/login', 'post', { login: loginOrProvider, password: optionsOrPassword }).then ->
+          apiFn.clearToken()
+          apiFn('me')
+        evtPromise = promise.then emailLoginComplete, loginFailed
       else
-        promise = loginWithProvider(loginOrProvider, optionsOrPassword).then(-> apiFn('me'))
+        promise = loginWithProvider(loginOrProvider, optionsOrPassword).then ->
+          apiFn.clearToken()
+          apiFn('me')
+        evtPromise = promise.then _.bind(loginComplete, undefined, loginOrProvider), loginFailed
 
-      evtPromise = promise.then loginComplete, loginFailed
       evtPromise.then(callback) if _.isFunction(callback)
 
       promise

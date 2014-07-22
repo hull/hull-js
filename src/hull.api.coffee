@@ -17,10 +17,10 @@ define [
         _emitter.on 'hull.auth.create', (me)->
           providers = _.pluck me.identities, 'provider'
           _reporting.track 'hull.auth.create', providers: providers, main_identity: me.main_identity
-        _emitter.on 'hull.auth.login', (me)->
-          #TODO Add the provider used to login
+        _emitter.on 'hull.auth.login', (me, provider)->
           providers = _.pluck me.identities, 'provider'
-          _reporting.track 'hull.auth.login', providers: providers, main_identity: me.main_identity
+          provider = provider || me.main_identity
+          _reporting.track 'hull.auth.login', { provider: provider, providers: providers, main_identity: me.main_identity }
         _emitter.on 'hull.auth.logout', ()-> _reporting.track('hull.auth.logout')
 
         noCurentUserDeferred = promises.deferred()
@@ -65,7 +65,6 @@ define [
             promise
           util:
             entity: entity
-            eventEmitter: _emitter
           trait: Traits.setup(api.api).build
         created.api.create = create
         raw: api

@@ -90,7 +90,6 @@ define(['squire', 'lib/utils/promises'], function (Squire, promises) {
       });
       it('should expose some utils', function () {
         this.flavour.util.entity.should.eql(this.entityMock);
-        this.flavour.util.eventEmitter.should.eql(this.emitterMock);
       });
       it('should expose the config getter method', function () {
         this.flavour.config.should.be.a('function');

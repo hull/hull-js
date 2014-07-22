@@ -73,6 +73,7 @@ preInit = (isMain, config, cb, errb)->
 
   lock.run ->
     _config = _extend {}, config
+    _config.track = getTrackConfig(_config.track) if _config.track?
     _config.namespace = 'hull'
     _config.debug = config.debug && { enable: true }
     _success = (args...)-> successCb [config, isMain, cb or ->].concat(args)...
@@ -86,6 +87,22 @@ initApi = (config, args...)->
 
 initMain = (config, args...)->
   preInit [true, config].concat(args)...
+
+getTrackConfig = (cfg)->
+  return unless cfg?
+  stringify = (a)->
+
+  ret = switch (Object.prototype.toString.call(cfg).match(/^\[object (.*)\]$/)[1])
+    when "Object" 
+      if cfg.only?
+        { only: (m.toString() for m in cfg.only) }
+      else if cfg.ignore?
+        { ignore: (m.toString() for m in cfg.ignore) }
+    when "RegExp"
+      { only: cfg.toString() }
+    when "Array"
+      { only: (m.toString() for m in cfg)  }
+  ret
 
 _hull = window.Hull =
   on:         createPool 'on'

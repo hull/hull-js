@@ -13,7 +13,7 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
       # _.extend(HullDef, sb);
       # After app init, call the queued events
 
-  setupApp = (app, api)->
+  setupApp = (app, api, extensions=[])->
     app
       .use(hullApiMiddleware(api))
       .use('aura-extensions/aura-base64')
@@ -26,6 +26,7 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
       .use('aura-extensions/hull-helpers')
       .use('aura-extensions/hull-utils')
       .use('aura-extensions/aura-form-serialize')
+      .use('aura-extensions/aura-purl')
       .use('aura-extensions/aura-component-validate-options')
       .use('aura-extensions/aura-component-require')
       .use('aura-extensions/hull-component-normalize-id')
@@ -35,6 +36,8 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
       .use('lib/client/component/component')
       .use('lib/client/component/templates')
       .use('lib/client/component/datasource')
+    app.use(ext) for ext in extensions
+    app
 
   init: (config)->
     appPromise = HullAPI.init(config)
@@ -47,7 +50,7 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
         remoteConfig: successResult.raw.remoteConfig
         login: successResult.api.login
         logout: successResult.api.logout
-      app: setupApp(app, deps)
+      app: setupApp(app, deps, (config.extensions || []))
       api: successResult
       components: true
   success: (appParts)->
@@ -55,6 +58,9 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
     booted = apiParts.exports
     return booted unless appParts.components
     booted.component = componentRegistrar(define)
+    appParts.app.sandbox.currentUser = apiParts.exports.currentUser
+    appParts.app.sandbox.promises = promises
+    booted.util = appParts.app.sandbox.util
     booted.util.Handlebars = Handlebars
     booted.define = define
     booted.parse = (el, options={})->
