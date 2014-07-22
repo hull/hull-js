@@ -78,6 +78,7 @@ define ['domready', 'lib/utils/promises', 'xdm', 'lib/utils/version', 'underscor
       rpc = new xdm.Rpc
         remote: buildRemoteUrl config
         container: document.body
+        channel: config.appId
         props:
           tabIndex: -1
           height: "0"
