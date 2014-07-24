@@ -1,3 +1,7 @@
+# 0.8.36
+
+* Fix loading issue when using Back button on Chrome (9dec8de)
+
 # 0.8.30
 
 * enforce contentType: 'application/json' for all non GET ajax requests from admin provider
