@@ -63,13 +63,19 @@ define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars',
     booted.util = appParts.app.sandbox.util
     booted.util.Handlebars = Handlebars
     booted.define = define
+
+    appStarted = appParts.app.start({ components: 'body' })
+
     booted.parse = (el, options={})->
-      appParts.app.core.appSandbox.start(el, options)
-    appParts.app.start({ components: 'body' }).then ->
+      appStarted.then ->
+        appParts.app.core.appSandbox.start(el, options)
+
+    appStarted.then ->
       #TODO populate the models from the remoteConfig
       booted.on 'hull.auth.login', _.bind(loginHelpers.login, undefined,  appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
       booted.on 'hull.auth.update', _.bind(loginHelpers.update, undefined,  appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
       booted.on 'hull.auth.logout', _.bind(loginHelpers.logout, undefined, appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
+
     ,(e)->
       console.error('Unable to start Aura app:', e)
       appParts.app.stop()
