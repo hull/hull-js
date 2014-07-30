@@ -1,3 +1,7 @@
+# 0.8.37
+
+* `Hull.parse` now waits for Aura app to finish starting
+
 # 0.8.36
 
 * Fix loading issue when using Back button on Chrome (9dec8de)
