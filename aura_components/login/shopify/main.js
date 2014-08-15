@@ -162,7 +162,7 @@ Hull.component({
     if (this.linkTagInjected || this.options.injectLinkTag === false) { return; }
 
     var e = document.createElement('link');
-    e.href = this.options.baseUrl + '/style.min.css';
+    e.href = this.options.baseUrl + '/style.css';
     e.rel = 'stylesheet';
 
     document.getElementsByTagName('head')[0].appendChild(e);
