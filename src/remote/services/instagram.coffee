@@ -18,7 +18,7 @@ define ['jquery-jsonp', 'lib/remote/services/proxy'], (jsonp, proxyBuilder)->
           callbackParameter: 'callback'
         request = jsonp(requestParams)
         request.done (response)->
-          callback({ response: response.data, provider: 'instagram', pagination: response.pagination })
+          callback({ response: response.data, provider: 'instagram', headers: { pagination: response.pagination, meta: response.meta } })
         request.fail (err)-> errback(err.url)
 
       else
