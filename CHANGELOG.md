@@ -1,3 +1,12 @@
+# 0.8.37
+
+* `Hull.parse` now waits for Aura app to finish starting
+* Instagram provider fix : expose pagination and meta from Instagram's response
+
+# 0.8.36
+
+* Fix loading issue when using Back button on Chrome (9dec8de)
+
 # 0.8.30
 
 * enforce contentType: 'application/json' for all non GET ajax requests from admin provider
