@@ -1,6 +1,7 @@
 # 0.8.37
 
 * `Hull.parse` now waits for Aura app to finish starting
+* Instagram provider fix : expose pagination and meta from Instagram's response
 
 # 0.8.36
 
