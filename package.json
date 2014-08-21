@@ -16,7 +16,7 @@
     "grunt-contrib-symlink": "0.2.0",
     "grunt-hull-dox": "git://github.com/hull/grunt-hull-dox.git",
     "grunt-hull-components": "0.2.0-beta",
-    "bower": "1.3.1",
+    "bower": "1.3.9",
     "grunt-wrap": "0.2.0",
     "git-rev": "0.2.1",
     "grunt-contrib-copy": "0.4.1",
@@ -41,6 +41,6 @@
     "node": "~0.10.0"
   },
   "dependencies": {
-    "bower": "1.3.1"
+    "bower": "1.3.9"
   }
 }
