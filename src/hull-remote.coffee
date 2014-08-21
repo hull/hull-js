@@ -1,6 +1,6 @@
 define ['aura/aura', 'underscore', 'lib/utils/version', 'lib/remote/config-normalizer'], (Aura, _, version, ConfigNormalizer)->
 
-  availableServices = ['angellist', 'facebook', 'github', 'instagram', 'linkedin', 'soundcloud', 'tumblr', 'twitter']
+  availableServices = ['angellist', 'facebook', 'github', 'instagram', 'linkedin', 'soundcloud', 'tumblr', 'twitter', 'google']
   isAvailable = _.bind(_.contains, _, availableServices)
 
   hull = null
