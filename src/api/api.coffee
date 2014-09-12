@@ -1,7 +1,9 @@
 define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '../api/auth', '../utils/promises', 'lib/api/xdm'], (_, cookie, version, apiParams, authModule, promises, xdm)->
   slice = Array.prototype.slice
 
-  init : (config={}, emitter)->
+  currentUserSignature = false
+
+  init: (config={}, emitter)->
     dfd = promises.deferred()
 
     # Fail right now if we don't have the required setup
@@ -9,6 +11,20 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
       dfd.reject(new ReferenceError 'no organizationURL provided. Can\'t proceed') unless config.orgUrl
       dfd.reject(new ReferenceError 'no applicationID provided. Can\'t proceed') unless config.appId
       return dfd.promise
+
+
+    # Fix for http://www.hull.io/docs/users/backend on browsers where 3rd party cookies disabled
+    try
+      if window.jQuery && _.isFunction(window.jQuery.fn.ajaxSend)
+          window.jQuery(document).ajaxSend (e, xhr, opts)->
+            if currentUserSignature && !opts.crossDomain
+              xhr.setRequestHeader('Hull-User-Sig', currentUserSignature)
+    catch e
+      #...
+        
+    
+    
+
 
     message = null
     # Main method to request the API
@@ -29,8 +45,10 @@ define ['underscore', '../utils/cookies', '../utils/version', '../api/params', '
       cookieName = "hull_#{config.appId}"
       if headers && headers['Hull-User-Id'] && headers['Hull-User-Sig']
         val = btoa(JSON.stringify(headers))
+        currentUserSignature = val
         cookie.set(cookieName, val, path: "/")
       else
+        currentUserSignature = false
         cookie.remove(cookieName, path: "/")
 
     rpc = null

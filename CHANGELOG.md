@@ -1,3 +1,7 @@
+# 0.8.38
+
+* Fix for browsers with 3rd party cookies disabled and (http://www.hull.io/docs/users/backend) : Use jquery ajaxSend to send user sig as a header
+
 # 0.8.37
 
 * `Hull.parse` now waits for Aura app to finish starting
