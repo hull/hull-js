@@ -36,29 +36,70 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
     signup = (user) ->
       apiFn('users', 'post', user).then emailLoginComplete, loginFailed
 
+    post = (path, method, params={}) ->
+      form = document.createElement("form")
+      form.setAttribute("method", 'post')
+      form.setAttribute("action", path)
 
-    login = (loginOrProvider, optionsOrPassword, callback) ->
-      throw new TypeError("'loginOrProvider' must be a String") unless _.isString(loginOrProvider)
+      for key of params
+        if params.hasOwnProperty key
+          hiddenField = document.createElement("input")
+          hiddenField.setAttribute("type", "hidden")
+          hiddenField.setAttribute("name", key)
+          hiddenField.setAttribute("value", params[key])
+          form.appendChild(hiddenField)
+      document.body.appendChild(form)
+      form.submit()
 
-      if _.isString(optionsOrPassword)
-        promise = apiFn('users/login', 'post', { login: loginOrProvider, password: optionsOrPassword }).then ->
-          apiFn.clearToken()
-          apiFn('me')
-        evtPromise = promise.then emailLoginComplete, loginFailed
+    login = (params, options={}, callback) ->
+      refresh = ->
+        apiFn.clearToken()
+        apiFn('me')
+
+      # Legacy Format.
+      if _.isString(params)
+        if _.isString(options)
+          # Hull.login('email@host.com','password')
+          options = {login:params, password:options}
+        else 
+          # Hull.login('facebook','opts')
+          options.provider=params
       else
-        promise = loginWithProvider(loginOrProvider, optionsOrPassword).then ->
-          apiFn.clearToken()
-          apiFn('me')
-        evtPromise = promise.then _.bind(loginComplete, undefined, loginOrProvider), loginFailed
+        # We only use 1 hash for the new setup
+        options = params
+
+      
+      # Set defaults for Redirect to current page if redirecting.
+      options.redirect_url = options.redirect_url || window.location.href if options.strategy=='redirect'
+
+      # New Format:
+      if options.provider?
+        # Social Login
+        # Hull.login({provider:'facebook', strategy:'redirect|popup', redirect:'...'})
+        promise = loginWithProvider(options).then(refresh)
+        evtPromise = promise.then _.bind(loginComplete, undefined, params), loginFailed
+      else
+        # UserName+Password
+        # Hull.login({login:'abcd@ef.com', password:'passwd', strategy:'redirect|popup', redirect:'...'})
+        
+        throw new Error('Seems like something is wrong in your Hull.login() call, We need a login and password fields to login. Read up here: http://www.hull.io/docs/references/hull_js/#user-signup-and-login') unless options.login? and options.password?
+
+        # Early return since we're leaving the page.
+        return post(config.orgUrl+'/api/v1/users/login', 'post', options) if options.strategy=='redirect'
+
+        promise = apiFn('users/login', 'post', { login: params, password: options }).then(refresh)
+        evtPromise = promise.then emailLoginComplete, loginFailed
 
       evtPromise.then(callback) if _.isFunction(callback)
 
       promise
 
-    loginWithProvider = (providerName, opts)->
+    loginWithProvider = (options)->
       return module.isAuthenticating() if module.isAuthenticating()
 
-      providerName = providerName.toLowerCase()
+      providerName = options.provider.toLowerCase()
+      delete options.provider
+
       authenticating = promises.deferred()
       unless ~(_.indexOf(authServices, providerName ))
         authenticating.reject
@@ -68,8 +109,14 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
 
       authenticating.providerName = providerName
 
-      authUrl = module.authUrl(config, providerName, opts)
-      module.authHelper(authUrl)
+      authUrl = module.authUrl(config, providerName, options)
+
+      if options.strategy=='redirect'
+        # Don't do an early return to not break promise chain
+        window.location.href=authUrl
+      else
+        # Classic Popup Strategy
+        module.authHelper(authUrl)
 
       authenticating.promise
 
@@ -105,7 +152,8 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       auth_params = opts || {}
       auth_params.app_id        = config.appId
       # The following is here for backward compatibility. Must be removed at first sight next time
-      auth_params.callback_url  = config.callback_url || config.callbackUrl || module.location.toString()
+      debugger
+      auth_params.callback_url  = opts.redirect_url || config.callback_url || config.callbackUrl || module.location.toString()
       auth_params.auth_referer  = module.location.toString()
       auth_params.version       = version
       querystring = _.map auth_params,(v,k) ->
