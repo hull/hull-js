@@ -1,3 +1,8 @@
+# 0.8.39
+
+* Allow redirect strategy login (for social and email/password)
+* FB Auth: Use display: 'popup' option and smaller popup window
+
 # 0.8.38
 
 * Fix for browsers with 3rd party cookies disabled and (http://www.hull.io/docs/users/backend) : Use jquery ajaxSend to send user sig as a header
