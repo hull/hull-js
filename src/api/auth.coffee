@@ -152,7 +152,6 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       auth_params = opts || {}
       auth_params.app_id        = config.appId
       # The following is here for backward compatibility. Must be removed at first sight next time
-      debugger
       auth_params.callback_url  = opts.redirect_url || config.callback_url || config.callbackUrl || module.location.toString()
       auth_params.auth_referer  = module.location.toString()
       auth_params.version       = version
