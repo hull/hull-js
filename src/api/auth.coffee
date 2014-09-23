@@ -61,14 +61,14 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
         if _.isString(options)
           # Hull.login('email@host.com','password')
           options = {login:params, password:options}
-        else 
+        else
           # Hull.login('facebook','opts')
-          options.provider=params
+          options.provider = params
       else
         # We only use 1 hash for the new setup
         options = params
 
-      
+
       # Set defaults for Redirect to current page if redirecting.
       options.redirect_url = options.redirect_url || window.location.href if options.strategy=='redirect'
 
@@ -81,13 +81,13 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       else
         # UserName+Password
         # Hull.login({login:'abcd@ef.com', password:'passwd', strategy:'redirect|popup', redirect:'...'})
-        
+
         throw new Error('Seems like something is wrong in your Hull.login() call, We need a login and password fields to login. Read up here: http://www.hull.io/docs/references/hull_js/#user-signup-and-login') unless options.login? and options.password?
 
         # Early return since we're leaving the page.
         return post(config.orgUrl+'/api/v1/users/login', 'post', options) if options.strategy=='redirect'
 
-        promise = apiFn('users/login', 'post', { login: params, password: options }).then(refresh)
+        promise = apiFn('users/login', 'post', _.pick(options, 'login', 'password')).then(refresh)
         evtPromise = promise.then emailLoginComplete, loginFailed
 
       evtPromise.then(callback) if _.isFunction(callback)
@@ -173,7 +173,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
         if providerName == 'facebook'
           width = 650
           height = 430
-        else 
+        else
           width = 1030
           width = 430
 
