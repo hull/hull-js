@@ -1,3 +1,4 @@
+wopen = Window?.constructor?.prototype.open || Window?.prototype.open || window.open
 try
   hash = JSON.parse(atob(document.location.hash.replace('#', '')))
   if window.opener && window.opener.Hull && window.opener.__hull_login_status__ && hash?
@@ -122,7 +123,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
           window.__hull_login_status__ = null
           onCompleteAuthentication(hash)
       authHelper: (path)->
-        w = window.open(path, "_auth", 'location=0,status=0,width=1030,height=600')
+        w = wopen.call undefined, path, "_auth", 'location=0,status=0,width=1030,height=600'
 
         # Support for cordova events
         if window.device?.cordova
