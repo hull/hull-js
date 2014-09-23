@@ -36,9 +36,9 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
     signup = (user) ->
       apiFn('users', 'post', user).then emailLoginComplete, loginFailed
 
-    post = (path, method, params={}) ->
+    postForm = (path, method='post', params={}) ->
       form = document.createElement("form")
-      form.setAttribute("method", 'post')
+      form.setAttribute("method", method)
       form.setAttribute("action", path)
 
       for key of params
@@ -85,7 +85,8 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
         throw new Error('Seems like something is wrong in your Hull.login() call, We need a login and password fields to login. Read up here: http://www.hull.io/docs/references/hull_js/#user-signup-and-login') unless options.login? and options.password?
 
         # Early return since we're leaving the page.
-        return post(config.orgUrl+'/api/v1/users/login', 'post', options) if options.strategy=='redirect'
+        if options.strategy=='redirect'
+          return postForm(config.orgUrl+'/api/v1/users/login', 'post', options)
 
         promise = apiFn('users/login', 'post', _.pick(options, 'login', 'password')).then(refresh)
         evtPromise = promise.then emailLoginComplete, loginFailed
@@ -113,7 +114,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
 
       if options.strategy=='redirect'
         # Don't do an early return to not break promise chain
-        window.location.href=authUrl
+        window.location.href = authUrl
       else
         # Classic Popup Strategy
         module.authHelper(authUrl, providerName)
