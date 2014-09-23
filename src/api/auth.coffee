@@ -116,7 +116,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
         window.location.href=authUrl
       else
         # Classic Popup Strategy
-        module.authHelper(authUrl)
+        module.authHelper(authUrl, providerName)
 
       authenticating.promise
 
@@ -169,8 +169,16 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
         window.__hull_login_status__ = (hash) ->
           window.__hull_login_status__ = null
           onCompleteAuthentication(hash)
-      authHelper: (path)->
-        w = window.open(path, "_auth", 'location=0,status=0,width=1030,height=600')
+      authHelper: (path, providerName)->
+
+        if providerName == 'facebook'
+          width = 650
+          height = 430
+        else 
+          width = 1030
+          width = 430
+
+        w = window.open(path, "_auth", "location=0,status=0,width=#{width},height=#{height}")
 
         # Support for cordova events
         if window.device?.cordova
