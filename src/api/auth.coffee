@@ -174,13 +174,12 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
           window.__hull_login_status__ = null
           onCompleteAuthentication(hash)
       authHelper: (path, providerName)->
-
         if providerName == 'facebook'
           width = 650
           height = 430
         else
           width = 1030
-          width = 430
+          height = 550
 
         w = window.open(path, "_auth", "location=0,status=0,width=#{width},height=#{height}")
 
