@@ -7,8 +7,39 @@
 
     <title>Hull App...</title>
     <script src="//code.jquery.com/jquery-1.8.3.js"></script>
-    <script src="//localhost:3001/dist/current/hull.api.js"></script>
+    <script src="//localhost:3001/dist/current/hull.js"></script>
     <script src="app.js"></script>
+    <script>
+    $(function() {
+      $('.login_facebook').on('click', function(e) {
+        e.preventDefault();
+        Hull.login('facebook');
+      });
+      $('.login_facebook_redirect').on('click', function(e) {
+        e.preventDefault();
+        Hull.login({ provider: 'facebook', strategy: 'redirect' });
+      });
+      $('.logout').on('click', function(e) {
+        e.preventDefault();
+        Hull.logout();
+      });
+
+      $('form[action="login"]').on('submit', function(e) {
+        e.preventDefault();
+        var login = $(e.target).serializeArray().reduce(function(l,i) {
+          if (i.value.length > 0) l[i.name] = i.value;
+          return l;
+        }, {});
+        login.strategy = login.redirect_url ? "redirect" : undefined;
+        console.warn("Login: ", login);
+        Hull.login(login);
+      });
+    });
+
+    Hull.ready(function(_, me) {
+      console.warn("Hello", me && me.name);
+    });
+    </script>
   </head>
   <body>
     <div class="container mt-1">
@@ -23,6 +54,28 @@
           </div>
         </div>
       </div>
+
+      <hr />
+
+      <div class="row">
+        <div class="col-sm-12" data-hull-component="login/profile"></div>
+      </div>
+
+      <hr />
+
+      <div class="row">
+        <div class="col-sm-12">
+          <form action="login">
+            <input type="text" name="redirect_url" placeholder="Redirect URL" />
+            <input type="text" name="login" placeholder="Login" />
+            <input type="password" name="password" placeholder="Password" />
+            <input type="submit" >
+          </form>
+        </div>
+      </div>
+
+      <hr />
+
       <div class="row">
         <div class="col-sm-12">
           <div class="log well"></div>

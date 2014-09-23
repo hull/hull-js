@@ -110,9 +110,13 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
 
       authenticating.providerName = providerName
 
+
+      if providerName == 'facebook'
+        options.display = if options.strategy=='redirect' then 'page' else 'popup'
+
       authUrl = module.authUrl(config, providerName, options)
 
-      if options.strategy=='redirect'
+      if options.strategy == 'redirect'
         # Don't do an early return to not break promise chain
         window.location.href = authUrl
       else
