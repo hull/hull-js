@@ -111,7 +111,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       authenticating.providerName = providerName
 
 
-      if providerName == 'facebook'
+      if providerName == 'facebook' && !options.display?
         options.display = if options.strategy=='redirect' then 'page' else 'popup'
 
       authUrl = module.authUrl(config, providerName, options)
