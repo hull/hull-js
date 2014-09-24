@@ -7,51 +7,20 @@
 
     <title>Hull App...</title>
     <script src="//code.jquery.com/jquery-1.8.3.js"></script>
-    <script src="//localhost:3001/dist/current/hull.js"></script>
+    <script src="//localhost:3001/dist/0.8.39/hull.js"></script>
     <script src="app.js"></script>
-    <script>
-    $(function() {
-      $('.login_facebook').on('click', function(e) {
-        e.preventDefault();
-        Hull.login('facebook');
-      });
-      $('.login_facebook_redirect').on('click', function(e) {
-        e.preventDefault();
-        Hull.login({ provider: 'facebook', strategy: 'redirect' });
-      });
-      $('.logout').on('click', function(e) {
-        e.preventDefault();
-        Hull.logout();
-      });
-
-      $('form[action="login"]').on('submit', function(e) {
-        e.preventDefault();
-        var login = $(e.target).serializeArray().reduce(function(l,i) {
-          if (i.value.length > 0) l[i.name] = i.value;
-          return l;
-        }, {});
-        login.strategy = login.redirect_url ? "redirect" : undefined;
-        console.warn("Login: ", login);
-        Hull.login(login);
-      });
-    });
-
-    Hull.ready(function(_, me) {
-      console.warn("Hello", me && me.name);
-    });
-    </script>
   </head>
   <body>
-    <div class="container mt-1">
-      <div class="row">
+    <div class="container-fluid mt-1">
+      <div class="row-fluid">
         <div class="col-sm-12">
-          <div class="btn-group btn-group-justified">
-            <a href="" class="btn btn-default login_facebook">Login Facebook</a>
-            <a href="" class="btn btn-default login_facebook_redirect">Login Facebook Redirect</a>
-            <a href="" class="btn btn-default login_email">Login email</a>
-            <a href="" class="btn btn-default login_email_redirect">Login email Redirect</a>
-            <a href="" class="btn btn-default logout">Logout</a>
-          </div>
+          <a href="" class="btn btn-block btn-default login_facebook">Login Facebook Auto</a>
+          <a href="" class="btn btn-block btn-default login_facebook_popup">Login Facebook Popup</a>
+          <a href="" class="btn btn-block btn-default login_facebook_redirect">Login Facebook Redirect</a>
+          <a href="" class="btn btn-block btn-default login_email">Login email auto</a>
+          <a href="" class="btn btn-block btn-default login_email_ajax">Login email ajax</a>
+          <a href="" class="btn btn-block btn-default login_email_redirect">Login email Redirect</a>
+          <a href="" class="btn btn-block btn-default logout">Logout</a>
         </div>
       </div>
 
