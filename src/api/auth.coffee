@@ -174,7 +174,6 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       params.callback_url  = opts.redirect_url || params.callback_url || config.callback_url || config.callbackUrl || module.location.toString()
       params.auth_referer  = module.location.toString()
       params.version       = version
-      debugger
       querystring = _.map params,(v,k) ->
         encodeURIComponent(k)+'='+encodeURIComponent(v)
       .join('&')
