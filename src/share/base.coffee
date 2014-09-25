@@ -47,7 +47,7 @@ define ['underscore', '../utils/promises'], (_, promises)->
     params = opts.params
     params.url ||= window.location.href
 
-    return Hull.api({ provider:'twitter', path: "/api/v1/services/twitter/#{opts.method}"},'post',params) if hasIdentity('twitter') and not opts.anonymous
+    # return Hull.api({ provider:'twitter', path: "/api/v1/services/twitter/#{opts.method}"},'post',params) if hasIdentity('twitter') and not opts.anonymous
 
     querystring = to_qs(params)
     url = "https://twitter.com/intent/tweet?#{querystring}"
