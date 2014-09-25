@@ -25,7 +25,7 @@ define ['underscore', '../utils/promises'], (_, promises)->
 
     sharePromise = () ->
       Hull.api({ provider: opts.provider, path: "ui.#{opts.method}" },params)
-    unless isMobile() and not opts.display=='popup'
+    unless isMobile() and not params.display=='popup'
       if opts.anonymous or hasIdentity('facebook')
         return sharePromise()
       else
