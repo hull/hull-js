@@ -168,12 +168,13 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
     generateAuthUrl = (config, opts={})->
       module.createCallback()
 
-      params ||= opts.params
+      params = opts.params || {}
       params.app_id        = config.appId
       # The following is here for backward compatibility. Must be removed at first sight next time
       params.callback_url  = opts.redirect_url || params.callback_url || config.callback_url || config.callbackUrl || module.location.toString()
       params.auth_referer  = module.location.toString()
       params.version       = version
+      debugger
       querystring = _.map params,(v,k) ->
         encodeURIComponent(k)+'='+encodeURIComponent(v)
       .join('&')
@@ -192,7 +193,7 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
         openerString = "location=0,status=0"
 
         # Handle smaller Facebook popup windows
-        if opts.provider == 'facebook' and opts.strategy='popup'
+        if opts.provider == 'facebook' and opts.params.display == 'popup'
           width = 500
           height = 400
         else
