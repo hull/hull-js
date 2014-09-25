@@ -9,6 +9,83 @@
     <script src="//code.jquery.com/jquery-1.8.3.js"></script>
     <script src="//localhost:3001/dist/0.8.39/hull.js"></script>
     <script src="app.js"></script>
+    <script>
+
+      $(function(){
+        $('.login_facebook').on('click',function(e){
+          e.preventDefault();
+          Hull.login({
+            provider:'facebook',
+            params:{
+              scope:'user_likes,user_about_me,user_actions.books',
+              display:'page'
+            }
+          });
+        })
+
+        $('.login_facebook_popup').on('click',function(e){
+          e.preventDefault();
+          Hull.login({
+            provider:'facebook',
+            strategy:'popup',
+            params:{
+              scope:'user_likes,user_about_me,user_actions.books'
+            }
+          });
+        })
+
+        $('.login_facebook_popup_redirect').on('click',function(e){
+          e.preventDefault();
+          Hull.login({
+            provider:'facebook',
+            strategy:'popup',
+            redirect_url: 'http://hull.io'
+          });
+        })
+
+        $('.login_facebook_redirect').on('click',function(e){
+          e.preventDefault();
+          Hull.login({provider:'facebook', strategy:'redirect', redirect_url:'http://hull.io'});
+        })
+
+        $('.login_facebook_redirect_auto').on('click',function(e){
+          e.preventDefault();
+          Hull.login({provider:'facebook', strategy:'redirect'});
+        })
+
+
+        $('.link_twitter').on('click',function(e){
+          e.preventDefault();
+          Hull.linkIdentity({provider:'twitter'}).then(function(currentUser){
+            console.log(currentUser);
+          });
+        })
+
+        $('.login_email').on('click',function(e){
+          e.preventDefault();
+          Hull.login('email@host.com','passwd')
+        })
+
+        $('.login_email_ajax').on('click',function(e){
+          e.preventDefault();
+          Hull.login('email@host.com','passwd')
+        })
+
+        $('.login_email_redirect').on('click',function(e){
+          e.preventDefault();
+          Hull.login({
+            login:'email@host.com',
+            password:'passwd',
+            redirect_url:'http://hull.io',
+            strategy:'redirect'
+          })
+        })
+
+        $('.logout').on('click',function(e){
+          e.preventDefault();
+          Hull.logout();
+        })
+    </script>
   </head>
   <body>
     <div class="container-fluid mt-1">
@@ -24,7 +101,6 @@
           <br/><a href="" class="btn btn-sm btn-default login_email_ajax">Login email ajax</a>
           <br/><a href="" class="btn btn-sm btn-default login_email_redirect">Login email Redirect (to hull.io)</a>
           <br/><a href="" class="btn btn-sm btn-default logout">Logout</a>
-          <br/><a href="" class="btn btn-sm btn-default share">Share</a>
         </div>
       </div>
 
