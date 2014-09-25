@@ -1,3 +1,7 @@
+# 0.8.41
+
+* Fix typo in popup code
+
 # 0.8.40
 
 * Update signature for Hull.login method calls to take one hash with a `params` sub-hash

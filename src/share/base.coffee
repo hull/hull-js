@@ -25,7 +25,7 @@ define ['underscore', '../utils/promises'], (_, promises)->
 
     sharePromise = () ->
       Hull.api({ provider: opts.provider, path: "ui.#{opts.method}" },params)
-    unless isMobile() and not params.display=='popup'
+    if not isMobile() and not params.display=='popup'
       if opts.anonymous or hasIdentity('facebook')
         return sharePromise()
       else
@@ -39,7 +39,9 @@ define ['underscore', '../utils/promises'], (_, promises)->
     [width, height] = if params.display == 'popup' then [500, 400] else [1030, 550]
     openerString = "#{openerString},width=#{width},height=#{height}"
     window.open(url, 'hull_share', openerString)
-
+    dfd = promises.deferred()
+    dfd.resolve()
+    dfd
 
   twitterShare  = (opts)->
     opts.method ||= 'statuses/update'
@@ -53,17 +55,17 @@ define ['underscore', '../utils/promises'], (_, promises)->
     url = "https://twitter.com/intent/tweet?#{querystring}"
 
     window.open(url)
+    dfd = promises.deferred()
+    dfd.resolve()
+    dfd
 
   (opts)->
     # Todo Throw error
-    return false unless _.isObject(opts) and _.isObject(opts.params) and opts.provider? 
+    unless _.isObject(opts) and _.isObject(opts.params) and opts.provider? 
+      dfd = promises.deferred()
+      dfd.reject()
+      return dfd 
 
-    res = switch opts.provider
+    switch opts.provider
       when 'facebook' then facebookShare(opts)
       when 'twitter'  then twitterShare(opts)
-    return res if _.isFunction(res)
-
-    dfd = promises.deferred()
-    return dfd.resolve()
-
-
