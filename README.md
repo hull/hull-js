@@ -40,6 +40,14 @@ as found in your account at [https://accounts.hullapp.io](https://accounts.hulla
 * `server` (default task): `dist` + starts a static HTTP server for local use
 * `deploy`: `dist` + [Additional flavors](http://hull.io/docs/hull_js/#flavors) + S3 upload (see MAINTENANCE.md)
 
+# Building + Deploying a new version
+
+* Checkout `master`
+* Merge your changes
+* Bump version in `bower.json` and `package.json`
+* Create Tag with your version number
+* `grunt dist`
+
 # Developing locally (force @hull components to be fetched locally)
 
 Modify `app/index.html` as follows:
