@@ -40,12 +40,15 @@ as found in your account at [https://accounts.hullapp.io](https://accounts.hulla
 * `server` (default task): `dist` + starts a static HTTP server for local use
 * `deploy`: `dist` + [Additional flavors](http://hull.io/docs/hull_js/#flavors) + S3 upload (see MAINTENANCE.md)
 
-# Building + Deploying a new version
+# Releasing
 
 * Checkout `master`
+* `git flow release start 'YOUR_RELEASE_VERSION_NAME'`
 * Merge your changes
-* Bump version in `bower.json` and `package.json`
-* Create Tag with your version number
+* Bump `YOUR_RELEASE_VERSION_NAME` in `bower.json` and `package.json`
+* Write Changelog
+* Commit changes
+* `git flow release finish 'YOUR_RELEASE_VERSION_NAME'`
 * `grunt dist`
 
 # Developing locally (force @hull components to be fetched locally)
