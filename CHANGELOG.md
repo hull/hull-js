@@ -1,3 +1,8 @@
+# 0.8.42
+
+* Specify Size for Twitter Popup
+* Add Release instructions to Readme
+
 # 0.8.41
 
 * Fix typo in popup code
