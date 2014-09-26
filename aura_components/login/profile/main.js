@@ -5,7 +5,7 @@
  *
  * @name Profile
  * @param {String} provider  Optional, One or more providers to log users in. If none specified, will show all configured providers for the app.
- * @template {identity} Show login buttons if the user isn't logged, display a micro profile card if he is.
+ * @tmpl {identity} Show login buttons if the user isn't logged, display a micro profile card if he is.
  * @example <div data-hull-component="login/profile@hull"></div>
  * @example <div data-hull-component="login/profile@hull" data-hull-provider="instagram"></div>
  * @example <div data-hull-component="login/profile@hull" data-hull-provider="facebook"></div>

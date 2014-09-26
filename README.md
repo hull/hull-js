@@ -98,7 +98,7 @@ when your component is integrated in the marketplace.
  * @param {String} optionName Optional/Required. Option description
  * @example <div data-hull-component="login/button@hull"></div>
  * # OPTIONAL
- * @template {template_name} template_description
+ * @tmpl {template_name} template_description
  * @datasource {activities} The activity stream that will be displayed.
  * @action {achieve} Achieve the achievement with the entered secret
  * @your_custom_tag {name} value
@@ -121,8 +121,8 @@ For instance:
  * @action {comment} Submits a new comment.
  * @action {delete} Deletes a comment.
  * @action {flag} Flags a  comment.
- * @template {list} The main templates. Displays this list of comments.
- * @template {form} The form to enter a new comment.
+ * @tmpl {list} The main templates. Displays this list of comments.
+ * @tmpl {form} The form to enter a new comment.
  * @example <div data-hull-component="comments/list@hull" data-hull-id="entity:http://hull.io"></div>
  * @example <div data-hull-component="comments/list@hull" data-hull-id="510fa2394875372516000009"></div>
  * @example <div data-hull-component="comments/list@hull" data-hull-id="app"></div>

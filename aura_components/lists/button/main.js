@@ -5,7 +5,7 @@
  *
  * @name Button
  * @param {String} list The name of the list you want to show. List will automatically be created if it does not exist yet.
- * @template {button} Shows the button with the right state
+ * @tmpl {button} Shows the button with the right state
  * @example <div data-hull-component="lists/button@hull" data-hull-id="app" data-hull-list="favorites"></div>
  * @example <div data-hull-component="lists/button@hull" data-hull-id="HULL_ID" data-hull-list="favorites"></div>
  * @example <div data-hull-component="lists/button@hull" data-hull-id="entity:ANY_UNIQUE_ID" data-hull-list="favorites"></div>

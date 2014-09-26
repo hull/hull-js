@@ -2,7 +2,7 @@
  * Create a csv of users that have participated to one or more quizzes.
  *
  * @name Quizzes export
- * @template {main} The main template. shows a form that allow admin to select the email where the export csv will be sent.
+ * @tmpl {main} The main template. shows a form that allow admin to select the email where the export csv will be sent.
  * @datasource {quizzes} The collection of all the quizzes available in the application.
  * @example <div data-hull-component="admin/quizzes_export@hull"></div>
  */

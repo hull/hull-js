@@ -12,14 +12,14 @@
  * @param {String} id       Required, the sweepstake achievement id.
  * @param {String} provider Optional, the identity provider to log with before playing. By default it will list all your identity providers.
  * @param {String} delay    Optional, time in milliseconds to wait before displaying the game's results. By default the results are displayed imediatly after that the server tell us if the user has win or lost.
- * @template {intro}     Show the button to play to the game.
- * @template {buttons}   The play buttons partial.
- * @template {working}   Show a loading message.
- * @template {won}       Say to the user that he has won
- * @template {lost}      Say to the user that he has lost.
- * @template {played}    Say to the user that he has already played.
- * @template {unstarted} Say to the user that the game hasn`t started yet.
- * @template {ended}     Say to the user that the game has ended.
+ * @tmpl {intro}     Show the button to play to the game.
+ * @tmpl {buttons}   The play buttons partial.
+ * @tmpl {working}   Show a loading message.
+ * @tmpl {won}       Say to the user that he has won
+ * @tmpl {lost}      Say to the user that he has lost.
+ * @tmpl {played}    Say to the user that he has already played.
+ * @tmpl {unstarted} Say to the user that the game hasn`t started yet.
+ * @tmpl {ended}     Say to the user that the game has ended.
  * @datasource {achievement} The sweepstake achievement.
  * @datasource {badge}       The user's badge for the sweepstake.
  * @tracking {start} Sweepstake Started

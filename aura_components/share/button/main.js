@@ -5,7 +5,7 @@
  * @name Button
  * @param {String} url URL to share
  * @param {String} providers A comma-separated list of providers to use. Supported: facebook, twitter, google, likedin
- * @template {button} The button renderer
+ * @tmpl {button} The button renderer
  * @example <div data-hull-component="share/button@hull" data-hull-text="Hull.io, an open platform for social apps" data-hull-url="http://hull.io" data-hull-providers='facebook,twitter'></div>
  */
 Hull.component({

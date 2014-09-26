@@ -7,9 +7,9 @@
  * @param {String} order  messages list ordering direction. default: desc. values: ['asc', 'desc']
  * @datasource {conversation} A conversation.
  * @datasource {messages} A collection of messages for the conversation.
- * @template {thread} The main template, that show conversation's messages, participants and form.
- * @template {participants} List of the conversation's participants.
- * @template {form} The form to enter a new message.
+ * @tmpl {thread} The main template, that show conversation's messages, participants and form.
+ * @tmpl {participants} List of the conversation's participants.
+ * @tmpl {form} The form to enter a new message.
  * @example <div data-hull-component="conversations/thread@hull" data-hull-id="5244ae9448e9c141de000015"></div>
  * @example <div data-hull-component="conversations/thread@hull" data-hull-id="OBJECT_ID"></div>
  */

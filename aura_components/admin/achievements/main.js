@@ -4,7 +4,7 @@
  *
  * @name Achievements
  * @datasource {achievements} Achievements for the current app
- * @template {main} Displays a form to create achievements and a table to list (and delete) all the achievements available in the app.
+ * @tmpl {main} Displays a form to create achievements and a table to list (and delete) all the achievements available in the app.
  * @action {remove} Removes an achievement
  * @example <div data-hull-component="admin/achievements@hull"></div>
  */

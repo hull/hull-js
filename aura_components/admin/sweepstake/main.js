@@ -4,7 +4,7 @@
  *
  * @name Sweepstake 
  * @datasource {achievements} Fetches Achievements of type="InstantWin" 
- * @template {sweepstake} Main template
+ * @tmpl {sweepstake} Main template
  * @example <div data-hull-component="admin/sweepstake@hull"></div>
  */
 Hull.component({

@@ -5,7 +5,7 @@
  *
  * @name All
  * @param {String} id The id of the owner which lists you want to display
- * @template {all} Shows lists
+ * @tmpl {all} Shows lists
  * @datasource {lists} Describes all the lists that belong to the `id` in parameter
  * @example <div data-hull-component="lists/all@hull" data-hull-id="app"></div>
  * @example <div data-hull-component="lists/all@hull" data-hull-id="HULL_ID"></div>
