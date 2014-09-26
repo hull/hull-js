@@ -43,12 +43,12 @@ as found in your account at [https://accounts.hullapp.io](https://accounts.hulla
 # Releasing
 
 * Checkout `master`
-* Git flow release start `YOUR_RELEASE_VERSION_NAME`
+* `git flow release start 'YOUR_RELEASE_VERSION_NAME'`
 * Merge your changes
 * Bump `YOUR_RELEASE_VERSION_NAME` in `bower.json` and `package.json`
 * Write Changelog
 * Commit changes
-* Create Tag with your version number
+* `git flow release finish 'YOUR_RELEASE_VERSION_NAME'`
 * `grunt dist`
 
 # Developing locally (force @hull components to be fetched locally)
