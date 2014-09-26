@@ -1,4 +1,5 @@
 define ['underscore', '../utils/promises'], (_, promises)->
+
   isMobile = ->
     # http://stackoverflow.com/questions/11381673/javascript-solution-to-detect-mobile-browser
     n = navigator.userAgent||navigator.vendor||window.opera
@@ -54,7 +55,9 @@ define ['underscore', '../utils/promises'], (_, promises)->
     querystring = to_qs(params)
     url = "https://twitter.com/intent/tweet?#{querystring}"
 
-    window.open(url)
+
+    openerString = "location=0,status=0,width=550,height=420"
+    window.open(url,'hull_share',openerString)
     dfd = promises.deferred()
     dfd.resolve()
     dfd
