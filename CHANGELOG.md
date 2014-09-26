@@ -1,3 +1,7 @@
+# 0.8.43
+
+* Rename @template to @tmpl in component docs. @template is now a reserved word in Dox
+
 # 0.8.42
 
 * Specify Size for Twitter Popup

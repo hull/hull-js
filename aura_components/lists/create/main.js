@@ -2,7 +2,7 @@
  * Create a list owned by the current user.
  * 
  * @name Create
- * @template {form} How the contents of the list should be displayed
+ * @tmpl {form} How the contents of the list should be displayed
  * @example <div data-hull-component="lists/create@hull"></div>
  */
 

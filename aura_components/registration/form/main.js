@@ -98,7 +98,7 @@
  * @param {Boolean} editable Wether to offer the user to modify his form again once he submitted it.
  * @action {achieve}
  * @datasource {activities}
- * @template {template_name}
+ * @tmpl {template_name}
  * @your_custom_tag {name} value
  * @your_custom_tag value
  * @example <div data-hull-component='registration/form@hull'></div>

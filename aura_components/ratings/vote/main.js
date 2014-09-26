@@ -5,7 +5,7 @@
  *
  * @name Vote
  * @param {String} id Target object to show vote buttons for
- * @template {vote} Main template. Has 3 states: Upvote, Downvote, Blank
+ * @tmpl {vote} Main template. Has 3 states: Upvote, Downvote, Blank
  * @example <div data-hull-component="ratings/vote@hull" data-hull-id="app"></div>
  * @example <div data-hull-component="ratings/vote@hull" data-hull-id="ANY_HULL_ID"></div>
  * @example <div data-hull-component="ratings/vote@hull" data-hull-id="entity:YOUR_UNIQUE_ID"></div>

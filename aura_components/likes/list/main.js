@@ -6,7 +6,7 @@
  * @param {String} id   Required The id of the object on which you wants likes listed. Default value will be 'me'
  * @datasource {target}     The object.
  * @datasource {likes}      The likers for the object
- * @template {list} Shows the faces of all users who liked the object
+ * @tmpl {list} Shows the faces of all users who liked the object
  * @example <div data-hull-component="likes/list@hull" data-hull-id="entity:http://hull.io"></div>
  * @example <div data-hull-component="likes/list@hull" data-hull-id="app"></div>
  * @example <div data-hull-component="likes/list@hull" data-hull-id="HULL_ID"></div>

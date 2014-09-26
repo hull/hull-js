@@ -11,7 +11,7 @@
  * @param {String} quality Optional The video quality can be full, high, standard, medium, low default: standard
  * @param {String} interval Optional Number of second to wait before requesting the video default: 10000
  * @datasource {video} A video
- * @template {main} The main template that shows the player
+ * @tmpl {main} The main template that shows the player
  * @example <div data-hull-component="video/player@hull" data-hull-id="VIDEO_ID"></div>
  */
 

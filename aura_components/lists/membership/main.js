@@ -3,8 +3,8 @@
  *
  * @name Membership
  * @param {String} id/uid Required, The object you want to comment on.
- * @template {main} Displays the basic markup information necessary to display the popover containg the list of lists
- * @template {elements} Displays the form to create a new list and all the lists that belong to the current user
+ * @tmpl {main} Displays the basic markup information necessary to display the popover containg the list of lists
+ * @tmpl {elements} Displays the form to create a new list and all the lists that belong to the current user
  * @datasource {lists}    Collection of all the lists the user has access to
  * @datasource {listedIn} Collection of lists in which the current item is listed into
  * @requires {jQuery.fn.popover} The popover plugin available in Twitter Bootstrap

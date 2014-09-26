@@ -10,7 +10,7 @@
  * @param {String} id Required. The id of the object for which we want to display a property.
  * @param {String} property Required. The name of the property to be displayed. Can be a path if the property is nested (_eg_ `stats.likes`)
  * @param {String} default-text The text to be displayed if the value does not exist
- * @template {property} Displays the property with no markup. Markup must be in the parents component
+ * @tmpl {property} Displays the property with no markup. Markup must be in the parents component
  * @example <div data-hull-component="utils/property@hull" data-hull-id="app" data-hull-property="stats.likes" data-hull-default-text="Not found"></div>
  */
 

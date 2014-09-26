@@ -4,8 +4,8 @@
  * @name Upload Image
  * @dependency {jquery.fileupload} This plugin uses [jQuery File upload plugin](https://github.com/blueimp/jQuery-File-Upload) to handle the file upload gracefully. Please note that the plugin is packaged within the component so you don't have to struggle against the dependencies.
  * @param {String} id Required The object ID on which to attach the image
- * @template {upload}               The main template. Because the jQuery plugin has some requirements, the template makes sure everything is set up as needed.
- * @template {file}   used to upload a single file. Override this partial to Customize the file upload to your needs.
+ * @tmpl {upload}               The main template. Because the jQuery plugin has some requirements, the template makes sure everything is set up as needed.
+ * @tmpl {file}   used to upload a single file. Override this partial to Customize the file upload to your needs.
  * @event {hull.uploads.send}     Triggered when an upload has started.
  * @event {hull.uploads.progress} Triggered when an upload is in progress. The total amount of data as well as the current amount of data transfered are available in the payload of the event.
  * @event {hull.uploads.finished} Triggered when an upload has finished. References to the uploadded files are available in an Array as the first parameter to the listeners.

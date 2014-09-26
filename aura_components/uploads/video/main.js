@@ -5,7 +5,7 @@
  *
  * @name Video Upload
  * @param {String} id Required The object ID on which to attach the video.
- * @template {upload} The main template. Because the jQuery plugin has some requirements, the template makes sure everything is set up as needed.
+ * @tmpl {upload} The main template. Because the jQuery plugin has some requirements, the template makes sure everything is set up as needed.
  * @event {hull.uploads.progress} Triggered when an upload is in progress. The total amount of data as well as the current amount of data transfered are in the payload of the event.
  * @event {hull.uploads.video.finished} Triggered when upload is done and video is created.
  * @example <div data-hull-component="uploads/video@hull" data-hull-id="me"></div>

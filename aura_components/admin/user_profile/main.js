@@ -3,7 +3,7 @@
  * Displays the profile of any user of your app.
  *
  * @name User Profile
- * @template {user_profile} Displays detailed informations about the selected user.
+ * @tmpl {user_profile} Displays detailed informations about the selected user.
  * @param {String} id The id of the user you want to display
  * @example <div data-hull-component="admin/user_profile@hull"></div>
  *
