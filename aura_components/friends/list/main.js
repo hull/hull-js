@@ -8,7 +8,7 @@
  * @param {String} scope    Optional A Facebook permission you need to ask the user before being able to show data. - If this permission is not given, a button will be shown to ask for it.
  * @datasource {friends}    The user's friends.
  * @datasource {authorized} A hash of permissions showing if the user can view the images. Contains `provider`, `permissions` : Booleans showing if the provider and permissions are right, and `provider_name` containing the name of the asked provider
- * @template {friends} Displays the list of the user's friends.
+ * @tmpl {friends} Displays the list of the user's friends.
  * @example <div data-hull-component="friends/list@hull"></div>
  * @example <div data-hull-component="friends/list@hull" data-hull-provider="facebook"></div>
  * @example <div data-hull-component="friends/list@hull" data-hull-provider="hull"></div>

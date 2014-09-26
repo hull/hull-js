@@ -3,9 +3,9 @@
  * List registration form entries.
  *
  * @name Registration
- * @template {admin} The main template. It shows the list of your quizzes or the form to edit a quiz.
- * @template {list}  Show the list of your quizzes and a form to add new quizzes.
- * @template {form}  Show the form to edit a quiz.
+ * @tmpl {admin} The main template. It shows the list of your quizzes or the form to edit a quiz.
+ * @tmpl {list}  Show the list of your quizzes and a form to add new quizzes.
+ * @tmpl {form}  Show the form to edit a quiz.
  * @datasource {quizzes} The collection of all the quizzes available in the application.
  * @example <div data-hull-component="admin/registration@hull"></div>
  */

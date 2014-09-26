@@ -10,7 +10,7 @@
  * @param {String} id The object on which to fetch likes.
  * @datasource {target} Info on the object.
  * @datasource {liked} Has the current user liked the object.
- * @template {button} The main template. Has 3 states: Unliked, Liked.
+ * @tmpl {button} The main template. Has 3 states: Unliked, Liked.
  * @example <div data-hull-component="likes/button@hull" data-hull-id="entity:http://hull.io"></div>
  * @example <div data-hull-component="likes/button@hull" data-hull-id="app"></div>
  * @example <div data-hull-component="likes/button@hull" data-hull-id="entity:YOUR_UNIQUE_ID"></div>

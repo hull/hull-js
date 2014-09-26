@@ -5,7 +5,7 @@
  * @param {String} id The object to vote on.
  * @datasource {target} Info on the object.
  * @datasource {credits} The user credit for the current period
- * @template {main} The main template.
+ * @tmpl {main} The main template.
  * @example <div data-hull-component="votes/button@hull" data-hull-id="app"></div>
  * @example <div data-hull-component="votes/button@hull" data-hull-id="entity:http://hull.io"></div>
  */
