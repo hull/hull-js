@@ -85,7 +85,13 @@ Hull.component({
     this.$el.addClass('hull-' + methodName);
 
     var self = this;
-    var p = this.sandbox[methodName](provider);
+
+    var location = this.options.redirectTo || '/account';
+    var e={
+      provider:provider,
+      redirect_url: document.location.host+'/a/hull-callback?redirect_url='+location
+    }
+    var p = this.sandbox[methodName](e);
 
     p.then(function() {
       if (handleSuccess) { self.stopLoading(); }
