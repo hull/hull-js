@@ -86,11 +86,15 @@ Hull.component({
 
     var self = this;
 
-    var location = this.options.redirectTo || '/account';
-    var e={
-      provider:provider,
-      redirect_url: document.location.host+'/a/hull-callback?redirect_url='+location
+    var e = {
+      provider: provider,
+      redirect_url: document.location.origin + '/a/hull-callback?redirect_url=' + (this.options.redirectTo || '/account')
     }
+
+    if (this.options.strategy) {
+      e.strategy = this.options.strategy;
+    }
+
     var p = this.sandbox[methodName](e);
 
     p.then(function() {
