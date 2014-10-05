@@ -41,6 +41,17 @@ This is the default snippet. Let's say we want to change the 'Sign In with Faceb
 '/account'
 ```
 
+### `data-strategy`
+
+*String*, default to:
+
+```
+'popup' // on Desktop
+'redirect' // on Mobile
+```
+
+
+
 ## Style
 
 ### `data-inject-link-tag`
