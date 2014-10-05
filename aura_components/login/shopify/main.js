@@ -85,7 +85,26 @@ Hull.component({
     this.$el.addClass('hull-' + methodName);
 
     var self = this;
-    var p = this.sandbox[methodName](provider);
+
+    var e = {
+      provider: provider,
+      redirect_url: document.location.origin + '/a/hull-callback'
+    };
+
+    if (this.options.redirectTo) {
+      e.redirect_url += "?redirect_url=" + this.options.redirectTo;
+    }
+
+
+    if (this.options.strategy) {
+      e.strategy = this.options.strategy;
+    } else {
+      if (this.sandbox.util.isMobile()) {
+        e.strategy = 'redirect';
+      }
+    }
+
+    var p = this.sandbox[methodName](e);
 
     p.then(function() {
       if (handleSuccess) { self.stopLoading(); }
