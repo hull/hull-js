@@ -81,7 +81,6 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
       #   # We're on mobile, setup defaults for Touch/Redirect login
       #   opts.strategy ||= 'redirect'
       #   opts.params.display ||= 'touch'
-      # else
 
       # Setup defaults for Popup login for Facebook on Desktop
 
