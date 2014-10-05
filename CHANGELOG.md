@@ -1,3 +1,7 @@
+# 0.8.44
+
+* Use redirect strategy by default on shopify for mobile browsers
+
 # 0.8.43
 
 * Rename @template to @tmpl in component docs. @template is now a reserved word in Dox
