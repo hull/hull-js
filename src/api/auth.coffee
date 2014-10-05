@@ -75,16 +75,18 @@ define ['underscore', '../utils/promises', '../utils/version'], (_, promises, ve
 
       # Opts format is now : {login:"", password:"", params:{}} or {provider:"", params:{}}
 
-      # Redirect login by default. if on Mobile.
-      # Setup 'display' to be 'touch' for Facebook Login if on Mobile
-      if isMobile()
-        # We're on mobile, setup defaults for Touch/Redirect login
-        opts.strategy ||= 'redirect'
-        opts.params.display ||= 'touch'
-      else
-        # Setup defaults for Popup login for Facebook on Desktop
-        if opts.provider == 'facebook'
-          opts.params.display ||= if opts.strategy=='redirect' then 'page' else 'popup'
+      # # Redirect login by default. if on Mobile.
+      # # Setup 'display' to be 'touch' for Facebook Login if on Mobile
+      # if isMobile()
+      #   # We're on mobile, setup defaults for Touch/Redirect login
+      #   opts.strategy ||= 'redirect'
+      #   opts.params.display ||= 'touch'
+      # else
+
+      # Setup defaults for Popup login for Facebook on Desktop
+
+      if opts.provider == 'facebook'
+        opts.params.display ||= if opts.strategy == 'redirect' then 'page' else 'popup'
 
       # Redirect to current page by default for Redirect login
       # TODO: Facebook calls it redirect_uri => Shouldnt we do the same?
