@@ -1,3 +1,7 @@
+# 0.8.46
+
+* Properly update bower.json and package.json, Do not botch release versions
+
 # 0.8.45
 
 * Share methods all return promises, even with Popup methods. They return response data if available
