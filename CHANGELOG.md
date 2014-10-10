@@ -1,3 +1,7 @@
+# 0.8.45
+
+* Share methods all return promises, even with Popup methods. They return response data if available
+
 # 0.8.44
 
 * Use redirect strategy by default on shopify for mobile browsers
