@@ -26,41 +26,44 @@ define ['underscore', '../utils/promises'], (_, promises)->
 
     sharePromise = () ->
       Hull.api({ provider: opts.provider, path: "ui.#{opts.method}" },params)
-    if not isMobile() and not params.display=='popup'
-      if opts.anonymous or hasIdentity('facebook')
-        return sharePromise()
-      else
-        return Hull.login({provider:'facebook',strategy:'popup'}).then(sharePromise)
 
-    params.redirect_uri = Hull.config('orgUrl')+"/api/v1/services/facebook/callback?data="+btoa(params)
-    params.app_id = Hull.config('services').auth.facebook.appId
-    querystring = to_qs(params)
-    url = "https://www.facebook.com/dialog/#{opts.method}?#{querystring}"
-    openerString = "location=0,status=0"
-    [width, height] = if params.display == 'popup' then [500, 400] else [1030, 550]
-    openerString = "#{openerString},width=#{width},height=#{height}"
-    window.open(url, 'hull_share', openerString)
+    return facebookPopup(opts) if isMobile() or params.display=='popup'
+
+    return sharePromise() if opts.anonymous or hasIdentity('facebook')
+
+    return Hull.login({provider:'facebook',strategy:'popup'}).then(sharePromise)
+
+  genericPopup = (location, opts)->
+    querystring = to_qs(opts.params)
+    share = window.open("#{location}?#{querystring}", 'hull_share', "location=0,status=0,width=#{opts.width},height=#{opts.height}")
     dfd = promises.deferred()
-    dfd.resolve()
-    dfd
+    interval = setInterval ()->
+      try
+        if share == null || share.closed
+          window.clearInterval(interval)
+          dfd.resolve({display:"popup"})
+       catch e
+        1 == 1
+    , 500
+    return dfd.promise
+
+  facebookPopup = (opts)->
+    params = opts.params
+    # params.redirect_uri = Hull.config('orgUrl')+"/api/v1/services/facebook/callback?data="+btoa(params)
+    params.redirect_uri = window.location.href
+    params.app_id = Hull.config('services').auth.facebook.appId
+    [opts.width, opts.height] = if params.display == 'popup' then [500, 400] else [1030, 550]
+    genericPopup("https://www.facebook.com/dialog/#{opts.method}", opts)
+
+  twitterPopup = (opts)->
+    [opts.width, opts.height] = [550, 420]
+    genericPopup("https://twitter.com/intent/tweet", opts)
 
   twitterShare  = (opts)->
-    opts.method ||= 'statuses/update'
-
+    # opts.method ||= 'statuses/update'
     params = opts.params
     params.url ||= window.location.href
-
-    # return Hull.api({ provider:'twitter', path: "/api/v1/services/twitter/#{opts.method}"},'post',params) if hasIdentity('twitter') and not opts.anonymous
-
-    querystring = to_qs(params)
-    url = "https://twitter.com/intent/tweet?#{querystring}"
-
-
-    openerString = "location=0,status=0,width=550,height=420"
-    window.open(url,'hull_share',openerString)
-    dfd = promises.deferred()
-    dfd.resolve()
-    dfd
+    twitterPopup(opts)
 
   (opts)->
     # Todo Throw error
@@ -69,6 +72,11 @@ define ['underscore', '../utils/promises'], (_, promises)->
       dfd.reject()
       return dfd 
 
-    switch opts.provider
+    sharePromise = switch opts.provider
       when 'facebook' then facebookShare(opts)
       when 'twitter'  then twitterShare(opts)
+
+    sharePromise.then (response)->
+      Hull.track "hull.#{opts.provider}.share", {params:opts.params,response:response}
+      response
+
