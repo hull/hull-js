@@ -10,8 +10,12 @@ You can customize your login buttons by adding options to your snippet.
 This is the default snippet. Let's say we want to change the 'Sign In with Facebook' to 'Connect with Facebook'. To do that we need to set the `data-sign-in-message` to `Connect with {{provider}}`.
 
 ```html
+{% raw %}
 <div data-hull-component="login/shopify@hull" data-sign-in-message="Connect with {{provider}}">Loading Social Login...</div>
+{% endraw %}
 ```
+
+_Note the that the component must be wrapped in a liquid `{% raw %}...{% endraw %}` tag._
 
 ## Core
 
