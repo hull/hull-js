@@ -1,5 +1,5 @@
 assign      = require 'object-assign'
-_            = require './utils/lodash'
+_           = require './utils/lodash'
 Client      = require './client'
 
 CurrentUser = require './client/current-user'
@@ -10,7 +10,7 @@ promises    = require './utils/promises'
 EventBus    = require './utils/eventbus'
 Pool        = require './utils/pool'
 HullRemote  = require './hull-remote'
-deployments = require './client/deployments'
+embeds      = require './client/embeds'
 
 require './utils/console-shim'
 
@@ -54,8 +54,8 @@ onInitSuccess = (userSuccessCallback, _hull, data)->
   hull = _hull
   {me, app, org} = data
 
-  hull.embed = deployments.embed
-  hull.onEmbed = deployments.onEmbed
+  hull.embed = embeds.embed
+  hull.onEmbed = embeds.onEmbed
 
   # We're on the client.
   delete hull.initRemote
@@ -68,7 +68,6 @@ onInitSuccess = (userSuccessCallback, _hull, data)->
 
   EventBus.emit('hull.ready', hull, me, app, org)
   EventBus.emit('hull.init', hull, me, app, org)
-
   console.info("Hull.js version \"#{hull.version}\" started")
 
   # Everything went well, call the init callback

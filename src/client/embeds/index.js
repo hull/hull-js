@@ -21,7 +21,7 @@ function embedDeployments(deployments, opts={}, callback) {
 
   for (var d = 0, l = deployments.length; d < l; d++) {
     dpl = new Deployment(deployments[d]);
-    dpl.embed(true, allEmbedCompleteCallback);
+    dpl.embed({refresh:true}, allEmbedCompleteCallback);
   }
 }
 

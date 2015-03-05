@@ -29,7 +29,6 @@ class Import
       el.href = href
       el.async = true #Will this break stuff ? if not - lets do it
       @document.getElementsByTagName('head')[0].parentNode.appendChild el
-
     if  _.isFunction callback
       if el.import
         callback el

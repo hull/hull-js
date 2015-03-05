@@ -51,7 +51,6 @@ class Deployment
     else
       target = document.querySelector selector
       targets = [target] if target
-    @targets = targets
 
   forEachTarget: (callback, args...)=>
     targets = @getTargets()
@@ -78,7 +77,7 @@ class Deployment
     w.foo = 'bar'
 
   embed : (opts={}, embedCompleteCallback)->
-    @getTargets({refresh:opts.refresh}) if opts.refresh
+    @targets = @getTargets({refresh:opts.refresh}) if opts.refresh
     @_callbacks.push(embedCompleteCallback) if _.isFunction(embedCompleteCallback)
     if @settings.$sandbox
       @forEachTarget (target, args...)=>
