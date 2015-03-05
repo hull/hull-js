@@ -14,7 +14,7 @@ var sourceFolder = 'src';
 var outputFolder = 'lib';
 var assetsFolder = '';
 var serverPort   = process.env.PORT||3001;
-var previewUrl   = 'http://localhost:'+serverPort+'/';
+var previewUrl   = 'http://localhost:'+serverPort;
 
 // DO NOT CHANGE SHIP ENTRY
 // WITHOUT UPDATING PACKAGE.JSON TOO
@@ -78,7 +78,7 @@ var aws = getAWSConfig(v);
 var outputPath = path.join(__dirname, outputFolder);
 
 var output = {
-  path: path.join(outputPath,assetsFolder,'/'),
+  path: path.join(outputPath,assetsFolder),
   pathinfo: true,
   filename: '[name].js',
   chunkFileName: '[name].chunk.js',

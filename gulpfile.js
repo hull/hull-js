@@ -125,7 +125,7 @@ gulp.task("webpack:server", function() {
   var taskName = "webpack:server";
   new WebpackDevServer(devCompiler, {
     contentBase: config.outputFolder,
-    publicPath: "/"+config.assetsFolder+"/",
+    publicPath: config.assetsFolder+"/",
     hot: true,
     stats: {colors: true }
   }).listen(config.serverPort, function(err) {
