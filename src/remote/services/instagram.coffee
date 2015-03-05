@@ -1,30 +1,32 @@
-define ['jquery-jsonp', 'lib/remote/services/proxy'], (jsonp, proxyBuilder)->
-  (app)->
-    proxy = proxyBuilder {name: 'instagram', path: 'instagram'}, app.core.handler
+GenericService    = require './generic_service'
 
-    handler = (req, callback, errback)=>
+class InstagramService extends GenericService
+  name : 'instagram'
+  path: 'instagram'
 
-      method = req.method.toLowerCase()
-      path = req.path
-      path = path.substring(1) if (path[0] == "/")
-      requestParams = {}
+  constructor: (config, gateway)-> super(config,gateway)
 
-      instaConfig = app.core.settings().auth?.instagram
+  request : (request,callback,errback)=>
+    config = @getSettings()
+    return errback('No Likedin User') unless token?
 
-      if method == 'get'
-        requestParams =
-          url: "https://api.instagram.com/v1/" + path
-          data: _.extend({}, req.params, instaConfig)
-          callbackParameter: 'callback'
-        request = jsonp(requestParams)
-        request.done (response)->
-          callback({ response: response.data, provider: 'instagram', headers: { pagination: response.pagination, meta: response.meta } })
-        request.fail (err)-> errback(err.url)
+    {method, path, params} = request
+    method = method.toLowerCase()
+    path   = path.substring(1) if (path[0] == "/")
+    if method != 'get'
+      return @wrappedRequest(request, callback, errback)
+    else
+      params = 
+        url  : "https://api.instagram.com/v1/#{path}"
+        data : assign({}, params, config)
+        error:   (err)-> errback(err.url)
+        success: (response)->
+          callback
+            provider: @name
+            response: response.data
+            headers: 
+              pagination: response.pagination
+              meta: response.meta
+      @request_jsonp(params)
 
-      else
-        proxy(req, callback, errback)
-
-      return
-
-    initialize: (app)->
-      app.core.routeHandlers.instagram = handler
+module.exports = InstagramService

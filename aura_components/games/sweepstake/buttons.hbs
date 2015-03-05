@@ -1,7 +1,0 @@
-{{#if loggedIn}}
-  <button class="btn btn-primary" data-hull-action="play">Play</button>
-{{else}}
-  {{#each authProviders}}
-    <button class="btn" data-hull-action="play" data-hull-provider={{this}}>Play with {{capitalize this}}</button>
-  {{/each}}
-{{/if}}

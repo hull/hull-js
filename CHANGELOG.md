@@ -1,3 +1,74 @@
+# 0.9.0
+
+* COMPLETE REWRITE OF THE LIBRARY.
+* Gets rid of legacy methods
+* Not dependent on jQuery or Aura.js anymore. Now only 44kb, much faster.
+* Fully promise-ified. Every data call returns a promise
+* Implements Smart login and Share strategy depending on device (popup or redirects)
+
+--------- 
+
+### Removed
+#### `Hull.utils.entity.[encode|decode]()`
+_Use `Hull.entity.[encode|decode]`_
+#### `Hull.api[get|put|post|delete]()`
+_Use `Hull.api(path,method)`_
+#### `Hull.api.parseRoute()`
+_Should not have been exposed in the first place._
+#### `Hull.api.clearToken()`
+_Use `Hull.currentUser.clear()` : More explicitely does what it says_
+#### `Hull.api.init()`
+_Removed [Was undocumented]_
+#### `hull.init` event
+_Please use `hull.ready` instead_
+
+--------- 
+
+### Deprecated
+
+#### `Hull.init(config, callback)`
+We're phasing out in favor of auto-initialized code, You can get the same results by using `Hull.ready(callback)` which has the benefit of allowing multiple calls.
+
+--------- 
+
+### Changed
+
+##### Events
+* `hull.ready` event now returns `hull, me, platform, org`
+* `hull.auth.update`, `hull.auth.login`, `hull.auth.logout`, `hull.auth.create` events are renamed `hull.user.update`, `hull.user.login`, `hull.user.logout`, `hull.user.create` and are emitted more reliably.
+* A `hull.track` event is now emitted every time tracking happens, so you can subscribe to them and implement your own track handlers Hull.on(`hull.track`,{event:[String], data:[Object]});
+* Access the event's name from inside the event callback with `this.event`:
+```js
+  Hull.on('hull.ready',function(args...){
+    console.log(this.event) //  "hull.ready"
+  })
+```
+
+##### Methods
+
+###### `Hull.login()`, `Hull.logout()`, `Hull.linkIdentity()`, `Hull.unlinkIdentity()` 
+All those now return promises. When using Promises, please don't forget to add `.done()` at the end of your promise chain, so errors are not swallowed without notice.
+
+###### `Hull.ready(callback)`
+returns a promise. Please end with `.done()` here too.
+
+###### `Hull.embed(deploymentsArray)` and `Hull.onEmbed(document, callback)` 
+New methods for Ship Deployment
+
+###### `Hull.setShipSize({width,height})`
+From inside a sandboxed ship to allow setting container size 
+
+###### `Hull.utils`
+Expose our internal utils, containing several libraries. We could change those at any time but we thought you might be happy to avoid embedding them too if it was a fit.
+
+###### `'on', 'onAny', 'offAny', 'once', 'many', 'off', 'emit'`
+Expose more event methods (we're using [EventEmitter2](https://github.com/asyncly/EventEmitter2), refer to their docs for signature)
+
+### Fixed
+
+* `Hull.currentUser()` from inside the promise or callback of a User-changing method such as `Hull.logout` now properly returns the right user status
+
+
 # 0.8.46
 
 * Properly update bower.json and package.json, Do not botch release versions

@@ -1,8 +1,7 @@
-define ()->
-  utilsContainer = window
-  utils: utilsContainer
+
+module.exports = {
   decode: (str)->
-    utilsContainer.decodeURIComponent(utilsContainer.escape(utilsContainer.atob(str)))
+    window.decodeURIComponent(window.escape(window.atob(str)))
   encode: (str)->
-    utilsContainer.btoa(utilsContainer.unescape(utilsContainer.encodeURIComponent(str)))
-  utilsContainer: window
+    window.btoa(window.unescape(window.encodeURIComponent(str)))
+}

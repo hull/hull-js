@@ -1,19 +1,28 @@
-define ['jquery-jsonp', 'underscore'], (jsonp, _)->
-  initialize: (app)->
-    app.core.routeHandlers.google = (req, success, failure)->
-      method = req.method.toLowerCase()
-      token = app.core.settings().auth?.google?.credentials?.token
+GenericService    = require './generic_service'
 
-      return failure('No Google+ user') unless token
-      #TODO Implement when the proxy is available
-      return failure('Unable to perform non-GET requests on Google+ API') unless method == 'get'
+class GoogleService extends GenericService
+  name : 'google'
+  path: 'google'
 
-      request = jsonp
-        url:  "https://www.googleapis.com/plus/v1/#{req.path}"
-        callbackParameter: "callback"
-        data: _.extend({}, req.params, { access_token: token })
-      request.done (response)->
-        success({ response: response, provider: 'google' })
-      request.fail (req)->
-        failure req.url
-      return
+  constructor: (config, gateway)-> super(config,gateway)
+
+  request : (request,callback,errback)=>
+    token = @getSettings().credentials?.token
+    return errback('No Google+ User') unless token?
+
+    {method, path, params} = request
+    method = method.toLowerCase()
+    return errback('Unable to perform non-GET requests on Google+') unless method=='get'
+    path   = path.substring(1) if (path[0] == "/")
+
+    params = 
+      url  : "https://www.googleapis.com/plus/v1/#{path}"
+      data : assign({}, params, {access_token : token})
+      error:   (err)-> errback(err.url)
+      success: (response)=>
+        callback
+          provider: @name
+          response: response
+    @request_jsonp(params)
+
+module.exports = GoogleService

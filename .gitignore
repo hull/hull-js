@@ -12,5 +12,5 @@ app/app.js
 /node_modules.bak/
 /build
 /local_components
-/grunt-aws.json
 app/*html
+.env.sh

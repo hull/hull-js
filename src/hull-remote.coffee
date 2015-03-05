@@ -1,37 +1,82 @@
-define ['aura/aura', 'underscore', 'lib/utils/version', 'lib/remote/config-normalizer'], (Aura, _, version, ConfigNormalizer)->
+EventBus            = require './utils/eventbus'
+ConfigNormalizer    = require './utils/config-normalizer'
+Services            = require './remote/services'
+Gateway             = require './remote/gateway'
+Channel             = require './remote/channel'
 
-  availableServices = ['angellist', 'facebook', 'github', 'instagram', 'linkedin', 'soundcloud', 'tumblr', 'twitter', 'google']
-  isAvailable = _.bind(_.contains, _, availableServices)
 
-  hull = null
+RemoteHeaderStore   = require './flux/stores/RemoteHeaderStore'
+RemoteHeaderActions = require './flux/actions/RemoteHeaderActions'
 
-  Hull = (config)->
-    normalizer = new ConfigNormalizer(config)
-    config = normalizer.normalize()
-    return hull if hull && hull.app
-    hull = { config }
-    config.debug ?= false
-    config.components = false
-    hull.app = Aura(config)
-    hull.app.use('aura-extensions/aura-cookies')
-    hull.app.use('aura-extensions/aura-purl')
-    hull.app.use('aura-extensions/aura-uuid')
-    hull.app.use('lib/remote/services')
-    hull.app.use('lib/remote/handler')
-    hull.app.use('lib/remote/current-user')
-    hull.app.use('lib/remote/services/hull')
-    hull.app.use('lib/remote/services/admin')
+RemoteConfigStore   = require './flux/stores/RemoteConfigStore'
+RemoteConfigActions = require './flux/actions/RemoteConfigActions'
 
-    keys = _.keys(config.settings?.auth || [])
-    auth_services = _.filter keys, isAvailable
+RemoteUserStore     = require './flux/stores/RemoteUserStore'
+RemoteUserActions   = require './flux/actions/RemoteUserActions'
 
-    _.each auth_services, (value) ->
-      hull.app.use "lib/remote/services/#{value}"
+RemoteSettingsStore     = require './flux/stores/RemoteSettingsStore'
+RemoteSettingsActions   = require './flux/actions/RemoteSettingsActions'
 
-    hull.app.start()
+RemoteConstants     = require './flux/constants/RemoteConstants'
 
-    return hull
+hull = undefined
 
-  window.Hull = Hull
-  Hull.version = version
-  Hull
+
+Hull = (remoteConfig)->
+  return hull if hull
+
+  config = ConfigNormalizer(remoteConfig)
+
+  # The access token stuff is a Safari hack:
+  # Safari doesn't send response tokens for remote exchange
+  RemoteHeaderActions.setAppIdHeader(config.appId)
+  RemoteHeaderActions.setTokenHeader(config.access_token) if config?.access_token
+  RemoteConfigActions.updateRemoteConfig(config)
+
+  hull        = {config}
+  gateway     = new Gateway(config)
+  services    = new Services(config, gateway)
+  channel     = new Channel(config, services)
+
+  request = services.services.hull.request
+
+  subscribeToEvents  = (clientConfig)->
+    (document.addEventListener||document.attachListener) 'click', (e)-> channel.rpc.hide()
+    EventBus.on 'remote.iframe.show',  -> channel.rpc.show()
+    EventBus.on 'remote.iframe.hide',  -> channel.rpc.hide()
+    EventBus.on 'remote.track',        (args...)->
+      channel.rpc.track(args...)
+      services.services.track.request(args...)
+    clientConfig
+
+
+  RemoteSettingsStore.addChangeListener (change)=>
+    state = RemoteSettingsStore.getState()
+    # Notify client whenever settings change
+    switch change
+      when RemoteConstants.UPDATE_SETTINGS
+        channel.rpc.settingsUpdate(state.settings)
+        break
+
+  RemoteUserStore.addChangeListener (change)=>
+    state = RemoteUserStore.getState()
+    # Notify client whenever user changes
+    switch change
+      when RemoteConstants.UPDATE_USER, RemoteConstants.CLEAR_USER
+        channel.rpc.userUpdate(state.user)
+        break
+
+  channel.promise
+  .then(subscribeToEvents)
+
+  .then (clientConfig)->
+    RemoteConfigActions.updateClientConfig(clientConfig)
+
+  .fail (err)->
+    throw new Error("Error from the client", err, err.stack)
+
+  .done()
+
+
+Hull.version = VERSION
+module.exports = Hull

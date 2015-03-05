@@ -1,6 +1,9 @@
-define ['promises'], (promises)->
-  {
-    deferred: promises.defer
-    when: promises.when
-    all: promises.all
-  }
+q = require 'q'
+
+# q.longStackSupport = true
+module.exports =   {
+  deferred: q.defer
+  when: q.when
+  all: q.all
+  allSettled: q.allSettled
+}

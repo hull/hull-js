@@ -1,87 +1,181 @@
-throw 'jQuery must be available for components to work' unless window.jQuery
+assign      = require 'object-assign'
+_            = require './utils/lodash'
+Client      = require './client'
 
-define ['underscore', 'lib/utils/promises', 'aura/aura', 'lib/utils/handlebars', 'lib/hull.api', 'lib/utils/emitter', 'lib/client/component/registrar', 'lib/helpers/login'], (_, promises, Aura, Handlebars, HullAPI, emitterInstance, componentRegistrar, loginHelpers) ->
+CurrentUser = require './client/current-user'
+Channel     = require './client/channel'
+Api         = require './client/api'
 
-  hullApiMiddleware = (api)->
-    name: 'Hull'
-    initialize: (app)->
-      app.core.mediator.setMaxListeners(100)
-      app.core.data.hullApi = api
-    afterAppStart: (app)->
-      _ = app.core.util._
-      sb = app.sandboxes.create();
-      # _.extend(HullDef, sb);
-      # After app init, call the queued events
+promises    = require './utils/promises'
+EventBus    = require './utils/eventbus'
+Pool        = require './utils/pool'
+HullRemote  = require './hull-remote'
+deployments = require './client/deployments'
 
-  setupApp = (app, api, extensions=[])->
-    app
-      .use(hullApiMiddleware(api))
-      .use('aura-extensions/aura-base64')
-      .use('aura-extensions/aura-cookies')
-      .use('aura-extensions/aura-backbone')
-      .use('aura-extensions/aura-moment')
-      .use('aura-extensions/aura-twitter-text')
-      .use('aura-extensions/hull-reporting')
-      .use('aura-extensions/hull-entities')
-      .use('aura-extensions/hull-helpers')
-      .use('aura-extensions/hull-utils')
-      .use('aura-extensions/aura-form-serialize')
-      .use('aura-extensions/aura-purl')
-      .use('aura-extensions/aura-mobile-detect')
-      .use('aura-extensions/aura-component-validate-options')
-      .use('aura-extensions/aura-component-require')
-      .use('aura-extensions/hull-component-normalize-id')
-      .use('aura-extensions/hull-component-reporting')
-      .use('lib/client/component/api')
-      .use('lib/client/component/actions')
-      .use('lib/client/component/component')
-      .use('lib/client/component/templates')
-      .use('lib/client/component/datasource')
-    app.use(ext) for ext in extensions
-    app
+require './utils/console-shim'
 
-  init: (config)->
-    appPromise = HullAPI.init(config)
-    return appPromise if config.apiOnly is true
-    appPromise.then (successResult)->
-      app = new Aura(_.extend config, mediatorInstance: successResult.eventEmitter)
-      deps =
-        api: successResult.raw.api
-        authScope: successResult.raw.authScope
-        remoteConfig: successResult.raw.remoteConfig
-        login: successResult.api.login
-        logout: successResult.api.logout
-      app: setupApp(app, deps, (config.extensions || []))
-      api: successResult
-      components: true
-  success: (appParts)->
-    apiParts = HullAPI.success(appParts.api)
-    booted = apiParts.exports
-    return booted unless appParts.components
-    booted.component = componentRegistrar(define)
-    appParts.app.sandbox.currentUser = apiParts.exports.currentUser
-    appParts.app.sandbox.promises = promises
-    booted.util = appParts.app.sandbox.util
-    booted.util.Handlebars = Handlebars
-    booted.define = define
+# # This file is responsible for defining window.Hull
+# # and providing pooled methods to the user while
+# # Hull is actually loading.
+# #
+# # It provides some global code that is to be executed immediately
+# # and an AMD module,
+# # The AMD module loads a particvular flavour of Hull, defined as a set of 3 methods:
+# # * init: Returns a promise or a value that indicates the success or failure of the loading process
+# # * success: will to be executed if the app is loaded correctly
+# # * failure: will be executed if the app fails to load
+# #
+# # The global code only defines some methods into window.Hull and pools the parameters
+# # to replay them if the app has loaded correctly
+# #
 
-    appStarted = appParts.app.start({ components: 'body' })
+# * Augments coniguration
+# * Adds a callback when ready
+_initialized = false
 
-    booted.parse = (el, options={})->
-      appStarted.then ->
-        appParts.app.core.appSandbox.start(el, options)
+checkConfig = (config)->
+  dfd = promises.deferred();
+  msg = "You need to pass some keys to Hull to start it: " 
+  readMore = "Read more about this here : http://www.hull.io/docs/references/hull_js/#hull-init-params-cb-errb"
+  # Fail right now if we don't have the required setup
+  if config.orgUrl and config.appId
+    dfd.resolve()
+  else
+    dfd.reject(new Error "#{msg} We couldn't find `orgUrl` in the config object you passed to `Hull.init`\n #{readMore}") unless config.orgUrl
+    dfd.reject(new Error "#{msg} We couldn't find `appId` in the config object you passed to `Hull.init`\n #{readMore}") unless config.appId
+  return dfd.promise
 
-    appStarted.then ->
-      #TODO populate the models from the remoteConfig
-      booted.on 'hull.auth.login', _.bind(loginHelpers.login, undefined,  appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
-      booted.on 'hull.auth.update', _.bind(loginHelpers.update, undefined,  appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
-      booted.on 'hull.auth.logout', _.bind(loginHelpers.logout, undefined, appParts.app.sandbox.data.api.model, appParts.app.core.mediator)
+# Wraps the success callback
+# * Extends the global object
+# * Reinjects events in the live app from the pool
+# * Replays the track events
+onInitSuccess = (userSuccessCallback, _hull, data)->
+  userSuccessCallback = userSuccessCallback || ->
+  hull = _hull
+  {me, app, org} = data
 
-    ,(e)->
-      console.error('Unable to start Aura app:', e)
-      appParts.app.stop()
-    exports: booted
-    context: apiParts.context
-  failure: (error)->
-    console.error(error.message || error)
-    error
+  hull.embed = deployments.embed
+  hull.onEmbed = deployments.onEmbed
+
+  # We're on the client.
+  delete hull.initRemote
+
+  # Prune init queue
+  Pool.run('track', hull)
+
+  # Execute Hull.init callback
+  readyDfd.resolve {hull, me, app, org}
+
+  EventBus.emit('hull.ready', hull, me, app, org)
+  EventBus.emit('hull.init', hull, me, app, org)
+
+  console.info("Hull.js version \"#{hull.version}\" started")
+
+  # Everything went well, call the init callback
+  userSuccessCallback(hull, me, app, org)
+
+  hull
+
+# Wraps config failure
+onConfigFailure = (err)->
+  throw new Error(err)
+
+# Wraps init failure
+onInitFailure = (err)->
+  throw new Error("We couldn't load the Hull server after trying for 30 seconds. Something about connectivity ?")
+
+# Parse the tracked events configuration and standardize it.
+getTrackConfig = (cfg)->
+  return undefined unless cfg?
+  switch (Object.prototype.toString.call(cfg).match(/^\[object (.*)\]$/)[1])
+    when "Object"
+      if cfg.only?
+        { only: (m.toString() for m in cfg.only) }
+      else if cfg.ignore?
+        { ignore: (m.toString() for m in cfg.ignore) }
+    when "RegExp"
+      { only: cfg.toString() }
+    when "Array"
+      { only: (m.toString() for m in cfg)  }
+
+
+
+
+readyDfd = promises.deferred()
+readyDfd.promise.catch (err)-> throw new Error('Hull.ready callback error', err)
+
+
+#Main Hull Entry Point
+init = (config, userSuccessCallback, userFailureCallback)->
+  if _initialized
+    throw new Error('Hull.init can be called only once')
+    return
+
+  _initialized = true
+
+  client  = {}
+  channel = {}
+
+  #TODO
+  config.version    = VERSION
+  config.debug      = config.debug && { enable: true }
+  config.track      = getTrackConfig(@config.track) if config.track?
+  config.appId = config.appId || config.platformId || config.shipId
+  delete config.platformId if config.platformId?
+  delete config.ship if config.ship?
+  #END
+
+
+  currentUser =  new CurrentUser()
+
+  checkConfig(config)
+  .then ()=>
+    channel = new Channel(config, currentUser)
+    channel.promise
+  , onConfigFailure
+
+  .then (channel)=>
+    client = new Client(config, channel, currentUser)
+  , onInitFailure
+
+  .then (hullClient)=>
+    client.hull = assign(hull,client.hull)
+    data = client.remoteConfig.data
+    currentUser.init(data.me)
+    onInitSuccess(userSuccessCallback, client.hull, data)
+
+  ,(err)->
+    console.error(err.stack);
+    userFailureCallback = userFailureCallback || ->
+    userFailureCallback(err)
+    readyDfd.reject(err)
+
+hullReady = (callback, errback)->
+    callback = callback || ->
+    errback = errback   || ->
+    readyDfd.promise
+    .then (res)->
+      callback(res.hull, res.me, res.app, res.org)
+    , errback
+    .catch (err)->
+      console.error err.stack
+
+hullSetShipSize = ->
+  console.log("SetShipSize is only useful when Ships are sandboxed. This method does nothing here")
+  false
+
+hull =
+  initRemote  : HullRemote
+  init        : init
+  version     : VERSION
+  track       : Pool.create('track')
+  setShipSize : hullSetShipSize
+  ready       : hullReady
+
+# Assign EventBus methods to Hull
+eeMethods = ['on', 'onAny', 'offAny', 'once', 'many', 'off', 'emit']
+_.map eeMethods,(m)=>
+  hull[m] = (args...)->EventBus[m](args...)
+
+window.Hull = hull
+module.exports = hull

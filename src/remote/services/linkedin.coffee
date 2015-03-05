@@ -1,19 +1,28 @@
-define ['jquery-jsonp', 'underscore'], (jsonp, _)->
-  initialize: (app)->
-    app.core.routeHandlers.linkedin = (req, success, failure)->
-      method = req.method.toLowerCase()
-      token = app.core.settings().auth?.linkedin?.credentials?.token
+GenericService    = require './generic_service'
 
-      return failure('No linkedIn user') unless token
-      #TODO Implement when the proxy is available
-      return failure('Unable to perform non-GET requests on LinkedIn') unless method == 'get'
+class LinkedInService extends GenericService
+  name : 'linkedin'
+  path: 'linkedin'
 
-      request = jsonp
-        url: "https://api.linkedin.com/v1/#{req.path}"
-        callbackParameter: "callback"
-        data: _.extend({}, req.params, { oauth2_access_token: token })
-      request.done (response)->
-        success({ response: response, provider: 'linkedin' })
-      request.fail (req)->
-        failure req.url
-      return
+  constructor: (config, gateway)-> super(config,gateway)
+
+  request : (request,callback,errback)=>
+    token = @getSettings().credentials?.token
+    return errback('No Likedin User') unless token?
+
+    {method, path, params} = request
+    method = method.toLowerCase()
+    return errback('Unable to perform non-GET requests on Likedin') unless method=='get'
+    path   = path.substring(1) if (path[0] == "/")
+
+    params = 
+      url  : "https://api.linkedin.com/v1/#{path}"
+      data : assign({}, params, {oauth2_access_token : token})
+      error:   (err)-> errback(err.url)
+      success: (response)=>
+        callback
+          provider: @name
+          response: response.data
+    @request_jsonp(params)
+
+module.exports = LinkedInService

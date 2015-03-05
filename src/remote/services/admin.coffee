@@ -1,33 +1,36 @@
-define ->
-  (app)->
-    api = (req, callback, errback) ->
-      path = req.path
-      path = path.substring(1) if (path[0] == "/")
-      top_domain = document.location.host.split('.')
-      top_domain.shift()
-      url  = "#{document.location.protocol}//#{req.namespace}.#{top_domain.join('.')}/api/v1/" + path
-      if req.method.toLowerCase() != 'get'
-        req_data = JSON.stringify(req.params || {})
-      else
-        req_data = req.params
+RemoteConfigStore = require '../../flux/stores/RemoteConfigStore'
+RemoteHeaderStore = require '../../flux/stores/RemoteHeaderStore'
+superagent        = require 'superagent'
+GenericService    = require './generic_service'
 
-      headers = {}
-      token = app.core.settings().auth?.hull?.credentials?.access_token
-      headers['AccessToken'] = token if token
+class HullAdminService extends GenericService
+  name : 'hull'
 
-      request = app.core.data.ajax
-        url: url
-        type: req.method
-        data: req_data
-        contentType: 'application/json'
-        dataType: 'json'
-        headers: headers
+  constructor: (config, gateway)->
 
-      request.then (response)->
-        callback({ response: response, provider: 'admin' })
-      , errback
+  request: (request, callback, errback)->
+    {method, path, params, organization} = request
+    throw new Error('No organization defined') unless organization?
+    method = method.toUpperCase()
 
-      return
+    path   = path.substring(1) if (path[0] == "/")
+    top_domain = document.location.host.split('.')
+    top_domain.shift()
+    top_domain = top_domain.join('.')
+    protocol = document.location.protocol
+    url  = "#{protocol}//#{organization}.#{top_domain}/api/v1/#{path}"
 
-    initialize: (app)->
-      app.core.routeHandlers.admin = api
+    headers = {}
+    token = @getSettings().credentials?.access_token
+    headers['AccessToken'] = token if token
+
+    console.log(url, method, params) if config?.debug?
+    s = superagent(method, url).set(headers)
+    if method=='GET' then s.query(params) else s.send(params)
+    s.end (response)->
+      return errback(response.error) if response.error
+      callback
+        provider: 'admin'
+        body: response.body
+
+module.exports = HullAdminService
