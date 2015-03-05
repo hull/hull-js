@@ -12,7 +12,7 @@ var moment = require('moment');
 // WIHTOUT UPDATING PACKAGE.JSON TOO.
 var sourceFolder = 'src';
 var outputFolder = 'lib';
-var assetsFolder = 'assets/'+pkg.version;
+var assetsFolder = '';
 var serverPort   = process.env.PORT||3001;
 var previewUrl   = 'http://localhost:'+serverPort+'/';
 
@@ -40,9 +40,6 @@ var displayName = 'Hull.js';
 
 // Need to find a cool way to define where we're deploying.
 // var v = (process.env.CIRCLE_BRANCH=='master') ? pkg.version : process.env.CIRCLE_SHA1
-var v = process.env.CIRCLE_SHA1;
-var aws = getAWSConfig(v);
-
 var getAWSConfig = function(version){
   if(version){
     return {
@@ -67,6 +64,10 @@ var getAWSConfig = function(version){
     return null;
   }
 };
+
+var v = process.env.CIRCLE_SHA1;
+var aws = getAWSConfig(v);
+
 
 // ------------------------------------------------
 // ------------------------------------------------
