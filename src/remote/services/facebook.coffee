@@ -102,18 +102,21 @@ class FacebookService extends GenericService
 
   loadFbSdk: (config)->
     dfd = promises.deferred()
-    fb = document.createElement 'script'
-    fb.type = 'text/javascript'
-    fb.async = true
-    fb.src =  "https://connect.facebook.net/en_US/all.js"
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(fb);
     config = assign({},config,{status:true})
-    window.fbAsyncInit = ()=>
-      @fb = true
-      FB.init config
-      FB.getLoginStatus @updateFBUserStatus
-      @subscribeToFBEvents()
-      dfd.resolve({})
+    if config.appId
+      fb = document.createElement 'script'
+      fb.type = 'text/javascript'
+      fb.async = true
+      fb.src =  "https://connect.facebook.net/en_US/all.js"
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(fb);
+      window.fbAsyncInit = ()=>
+        @fb = true
+        FB.init config
+        FB.getLoginStatus @updateFBUserStatus
+        @subscribeToFBEvents()
+        dfd.resolve({})
+    else 
+      dfd.reject({})
     dfd.promise
 
 
