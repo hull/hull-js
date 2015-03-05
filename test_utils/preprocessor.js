@@ -6,7 +6,6 @@ var Babel = require("../node_modules/babel-jest");
 
 module.exports = {
   process: function(src, path) {
-    console.log(path);
     if (CoffeeScript.helpers.isCoffee(path)) {
       return CoffeeScript.compile(src, {"bare": true});
     } else {
