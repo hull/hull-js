@@ -5,5 +5,6 @@ module.exports = {
   eventemitter2 : require("eventemitter2"),
   _             : require("./lodash"),
   isMobile      : require("./is-mobile"),
-  uuid          : require("./uuid")
+  uuid          : require("./uuid"),
+  domready      : require("./domready")
 };
