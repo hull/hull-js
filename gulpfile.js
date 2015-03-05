@@ -7,7 +7,6 @@ var path             = require("path");
 var runSequence      = require("run-sequence");
 
 var gulp             = require("gulp");
-var gzip             = require("gulp-gzip");
 var harmonize        = require("harmonize");
 var awspublish       = require("gulp-awspublish");
 var rename           = require("gulp-rename");
@@ -173,9 +172,3 @@ gulp.task('publish',function(){
 // gulp.task("jest:watch", function(){
 //   gulp.watch(["__tests__/**", config.sourceFolder+"/**"], ["jest"]);
 // });
-
-gulp.task("compress", function(){
-  gulp.src(path.join(config.outputFolder, config.assetsFolder, "*.js"))
-  .pipe(gzip())
-  .pipe(gulp.dest(path.join(config.outputFolder, config.assetsFolder)));
-});
