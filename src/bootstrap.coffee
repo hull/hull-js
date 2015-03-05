@@ -29,6 +29,7 @@ unless window.console and console.log
 #
 ENV = if HULL_ENV? then HULL_ENV else ''
 _extend = null
+_partial = null
 currentFlavour = null
 
 createLock = ()->
@@ -68,6 +69,8 @@ lock = createLock()
 # * Adds a callback when ready
 _mainCalled = false
 preInit = (isMain, config, cb, errb)->
+  successCbs = [cb or ->]
+  errorCbs = [errb or ->]
   throw new Error('Hull.init can be called only once') if isMain and _mainCalled
   _mainCalled = true if isMain
 
@@ -76,10 +79,13 @@ preInit = (isMain, config, cb, errb)->
     _config.track = getTrackConfig(_config.track) if _config.track?
     _config.namespace = 'hull'
     _config.debug = config.debug && { enable: true }
-    _success = (args...)-> successCb [config, isMain, cb or ->].concat(args)...
-    _failure = (args...)-> failureCb [isMain, errb or ->].concat(args)...
+    _success = (args...)-> successCbRunner [config, isMain, successCbs].concat(args)...
+    _failure = (args...)-> failureCbRunner [isMain, errorCbs].concat(args)...
     currentFlavour.init(_config).then(_success, _failure).done()
     console.info("Hull.js version \"#{_hull.version}\" started")
+  then: (success, error)->
+    successCbs.push success
+    errorCbs.push error
 
 initApi = (config, args...)->
   config.apiOnly = true
@@ -118,7 +124,7 @@ _hull.component =  createPool 'component' if ENV=="client"
 # * Extends the global object
 # * Reinjects events in the live app from the pool
 # * Replays the track events
-successCb = (config, isMain, success, args...)->
+successCbRunner = (config, isMain, successes, args...)->
   extension = currentFlavour.success(args...)
   context = extension.context
   _config = _extend {}, config
@@ -139,20 +145,24 @@ successCb = (config, isMain, success, args...)->
   _final.emit('hull.init', _final, extension.context.me, extension.context.app, extension.context.org)
 
   # Prune init queue
-  success(_final, extension.context.me, extension.context.app, extension.context.org)
-
+  for success in successes
+    fn = _partial(success, _final, extension.context.me, extension.context.app, extension.context.org)
+    setTimeout fn, 0
   _final
 
 
 # Wraps the failure callback
 # * Executes the failure behaviour defined by the current flavour
-failureCb = (isMain, userFailureFn, err, args...)->
+failureCbRunner = (isMain, errorFns, err, args...)->
   currentFlavour.failure(err)
-  userFailureFn([err].concat(args)...)
+  for errorFn in errorFns
+    fn = _partial(errorFn, [err].concat(args)...)
+    setTimeout fn, 0
 
 require ['flavour', 'underscore', 'lib/utils/version'], (flavour, _, version)->
   _hull.version = version
   _extend = _.extend
+  _partial = _.partial
   currentFlavour = flavour
   lock.unlock()
 
