@@ -56,8 +56,10 @@ var RemoteHeaderStore = assign({}, EventEmitter.prototype, {
         }
 
       case RemoteConstants.UPDATE_USER:
-        setHeader(ACCESS_TOKEN_HEADER,action.value);
-        RemoteHeaderStore.emitChange(action.actionType);
+        if (action.user && action.user.access_token){
+          setHeader(ACCESS_TOKEN_HEADER,action.user.access_token);
+          RemoteHeaderStore.emitChange(action.actionType);
+        }
         break;
 
 
@@ -71,6 +73,11 @@ var RemoteHeaderStore = assign({}, EventEmitter.prototype, {
           setHeader(action.header,action.value);
           RemoteHeaderStore.emitChange();
         }
+        break;
+
+      case RemoteConstants.SET_TOKEN_HEADER:
+        setHeader(ACCESS_TOKEN_HEADER,action.value);
+        RemoteHeaderStore.emitChange(RemoteConstants.SET_TOKEN_HEADER);
         break;
 
       case RemoteConstants.SET_APP_ID_HEADER:
