@@ -52,15 +52,12 @@
     "scriptPreprocessor": "<rootDir>/test_utils/preprocessor.js",
     "testFileExtensions": [
       "coffee",
-      "js",
-      "jsx"
+      "js"
     ],
     "testPathIgnorePatterns": [
-      "node_modules",
-      "spec/support"
+      "node_modules"
     ],
     "unmockedModulePathPatterns": [
-      "<rootDir>/node_modules/react",
       "<rootDir>/node_modules/object-assign",
       "<rootDir>/node_modules/lodash",
       "<rootDir>/src/utils/lodash"
@@ -68,9 +65,7 @@
     "moduleFileExtensions": [
       "js",
       "json",
-      "coffee",
-      "litcoffee",
-      "coffee.md"
+      "coffee"
     ]
   },
   "scripts": {
