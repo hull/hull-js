@@ -16,6 +16,8 @@ var assetsFolder = '';
 var serverPort   = process.env.PORT||3001;
 var previewUrl   = 'http://localhost:'+serverPort;
 
+var hotReload = false;
+
 // DO NOT CHANGE SHIP ENTRY
 // WITHOUT UPDATING PACKAGE.JSON TOO
 // THESE ARE THE JS FILES USED AS ENTRY POINTS TO COMPILE YOUR APP
@@ -128,6 +130,7 @@ var plugins = [
 var externals = {}
 
 module.exports = {
+  hotReload          : hotReload,
   aws                : aws,
   getAWSConfig       : getAWSConfig,
   libName            : libName,
