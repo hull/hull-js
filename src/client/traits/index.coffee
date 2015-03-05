@@ -2,7 +2,9 @@ _       = require '../../utils/lodash'
 assign  = require 'object-assign'
 
 class Trait
-  constructor: (api, @name, @value)->
+  constructor: (api, name, value)->
+    @name  = name
+    @value = value
     @set(@value) unless _.isUndefined(@value)
 
   inc: (step = 1)->

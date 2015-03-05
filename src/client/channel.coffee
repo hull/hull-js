@@ -44,12 +44,12 @@ rpcFrameInitStyle =
 # Based upon the (app) configuration
 getRemoteUrl = (config)->
   url = "#{config.orgUrl}/api/v1/#{config.appId}/remote.html?v=#{VERSION}"
+  url += "&r=#{encodeURIComponent(document.referrer)}"
   url += "&js=#{config.jsUrl}"  if config.jsUrl
   url += "&uid=#{config.uid}"   if config.uid
   url += "&debug_remote=true"   if config.debugRemote
   url += "&access_token=#{config.accessToken}" if config.accessToken?
   url += "&user_hash=#{config.userHash}" if config.userHash != undefined
-  url += "&r=#{encodeURIComponent(document.referrer)}"
   url
 
 
