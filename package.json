@@ -25,7 +25,6 @@
     "css": "^2.1.0",
     "css-loader": "^0.9.0",
     "del": "^1.1.0",
-    "extract-text-webpack-plugin": "^0.3.5",
     "gulp": "^3.8.10",
     "gulp-awspublish": "^1.0.5",
     "gulp-gh-pages": "^0.4.0",
