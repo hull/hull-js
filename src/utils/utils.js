@@ -6,5 +6,5 @@ module.exports = {
   _             : require("./lodash"),
   isMobile      : require("./is-mobile"),
   uuid          : require("./uuid"),
-  domready      : require("./domready")
+  domready      : require("domready")
 };
