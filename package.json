@@ -8,9 +8,10 @@
     "cookies-js": "^1.2.1",
     "domready": "^1.0.7",
     "eventemitter2": "^0.4.14",
-    "harmonize": "^1.4.1",
+    "flux": "^2.0.1",
     "lodash": "^3.3.1",
     "q": "^1.1.2",
+    "react": "^0.12.2",
     "superagent": "^0.21.0"
   },
   "devDependencies": {
@@ -32,9 +33,11 @@
     "gulp-notify": "^2.2.0",
     "gulp-rename": "^1.2.0",
     "gulp-util": "^3.0.1",
+    "harmonize": "^1.4.1",
     "html-webpack-plugin": "^1.1.0",
     "imports-loader": "^0.6.3",
     "jest-cli": "^0.4.0",
+    "moment": "^2.9.0",
     "node-notifier": "^4.1.1",
     "node-uuid": "^1.4.1",
     "object-assign": "^2.0.0",
