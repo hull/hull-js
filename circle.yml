@@ -5,7 +5,7 @@ deployment:
   releases:
     branch: /release\/.*/
     commands:
-      - gulp deploy
+      - ./node_modules/.bin/gulp deploy
 test:
   override:
     - echo "OK"
