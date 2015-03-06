@@ -2,6 +2,7 @@ RemoteConfigStore = require '../../flux/stores/RemoteConfigStore'
 RemoteHeaderStore = require '../../flux/stores/RemoteHeaderStore'
 superagent        = require 'superagent'
 GenericService    = require './generic_service'
+QSEncoder         = require '../../utils/query-string-encoder'
 
 class HullAdminService extends GenericService
   name : 'hull'
@@ -26,7 +27,8 @@ class HullAdminService extends GenericService
 
     console.log(url, method, params) if config?.debug?
     s = superagent(method, url).set(headers)
-    if method=='GET' then s.query(params) else s.send(params)
+    
+    if (method=='GET' and params?) then s.query(QSEncoder.encode(params)) else s.send(params)
     s.end (response)->
       return errback(response.error) if response.error
       callback

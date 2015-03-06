@@ -1,5 +1,6 @@
 GenericService    = require './generic_service'
 superagent        = require 'superagent'
+QSEncoder           = require '../../utils/query-string-encoder'
 
 class GithubService extends GenericService
   name : 'github'
@@ -16,7 +17,8 @@ class GithubService extends GenericService
 
     url = "https://api.github.com/#{path}"
 
-    s = superagent(method, url).send(params)
+    s = superagent(method, url)
+    if (method=='GET' and params?) then s.query(QSEncoder.encode(params)) else s.send(params)
     s.set('Authorization', "token #{token}") if token
     s.end (response)->
       return errback(response.error.message) if response.error

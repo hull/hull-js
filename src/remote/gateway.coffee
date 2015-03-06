@@ -6,6 +6,7 @@ clone               = require '../utils/clone'
 RemoteConfigStore   = require '../flux/stores/RemoteConfigStore'
 RemoteHeaderStore   = require '../flux/stores/RemoteHeaderStore'
 RemoteHeaderActions = require '../flux/actions/RemoteHeaderActions'
+QSEncoder           = require '../../utils/query-string-encoder'
 
 # require 'whatwg-fetch' #Polyfill for Global -> Not ready from primetime
 superagent          = require 'superagent'
@@ -75,7 +76,7 @@ class Gateway
 
     s = superagent(method, path).set(headers)
 
-    if params? and method=='GET' then s.query(params) else s.send(params)
+    if params? and method=='GET' then s.query(QSEncoder.encode(params)) else s.send(params)
 
     d = new promises.deferred()
 
