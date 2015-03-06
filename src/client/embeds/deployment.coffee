@@ -28,12 +28,12 @@ class Deployment
     # "index"-> href for embed
 
     @settings   = dpl.settings
-    # "$selector" : ".ship", //CSS3 Selector on which to embed the ship(s)
-    # "$multi": true, //Wether to embed on the first matching element or all
-    # "$placement" : "before"|"after"|"append"|"prepend"|"replace", //Position relative to selector
-    # "$sandbox" : true //Wether to sandbox the platform : true
-    # "$width" : "100%", //Dimensions to give the containing element. Passed as-is as style tag
-    # "$height" : "50px", //Dimensions to give the containing element. Passed as-is as style tag
+    # "_selector" : ".ship", //CSS3 Selector on which to embed the ship(s)
+    # "_multi": true, //Wether to embed on the first matching element or all
+    # "_placement" : "before"|"after"|"append"|"prepend"|"replace", //Position relative to selector
+    # "_sandbox" : true //Wether to sandbox the platform : true
+    # "_width" : "100%", //Dimensions to give the containing element. Passed as-is as style tag
+    # "_height" : "50px", //Dimensions to give the containing element. Passed as-is as style tag
 
     @targets    = @getTargets()
     @_imports   = []
@@ -41,12 +41,12 @@ class Deployment
     @_callbacks = []
 
   getTargets : (opts={})->
-    selector = @settings.$selector
+    selector = @settings._selector
     targets = []
     return [] if !selector || selector.length == 0
     return @targets if @targets and !opts.refresh
 
-    if @settings.$multi
+    if @settings._multi
       targets = document.querySelectorAll selector
     else
       target = document.querySelector selector
@@ -79,7 +79,7 @@ class Deployment
   embed : (opts={}, embedCompleteCallback)->
     @targets = @getTargets({refresh:opts.refresh}) if opts.refresh
     @_callbacks.push(embedCompleteCallback) if _.isFunction(embedCompleteCallback)
-    if @settings.$sandbox
+    if @settings._sandbox
       @forEachTarget (target, args...)=>
         iframe = @embedIframe(target)
         @insert(target, iframe)
@@ -150,10 +150,10 @@ class Deployment
       el = @_elements.shift()
 
   insert: (target, el)->
-    setDimension(el, 'width', @settings.$width || '100%')
-    setDimension(el, 'height', @settings.$height)
+    setDimension(el, 'width', @settings._width || '100%')
+    setDimension(el, 'height', @settings._height)
     @_elements.push el
-    switch @settings.$placement
+    switch @settings._placement
       when 'before' then target.parentNode.insertBefore(el, target)
       when 'after'  then target.parentNode.insertBefore(el, target.nextSibling)
       when 'top'    then target.insertBefore(el, target.firstChild)
