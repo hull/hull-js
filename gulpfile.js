@@ -66,27 +66,32 @@ gulp.task("copy-files:watch", function(){
 //demo.html WILL NOT WORK with this build.
 //
 //Webpack handles CSS/SCSS, JS, and HTML files.
+var afterBuild = function(err, stats){
+  if (!!err) {throw new gutil.PluginError("webpack:build", err); }
+
+  var jsonStats = stats.toJson();
+
+  if (jsonStats.errors.length > 0) {
+    return new gutil.PluginError("webpack:build", JSON.stringify(jsonStats.errors));
+  }
+
+  if (jsonStats.warnings.length > 0) {
+    new gutil.PluginError("webpack:build", JSON.stringify(jsonStats.warnings));
+  }
+
+
+  gutil.log("[webpack:build]", stats.toString({colors: true}));
+  notify("App Built");
+};
 gulp.task("webpack:build", function(callback) {
   // Then, use Webpack to bundle all JS and html files to the destination folder
   notify("Building App");
   webpack(_.values(webpackConfig.production), function(err, stats) {
-    if (err) {throw new gutil.PluginError("webpack:build", err); }
-
-    var jsonStats = stats.toJson();
-
-    if (jsonStats.errors.length > 0) {
-      return new gutil.PluginError("webpack:build", JSON.stringify(jsonStats.errors));
-    }
-
-    if (jsonStats.warnings.length > 0) {
-      new gutil.PluginError("webpack:build", JSON.stringify(jsonStats.warnings));
-    }
-
-
-    gutil.log("[webpack:build]", stats.toString({colors: true}));
-    notify("App Built");
-
-    callback();
+    afterBuild(err, stats);
+    webpack(_.values(webpackConfig.debug), function(err, stats){
+      afterBuild(err, stats);
+      callback();
+    });
   });
 });
 

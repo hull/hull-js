@@ -3,6 +3,7 @@ var path = require('path');
 var webpack = require('webpack');
 var config = require('./config');
 var StatsPlugin = require('stats-webpack-plugin');
+var assign = require('object-assign');
 
 var devOutput = _.extend({},config.output,{publicPath: config.previewUrl+config.assetsFolder+'/'});
 
@@ -16,6 +17,8 @@ if(config.hotReload){
   var devEntry = config.entry
   var devPlugins = [new webpack.NoErrorsPlugin()]
 }
+
+debugOutput = assign({},config.output,{filename: '[name].debug.js',});
 
 module.exports = {
   development:{
@@ -38,6 +41,7 @@ module.exports = {
   production:{
     browser: {
       name    : 'browser',
+      devtool  : '#source-map',
       entry   : config.entry,
       output  : config.output,
       resolve : {
@@ -60,5 +64,22 @@ module.exports = {
         new StatsPlugin(path.join(__dirname, config.outputFolder, 'stats.json'), { chunkModules: true, profile: true })
       ])
     }
-  }
+  },
+  debug:{
+    browser: {
+      name    : 'browser',
+      devtool  : '#source-map',
+      entry   : config.entry,
+      output  : debugOutput,
+      resolve : {
+        root: [path.join(__dirname, "bower_components")],
+        extensions: config.extensions
+      },
+      module  : {loaders: config.loaders},
+      plugins : config.plugins.concat([
+        new webpack.DefinePlugin({'process.env': {'NODE_ENV': JSON.stringify('production') } }),
+        new webpack.optimize.DedupePlugin()
+      ])
+    }
+  },
 }
