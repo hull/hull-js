@@ -53,7 +53,11 @@ formatBatchParams = (requests) ->
 resolveResponse = (request, response, deferred)->
   headers = reduceHeaders(response.headers)
   h = { body: response.body, headers: headers, request: request }
-  return if (response.status >= 200 && response.status < 300) then deferred.resolve(h) else deferred.reject(h)
+  if (response.status >= 200 && response.status < 300)
+    return deferred.resolve(h)
+  else
+    err = {response:response.body, headers: response.headers}
+    return deferred.reject(err)
 
 class Gateway
 

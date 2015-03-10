@@ -1,6 +1,6 @@
 q = require 'q'
 
-# q.longStackSupport = true
+q.longStackSupport = true
 module.exports =   {
   deferred: q.defer
   when: q.when
