@@ -50,11 +50,15 @@ We're phasing out in favor of auto-initialized code, You can get the same result
 ###### `Hull.login()`, `Hull.logout()`, `Hull.linkIdentity()`, `Hull.unlinkIdentity()` 
 All those now return promises. When using Promises, please don't forget to add `.done()` at the end of your promise chain, so errors are not swallowed without notice.
 
-These methods accept the following signature :
-```
-Hull.[login|linkIdentity|unlinkIdentity]({provider:'xxxx',params:{...}}, callback, errback)
+These methods have the following signatures :
 
+```js
+Hull.login({provider:'xxxx',params:{...}}, callback, errback)
 Hull.login({login:'xxx', password:'xxx',params:{...}},callback, errback)
+Hull.logout(callback, errback)
+Hull.linkIdentity({provider:'xxxx',params:{...}}, callback, errback)
+Hull.linkIdentity({login:'xxx', password:'xxx',params:{...}}, callback, errback)
+Hull.unlinkIdentity({provider:'xxxx',params:{...}}, callback, errback)
 ```
 
 ###### `Hull.ready(callback)`
