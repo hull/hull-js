@@ -10,6 +10,7 @@ export default {
   each: require("lodash/collection/each"),
   indexOf: require("lodash/array/indexOf"),
   isEmpty: require("lodash/lang/isEmpty"),
+  isArray: require("lodash/lang/isArray"),
   isFunction: require("lodash/lang/isFunction"),
   isObject: require("lodash/lang/isObject"),
   isString: require("lodash/lang/isString"),
