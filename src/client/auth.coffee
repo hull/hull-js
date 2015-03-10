@@ -21,6 +21,10 @@ getNoUserPromise = ()->
   )
   noUserDfd.promise
 
+user = ()->
+  user = Hull.currentUser()
+  return (!!user && user.id?)
+
 parseParams = (argsArray)->
 
   opts = {}
@@ -225,27 +229,16 @@ class Auth
     promise = @api.message('users', 'POST', user)
     @completeLoginPromiseChain(promise, callback, errback)
 
-  linkIdentity   : (provider, params = {}, callback, errback)=>
+  linkIdentity   : ()=>
     return getNoUserPromise() unless user()
-    params.mode = 'connect'
-    @login(provider, params, callback, errback)
+    {options, callback, errback} = parseParams(Array.prototype.slice.call(arguments))
+    options.params.mode = 'connect'
+    @login(options, callback, errback)
 
-  unlinkIdentity : (provider, callback, errback)=>
+  unlinkIdentity : ()=>
     return getNoUserPromise() unless user()
-    promise = @api.message("me/identities/#{provider}", 'delete')
-    # promise
-    # .then @refreshUser
-    # .fail @emitLoginFailure
-    # .then (me) ->
-    #   EventBus.emit('hull.auth.login', me)
-    #   callback(me)
-    #   me
-    # , (err)->
-    #   EventBus.emit('hull.auth.fail', err)
-    #   errback(err)
-    #   err
-    # 
-    # promise
+    {options, callback, errback} = parseParams(Array.prototype.slice.call(arguments))
+    promise = @api.message("me/identities/#{options.provider}", 'delete')
     @completeLoginPromiseChain(promise,callback,errback)
 
   completeLoginPromiseChain: (promise, callback,errback)=>
