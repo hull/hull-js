@@ -21,7 +21,7 @@ getNoUserPromise = ()->
   )
   noUserDfd.promise
 
-user = ()->
+getUser = ()->
   user = Hull.currentUser()
   return (!!user && user.id?)
 
@@ -230,13 +230,13 @@ class Auth
     @completeLoginPromiseChain(promise, callback, errback)
 
   linkIdentity   : ()=>
-    return getNoUserPromise() unless user()
+    return getNoUserPromise() unless getUser()
     {options, callback, errback} = parseParams(Array.prototype.slice.call(arguments))
     options.params.mode = 'connect'
     @login(options, callback, errback)
 
   unlinkIdentity : ()=>
-    return getNoUserPromise() unless user()
+    return getNoUserPromise() unless getUser()
     {options, callback, errback} = parseParams(Array.prototype.slice.call(arguments))
     promise = @api.message("me/identities/#{options.provider}", 'delete')
     @completeLoginPromiseChain(promise,callback,errback)
