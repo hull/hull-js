@@ -16,7 +16,7 @@ _Use `Hull.api(path,method)`_
 #### `Hull.api.parseRoute()`
 _Should not have been exposed in the first place._
 #### `Hull.api.clearToken()`
-_Use `Hull.currentUser.clear()` : More explicitely does what it says_
+_Removed_
 #### `Hull.api.init()`
 _Removed [Was undocumented]_
 #### `hull.init` event
