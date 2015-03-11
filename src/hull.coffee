@@ -44,7 +44,7 @@ checkConfig = (config)->
     dfd.resolve()
   else
     dfd.reject(new Error "#{msg} We couldn't find `orgUrl` in the config object you passed to `Hull.init`\n #{readMore}") unless config.orgUrl
-    dfd.reject(new Error "#{msg} We couldn't find `appId` in the config object you passed to `Hull.init`\n #{readMore}") unless config.appId
+    dfd.reject(new Error "#{msg} We couldn't find `platformId` in the config object you passed to `Hull.init`\n #{readMore}") unless config.appId
   return dfd.promise
 
 # Wraps the success callback
