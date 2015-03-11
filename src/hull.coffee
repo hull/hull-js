@@ -73,7 +73,7 @@ onInitSuccess = (userSuccessCallback, _hull, data)->
   console.info("Hull.js version \"#{hull.version}\" started")
 
   # Do Hull.embed(platform.deployments) automatically
-  embeds.embed(app.deployments) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
+  embeds.embed(app.deployments) if hull.config().embed!='false' and _.isArray(app?.deployments) and app.deployments.length>0
 
   # Everything went well, call the init callback
   userSuccessCallback(hull, me, app, org)
@@ -208,7 +208,7 @@ if (hull_js_sdk)
       # Automatically specify jsUrl unless we have overriden it.
       config.jsUrl = hull_js_sdk.src unless config.jsUrl?
 
-      init(config) unless config.proxyMode==true
+      init(config) unless config.proxyMode=='true'
     else
       missing = if config.platformId? then 'orgUrl' else 'platformId'
       throw new Error("Hull error : You forgot to pass the #{missing} in the Script tag to initialize hull properly")
