@@ -7,6 +7,22 @@
 * Implements Smart login and Share strategy depending on device (popup or redirects)
 
 --------- 
+### New
+
+Allow Initializing hull automatically with attributes in the `SCRIPT` tag,
+Supported tags : 
+```
+platform-id : platform ID
+org-url : organization URL
+debug : debug mode
+js-url : specify Hull Remote Url
+embed : true|false //perform Hull.embed on init. Default: true 
+proxy-mode [undocumented]
+```
+
+For this to work, the `hull.js` script tag needs to have `id='hull-js-sdk'`
+
+--------- 
 
 ### Removed
 #### `Hull.utils.entity.[encode|decode]()`

@@ -73,7 +73,7 @@ onInitSuccess = (userSuccessCallback, _hull, data)->
   console.info("Hull.js version \"#{hull.version}\" started")
 
   # Do Hull.embed(platform.deployments) automatically
-  embeds.embed(app.deployments) if _.isArray(app?.deployments) and app.deployments.length>0
+  embeds.embed(app.deployments) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
 
   # Everything went well, call the init callback
   userSuccessCallback(hull, me, app, org)
@@ -180,6 +180,23 @@ hull =
 eeMethods = ['on', 'onAny', 'offAny', 'once', 'many', 'off', 'emit']
 _.map eeMethods,(m)=>
   hull[m] = (args...)->EventBus[m](args...)
+
+
+
+initParams = ['jsUrl', 'platformId', 'orgUrl', 'embed', 'proxyMode', 'accessToken']
+hull_js_sdk = document.getElementById('hull-js-sdk');
+
+if (hull_js_sdk)
+  config = _.reduce initParams, (config, v, k)->
+    config[k] = hull_js_sdk.attributes[k]?.value
+  , {} 
+  if config.platformId? or config.orgUrl?
+    if config.platformId? and config.orgUrl?
+      init(config) unless config.proxyMode==true
+    else
+      missing = if config.platformId? then 'orgUrl' else 'platformId'
+      throw new Error("Hull error : You forgot to pass the #{missing} in the Script tag to initialize hull properly")
+
 
 window.Hull = hull
 module.exports = hull
