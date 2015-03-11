@@ -21,16 +21,16 @@ setupTracking = (track)->
   EventBus.on 'hull.*.share', (res)->
     track this.event, res
 
-  EventBus.on 'hull.auth.create', (me)->
+  EventBus.on 'hull.user.create', (me)->
     providers = _.pluck me.identities, 'provider'
-    track 'hull.auth.create', { providers: providers, main_identity: me.main_identity }
+    track 'hull.user.create', { providers: providers, main_identity: me.main_identity }
 
-  EventBus.on 'hull.auth.login', (me, provider)->
+  EventBus.on 'hull.user.login', (me, provider)->
     providers = _.pluck me.identities, 'provider'
     provider = provider || me.main_identity
-    track 'hull.auth.login', { provider: provider, providers: providers, main_identity: me.main_identity }
+    track 'hull.user.login', { provider: provider, providers: providers, main_identity: me.main_identity }
 
-  EventBus.on 'hull.auth.logout', ()-> track('hull.auth.logout')
+  EventBus.on 'hull.user.logout', ()-> track('hull.user.logout')
 
 class Client 
 

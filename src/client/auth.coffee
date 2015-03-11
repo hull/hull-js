@@ -198,7 +198,7 @@ class Auth
 
   login : () =>
 
-    return console.info "Login in progress. Use `Hull.on('hull.auth.login', callback)` to call `callback` when done." if @isAuthenticating()
+    return console.info "Login in progress. Use `Hull.on('hull.user.login', callback)` to call `callback` when done." if @isAuthenticating()
     # Handle Legacy Format,
     # Ensure New Format: Hash signature
     # Preprocess Options
@@ -250,7 +250,7 @@ class Auth
     
 
   emitLoginFailure : (err)->
-    EventBus.emit("hull.auth.fail", err)
+    EventBus.emit("hull.user.fail", err)
     err
 
 module.exports = Auth
