@@ -40,7 +40,7 @@ checkConfig = (config)->
   # Fail right now if we don't have the required setup
   if config.orgUrl and config.appId
     # Auto add protocol if we dont have one of http://, https://, //
-    config.orgUrl ="https://#{config.orgUrl}" unless config.orgUrl.match(/^(http[s]?:)?\/\//)
+    config.orgUrl ="//#{config.orgUrl}" unless config.orgUrl.match(/^(http[s]?:)?\/\//)
     dfd.resolve()
   else
     dfd.reject(new Error "#{msg} We couldn't find `orgUrl` in the config object you passed to `Hull.init`\n #{readMore}") unless config.orgUrl
