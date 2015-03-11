@@ -15,7 +15,7 @@ Supported tags :
 platform-id : platform ID
 org-url : organization URL
 debug : debug mode
-js-url : specify Hull Remote Url
+js-url : specify Hull Remote Url (automatically specified if using snippet)
 embed : true|false //perform Hull.embed on init. Default: true 
 proxy-mode [undocumented]
 ```
