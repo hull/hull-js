@@ -151,7 +151,7 @@ class Auth
       @onAuthComplete
     , 30000, { success: false, error: { reason: 'timeout', message: 'Timeout for login (after 30 seconds), User never finished the auth' } }
 
-    # Reject Promise if 
+    # Reject Promise if window has been closed
     @_popupInterval = w? && setInterval =>
       @onAuthComplete({ success: false, error: { reason: 'window_closed', message: 'User closed the window before finishing. He might have canceled' } }) if w?.closed
     , 200
@@ -244,13 +244,15 @@ class Auth
   completeLoginPromiseChain: (promise, callback,errback)=>
     callback = callback || ->
     errback  = errback  || ->
+
     p = promise.then @api.refreshUser, @emitLoginFailure
     p.then callback, errback
+
     p
     
 
   emitLoginFailure : (err)->
     EventBus.emit("hull.user.fail", err)
-    err
+    throw err
 
 module.exports = Auth
