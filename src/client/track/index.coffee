@@ -1,5 +1,5 @@
-EventBus     = require '../../utils/eventbus'
-assign = require 'object-assign'
+EventBus = require '../../utils/eventbus'
+assign   = require 'object-assign'
 
 
 class Tracker
