@@ -1,3 +1,7 @@
+# # This file is responsible for defining window.Hull
+# # and providing pooled methods to the user while
+# # Hull is actually loading.
+
 assign      = require 'object-assign'
 _           = require './utils/lodash'
 Client      = require './client'
@@ -11,42 +15,10 @@ EventBus    = require './utils/eventbus'
 Pool        = require './utils/pool'
 HullRemote  = require './hull-remote'
 embeds      = require './client/embeds'
+configCheck = require './client/config-check'
+getScriptTagConfig = require './client/script-tag-config'
 
 require './utils/console-shim'
-
-# # This file is responsible for defining window.Hull
-# # and providing pooled methods to the user while
-# # Hull is actually loading.
-# #
-# # It provides some global code that is to be executed immediately
-# # and an AMD module,
-# # The AMD module loads a particvular flavour of Hull, defined as a set of 3 methods:
-# # * init: Returns a promise or a value that indicates the success or failure of the loading process
-# # * success: will to be executed if the app is loaded correctly
-# # * failure: will be executed if the app fails to load
-# #
-# # The global code only defines some methods into window.Hull and pools the parameters
-# # to replay them if the app has loaded correctly
-# #
-
-# * Augments coniguration
-# * Adds a callback when ready
-_initialized = false
-
-checkConfig = (config)->
-  dfd = promises.deferred();
-  msg = "You need to pass some keys to Hull to start it: " 
-  readMore = "Read more about this here : http://www.hull.io/docs/references/hull_js/#hull-init-params-cb-errb"
-  # Fail right now if we don't have the required setup
-  if config.orgUrl and config.appId
-    # Auto add protocol if we dont have one of http://, https://, //
-    dfd.reject(new Error(" You specified orgUrl as #{config.orgUrl}. We do not support protocol-relative URLs in organization URLs yet.")) if config.orgUrl.match(/^\/\//)
-    config.orgUrl ="https://#{config.orgUrl}" unless config.orgUrl.match(/^http[s]?:\/\//)
-    dfd.resolve()
-  else
-    dfd.reject(new Error "#{msg} We couldn't find `orgUrl` in the config object you passed to `Hull.init`\n #{readMore}") unless config.orgUrl
-    dfd.reject(new Error "#{msg} We couldn't find `platformId` in the config object you passed to `Hull.init`\n #{readMore}") unless config.appId
-  return dfd.promise
 
 # Wraps the success callback
 # * Extends the global object
@@ -81,63 +53,39 @@ onInitSuccess = (userSuccessCallback, _hull, data)->
 
   hull
 
-# Wraps config failure
-onConfigFailure = (err)->
-  throw err
-
 # Wraps init failure
-onInitFailure = (err)->
-  throw err
-
-# Parse the tracked events configuration and standardize it.
-getTrackConfig = (cfg)->
-  return undefined unless cfg?
-  switch (Object.prototype.toString.call(cfg).match(/^\[object (.*)\]$/)[1])
-    when "Object"
-      if cfg.only?
-        { only: (m.toString() for m in cfg.only) }
-      else if cfg.ignore?
-        { ignore: (m.toString() for m in cfg.ignore) }
-    when "RegExp"
-      { only: cfg.toString() }
-    when "Array"
-      { only: (m.toString() for m in cfg)  }
-
-
-
-
-readyDfd = promises.deferred()
-readyDfd.promise.catch (err)-> throw new Error('Hull.ready callback error', err)
-
+onInitFailure = (err)-> throw err
 
 #Main Hull Entry Point
-init = (config, userSuccessCallback, userFailureCallback)->
+_initialized = false
+init = (config={}, userSuccessCallback, userFailureCallback)->
   if _initialized
     throw new Error('Hull.init can be called only once')
     return
+
+  config.version = VERSION
+  config.debug   = config.debug && { enable: true }
+  config.appId   = config.appId || config.platformId || config.shipId
+  delete config.platformId if config.platformId?
+  delete config.ship       if config.ship?
+
+  missing = []
+  missing.push "orgUrl" unless config.orgUrl?
+  missing.push "platformId" unless config.appId?
+  throw new Error("Hull config error: You forgot to pass #{missing.join(',')} needed to initialize hull properly") if missing.length
 
   _initialized = true
 
   client  = {}
   channel = {}
 
-  #TODO
-  config.version    = VERSION
-  config.debug      = config.debug && { enable: true }
-  config.track      = getTrackConfig(@config.track) if config.track?
-  config.appId = config.appId || config.platformId || config.shipId
-  delete config.platformId if config.platformId?
-  delete config.ship if config.ship?
-  #END
-
 
   currentUser =  new CurrentUser()
 
-  checkConfig(config)
+  configCheck(config)
   .then ()=>
     channel = new Channel(config, currentUser)
     channel.promise
-  , onConfigFailure
 
   .then (channel)=>
     client = new Client(config, channel, currentUser)
@@ -155,65 +103,36 @@ init = (config, userSuccessCallback, userFailureCallback)->
     userFailureCallback(err)
     readyDfd.reject(err)
 
+# Hull.ready promise chain
+readyDfd = promises.deferred()
+readyDfd.promise.catch (err)-> throw new Error('Hull.ready callback error', err)
 hullReady = (callback, errback)->
-    callback = callback || ->
-    errback = errback   || ->
-    readyDfd.promise
-    .then (res)->
-      callback(res.hull, res.me, res.app, res.org)
-    , errback
-    .catch (err)->
-      console.error err.stack
-
-hullSetShipSize = ->
-  console.log("SetShipSize is only useful when Ships are sandboxed. This method does nothing here")
-  false
+  callback = callback || ->
+  errback = errback   || ->
+  readyDfd.promise
+  .then (res)->
+    callback(res.hull, res.me, res.app, res.org)
+  , errback
+  .catch (err)->
+    console.error err.stack
 
 hull =
   initRemote  : HullRemote
   init        : init
+  ready       : hullReady
   version     : VERSION
   track       : Pool.create('track')
-  setShipSize : hullSetShipSize
-  ready       : hullReady
+  setShipSize : ->
+    console.log("SetShipSize is only useful when Ships are sandboxed. This method does nothing here")
+    false
 
 # Assign EventBus methods to Hull
 eeMethods = ['on', 'onAny', 'offAny', 'once', 'many', 'off', 'emit']
 _.map eeMethods,(m)=>
   hull[m] = (args...)->EventBus[m](args...)
 
-
-
-initParams = {
-  'jsUrl'      : 'js-url'
-  'platformId' : 'platform-id'
-  'orgUrl'     : 'org-url'
-  'embed'      : 'embed'
-  'proxyMode'  : 'proxy-mode'
-  'accessToken': 'access-token'
-}
-
-hull_js_sdk = document.getElementById('hull-js-sdk');
-
-if (hull_js_sdk)
-
-  # Map known config values to Hull init
-  config = _.reduce initParams, (config, v, k)->
-    value = hull_js_sdk.attributes[v]?.value
-    config[k] = value if value?
-    config
-  ,{}
-  if config.platformId? or config.orgUrl?
-    if config.platformId? and config.orgUrl?
-
-      # Automatically specify jsUrl unless we have overriden it.
-      config.jsUrl = hull_js_sdk.src unless config.jsUrl?
-
-      init(config) unless config.proxyMode=='true'
-    else
-      missing = if config.platformId? then 'orgUrl' else 'platformId'
-      throw new Error("Hull error : You forgot to pass the #{missing} in the Script tag to initialize hull properly")
-
+config = getScriptTagConfig()
+init(config) if config? and not config.proxyMode=='true'
 
 window.Hull = hull
 module.exports = hull
