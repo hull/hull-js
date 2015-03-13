@@ -82,11 +82,11 @@ onInitSuccess = (userSuccessCallback, _hull, data)->
 
 # Wraps config failure
 onConfigFailure = (err)->
-  throw new Error(err)
+  throw err
 
 # Wraps init failure
 onInitFailure = (err)->
-  throw new Error("We couldn't load the Hull server after trying for 30 seconds. Something about connectivity ?")
+  throw err
 
 # Parse the tracked events configuration and standardize it.
 getTrackConfig = (cfg)->
