@@ -4,8 +4,8 @@
 
 assign      = require 'object-assign'
 _           = require './utils/lodash'
-Client      = require './client'
 
+Client      = require './client'
 CurrentUser = require './client/current-user'
 Channel     = require './client/channel'
 Api         = require './client/api'
