@@ -79,6 +79,7 @@ class Channel
       local:
         message         : @onMessage
         ready           : @ready
+        loadError       : @error
         userUpdate      : @userUpdate
         settingsUpdate  : @settingsUpdate
         show            : @showIframe
@@ -87,11 +88,14 @@ class Channel
         getClientConfig : @getClientConfig
     @rpc
 
-  loadingFailed   : () =>
+  loadError       : (err)=>
+    window.clearTimeout @timeout
+    @deferred.reject err
+  loadingFailed   : (err) =>
     @deferred.reject('Remote loading has failed. Please check "orgUrl" and "appId" in your configuration. This may also be about connectivity.')
-  onMessage = (e)->
+  onMessage       : (e)->
     if e.error then @deferred.reject(e.error) else console.warn("RPC Message", arguments)
-  ready         : (remoteConfig)   =>
+  ready           : (remoteConfig)   =>
     window.clearTimeout(@timeout)
     @remoteConfig = remoteConfig
     @deferred.resolve @

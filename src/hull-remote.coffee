@@ -26,7 +26,6 @@ Hull = (remoteConfig)->
   return hull if hull
 
   config = ConfigNormalizer(remoteConfig)
-
   # The access token stuff is a Safari hack:
   # Safari doesn't send response tokens for remote exchange
   RemoteHeaderActions.setAppIdHeader(config.appId)
@@ -73,7 +72,7 @@ Hull = (remoteConfig)->
     RemoteConfigActions.updateClientConfig(clientConfig)
 
   .fail (err)->
-    throw new Error("Error from the client", err, err.stack)
+    console.error("Could not initialize Hull: #{err.message}");
 
   .done()
 
