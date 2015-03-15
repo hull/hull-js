@@ -2,7 +2,7 @@ _ = require '../../utils/lodash'
 Import = require './import'
 assign = require 'object-assign'
 findUrl = require '../../utils/find-url'
-SandboxedShare = require './sharer/sandboxed-sharer';
+SandboxedShare = require '../sharer/sandboxed-sharer';
 
 registry = {}
 
