@@ -10,13 +10,30 @@
     <script src="app.js"></script>
   </head>
   <body>
-    <div class="container-fluid mt-1">
-      <div class="row">
-        <div class="col-sm-12">
+    <div className="container-fluid mt-1">
+      <div className="row">
+        <div className="col-sm-12">
           <div id="buttons"></div>
-          <pre id="log" class="well"></pre>
+          <div>
+            <a href="http://test.com" className="test">Test Parent</a>
+            <div>
+              <p>Test</p>
+            </div>
+            <div>
+              <p data-hull-link='http://dataset.com'>Dataset</p>
+              <p id='dataset'>Dataset Sibling</p>
+            </div>
+          </div>
+          <pre id="log" className="well"></pre>
         </div>
       </div>
     </div>
+    <script>
+      var onHullShare = function(e){
+        Hull.share({provider:'facebook'},e)
+      }
+      document.getElementById('dataset').addEventListener('click', onHullShare);
+    </script>
+
   </body>
 </html>
