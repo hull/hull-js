@@ -1,8 +1,9 @@
 _            = require './lodash'
 
 # Returns Link in either data-hull-link='...' or a href='...'
-findLink = (node)->
-  n.dataset?.hullLink || (n.nodeName=='A' && n.href)
+getLinkValue = (node)->
+  return unless node?
+  node.dataset?.hullLink || (node.nodeName=='A' && node.href)
 
 # Returns a Meta Tag
 getMetaValue = (name)->
@@ -18,17 +19,17 @@ isNode = (o)->
 
 getChildren = (n, skipMe)->
   r = []
-  while n = n.nextSibling and n
-     r.push n if n.nodeType == 1 and n != skipMe
+  while n and n = n.nextSibling
+    r.push n if n.nodeType == 1 and n != skipMe
   r
 
 getSiblings = (n) ->
-  getChildren n.parentNode.firstChild, n
+  getChildren(n.parentNode.firstChild, n)
 
 module.exports = {
   getSiblings  : getSiblings
   getChildren  : getChildren
   getMetaValue : getMetaValue
-  findLink     : findLink
+  getLinkValue     : getLinkValue
   isNode       : isNode
 } 
