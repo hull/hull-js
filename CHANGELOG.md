@@ -22,6 +22,9 @@ proxy-mode [undocumented]
 
 For this to work, the `hull.js` script tag needs to have `id='hull-js-sdk'`
 
+Share Link and Entity resolution : `Hull.share` and `Hull.findUrl(node)` search upwards in the DOM for the closest matching `hull-link` or `href` attribute, up to the document. If not found, searches for `og:url` else, fallbacks to the window URL.
+**Note** : In Sandboxed Ships, this method will start looking OUTSIDE the ship. No point in performing a lookup on Document parts the Ship author built.
+
 --------- 
 
 ### Removed
@@ -60,6 +63,7 @@ We're phasing out in favor of auto-initialized code, You can get the same result
     console.log(this.event) //  "hull.ready"
   })
 ```
+* `Hull.currentUser()` accepts a parameter, will return the field value. Only works with 1 level of nesting. No dots. Example: `Hull.currentUser('name')`
 
 ##### Methods
 
