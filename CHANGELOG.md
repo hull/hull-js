@@ -22,7 +22,8 @@ proxy-mode [undocumented]
 
 For this to work, the `hull.js` script tag needs to have `id='hull-js-sdk'`
 
-Share Link and Entity resolution : `Hull.share` and `Hull.findUrl(node)` search upwards in the DOM for the closest matching `hull-link` or `href` attribute, up to the document. If not found, searches for `og:url` else, fallbacks to the window URL.
+Share Link and Entity resolution : `Hull.share` and `Hull.findUrl(node)` try really hard to find a URL to share or to target, by traversing the DOM upwards for the closest matching `hull-link` or `href` attribute, looking for siblings at each level up to `body`. If not found, searches for `og:url` else, fallbacks to the window URL.
+
 **Note** : In Sandboxed Ships, this method will start looking OUTSIDE the ship. No point in performing a lookup on Document parts the Ship author built.
 
 --------- 
