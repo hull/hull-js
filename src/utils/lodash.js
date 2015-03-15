@@ -17,6 +17,7 @@ export default {
   isUndefined: require("lodash/lang/isObject"),
   keys: require("lodash/object/keys"),
   map: require("lodash/collection/map"),
+  find: require("lodash/collection/find"),
   omit: require("lodash/object/omit"),
   pick: require("lodash/object/pick"),
   pluck: require("lodash/collection/pluck"),
