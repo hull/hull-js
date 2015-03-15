@@ -6,6 +6,7 @@ clone        = require '../utils/clone'
 EventBus     = require '../utils/eventbus'
 Entity       = require '../utils/entity'
 cloneConfig  = require '../utils/clone-config'
+findUrl      = require '../utils/find-url'
 
 Api          = require './api'
 Auth         = require './auth'
@@ -52,6 +53,7 @@ class Client
       flag           : flag
       traits         : traits
       share          : sharer.share
+      findUrl        : findUrl
 
     # Return an object that will be digested by Hull main file and
     # has everything
