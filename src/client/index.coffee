@@ -28,7 +28,7 @@ class Client
     auth  = new Auth(api)
     tracker = new Tracker(api)
 
-    sharer = new Sharer(api, auth, currentUser)
+    sharer = new Sharer(api, auth, currentUser, @remoteConfig.data)
     flag  = new Flag(api)
     traits= new Traits(api)
 

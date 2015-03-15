@@ -15,8 +15,6 @@ class GenericShare
     @provider = provider
     @currentUser = currentUser
 
-  getDefaultUrl : ()-> window.location.href
-
   _ensureLogin: =>
     # We can't have strategy==redirect when wanting a promise...
     loginParams = assign(_.omit(@opts,'params','method'), {provider:@provider,strategy:'popup'})

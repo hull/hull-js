@@ -1,6 +1,8 @@
 _ = require '../../utils/lodash'
 Import = require './import'
 assign = require 'object-assign'
+findUrl = require '../../utils/find-url'
+SandboxedShare = require './sharer/sandboxed-sharer';
 
 registry = {}
 
@@ -66,15 +68,36 @@ class Deployment
       cb = callbacks.shift()
     @_callbacks = []
 
+  # Build a sandbox for the current ship.
+  # Will contain : 
+  # an enhanced version of Hull, with methods that resolve locally
+  # - setShipSize
+  # - getTargetUrl
   prepareIframeSandbox : (iframe)->
     w = iframe.contentWindow
     setShipSize = (size={})=>
       setDimension(iframe, 'width', size.width) if size.width?
       setDimension(iframe, 'height', size.height) if size.height?
       true
-    w.Hull = assign({}, window.Hull, {setShipSize: setShipSize});
+
+    # Start resolving from the containing iframe up
+
+    # TODO architecture could be better herer 
+    sandboxedShare = new SandboxedShare({
+      share: Hull.share, 
+      ship: @ship, 
+      domRoot: iframe
+    })
+
+    sandboxedFindUrl = ()->
+      findUrl(iframe)
+
     w.location.hash='/'
-    w.foo = 'bar'
+    w.Hull = assign({}, window.Hull, {
+      setShipSize: setShipSize
+      share   : sandboxedShare.share
+      findUrl : sandboxedFindUrl
+    });
 
   embed : (opts={}, embedCompleteCallback)->
     @targets = @getTargets({refresh:opts.refresh}) if opts.refresh

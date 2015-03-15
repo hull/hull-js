@@ -1,6 +1,5 @@
 _ = require '../../utils/lodash'
 
-
 fjs = document.getElementsByTagName("script")[0]
 
 class Import

@@ -16,7 +16,9 @@ class CurrentUser
   constructor : ()->
     @currentUser = null
 
-  get: () => JSON.parse(JSON.stringify(@currentUser))
+  get: (field) =>
+    returned = if field? then @currentUser[field] else @currentUser
+    JSON.parse(JSON.stringify(returned))
 
   hasIdentity : (identity)=>
     identities = @currentUser?.identities

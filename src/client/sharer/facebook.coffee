@@ -9,8 +9,10 @@ class FacebookShare extends GenericShare
     @params = opts.params
 
     @opts.method   ||= @defaultMethod
-    @params.href   ||= @getDefaultUrl() if @opts.method=='share'
-    @params.link   ||= @getDefaultUrl() if @opts.method=='feed'
+
+    @params.href ?= @params.url if @opts.method=='share'  
+    @params.link ?= @params.url if @opts.method=='feed'
+    delete @params.url
 
     return @sharePopup()   if isMobile()     or @opts.display=='popup'
     return @sharePromise() if opts.anonymous or @currentUser.hasIdentity('facebook')
