@@ -1,3 +1,5 @@
+_ = require '../utils/lodash'
+
 initParams = {
   'jsUrl'      : 'js-url'
   'platformId' : 'platform-id'
