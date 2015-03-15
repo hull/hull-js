@@ -113,7 +113,6 @@ class Sharer
     utmTags = @buildUtmTags(opts)
     opts.params.url = @addToQueryString(opts.params.url, utmTags)
 
-    debugger
     sharePromise = switch opts.provider
       when 'facebook' then new FacebookShare(@api, @auth, @currentUser, opts)
       when 'twitter'  then new twitterShare(@api, @auth, @currentUser, opts)
