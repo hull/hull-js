@@ -132,7 +132,7 @@ _.map eeMethods,(m)=>
   hull[m] = (args...)->EventBus[m](args...)
 
 config = getScriptTagConfig()
-init(config) if config? and not config.proxyMode=='true'
+init(config) if config? and config.proxyMode!='true'
 
 window.Hull = hull
 module.exports = hull
