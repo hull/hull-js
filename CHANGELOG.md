@@ -65,6 +65,7 @@ We're phasing out in favor of auto-initialized code, You can get the same result
   })
 ```
 * `Hull.currentUser()` accepts a parameter, will return the field value. Only works with 1 level of nesting. No dots. Example: `Hull.currentUser('name')`
+* `Hull.share({params:{}})` now parses `params.url` instead of `params.href`
 
 ##### Methods
 
