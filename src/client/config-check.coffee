@@ -6,22 +6,26 @@ onConfigFailure = (err)->
 
 
 # Parse the tracked events configuration and standardize it.
-formatTrackConfig = (cfg)->
-  return undefined unless cfg?
-  switch (Object.prototype.toString.call(cfg).match(/^\[object (.*)\]$/)[1])
+formatTrackConfig = (config={})->
+  switch (Object.prototype.toString.call(config).match(/^\[object (.*)\]$/)[1])
     when "Object"
-      if cfg.only?
-        { only: (m.toString() for m in cfg.only) }
-      else if cfg.ignore?
-        { ignore: (m.toString() for m in cfg.ignore) }
+      if config.only?
+        config = { only: (m.toString() for m in config.only) }
+      else if config.ignore?
+        config = { ignore: (m.toString() for m in config.ignore) }
+      else 
+        config
     when "RegExp"
-      { only: cfg.toString() }
+      config = { only: config.toString() }
     when "Array"
-      { only: (m.toString() for m in cfg)  }
+      config = { only: (m.toString() for m in config)  }
+  # Setup initial referrer
+  config.referrer = document.referrer if document?.referrer
+  config
 
 
 module.exports = (config)->
-  config.track  = formatTrackConfig(config.track) if config.track?
+  config.track  = formatTrackConfig(config.track)
   dfd = promises.deferred();
   msg = "You need to pass some keys to Hull to start it: " 
   readMore = "Read more about this here : http://www.hull.io/docs/references/hull_js/#hull-init-params-cb-errb"
