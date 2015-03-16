@@ -68,9 +68,11 @@ class HullTrackService extends GenericService
     return false unless event?
     # @trackWithAnalytics(event,params)
     config = RemoteConfigStore.getState().remoteConfig
+    referrer = RemoteConfigStore.getState().clientConfig?.track?.referrer
 
     method               = 'post'
     params.event        ?= event
+    params.referrer      = referrer if referrer?
     params.hull_app_id   = config?.appId
     params.hull_app_name = config?.data?.app?.name
 
