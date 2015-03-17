@@ -11,7 +11,8 @@ channel        = require './channel'
 class Api
   constructor : (config, channel, currentUser)->
     @config = config
-    @services = channel.remoteConfig.settings
+    @remoteConfig = channel.remoteConfig
+    @services = @remoteConfig.settings
     @channel = channel
     @currentUser = currentUser
     EventBus.on 'hull.settings.update', (settings)-> @services = settings

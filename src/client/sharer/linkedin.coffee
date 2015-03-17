@@ -1,14 +1,16 @@
 GenericShare = require './generic_share'
 
-class GoogleShare extends GenericShare
-  defaultMethod: 'share'
+class TwitterShare extends GenericShare
+  defaultMethod: 'tweet'
 
   constructor : (api, auth, currentUser, opts)->
-    super(api, currentUser, 'google')
+    super(api, currentUser, 'twitter')
 
     @opts   = opts
     @params = opts.params || {}
     @opts.method   ||= @defaultMethod
+
+    @params.source ||= api.remoteConfig.data.app.name
 
     # Parameter name already is url. No need to touch
 
@@ -17,7 +19,7 @@ class GoogleShare extends GenericShare
   sharePopup : ()->
     # opts.method ||= 'statuses/update'
     [@opts.width, @opts.height] = [550, 420]
+    @params.mini = true
+    @_popup("https://www.linkedin.com/shareArticle", @opts, @params)
 
-    @_popup("https://plus.google.com/#{@opts.method}", @opts, @params)
-
-module.exports = GoogleShare
+module.exports = TwitterShare

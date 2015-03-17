@@ -72,8 +72,11 @@ We're phasing out in favor of auto-initialized code, You can get the same result
 Hull.share({provider:'facebook', path:'ui', params:{/*FB.ui params*/}});
 //https://developers.facebook.com/docs/javascript/reference/FB.ui/
 
+Hull.share({provider:'linkedin', params:{url: "http://example.com", title: "So Cool", source:'My App'}});
+//https://developer.linkedin.com/docs/share-on-linkedin
+
 //Default path : 'tweet'
-Hull.share({provider:'twitter', path: 'tweet' params:{url: "http://example.com", message: "So Cool"}});
+Hull.share({provider:'twitter', path: 'tweet', params:{url: "http://example.com", message: "So Cool"}});
 //https://dev.twitter.com/web/intents
 //https://dev.twitter.com/web/tweet-button/web-intent
 //https://dev.twitter.com/web/follow-button/web-intent

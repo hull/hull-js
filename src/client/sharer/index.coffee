@@ -7,6 +7,7 @@ FacebookShare = require './facebook'
 EmailShare    = require './email'
 TwitterShare  = require './twitter'
 GoogleShare  = require './google'
+LinkedinShare  = require './linkedin'
 
 
 # Organization coming from
@@ -121,6 +122,7 @@ class Sharer
       when 'facebook' then new FacebookShare(@api, @auth, @currentUser, opts)
       when 'twitter'  then new TwitterShare(@api, @auth, @currentUser, opts)
       when 'google'   then new GoogleShare(@api, @auth, @currentUser, opts)
+      when 'linkedin' then new LinkedinShare(@api, @auth, @currentUser, opts)
 
     params = opts.params
 

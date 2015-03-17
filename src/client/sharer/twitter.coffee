@@ -10,8 +10,6 @@ class TwitterShare extends GenericShare
     @params = opts.params || {}
     @opts.method   ||= @defaultMethod
 
-
-    # if @opts.method=='share'
     # Parameter name already is url. No need to touch
 
     return @sharePopup()
