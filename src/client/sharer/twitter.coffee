@@ -4,7 +4,7 @@ class TwitterShare extends GenericShare
   defaultMethod: 'tweet'
 
   constructor : (api, auth, currentUser, opts)->
-    super(api, currentUser, 'facebook')
+    super(api, currentUser, 'twitter')
 
     @opts   = opts
     @params = opts.params || {}
