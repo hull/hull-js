@@ -6,6 +6,8 @@ promises          = require '../../utils/promises'
 clone             = require '../../utils/clone'
 GenericService    = require './generic_service'
 
+FB_EVENTS = ["auth.authResponseChanged", "auth.statusChange", "auth.login", "auth.logout", "comment.create", "comment.remove", "edge.create", "edge.remove", "message.send", "xfbml.render"]
+
 class FacebookService extends GenericService
   name : 'facebook'
   path : 'facebook'
@@ -32,20 +34,19 @@ class FacebookService extends GenericService
   performRequest: (request,callback,errback)=>
 
     path = request.path
-    uiAction = /^ui\./.test(path)
+    isUICall = (path=='ui' and request.params?.method?)
 
     fbErrback = (msg, res)->
       res.time = new Date()
       errback(res)
 
-    fbCallback = @fbRequestCallback(request, {uiAction, path}, callback, errback)
+    fbCallback = @fbRequestCallback(request, {isUICall, path}, callback, errback)
 
     if path == 'fql.query'
       FB.api({ method: 'fql.query', query: request.params.query },fbCallback)
 
-    else if uiAction
+    else if isUICall
       params = clone(request.params)
-      params.method = path.replace(/^ui\./, '')
 
       @showIframe()
       trackParams = { ui_request_id: utils?.uuid?() || (new Date()).getTime() }
@@ -60,7 +61,7 @@ class FacebookService extends GenericService
       , 100
 
     else
-      FB.api path, request.method, request.params, fbCallback(request, {uiAction:false, path}, callback, fbErrback)
+      FB.api path, request.method, request.params, fbCallback(request, {isUICall:false, path}, callback, fbErrback)
 
 
   showIframe : ->
@@ -74,20 +75,15 @@ class FacebookService extends GenericService
 
   fbRequestCallback : (request, opts={}, callback, errback) =>
     (response) =>
-      @fbUiCallback(request,response,opts.path) if opts.uiAction
+      @fbUiCallback(request,response,opts.path) if opts.isUICall
       if !response or response?.error
         errorMsg = if (response) then "[Facebook Error] #{response.error.type}  : #{response.error.message}" else "[Facebook Error] Unknown error"
         return errback(errorMsg, { response, request })
-
       callback({ response, provider: 'facebook' })
 
   fbUiCallback : (req, res, path)=>
     @hideIframe()
-    endpoint = switch path
-      when 'ui.apprequests' then 'apprequests'
-      when 'ui.share' then 'share'
-      when 'ui.feed' then 'feed'
-    opts = { path: endpoint, method: 'post', params: res }
+    opts = { path: path, method: 'post', params: res }
     @wrappedRequest(opts)
 
   updateFBUserStatus: (res)=>
@@ -95,10 +91,12 @@ class FacebookService extends GenericService
 
   subscribeToFBEvents : ()->
     return unless FB?.Event?
-    FB.Event.subscribe 'auth.statusChange',       @updateFBUserStatus
-    FB.Event.subscribe 'auth.authResponseChange', @updateFBUserStatus
-    FB.Event.subscribe 'auth.login',              @updateFBUserStatus
-    FB.Event.subscribe 'auth.logout',             @updateFBUserStatus
+
+    _.map FB_EVENTS, (event)=>
+      FB.Event.subscribe event, (args...)=>
+        @updateFBUserStatus(args...) if event.indexOf('auth.')>-1
+        EventBus.emit("fb.#{event}", args...)
+
 
   loadFbSdk: (config)->
     dfd = promises.deferred()
