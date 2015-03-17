@@ -8,7 +8,7 @@ getLinkValue = (node)->
 # Returns a Meta Tag
 getMetaValue = (name)->
   metas = document.getElementsByTagName('meta');
-  meta = _.find metas, (meta)-> meta.property==name || meta.name==name
+  meta = _.find metas, (meta)-> meta.getAttribute('property')==name || meta.getAttribute('name')==name
   return unless meta?
   meta.content
 
