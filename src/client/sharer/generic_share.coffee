@@ -20,8 +20,9 @@ class GenericShare
     loginParams = assign(_.omit(@opts,'params','method'), {provider:@provider,strategy:'popup'})
     @auth.login(loginParams)
 
-  _popup : (location, opts)->
-    querystring = to_qs(opts.params)
+  _popup : (location, opts={}, params={})->
+    return unless location?
+    querystring = to_qs(params)
     share = window.open("#{location}?#{querystring}", 'hull_share', "location=0,status=0,width=#{opts.width},height=#{opts.height}")
     dfd = promises.deferred()
     interval = setInterval ()->

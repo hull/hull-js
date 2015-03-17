@@ -93,6 +93,7 @@ class Sharer
       opts.params = {}
       # throw new Error("You need specify some parameters to pass the provider. You passed: #{opts.params}")
 
+    opts.params ||= {}
     # If the Sharing URL is not specified, then walk up the DOM to find some URL to share.
     # If No url is specified, will walk up to window.location.href.
     # 
@@ -115,7 +116,7 @@ class Sharer
 
     sharePromise = switch opts.provider
       when 'facebook' then new FacebookShare(@api, @auth, @currentUser, opts)
-      when 'twitter'  then new twitterShare(@api, @auth, @currentUser, opts)
+      when 'twitter'  then new TwitterShare(@api, @auth, @currentUser, opts)
 
     params = opts.params
 

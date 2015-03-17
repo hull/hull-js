@@ -22,7 +22,8 @@ proxy-mode [undocumented]
 
 For this to work, the `hull.js` script tag needs to have `id='hull-js-sdk'`
 
-Share Link and Entity resolution : `Hull.share` and `Hull.findUrl(node)` try really hard to find a URL to share or to target, by traversing the DOM upwards for the closest matching `hull-link` or `href` attribute, looking for siblings at each level up to `body`. If not found, searches for `og:url` else, fallbacks to the window URL.
+#### `Hull.share` and `Hull.findUrl(node)`
+These methods now try really hard to find a URL to share or to target, by traversing the DOM upwards for the closest matching `hull-link` or `href` attribute, looking for siblings at each level up to `body`. If not found, searches for `og:url` else, fallbacks to the window URL.
 
 **Note** : In Sandboxed Ships, this method will start looking OUTSIDE the ship. No point in performing a lookup on Document parts the Ship author built.
 
@@ -65,7 +66,18 @@ We're phasing out in favor of auto-initialized code, You can get the same result
   })
 ```
 * `Hull.currentUser()` accepts a parameter, will return the field value. Only works with 1 level of nesting. No dots. Example: `Hull.currentUser('name')`
-* `Hull.share({params:{}})` now parses `params.url` instead of `params.href`
+* `Hull.share()` now has the following signature:
+```js
+//Default params.method: 'share'
+Hull.share({provider:'facebook', path:'ui', params:{/*FB.ui params*/}});
+//https://developers.facebook.com/docs/javascript/reference/FB.ui/
+
+//Default path : 'tweet'
+Hull.share({provider:'twitter', path: 'tweet' params:{url: "http://example.com", message: "So Cool"}});
+//https://dev.twitter.com/web/intents
+//https://dev.twitter.com/web/tweet-button/web-intent
+//https://dev.twitter.com/web/follow-button/web-intent
+```
 
 ##### Methods
 
