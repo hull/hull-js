@@ -77,6 +77,12 @@ Hull.share({provider:'twitter', path: 'tweet' params:{url: "http://example.com",
 //https://dev.twitter.com/web/intents
 //https://dev.twitter.com/web/tweet-button/web-intent
 //https://dev.twitter.com/web/follow-button/web-intent
+
+Hull.share({provider:'email', params:{subject:'This is really cool', body:"This works well", to:'romain@hull.io' }})
+
+Hull.share({provider:'google'}) //Shares og:url or window.location
+Hull.share({provider:'google', params:{url:'http://example.com'}}) //Shares example.com
+
 ```
 
 ##### Methods

@@ -4,7 +4,9 @@ track    = require '../track/index'
 findUrl  = require '../../utils/find-url'
 
 FacebookShare = require './facebook'
-TwitterShare = require './twitter'
+EmailShare    = require './email'
+TwitterShare  = require './twitter'
+GoogleShare  = require './google'
 
 
 # Organization coming from
@@ -115,8 +117,10 @@ class Sharer
     opts.params.url = @addToQueryString(opts.params.url, utmTags)
 
     sharePromise = switch opts.provider
+      when 'email'    then new EmailShare(@api, @auth, @currentUser, opts)
       when 'facebook' then new FacebookShare(@api, @auth, @currentUser, opts)
       when 'twitter'  then new TwitterShare(@api, @auth, @currentUser, opts)
+      when 'google'   then new GoogleShare(@api, @auth, @currentUser, opts)
 
     params = opts.params
 

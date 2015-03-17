@@ -20,6 +20,14 @@ class GenericShare
     loginParams = assign(_.omit(@opts,'params','method'), {provider:@provider,strategy:'popup'})
     @auth.login(loginParams)
 
+  _redirect: (location, opts={}, params={})->
+    return unless location?
+    querystring = to_qs(params)
+    dfd = promises.deferred()
+    dfd.resolve({display:"popup"})
+    window.location.href="#{location}?#{querystring}"
+    return dfd.promise
+
   _popup : (location, opts={}, params={})->
     return unless location?
     querystring = to_qs(params)
