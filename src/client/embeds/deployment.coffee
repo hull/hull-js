@@ -154,8 +154,9 @@ class Deployment
       It seems the ship "#{@ship.name}" is trying to load #{@ship.index} that contains a copy of Hull.js.
       This can't happen. Skipping ship.
     """
-    err = new Error(msg) if hull_in_ship?
-    return console.error(err.message)
+    if hull_in_ship?
+      err = new Error(msg)
+      return console.error(err.message)
     if body.hasChildNodes()
       while child = body.firstChild
         # http://www.html5rocks.com/en/tutorials/webcomponents/imports/
