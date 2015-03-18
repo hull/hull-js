@@ -57,9 +57,8 @@ onInitSuccess = (userSuccessCallback, _hull, data)->
 onInitFailure = (err)-> throw err
 
 #Main Hull Entry Point
-_initialized = false
 init = (config={}, userSuccessCallback, userFailureCallback)->
-  if _initialized
+  if !!hull._initialized
     throw new Error('Hull.init can be called only once')
     return
 
@@ -74,7 +73,7 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
   missing.push "platformId" unless config.appId?
   throw new Error("Hull config error: You forgot to pass #{missing.join(',')} needed to initialize hull properly") if missing.length
 
-  _initialized = true
+  hull._initialized = true
 
   client  = {}
   channel = {}
@@ -117,6 +116,7 @@ hullReady = (callback, errback)->
     console.error err.stack
 
 hull =
+  _initialized: false
   initRemote  : HullRemote
   init        : init
   ready       : hullReady
@@ -132,7 +132,7 @@ _.map eeMethods,(m)=>
   hull[m] = (args...)->EventBus[m](args...)
 
 config = getScriptTagConfig()
-init(config) if config? and config.proxyMode!='true'
+init(config) if !window.Hull? and !hull._initialized and config? and config.proxyMode!='true'
 
 window.Hull = hull
 module.exports = hull
