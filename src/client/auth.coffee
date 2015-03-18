@@ -225,7 +225,7 @@ class Auth
     .then callback, errback
     # @completeLoginPromiseChain(promise,callback,errback)
 
-  signup : (user,callback, errback) ->
+  signup : (user,callback, errback) =>
     promise = @api.message('users', 'POST', user)
     @completeLoginPromiseChain(promise, callback, errback)
 
@@ -249,7 +249,7 @@ class Auth
     p.then callback, errback
 
     p
-    
+
 
   emitLoginFailure : (err)->
     EventBus.emit("hull.user.fail", err)

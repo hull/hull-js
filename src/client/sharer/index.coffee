@@ -12,7 +12,7 @@ LinkedinShare  = require './linkedin'
 
 # Organization coming from
 # http://www.degordian.com/blog/5-cool-examples-of-utm-tracking/
-# 
+#
 # TODO : Define whether if so, how to specify the URL where the User was shen he shared.
 # This can be different from the URL he shared
 
@@ -25,7 +25,7 @@ utm_tags = {
   # CAMPAIGN SOURCE
   # This tag is mandatory, it identifies where exactly did your ad appear. That can be a specific portal name, social network name or similar.
   # TODO: Should we use "facebook" or "platform.name"?
-  # Former is more accurate from GA's point of view. Latter allows to understand where Share comes from. 
+  # Former is more accurate from GA's point of view. Latter allows to understand where Share comes from.
   utm_source   : (opts, config, currentUser)->
     ['utm_source',opts?.provider?.toLowerCase()]
 
@@ -46,7 +46,12 @@ utm_tags = {
   # CAMPAIGN CONTENT (UTM_CONTENT)
   # This tag is usually used for A/B testing, but it could be used for ad type, market, website language version or any other similar info that will help you distinguish one ad version from another.
   utm_content  : (opts, config, currentUser)->
-    ['utm_content',currentUser.get('id')]
+    id = currentUser.get('id')
+
+    if id
+      ['utm_content', id]
+    else
+      []
 
 }
 
@@ -73,7 +78,7 @@ class Sharer
       tuple.join('=')
     query = query.concat(qs)
     hashtagParts[0] = "#{host}?#{query.join('&')}"
-    hashtagParts.join('#')    
+    hashtagParts.join('#')
 
   buildUtmTags: (opts)=>
     tags = opts.tags || {}
@@ -99,7 +104,7 @@ class Sharer
     opts.params ||= {}
     # If the Sharing URL is not specified, then walk up the DOM to find some URL to share.
     # If No url is specified, will walk up to window.location.href.
-    # 
+    #
     # Lookup Order
     # 1. Passed-in url
     # 2. Find url from Click Targt

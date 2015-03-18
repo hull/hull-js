@@ -17,8 +17,9 @@ class CurrentUser
     @currentUser = null
 
   get: (field) =>
-    returned = if field? then @currentUser[field] else @currentUser
-    JSON.parse(JSON.stringify(returned))
+    if @currentUser
+      returned = if field? then @currentUser[field] else @currentUser
+      JSON.parse(JSON.stringify(returned))
 
   hasIdentity : (identity)=>
     identities = @currentUser?.identities
