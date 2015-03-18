@@ -2,7 +2,7 @@ assign       = require 'object-assign'
 _            = require './lodash'
 domWalker    = require './dom-walker'
 
-getDOMUrl  = (sourceNode)->
+getDOMUrl = (sourceNode)->
   return unless domWalker.isNode(sourceNode)
   body = document.body
   node = sourceNode
@@ -26,4 +26,7 @@ getPageUrl = ()->
 getOGUrl = ()->
   domWalker.getMetaValue('og:url')
 
-module.exports = (node)-> getDOMUrl(node) || getOGUrl() || getPageUrl()
+module.exports = (node)->
+  u = getDOMUrl(node) || getOGUrl() || getPageUrl()
+  u.replace(/[#\/]*$/, '')
+
