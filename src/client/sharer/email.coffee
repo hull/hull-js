@@ -8,7 +8,7 @@ class EmailShare extends GenericShare
     @opts   = opts
     @params = opts.params || {}
 
-    @params.message ||= @params.url
+    @params.body ||= @params.url
 
     return @sharePopup()
 
