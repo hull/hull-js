@@ -1,6 +1,7 @@
 _        = require '../utils/lodash'
 EventBus = require '../utils/eventbus'
 cookies  = require '../utils/cookies'
+Base64 = require('js-base64').Base64
 
 # Fix for http://www.hull.io/docs/users/backend on browsers where 3rd party cookies disabled
 fixCookies = (userSig)->
@@ -63,7 +64,7 @@ class CurrentUser
   updateCookies : (headers={}, appId)->
     cookieName = "hull_#{appId}"
     if headers && headers['Hull-User-Id'] && headers['Hull-User-Sig']
-      val = btoa(JSON.stringify(headers))
+      val = Base64.btoa(JSON.stringify(headers))
       @currentUserSignature = val
       fixCookies(val)
       cookies.set(cookieName, val, path: "/")

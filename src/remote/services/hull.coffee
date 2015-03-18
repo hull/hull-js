@@ -3,6 +3,7 @@ cookies           = require '../../utils/cookies'
 analyticsId       = require '../../utils/analytics-id'
 EventBus          = require '../../utils/eventbus'
 getWrappedRequest = require '../wrapped-request'
+Base64 = require('js-base64').Base64
 
 class TrackEventMatcher
 
@@ -43,7 +44,7 @@ class TrackEventMatcher
 trackResponse  = (response={})=>
   if track = response.headers?['Hull-Track']
     try
-      [eventName, trackParams] = JSON.parse(atob(track))
+      [eventName, trackParams] = JSON.parse(Base64.atob(track))
       EventBus.emit('remote.track',{event:eventName,params:trackParams})
     catch error
       # Don't throw an error here but report what happened.
@@ -51,7 +52,7 @@ trackResponse  = (response={})=>
   return response
 identifyResponse= ()->
 
-class HullService 
+class HullService
   constructor: (config, gateway)->
     @config       = config
     middlewares   = [trackResponse, identifyResponse]

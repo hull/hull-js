@@ -1,15 +1,14 @@
-# defaults            = require 'lodash/object/defaults'
 cookies           = require '../../utils/cookies'
 analyticsId       = require '../../utils/analytics-id'
 getWrappedRequest = require '../wrapped-request'
 RemoteConfigStore   = require '../../flux/stores/RemoteConfigStore'
 GenericService    = require './generic_service'
-# analytics         = require 'analytics.js'
+Base64 = require('js-base64').Base64
 
 
 
 # Analytics.js methods
-# initializeAnalytics = (appSettings={})-> 
+# initializeAnalytics = (appSettings={})->
 #   settings = _.reduce (appSettings), (settings,s)->
 #     settings[s.name] = s
 #     return settings
@@ -31,7 +30,7 @@ GenericService    = require './generic_service'
 
 # identifyResponse = (response={})->
 #   return unless response.request.url == '/api/v1/me'
-#   identifyWithAnalytics(response.me) 
+#   identifyWithAnalytics(response.me)
 
 class HullTrackService extends GenericService
   name : 'hull'
@@ -76,7 +75,7 @@ class HullTrackService extends GenericService
     params.hull_app_id   = config?.appId
     params.hull_app_name = config?.data?.app?.name
 
-    data = {t: btoa(JSON.stringify(params))}
+    data = {t: Base64.btoa(JSON.stringify(params))}
 
     @_request({path: "t", method, params:data, nocallback: true})
     .then (response)=>

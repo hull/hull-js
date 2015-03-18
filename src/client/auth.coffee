@@ -3,11 +3,12 @@ _            = require '../utils/lodash'
 promises     = require '../utils/promises'
 EventBus     = require '../utils/eventbus'
 isMobile     = require '../utils/is-mobile'
+Base64 = require('js-base64').Base64
 
 try
   h = document.location.hash.replace('#', '')
   if !!h
-    hash = JSON.parse(atob(h))
+    hash = JSON.parse(Base64.atob(h))
     if window?.opener?.Hull? and window?.opener?.__hull_login_status__ and  !!hash
       window.opener.__hull_login_status__(hash)
       window.close()
@@ -141,7 +142,7 @@ class Auth
     # Support for cordova events
     if window.device?.cordova
       w?.addEventListener 'loadstart', (event)->
-        hash = try JSON.parse(atob(event.url.split('#')[1]))
+        hash = try JSON.parse(Base64.atob(event.url.split('#')[1]))
         if hash
           window.__hull_login_status__(hash)
           w.close()

@@ -14,7 +14,7 @@ class FacebookShare extends GenericShare
     @params.method   ||= @defaultMethod
 
     # Use the existing href or link param and default to the looked-up url otherwise
-    @params.href ||= @params.url if @params.method=='share'  
+    @params.href ||= @params.url if @params.method=='share'
     @params.link ||= @params.url if @params.method=='feed'
     delete @params.url if @params?.url?
 
@@ -24,15 +24,14 @@ class FacebookShare extends GenericShare
     return @sharePromise() if @opts.anonymous or @currentUser.hasIdentity('facebook')
     return @_ensureLogin().then(@sharePromise)
 
-  
   sharePromise : () =>
     @api.message({provider:@provider, path:@opts.path},@params)
 
   sharePopup : ()=>
-    # params.redirect_uri = hull.config('orgUrl')+"/api/v1/services/facebook/callback?data="+btoa(params)
     @opts.params.redirect_uri ||= window.location.href
     @opts.params.app_id       ||= Hull?.config()?.services?.auth?.facebook?.appId
     [@opts.width, @opts.height] = if @isPopup then [500, 400] else [1030, 550]
     @_popup("https://www.facebook.com/dialog/#{@params.method}", @opts, @params)
 
 module.exports = FacebookShare
+
