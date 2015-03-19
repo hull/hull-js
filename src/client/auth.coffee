@@ -8,7 +8,6 @@ Base64   = require '../utils/base64'
 try
   h = document.location.hash.replace('#', '')
   if !!h
-    # TODO use Base64 module...
     hash = JSON.parse(Base64.decode(h))
     if window?.opener?.Hull? and window?.opener?.__hull_login_status__ and  !!hash
       window.opener.__hull_login_status__(hash)
