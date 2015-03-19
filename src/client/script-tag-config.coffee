@@ -22,21 +22,17 @@ valid =
 
 transform =
 
-  url: (url)->
+  url: (url, key)->
     if url && url.length > 0
       a = document.createElement('a')
       a.href = url
       a.href
 
-  bool: (str)->
-    if str && _.isString(str)
-      switch str.toString()
-        when 'true' then true
-        when 'false' then false
-        else undefined
-    else
-      str
-
+  bool: (str, key)->
+    switch str
+      when 'true', true then true
+      when 'false', false then false
+      else undefined
 
 initParams = {
   appId: {
@@ -67,13 +63,15 @@ initParams = {
 getParamValue = (el, param, key)->
   keys = [key].concat(param.altKeys || [])
   transform = param.transform || (o)-> o
-  _.reduce(keys, (ret, k)->
-    if !ret
-      value = transform(el.getAttribute(dasherize(k)) || el.getAttribute(k) || el.dataset[k])
+  value = _.reduce(keys, (ret, k)->
+    if ret == null
+      value = transform((el.getAttribute(dasherize(k)) || el.getAttribute(k) || el.dataset[k]), key)
       valid = value? && (!param.validation  || param.validation(value, k))
       ret = value if valid
     ret
-  , null) || param.default
+  , null)
+
+  if value? then value else param.default
 
 
 module.exports = ->
@@ -86,7 +84,7 @@ module.exports = ->
   _.reduce initParams, (config, param, key)->
     return unless config
     value = getParamValue(hull_js_sdk, param, key)
-    if value
+    if value?
       config[key] = value
     else if param.required
       config = false
