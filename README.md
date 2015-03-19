@@ -6,7 +6,7 @@ Checkout
 
     git clone git@github.com:hull/hull-js.git
 
-First, install grunt and bower
+First, install gulp
 
     sudo npm install -g gulp
 
