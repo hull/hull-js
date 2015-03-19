@@ -58,7 +58,15 @@ module.exports = {
           quote_keys:true,
           sourceMap: false,
           beautify: false,
-          compress: { drop_console: true }
+          compress: {
+            warnings: false,
+            drop_console: false,
+            drop_debugger:true,
+            dead_code:true,
+            // comparisons: true,
+            // conditionals:true
+            join_vars:true
+          }
         }),
         new webpack.optimize.DedupePlugin(),
         new StatsPlugin(path.join(__dirname, config.outputFolder, 'stats.json'), { chunkModules: true, profile: true })
