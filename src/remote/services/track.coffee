@@ -1,11 +1,9 @@
 cookies           = require '../../utils/cookies'
 analyticsId       = require '../../utils/analytics-id'
 getWrappedRequest = require '../wrapped-request'
-RemoteConfigStore   = require '../../flux/stores/RemoteConfigStore'
+RemoteConfigStore = require '../../flux/stores/RemoteConfigStore'
 GenericService    = require './generic_service'
-Base64 = require('js-base64').Base64
-
-
+Base64            = require '../../utils/base64'
 
 # Analytics.js methods
 # initializeAnalytics = (appSettings={})->
@@ -75,7 +73,7 @@ class HullTrackService extends GenericService
     params.hull_app_id   = config?.appId
     params.hull_app_name = config?.data?.app?.name
 
-    data = {t: Base64.btoa(JSON.stringify(params))}
+    data = {t: Base64.encode(JSON.stringify(params))}
 
     @_request({path: "t", method, params:data, nocallback: true})
     .then (response)=>

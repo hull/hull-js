@@ -2,8 +2,8 @@ _                 = require '../../utils/lodash'
 cookies           = require '../../utils/cookies'
 analyticsId       = require '../../utils/analytics-id'
 EventBus          = require '../../utils/eventbus'
+Base64            = require '../../utils/base64'
 getWrappedRequest = require '../wrapped-request'
-Base64 = require('js-base64').Base64
 
 class TrackEventMatcher
 
@@ -44,7 +44,7 @@ class TrackEventMatcher
 trackResponse  = (response={})=>
   if track = response.headers?['Hull-Track']
     try
-      [eventName, trackParams] = JSON.parse(Base64.atob(track))
+      [eventName, trackParams] = JSON.parse(Base64.decode(track))
       EventBus.emit('remote.track',{event:eventName,params:trackParams})
     catch error
       # Don't throw an error here but report what happened.
@@ -61,3 +61,4 @@ class HullService
     @trackMatcher = new TrackEventMatcher(config.track)
 
 module.exports = HullService
+

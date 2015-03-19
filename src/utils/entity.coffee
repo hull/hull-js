@@ -1,11 +1,11 @@
-Base64 = require('js-base64').Base64
+Base64 = require './base64.js'
 
-module.exports = {
-  decode: (str)->
-    if /^~[a-z0-9_\-\+\/\=]+$/i.test(str) && (str.length - 1) % 4 == 0
-      Base64.decode(str.substr(1), true)
-    else
-      str
-  encode: (str)->
-    "~#{Base64.encodeURI(str, true)}"
-}
+module.exports =
+  decode: (input)->
+    unless /^~[a-z0-9_\-\+\/\=]+$/i.test(input)
+      throw "'#{input}' cannot be decoded because it has not been correctly encoded"
+
+    Base64.decodeURL(input.substr(1))
+
+  encode: (input)->
+    "~#{Base64.encodeURL(input)}"
