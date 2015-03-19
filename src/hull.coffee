@@ -122,17 +122,23 @@ hull =
   ready       : hullReady
   version     : VERSION
   track       : Pool.create('track')
+
   setShipSize : ->
     console.log("SetShipSize is only useful when Ships are sandboxed. This method does nothing here")
     false
 
 # Assign EventBus methods to Hull
 eeMethods = ['on', 'onAny', 'offAny', 'once', 'many', 'off', 'emit']
-_.map eeMethods,(m)=>
-  hull[m] = (args...)->EventBus[m](args...)
+_.map eeMethods, (m)->
+  hull[m] = (args...) -> EventBus[m](args...)
 
-config = getScriptTagConfig()
-init(config) if !window.Hull? and !hull._initialized and config? and config.proxyMode!='true'
+
+autostart = ->
+  if !hull._initialized && !window.Hull
+    autoStartConfig = getScriptTagConfig()
+    autoStartConfig && autoStartConfig.autoStart && init(autoStartConfig)
+
+autostart()
 
 window.Hull = hull
 module.exports = hull
