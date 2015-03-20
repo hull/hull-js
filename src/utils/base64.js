@@ -128,19 +128,11 @@ function decode(s) {
 }
 
 function encodeURL(input) {
-  return encode(input)
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/\=+$/, '');
+  return encodeURIComponent(encode(input).replace(/\+/g, '-').replace(/\//g, '_'));
 }
 
 function decodeURL(input) {
-  input = (input + '===')
-    .slice(0, input.length + (input.length % 4))
-    .replace(/-/g, '+')
-    .replace(/_/g, '/');
-
-  return decode(input);
+  return decode(decodeURIComponent(input).replace(/-/g, '+').replace(/_/g, '/'));
 }
 
 export default {
