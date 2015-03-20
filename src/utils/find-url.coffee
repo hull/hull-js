@@ -1,4 +1,3 @@
-assign       = require 'object-assign'
 _            = require './lodash'
 domWalker    = require './dom-walker'
 

@@ -1,3 +1,4 @@
+assign       = require 'object-assign'
 GenericService    = require './generic_service'
 
 class InstagramService extends GenericService

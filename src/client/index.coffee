@@ -1,5 +1,3 @@
-assign       = require 'object-assign'
-
 _            = require '../utils/lodash'
 promises     = require '../utils/promises'
 clone        = require '../utils/clone'

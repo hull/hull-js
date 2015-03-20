@@ -1,5 +1,3 @@
-assign         = require 'object-assign'
-
 promises       = require '../utils/promises'
 cookie         = require '../utils/cookies'
 EventBus       = require '../utils/eventbus'
