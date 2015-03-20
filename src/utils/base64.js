@@ -1,64 +1,130 @@
-const KEYS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+// https://code.google.com/p/stringencoders/source/browse/trunk/javascript/base64.js?r=230
 
-function encode(input) {
-  var output = '';
-  var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+const PADCHAR = '=';
+const ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
-  input = encodeUTF8(input);
+function makeDOMException() {
+  // sadly in FF,Safari,Chrome you can't make a DOMException
+  var e, tmp;
 
-  var i = 0;
-  while (i < input.length) {
-    chr1 = input.charCodeAt(i++);
-    chr2 = input.charCodeAt(i++);
-    chr3 = input.charCodeAt(i++);
+  try {
+    return new DOMException(DOMException.INVALID_CHARACTER_ERR);
+  } catch (tmp) {
+    // not available, just passback a duck-typed equiv
+    // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/Error
+    // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/Error/prototype
+    var ex = new Error("DOM Exception 5");
 
-    enc1 = chr1 >> 2;
-    enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-    enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-    enc4 = chr3 & 63;
+    // ex.number and ex.description is IE-specific.
+    ex.code = ex.number = 5;
+    ex.name = ex.description = "INVALID_CHARACTER_ERR";
 
-    if (isNaN(chr2)) {
-      enc3 = enc4 = 64;
-    } else if (isNaN(chr3)) {
-      enc4 = 64;
-    }
-
-    output = output
-      + KEYS.charAt(enc1)
-      + KEYS.charAt(enc2)
-      + KEYS.charAt(enc3)
-      + KEYS.charAt(enc4);
+    // Safari/Chrome output format
+    ex.toString = function() { return 'Error: ' + ex.name + ': ' + ex.message; };
+    return ex;
   }
-
-  return output;
 }
 
-function decode(input) {
-  var output = '';
-  var chr1, chr2, chr3;
-  var enc1, enc2, enc3, enc4;
+function getbyte64(s,i) {
+  // This is oddly fast, except on Chrome/V8.
+  // Minimal or no improvement in performance by using a
+  // object with properties mapping chars to value (eg. 'A': 0)
+  var idx = ALPHA.indexOf(s.charAt(i));
+  if (idx === -1) {
+    throw makeDOMException();
+  }
+  return idx;
+}
 
-  input = input.replace(/[^A-Za-z0-9\+\/\=]/g, '');
+function getbyte(s,i) {
+  var x = s.charCodeAt(i);
+  if (x > 255) {
+    throw makeDOMException();
+  }
+  return x;
+}
 
-  var i = 0;
-  while (i < input.length) {
-    enc1 = KEYS.indexOf(input.charAt(i++));
-    enc2 = KEYS.indexOf(input.charAt(i++));
-    enc3 = KEYS.indexOf(input.charAt(i++));
-    enc4 = KEYS.indexOf(input.charAt(i++));
+function encode(s) {
+  if (arguments.length !== 1) {
+    throw new SyntaxError("Not enough arguments");
+  }
+  var padchar = PADCHAR;
+  var alpha   = ALPHA;
 
-    chr1 = (enc1 << 2) | (enc2 >> 4);
-    chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-    chr3 = ((enc3 & 3) << 6) | enc4;
+  var i, b10;
+  var x = [];
 
-    output = output + String.fromCharCode(chr1);
-    if (enc3 != 64) { output = output + String.fromCharCode(chr2); }
-    if (enc4 != 64) { output = output + String.fromCharCode(chr3); }
+  // convert to string
+  s = '' + s;
+
+  var imax = s.length - s.length % 3;
+
+  if (s.length === 0) {
+    return s;
+  }
+  for (i = 0; i < imax; i += 3) {
+    b10 = (getbyte(s,i) << 16) | (getbyte(s,i+1) << 8) | getbyte(s,i+2);
+    x.push(alpha.charAt(b10 >> 18));
+    x.push(alpha.charAt((b10 >> 12) & 0x3F));
+    x.push(alpha.charAt((b10 >> 6) & 0x3f));
+    x.push(alpha.charAt(b10 & 0x3f));
+  }
+  switch (s.length - imax) {
+    case 1:
+      b10 = getbyte(s,i) << 16;
+    x.push(alpha.charAt(b10 >> 18) + alpha.charAt((b10 >> 12) & 0x3F) +
+           padchar + padchar);
+    break;
+    case 2:
+      b10 = (getbyte(s,i) << 16) | (getbyte(s,i+1) << 8);
+    x.push(alpha.charAt(b10 >> 18) + alpha.charAt((b10 >> 12) & 0x3F) +
+           alpha.charAt((b10 >> 6) & 0x3f) + padchar);
+    break;
+  }
+  return x.join('');
+}
+
+function decode(s) {
+  // convert to string
+  s = '' + s;
+  var pads, i, b10;
+  var imax = s.length
+  if (imax === 0) {
+    return s;
   }
 
-  output = decodeUTF8(output);
+  if (imax % 4 !== 0) {
+    throw makeDOMException();
+  }
 
-  return output;
+  pads = 0
+  if (s.charAt(imax - 1) === PADCHAR) {
+    pads = 1;
+    if (s.charAt(imax - 2) === PADCHAR) {
+      pads = 2;
+    }
+    // either way, we want to ignore this last block
+    imax -= 4;
+  }
+
+  var x = [];
+  for (i = 0; i < imax; i += 4) {
+    b10 = (getbyte64(s,i) << 18) | (getbyte64(s,i+1) << 12) |
+      (getbyte64(s,i+2) << 6) | getbyte64(s,i+3);
+    x.push(String.fromCharCode(b10 >> 16, (b10 >> 8) & 0xff, b10 & 0xff));
+  }
+
+  switch (pads) {
+    case 1:
+      b10 = (getbyte64(s,i) << 18) | (getbyte64(s,i+1) << 12) | (getbyte64(s,i+2) << 6);
+    x.push(String.fromCharCode(b10 >> 16, (b10 >> 8) & 0xff));
+    break;
+    case 2:
+      b10 = (getbyte64(s,i) << 18) | (getbyte64(s,i+1) << 12);
+    x.push(String.fromCharCode(b10 >> 16));
+    break;
+  }
+  return x.join('');
 }
 
 function encodeURL(input) {
@@ -77,57 +143,10 @@ function decodeURL(input) {
   return decode(input);
 }
 
-function encodeUTF8(input) {
-  input = input.replace(/\r\n/g, "\n");
-
-  var output = '';
-  for ( var n = 0; n < input.length; n++) {
-    var c = input.charCodeAt(n);
-
-    if (c < 128) {
-      output += String.fromCharCode(c);
-    } else if ((c > 127) && (c < 2048)) {
-      output += String.fromCharCode((c >> 6) | 192);
-      output += String.fromCharCode((c & 63) | 128);
-    } else {
-      output += String.fromCharCode((c >> 12) | 224);
-      output += String.fromCharCode(((c >> 6) & 63) | 128);
-      output += String.fromCharCode((c & 63) | 128);
-    }
-  }
-
-  return output;
-}
-
-function decodeUTF8(input) {
-  var output = '';
-  var i = 0;
-  var c = 0, c1 = 0, c2 = 0, c3 = 0;
-
-  while (i < input.length) {
-    c = input.charCodeAt(i);
-
-    if (c < 128) {
-      output += String.fromCharCode(c);
-      i++;
-    } else if ((c > 191) && (c < 224)) {
-      c2 = input.charCodeAt(i + 1);
-      output += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
-      i += 2;
-    } else {
-      c2 = input.charCodeAt(i + 1);
-      c3 = input.charCodeAt(i + 2);
-      output += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
-      i += 3;
-    }
-  }
-
-  return output;
-}
-
 export default {
   encode: encode,
   decode: decode,
   encodeURL: encodeURL,
   decodeURL: decodeURL
-}
+};
+
