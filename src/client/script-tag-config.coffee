@@ -41,7 +41,6 @@ initParams = {
     altKeys: ['shipId', 'platformId']
   },
   orgUrl: {
-    transform: transform.url
     validation: valid.https
     required: true
   },

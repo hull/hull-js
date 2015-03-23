@@ -5,7 +5,7 @@
   "dependencies": {
     "browser-jsonp": "^1.0.8",
     "cookies-js": "^1.2.1",
-    "domready": "^1.0.7",
+    "domready": "0.3.0",
     "eventemitter2": "^0.4.14",
     "flux": "^2.0.1",
     "lodash": "^3.3.1",
@@ -45,7 +45,8 @@
     "stats-webpack-plugin": "0.0.1",
     "webpack": "^1.7.1",
     "webpack-dev-server": "^1.7.0",
-    "xdm.js": "necolas/xdm.js#1.0.1"
+    "xdm.js": "necolas/xdm.js#1.0.1",
+    "webcomponents" : "hull/webcomponentsjs#3df41cf485e30c343971c81cbb3dccddb58ac9f0"
   },
   "jest": {
     "testDirectoryName": "__tests__",

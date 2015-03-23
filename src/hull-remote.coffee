@@ -39,8 +39,15 @@ Hull = (remoteConfig)->
 
   request = services.services.hull.request
 
+  hideOnClick = (e)-> channel.rpc.hide()
+
   subscribeToEvents  = (clientConfig)->
-    (document.addEventListener||document.attachListener) 'click', (e)-> channel.rpc.hide()
+
+    if document.addEventListener
+      document.addEventListener('click', hideOnClick)
+    else if document.attachEvent
+      document.attachEvent('onclick', hideOnClick)
+
     EventBus.on 'remote.iframe.show',  -> channel.rpc.show()
     EventBus.on 'remote.iframe.hide',  -> channel.rpc.hide()
     EventBus.on 'remote.track',        (args...)->
@@ -72,7 +79,7 @@ Hull = (remoteConfig)->
     RemoteConfigActions.updateClientConfig(clientConfig)
 
   .fail (err)->
-    console.error("Could not initialize Hull: #{err.message}");
+    console.error("Could not initialize Hull: #{err.message}")
 
   .done()
 

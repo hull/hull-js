@@ -69,7 +69,7 @@ class Deployment
     @_callbacks = []
 
   # Build a sandbox for the current ship.
-  # Will contain : 
+  # Will contain :
   # an enhanced version of Hull, with methods that resolve locally
   # - setShipSize
   # - getTargetUrl
@@ -82,17 +82,17 @@ class Deployment
 
     # Start resolving from the containing iframe up
 
-    # TODO architecture could be better herer 
+    # TODO architecture could be better herer
     sandboxedShare = new SandboxedShare({
-      share: Hull.share, 
-      ship: @ship, 
+      share: Hull.share,
+      ship: @ship,
       domRoot: iframe
     })
 
     sandboxedFindUrl = ()->
       findUrl(iframe)
 
-    w.location.hash='/'
+    w.location.hash = '/'
     w.Hull = assign({}, window.Hull, {
       setShipSize: setShipSize
       share   : sandboxedShare.share
@@ -113,7 +113,7 @@ class Deployment
             @_imports.push = new Import {href: @ship.index, sandbox:iframe}, (imprt)=>
               body = doc.getElementsByTagName('body')[0]
               ship = document.createElement('div')
-              ship.id='ship'
+              ship.id = 'ship'
               body.appendChild(ship)
               el = @embedImport(ship, imprt);
           else
@@ -139,16 +139,16 @@ class Deployment
     frame.scrolling              = 'no'
     frame.border                 = 0
     frame.frameBorder            = 0
-    frame.dataset.hullDeployment = @id
-    frame.dataset.hullShip       = @ship.id
+    frame.setAttribute('data-hull-deployment', @id)
+    frame.setAttribute('data-hull-ship', @ship.id)
     @insert target, frame
     frame
 
-  embedImport : (target, link)->
+  embedImport : (el, link)->
     doc = link.import
     body = doc.body.cloneNode true
-    target.dataset.hullDeployment = @id
-    target.dataset.hullShip = @ship.id
+    el.setAttribute('data-hull-deployment', @id)
+    el.setAttribute('data-hull-ship', @ship.id)
     hull_in_ship = doc.getElementById('hull-js-sdk')
     msg = """
       It seems the ship "#{@ship.name}" is trying to load #{@ship.index} that contains a copy of Hull.js.
@@ -160,16 +160,16 @@ class Deployment
     if body.hasChildNodes()
       while child = body.firstChild
         # http://www.html5rocks.com/en/tutorials/webcomponents/imports/
-        child.scoped=true if child.nodeName == "STYLE"
+        child.scoped = true if child.nodeName == "STYLE"
         # https://github.com/thingsinjars/jQuery-Scoped-CSS-plugin
         # https://github.com/PM5544/scoped-polyfill
         # https://www.npmjs.com/package/css-transform#readme
         # https://github.com/MaxGfeller/apply-css
         # https://github.com/reworkcss/css
         # https://cssnext.github.io/cssnext-playground/
-        target.appendChild child.cloneNode(true) if child.nodeName != 'SCRIPT'
+        el.appendChild child.cloneNode(true) if child.nodeName != 'SCRIPT'
         body.removeChild child
-    doc.onEmbed(target, @) if doc?.onEmbed
+    doc.onEmbed(el, @) if doc?.onEmbed
 
   remove: ()=>
     @targets = false
