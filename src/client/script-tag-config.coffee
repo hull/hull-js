@@ -65,7 +65,7 @@ getParamValue = (el, param, key)->
   transform = param.transform || (o)-> o
   value = _.reduce(keys, (ret, k)->
     if ret == null
-      value = transform((el.getAttribute(dasherize(k)) || el.getAttribute(k) || el.dataset[k]), key)
+      value = transform((el.getAttribute(dasherize(k)) || el.getAttribute(k)), key)
       valid = value? && (!param.validation  || param.validation(value, k))
       ret = value if valid
     ret
