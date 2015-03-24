@@ -29,7 +29,7 @@ class FacebookShare extends GenericShare
     @api.message({provider:@provider, path:@opts.path},@params)
 
   sharePopup: ()=>
-    u = @config.orgUrl + '/api/v1/services/facebook/share'
+    u = @config.orgUrl + '/api/v1/services/facebook/social_actions'
     @opts.params.redirect_uri ||= u
     @opts.params.app_id ||= Hull?.config()?.services?.auth?.facebook?.appId
     [@opts.width, @opts.height] = if @isPopup then [500, 400] else [1030, 550]
