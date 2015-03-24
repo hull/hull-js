@@ -6,33 +6,32 @@
     <link href="//neuestrap.s3.amazonaws.com/releases/neue/b18eaf457f93592526b33ca0f966668a91628036/stylesheets/neue.css" media="screen" rel="stylesheet" type="text/css" />
 
     <title>Hull JS Library</title>
-    <script src="hull.js"></script>
-    <script src="app.js"></script>
+    <script
+      src="hull.js"
+      id="hull-js-sdk"
+      app-id="551154c05cc017b6c1000002"
+      org-url="http://super.hullapp.dev"
+      js-url="http://js.hull.dev/hull.js"></script>
   </head>
   <body>
     <div className="container-fluid mt-1">
       <div className="row">
-        <div className="col-sm-12">
-          <div id="buttons"></div>
-          <div>
-            <a href="http://test.com" className="test">Test Parent</a>
-            <div>
-              <p>Test</p>
-            </div>
-            <div>
-              <p data-hull-link='http://dataset.com'>Dataset</p>
-              <p id='dataset'>Dataset Sibling</p>
-            </div>
-          </div>
-          <pre id="log" className="well"></pre>
-        </div>
+          <a href="#" id="share">Share</a>
       </div>
     </div>
     <script>
-      var onHullShare = function(e){
-        Hull.share({provider:'facebook'},e)
-      }
-      document.getElementById('dataset').addEventListener('click', onHullShare);
+      document.getElementById('share').addEventListener('click', function(e){
+        Hull.share({
+          provider:'facebook',
+          url: 'http://google.com',
+          params: {
+            display: 'popup',
+            url: 'http://google.com'
+          }
+        }, e).then(function() {
+           console.log('VOILA');
+        });
+      });
     </script>
 
   </body>

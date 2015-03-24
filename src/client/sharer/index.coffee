@@ -9,7 +9,6 @@ TwitterShare  = require './twitter'
 GoogleShare  = require './google'
 LinkedinShare  = require './linkedin'
 
-
 # Organization coming from
 # http://www.degordian.com/blog/5-cool-examples-of-utm-tracking/
 #
@@ -56,8 +55,7 @@ utm_tags = {
 }
 
 class Sharer
-
-  constructor : (api, auth, currentUser, data)->
+  constructor : (api, auth, currentUser, data, config)->
     @api         = api
     @auth        = auth
     @currentUser = currentUser
@@ -66,6 +64,7 @@ class Sharer
       org: data.org || {}
       user: currentUser || {}
     }
+    @config = config
 
   # Injects into querystring some more variables
   addToQueryString : (url, params)->
@@ -89,8 +88,6 @@ class Sharer
       arr.push(tuple) if tuple? and tuple[1]!=undefined
       arr
     , []
-
-
 
   share: (opts, event={})=>
     if !_.isObject(opts)
@@ -123,11 +120,11 @@ class Sharer
     opts.params.url = @addToQueryString(opts.params.url, utmTags)
 
     sharePromise = switch opts.provider
-      when 'email'    then new EmailShare(@api, @auth, @currentUser, opts)
-      when 'facebook' then new FacebookShare(@api, @auth, @currentUser, opts)
-      when 'twitter'  then new TwitterShare(@api, @auth, @currentUser, opts)
-      when 'google'   then new GoogleShare(@api, @auth, @currentUser, opts)
-      when 'linkedin' then new LinkedinShare(@api, @auth, @currentUser, opts)
+      when 'email'    then new EmailShare(@api, @auth, @currentUser, opts, @config)
+      when 'facebook' then new FacebookShare(@api, @auth, @currentUser, opts, @config)
+      when 'twitter'  then new TwitterShare(@api, @auth, @currentUser, opts, @config)
+      when 'google'   then new GoogleShare(@api, @auth, @currentUser, opts, @config)
+      when 'linkedin' then new LinkedinShare(@api, @auth, @currentUser, opts, @config)
 
     params = opts.params
 

@@ -16,7 +16,7 @@ Sharer       = require './sharer/index'
 utils        = require '../utils/utils'
 
 
-class Client 
+class Client
 
   constructor: (config={}, channel, currentUser)->
 
@@ -27,7 +27,7 @@ class Client
     auth  = new Auth(api)
     tracker = new Tracker(api)
 
-    sharer = new Sharer(api, auth, currentUser, @remoteConfig.data)
+    sharer = new Sharer(api, auth, currentUser, @remoteConfig.data, @config)
     flag  = new Flag(api)
     traits= new Traits(api)
 

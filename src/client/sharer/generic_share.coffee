@@ -1,5 +1,5 @@
-assign   = require 'object-assign'
-_        = require '../../utils/lodash'
+assign = require 'object-assign'
+_ = require '../../utils/lodash'
 promises = require '../../utils/promises'
 
 to_qs = (params)->
@@ -8,12 +8,13 @@ to_qs = (params)->
   .join('&')
 
 class GenericShare
-  constructor: (api, auth, currentUser, provider, opts)->
+  constructor: (api, auth, currentUser, provider, opts, config)->
     @api = api
     @opts = opts
     @auth = auth
     @provider = provider
     @currentUser = currentUser
+    @config = config
 
   _ensureLogin: =>
     # We can't have strategy==redirect when wanting a promise...
@@ -44,3 +45,4 @@ class GenericShare
     return dfd.promise
 
 module.exports = GenericShare
+
