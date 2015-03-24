@@ -15,7 +15,8 @@ class TwitterShare extends GenericShare
     return @sharePopup()
 
   sharePopup : ()->
-    # opts.method ||= 'statuses/update'
+    @opts.params.text ||= document.title
+
     [@opts.width, @opts.height] = [550, 420]
     @_popup("https://twitter.com/intent/#{@opts.method}", @opts, @params)
 
