@@ -4,10 +4,11 @@ track    = require '../track/index'
 findUrl  = require '../../utils/find-url'
 
 FacebookShare = require './facebook'
-EmailShare    = require './email'
-TwitterShare  = require './twitter'
-GoogleShare  = require './google'
-LinkedinShare  = require './linkedin'
+EmailShare = require './email'
+TwitterShare = require './twitter'
+GoogleShare = require './google'
+LinkedinShare = require './linkedin'
+WhatsappShare = require './whatsapp'
 
 # Organization coming from
 # http://www.degordian.com/blog/5-cool-examples-of-utm-tracking/
@@ -125,6 +126,7 @@ class Sharer
       when 'twitter'  then new TwitterShare(@api, @auth, @currentUser, opts, @config)
       when 'google'   then new GoogleShare(@api, @auth, @currentUser, opts, @config)
       when 'linkedin' then new LinkedinShare(@api, @auth, @currentUser, opts, @config)
+      when 'whatsapp' then new WhatsappShare(@api, @auth, @currentUser, opts, @config)
 
     params = opts.params
 
