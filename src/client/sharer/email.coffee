@@ -8,6 +8,7 @@ class EmailShare extends GenericShare
     @opts   = opts
     @params = opts.params || {}
 
+    @params.subject ||= document.title
     @params.body ||= @params.url
 
     return @sharePopup()
@@ -16,3 +17,4 @@ class EmailShare extends GenericShare
     @_redirect("mailto:", @opts, @params)
 
 module.exports = EmailShare
+
