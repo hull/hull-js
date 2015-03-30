@@ -41,7 +41,7 @@ define ['lib/utils/promises', 'underscore'], (promises, _) ->
       trackHandler({ path: "facebook.#{req.path}.open", params: _.extend({}, req.params, trackParams) })
       _.delay ->
         FB.ui prms, (response)->
-          
+
           path = "facebook.#{req.path}."
           if !response || response.error_code
             path += "error"
@@ -54,7 +54,7 @@ define ['lib/utils/promises', 'underscore'], (promises, _) ->
       , 100
     else
       FB.api path, req.method, req.params, resp(req, callback, (msg, res)-> res.time = new Date(); callback(res))
-  
+
 
 
   initialize: (app)->
@@ -86,9 +86,9 @@ define ['lib/utils/promises', 'underscore'], (promises, _) ->
       opts = { path: 'services/facebook/apprequests', method: 'post', params: res }
       noop = ->
       app.core.routeHandlers.hull(opts, noop, noop)
-    
+
     uiHandlers['ui.share'] = (req, res)->
-      opts = { path: 'services/facebook/share', method: 'post', params: res }
+      opts = { path: 'services/facebook/social_actions', method: 'post', params: res }
       noop = ->
       app.core.routeHandlers.hull(opts, noop, noop)
 
