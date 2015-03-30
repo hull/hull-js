@@ -1,3 +1,11 @@
+# 0.8.48
+
+* FB share dialog use API endopoint for redirect_uri
+
+# 0.8.47
+
+* Auto add utm_ tags to shared links
+
 # 0.8.46
 
 * Properly update bower.json and package.json, Do not botch release versions
