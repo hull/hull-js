@@ -1,5 +1,77 @@
 define ['underscore', '../utils/promises'], (_, promises)->
 
+  CURRENT_APP = {}
+  CURRENT_ORG = {}
+
+
+  UTM_TAGS = {
+    # CAMPAIGN MEDIUM (UTM_MEDIUM)
+    # Identifies the way your ad appears on the web page (banner, PR) but I suggest you to use the Medium as you would use it within Google Analytics: Social, cpc, email, etc. This tag is also mandatory.
+    utm_medium   : (opts)->
+      [ 'utm_medium', 'social' ]
+
+    # CAMPAIGN SOURCE
+    # This tag is mandatory, it identifies where exactly did your ad appear. That can be a specific portal name, social network name or similar.
+    # TODO: Should we use "facebook" or "platform.name"?
+    # Former is more accurate from GA's point of view. Latter allows to understand where Share comes from.
+    utm_source   : (opts)->
+      [ 'utm_source', opts?.provider?.toLowerCase() ]
+
+    # CAMPAIGN NAME (UTM_CAMPAIGN)
+    #  A group of your ads through various mediums (banners, newsletters, articles) that cover the same topic like “Autumn collection 2014” or “Early booking 2015”. This tag is also mandatory.
+    # When coming from a ship, this will be the ship name.
+    # Since it's mandatory, we handle fallback with the platform name.
+    utm_campaign : (opts)->
+      [ 'utm_campaign', CURRENT_APP?.name ]
+
+
+    #  CAMPAIGN TERM (UTM_TERM)
+    # This should be the keyword you use for identifying your ad. It will also appear as “keyword” within Google Analytics report.
+    # Further categorize the add with the platform name as a Term, in case it's obscured by the Ship name in utm_campaign
+    utm_term: ->
+      [ 'utm_term', CURRENT_APP?.name ]
+
+    # CAMPAIGN CONTENT (UTM_CONTENT)
+    # This tag is usually used for A/B testing, but it could be used for ad type, market, website language version or any other similar info that will help you distinguish one ad version from another.
+    utm_content  : (opts)->
+      currentUser = Hull.currentUser()
+      if currentUser && currentUser.id
+        ['utm_content', currentUser.id]
+      else
+        []
+  }
+
+  # Injects into querystring some more variables
+  buildShareUrl = (url, opts)->
+    hashtagParts = url.split('#')
+    urlParts = hashtagParts[0].split('?')
+    host = urlParts[0]
+    query = urlParts.slice(1)
+    _utm_tags = buildUtmTags(opts)
+    qs = _.map _utm_tags, (param)->
+      tuple = _.map param, (v)->encodeURIComponent(v)
+      tuple.join('=')
+    query = query.concat(qs)
+    hashtagParts[0] = "#{host}?#{query.join('&')}"
+    hashtagParts.join('#')
+
+  buildUtmTags = (opts)->
+    tags = opts.tags || {}
+    # Build UTM Tags from an existing link
+    # Allow User to override some tags.
+    _.reduce UTM_TAGS, (arr, method, tagName)=>
+      t = tags[tagName]
+      if t?
+        tuple = [tagName, t]
+      else
+        tuple = method(opts)
+      arr.push(tuple) if tuple? and tuple[1]!=undefined
+      arr
+    , []
+
+
+
+
   isMobile = ->
     # http://stackoverflow.com/questions/11381673/javascript-solution-to-detect-mobile-browser
     n = navigator.userAgent||navigator.vendor||window.opera
@@ -20,12 +92,15 @@ define ['underscore', '../utils/promises'], (_, promises)->
 
     params = opts.params
 
-    # Setup default values for the shares.
-    params.href  ||= window.location.href if opts.method=='share'
-    params.link  ||= window.location.href if opts.method=='feed'
 
-    sharePromise = () ->
-      Hull.api({ provider: opts.provider, path: "ui.#{opts.method}" },params)
+    # Setup default values for the shares.
+    if opts.method == 'share'
+      params.href  = buildShareUrl((params.href || window.location.href), opts)
+    if opts.method == 'feed'
+      params.link  = buildShareUrl((params.link || window.location.href), opts)
+
+    sharePromise = ->
+      Hull.api({ provider: opts.provider, path: "ui.#{opts.method}" }, params)
 
     return facebookPopup(opts) if isMobile() or params.display=='popup'
 
@@ -50,7 +125,7 @@ define ['underscore', '../utils/promises'], (_, promises)->
   facebookPopup = (opts)->
     params = opts.params
     # params.redirect_uri = Hull.config('orgUrl')+"/api/v1/services/facebook/callback?data="+btoa(params)
-    params.redirect_uri = window.location.href
+    params.redirect_uri = buildShareUrl(window.location.href, opts)
     params.app_id = Hull.config('services').auth.facebook.appId
     [opts.width, opts.height] = if params.display == 'popup' then [500, 400] else [1030, 550]
     genericPopup("https://www.facebook.com/dialog/#{opts.method}", opts)
@@ -62,21 +137,27 @@ define ['underscore', '../utils/promises'], (_, promises)->
   twitterShare  = (opts)->
     # opts.method ||= 'statuses/update'
     params = opts.params
-    params.url ||= window.location.href
+    params.url = buildShareUrl((params.url || window.location.href), opts)
     twitterPopup(opts)
 
-  (opts)->
-    # Todo Throw error
-    unless _.isObject(opts) and _.isObject(opts.params) and opts.provider? 
-      dfd = promises.deferred()
-      dfd.reject()
-      return dfd 
 
-    sharePromise = switch opts.provider
-      when 'facebook' then facebookShare(opts)
-      when 'twitter'  then twitterShare(opts)
+  setup: (api)->
 
-    sharePromise.then (response)->
-      Hull.track "hull.#{opts.provider}.share", {params:opts.params,response:response}
-      response
+    CURRENT_ORG = api.remoteConfig.data.org
+    CURRENT_APP = api.remoteConfig.data.app
+
+    (opts)->
+      # Todo Throw error
+      unless _.isObject(opts) and _.isObject(opts.params) and opts.provider?
+        dfd = promises.deferred()
+        dfd.reject()
+        return dfd.promise
+
+      sharePromise = switch opts.provider
+        when 'facebook' then facebookShare(opts)
+        when 'twitter'  then twitterShare(opts)
+
+      sharePromise.then (response)->
+        Hull.track "hull.#{opts.provider}.share", {params:opts.params,response:response}
+        response
 

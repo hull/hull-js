@@ -9,7 +9,7 @@ define [
   'lib/api/current-user',
   'lib/traits/base',
   'lib/share/base'
-  ], (_, promises, emitter, api, reporting, entity, configParser, currentUser, Traits, share)->
+  ], (_, promises, emitter, api, reporting, entity, configParser, currentUser, Traits, Share)->
 
     create = (config)->
       _emitter = emitter()
@@ -67,7 +67,7 @@ define [
           util:
             entity: entity
           trait: Traits.setup(api.api).build
-          share: share
+          share: Share.setup(api)
         created.api.create = create
         raw: api
         api: created
