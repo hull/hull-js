@@ -99,14 +99,16 @@ define ['underscore', '../utils/promises'], (_, promises)->
     if opts.method == 'feed'
       params.link  = buildShareUrl((params.link || window.location.href), opts)
 
+
     sharePromise = ->
       Hull.api({ provider: opts.provider, path: "ui.#{opts.method}" }, params)
 
-    return facebookPopup(opts) if isMobile() or params.display=='popup'
-
-    return sharePromise() if opts.anonymous or hasIdentity('facebook')
-
-    return Hull.login({provider:'facebook',strategy:'popup'}).then(sharePromise)
+    if params.display == 'popup' or isMobile()
+      return facebookPopup(opts)
+    else if opts.anonymous or hasIdentity('facebook')
+      return sharePromise()
+    else
+      return Hull.login({provider:'facebook',strategy:'popup'}).then(sharePromise)
 
   genericPopup = (location, opts)->
     querystring = to_qs(opts.params)
@@ -125,7 +127,7 @@ define ['underscore', '../utils/promises'], (_, promises)->
   facebookPopup = (opts)->
     params = opts.params
     # params.redirect_uri = Hull.config('orgUrl')+"/api/v1/services/facebook/callback?data="+btoa(params)
-    params.redirect_uri = buildShareUrl(window.location.href, opts)
+    params.redirect_uri = params.href || params.link
     params.app_id = Hull.config('services').auth.facebook.appId
     [opts.width, opts.height] = if params.display == 'popup' then [500, 400] else [1030, 550]
     genericPopup("https://www.facebook.com/dialog/#{opts.method}", opts)
@@ -147,6 +149,7 @@ define ['underscore', '../utils/promises'], (_, promises)->
     CURRENT_APP = api.remoteConfig.data.app
 
     (opts)->
+
       # Todo Throw error
       unless _.isObject(opts) and _.isObject(opts.params) and opts.provider?
         dfd = promises.deferred()
@@ -160,4 +163,6 @@ define ['underscore', '../utils/promises'], (_, promises)->
       sharePromise.then (response)->
         Hull.track "hull.#{opts.provider}.share", {params:opts.params,response:response}
         response
+
+      sharePromise
 
