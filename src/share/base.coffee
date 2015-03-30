@@ -126,8 +126,7 @@ define ['underscore', '../utils/promises'], (_, promises)->
 
   facebookPopup = (opts)->
     params = opts.params
-    # params.redirect_uri = Hull.config('orgUrl')+"/api/v1/services/facebook/callback?data="+btoa(params)
-    params.redirect_uri = params.href || params.link
+    params.redirect_uri = Hull.config('orgUrl') + "/api/v1/services/facebook/social_actions"
     params.app_id = Hull.config('services').auth.facebook.appId
     [opts.width, opts.height] = if params.display == 'popup' then [500, 400] else [1030, 550]
     genericPopup("https://www.facebook.com/dialog/#{opts.method}", opts)
