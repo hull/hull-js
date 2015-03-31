@@ -113,6 +113,9 @@ New methods for Ship Deployment
 ###### `Hull.setShipSize({width,height})`
 From inside a sandboxed ship to allow setting container size 
 
+###### `Hull.setShipStyle({style_hash})`
+From inside a sandboxed ship to allow setting ship style (Useful to manage modals)
+
 ###### `Hull.utils`
 Expose our internal utils, containing several libraries. We could change those at any time but we thought you might be happy to avoid embedding them too if it was a fit.
 
