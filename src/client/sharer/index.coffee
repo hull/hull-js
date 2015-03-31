@@ -19,34 +19,34 @@ WhatsappShare = require './whatsapp'
 utm_tags = {
   # CAMPAIGN MEDIUM (UTM_MEDIUM)
   # Identifies the way your ad appears on the web page (banner, PR) but I suggest you to use the Medium as you would use it within Google Analytics: Social, cpc, email, etc. This tag is also mandatory.
-  utm_medium   : (opts, config, currentUser)->
+  utm_medium   : (opts, config)->
     ['utm_medium','social']
 
   # CAMPAIGN SOURCE
   # This tag is mandatory, it identifies where exactly did your ad appear. That can be a specific portal name, social network name or similar.
   # TODO: Should we use "facebook" or "platform.name"?
   # Former is more accurate from GA's point of view. Latter allows to understand where Share comes from.
-  utm_source   : (opts, config, currentUser)->
+  utm_source   : (opts, config)->
     ['utm_source',opts?.provider?.toLowerCase()]
 
   # CAMPAIGN NAME (UTM_CAMPAIGN)
   #  A group of your ads through various mediums (banners, newsletters, articles) that cover the same topic like “Autumn collection 2014” or “Early booking 2015”. This tag is also mandatory.
   # When coming from a ship, this will be the ship name.
   # Since it's mandatory, we handle fallback with the platform name.
-  utm_campaign : (opts, config, currentUser)->
+  utm_campaign : (opts, config)->
     ['utm_campaign',config?.platform?.name]
 
 
   #  CAMPAIGN TERM (UTM_TERM)
   # This should be the keyword you use for identifying your ad. It will also appear as “keyword” within Google Analytics report.
   # Further categorize the add with the platform name as a Term, in case it's obscured by the Ship name in utm_campaign
-  utm_term     : (opts, config, currentUser)->
+  utm_term     : (opts, config)->
     ['utm_term',config?.platform?.name]
 
   # CAMPAIGN CONTENT (UTM_CONTENT)
   # This tag is usually used for A/B testing, but it could be used for ad type, market, website language version or any other similar info that will help you distinguish one ad version from another.
-  utm_content  : (opts, config, currentUser)->
-    id = currentUser.get('id')
+  utm_content  : (opts, config)->
+    id = config.user.get('id')
 
     if id
       ['utm_content', id]
@@ -85,7 +85,7 @@ class Sharer
     # Build UTM Tags from an existing link
     # Allow User to override some tags.
     _.reduce utm_tags, (arr, method, tagName)=>
-      tuple = tags[tagName] || method(opts, @tagConfig, @currentUser)
+      tuple = tags[tagName] || method(opts, @tagConfig)
       arr.push(tuple) if tuple? and tuple[1]!=undefined
       arr
     , []
