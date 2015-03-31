@@ -6,6 +6,11 @@ SandboxedShare = require '../sharer/sandboxed-sharer';
 
 registry = {}
 
+setStyle = (el,style) ->
+  if _.isObject(style)
+    _.map style, (value,key)->
+      setDimension(el,key,value)
+
 setDimension = (el, dim, val)->
   if val?
     val = "#{val}px" if /[0-9]+$/.test(val.toString())
@@ -75,6 +80,7 @@ class Deployment
   # - getTargetUrl
   prepareIframeSandbox : (iframe)->
     w = iframe.contentWindow
+    setShipStyle = (style={})-> setStyle(iframe,style)
     setShipSize = (size={})=>
       setDimension(iframe, 'width', size.width) if size.width?
       setDimension(iframe, 'height', size.height) if size.height?
@@ -95,6 +101,7 @@ class Deployment
     w.location.hash = '/'
     w.Hull = assign({}, window.Hull, {
       setShipSize: setShipSize
+      setShipStyle: setShipStyle
       share   : sandboxedShare.share
       findUrl : sandboxedFindUrl
     });

@@ -122,9 +122,11 @@ hull =
   ready       : hullReady
   version     : VERSION
   track       : Pool.create('track')
-
+  setShipStyle : ->
+    console.log("Hull.setShipStyle is only useful when Ships are sandboxed. This method does nothing here")
+    false
   setShipSize : ->
-    console.log("SetShipSize is only useful when Ships are sandboxed. This method does nothing here")
+    console.log("Hull.setShipSize is only useful when Ships are sandboxed. This method does nothing here")
     false
 
 # Assign EventBus methods to Hull
