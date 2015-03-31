@@ -46,7 +46,7 @@ onInitSuccess = (userSuccessCallback, _hull, data)->
   console.info("Hull.js version \"#{hull.version}\" started")
 
   # Do Hull.embed(platform.deployments) automatically
-  embeds.embed(app.deployments) if hull.config().embed!='false' and _.isArray(app?.deployments) and app.deployments.length>0
+  embeds.embed(app.deployments) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
 
   # Everything went well, call the init callback
   userSuccessCallback(hull, me, app, org)
