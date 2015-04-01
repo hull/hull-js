@@ -199,7 +199,14 @@ class Auth
 
   login : () =>
 
-    return console.info "Login in progress. Use `Hull.on('hull.user.login', callback)` to call `callback` when done." if @isAuthenticating()
+    if @isAuthenticating()
+      # Return promise even if login is in progress.
+      msg = "Login in progress. Use `Hull.on('hull.user.login', callback)` to call `callback` when done."
+      console.info msg
+      dfd = promises.deferred()
+      dfd.reject {error: {reason:'in_progress', message: msg}}
+      return dfd.promise;
+
     # Handle Legacy Format,
     # Ensure New Format: Hash signature
     # Preprocess Options
