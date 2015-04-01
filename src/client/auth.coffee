@@ -54,7 +54,7 @@ parseParams = (argsArray)->
   callback = callback || ->
   errback  = errback  || ->
 
-  if !(opts?.provider? || opts.login?)
+  if !(opts?.provider? || opts.login? || opts.access_token?)
     # UserName+Password
     # Hull.login({login:'abcd@ef.com', password:'passwd', strategy:'redirect|popup', redirect:'...'})
     throw new Error('Seems like something is wrong in your Hull.login() call, We need a login and password fields to login. Read up here: http://www.hull.io/docs/references/hull_js/#user-signup-and-login') unless opts.login? and opts.password?
@@ -212,19 +212,28 @@ class Auth
     # Preprocess Options
     # Opts format is now : {login:"", password:"", params:{}} or {provider:"", params:{}}
     {options, callback, errback} = parseParams(Array.prototype.slice.call(arguments))
-
+    if options.
     if options.provider?
       # Social Login
-      # Hull.login({provider:'facebook', strategy:'redirect|popup', redirect:'...'})
-      promise = @loginWithProvider(options)
+      if options.access_token?
+        # Hull.login({provider:'facebook', access_token:'xxxx'})
+        provider = assign({}, options)
+        delete provider.provider
+        op = {}
+        op[options.provider] = provider
+        promise = @api.message('users', 'post', op)
+      else 
+        # Hull.login({provider:'facebook', strategy:'redirect|popup', redirect:'...'})
+        promise = @loginWithProvider(options)
 
     else
       # Email Login
       # Hull.login({login:'user@host.com', password:'xxxx'})
+      # Hull.login({access_token:'xxxxx'})
 
       # Early return since we're leaving the page.
-      return postForm(config.orgUrl+'/api/v1/users/login', 'post', options) if options.strategy=='redirect'
-      promise = @api.message('users/login', 'post', _.pick(options, 'login', 'password'))
+      return postForm(@config.orgUrl+'/api/v1/users/login', 'post', options) if options.strategy=='redirect'
+      promise = @api.message('users/login', 'post', _.pick(options, 'login', 'password', 'access_token'))
 
     @completeLoginPromiseChain(promise,callback,errback)
 
@@ -233,7 +242,7 @@ class Auth
     .then callback, errback
     # @completeLoginPromiseChain(promise,callback,errback)
 
-  signup : (user,callback, errback) =>
+  signup : (user, callback, errback) =>t
     promise = @api.message('users', 'POST', user)
     @completeLoginPromiseChain(promise, callback, errback)
 

@@ -97,10 +97,12 @@ These methods have the following signatures :
 
 ```js
 Hull.login({provider:'xxxx',params:{...}}, callback, errback)
+Hull.login({provider:'facebook',access_token:'xxx'}, callback, errback)
 Hull.login({login:'xxx', password:'xxx',params:{...}},callback, errback)
 Hull.logout(callback, errback)
 Hull.linkIdentity({provider:'xxxx',params:{...}}, callback, errback)
 Hull.linkIdentity({login:'xxx', password:'xxx',params:{...}}, callback, errback)
+Hull.signup({facebook:{access_token:'xxxx'}}, callback, errback)
 Hull.unlinkIdentity({provider:'xxxx',params:{...}}, callback, errback)
 ```
 
