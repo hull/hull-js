@@ -18,7 +18,6 @@ RemoteConstants       = require '../flux/constants/RemoteConstants'
 
 promises              = require '../utils/promises'
 
-
 handleSpecialRoutes = (request)->
   switch request.path
     when '/api/v1/logout'
@@ -36,10 +35,8 @@ maybeUpdateUser = (response)->
   # We do this because Me can have aliases such as the user's ID.
   RemoteUserActions.updateIfMe(response.body) if response.body?.id?
 
-  
 class Services
   constructor : (remoteConfig, gateway)->
-
     RemoteUserActions.update(remoteConfig.data.me) if (remoteConfig.data.me)
     gateway.after(maybeUpdateUser)
     gateway.before(handleSpecialRoutes)
@@ -92,7 +89,6 @@ class Services
       throw new Error(err)
       undefined
 
-
     promises.allSettled([me, settings]).then onSuccess, onError
 
     undefined
@@ -105,12 +101,11 @@ class Services
     throw new Error("Path not recognized #{JSON.stringify(request, null, 2)}") unless request.path
     service = @services[request.provider]
     if _.isFunction service.request
-      service.request(request, xdmCallback, xdmErrback) 
+      service.request(request, xdmCallback, xdmErrback)
       return undefined
     else
       xdmErrback request
 
     undefined
-
 
 module.exports = Services

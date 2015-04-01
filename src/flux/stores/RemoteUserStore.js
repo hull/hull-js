@@ -9,9 +9,10 @@ var state = {
   user:null,
 };
 
-var isId = function(value){return
-  value===state.user.id
+var isId = function(value){
+  return value === state.user.id;
 }
+
 var isUpToDate = function(user){
   if(!user && !state.user){return true}
   return user && state.user && user.updated_at===state.user.updated_at
@@ -44,7 +45,7 @@ var RemoteUserStore = assign({}, EventEmitter.prototype, {
 
       case RemoteConstants.UPDATE_USER_IF_ME:
         // Updates a User if it's a Me request.
-        if(isId(action.data) && !isUpToDate(action.data)){
+        if(isId(action.data.id) && !isUpToDate(action.data)){
           state.user = action.data
           RemoteUserStore.emitChange(action.actionType);
         }

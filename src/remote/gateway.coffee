@@ -73,19 +73,17 @@ class Gateway
 
     method = (method||'get').toUpperCase()
 
-    config  = RemoteConfigStore.getState().clientConfig
-    headers = assign({},RemoteHeaderStore.getState(), headers)
+    config= RemoteConfigStore.getState().clientConfig
+    headers = assign({}, RemoteHeaderStore.getState(), headers)
 
     #TODO Check SuperAgent under IE8 and below
-
     s = superagent(method, path).set(headers)
 
     if params? and method=='GET' then s.query(QSEncoder.encode(params)) else s.send(params)
 
     d = new promises.deferred()
 
-
-    console.log(">", method, path, params) if config.debug?.enable?
+    console.log(">", method, path, params, headers) if config.debug?.enable?
 
     s.end (response)=>
       console.log("<", method, path, response) if config.debug?.enable?
@@ -133,7 +131,6 @@ class Gateway
 
   # Single request posting
   handleOne: (request, deferred) ->
-
     success = (response)->
       resolveResponse(request, response, deferred)
 

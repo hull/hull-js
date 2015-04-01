@@ -1,10 +1,8 @@
-promises       = require '../utils/promises'
-cookie         = require '../utils/cookies'
-EventBus       = require '../utils/eventbus'
-
-parseOpts    = require './parse-opts'
-channel        = require './channel'
-
+promises = require '../utils/promises'
+cookie = require '../utils/cookies'
+EventBus = require '../utils/eventbus'
+parseOpts = require './parse-opts'
+channel = require './channel'
 
 class Api
   constructor : (config, channel, currentUser)->
@@ -27,7 +25,7 @@ class Api
   # @param {Function} optional an error callback
   # @return {Promise}
   ###
-  message       : ()=>
+  message: ()=>
     return console.error("Hull Api is not initialized yet. You should run your app from the callback of Hull.ready()") unless @channel.rpc
     {opts, callback, errback} = parseOpts(Array.prototype.slice.call(arguments))
     deferred = promises.deferred()

@@ -86,8 +86,12 @@ var RemoteHeaderStore = assign({}, EventEmitter.prototype, {
         break;
 
       case RemoteConstants.SET_USER_ID_HEADER:
-        setHeader(USER_ID_HEADER,action.value)
-        if(!RemoteUserStore.isId(action.value)){destroyHeader(ACCESS_TOKEN_HEADER)}
+        setHeader(USER_ID_HEADER, action.value)
+
+        if (!RemoteUserStore.isId(action.value)) {
+          destroyHeader(ACCESS_TOKEN_HEADER);
+        }
+
         RemoteHeaderStore.emitChange(action.actionType);
         break;
     }
