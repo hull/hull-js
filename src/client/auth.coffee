@@ -222,7 +222,7 @@ class Auth
         op = {}
         op[options.provider] = provider
         promise = @api.message('users', 'post', op)
-      else 
+      else
         # Hull.login({provider:'facebook', strategy:'redirect|popup', redirect:'...'})
         promise = @loginWithProvider(options)
 
@@ -242,7 +242,7 @@ class Auth
     .then callback, errback
     # @completeLoginPromiseChain(promise,callback,errback)
 
-  signup : (user, callback, errback) =>t
+  signup : (user, callback, errback) =>
     promise = @api.message('users', 'POST', user)
     @completeLoginPromiseChain(promise, callback, errback)
 

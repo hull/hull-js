@@ -17,7 +17,6 @@ utils        = require '../utils/utils'
 
 
 class Client
-
   constructor: (config={}, channel, currentUser)->
 
     @config = clone(config)
