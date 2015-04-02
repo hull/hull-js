@@ -212,7 +212,6 @@ class Auth
     # Preprocess Options
     # Opts format is now : {login:"", password:"", params:{}} or {provider:"", params:{}}
     {options, callback, errback} = parseParams(Array.prototype.slice.call(arguments))
-    if options.
     if options.provider?
       # Social Login
       if options.access_token?
