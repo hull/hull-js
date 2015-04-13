@@ -100,7 +100,7 @@ class FacebookService extends GenericService
 
   loadFbSdk: (config)->
     dfd = promises.deferred()
-    config = assign({},config,{status:true})
+    config = _.omit(assign({},config,{status:true}), 'credentials')
     if config.appId
       fb = document.createElement 'script'
       fb.type = 'text/javascript'
@@ -113,7 +113,7 @@ class FacebookService extends GenericService
         FB.getLoginStatus @updateFBUserStatus
         @subscribeToFBEvents()
         dfd.resolve({})
-    else 
+    else
       dfd.reject({})
     dfd.promise
 
