@@ -8,6 +8,7 @@ export default {
   defaults: require("lodash/object/defaults"),
   delay: require("lodash/function/delay"),
   each: require("lodash/collection/each"),
+  every: require("lodash/collection/every"),
   indexOf: require("lodash/array/indexOf"),
   isEmpty: require("lodash/lang/isEmpty"),
   isArray: require("lodash/lang/isArray"),

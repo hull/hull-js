@@ -4,7 +4,7 @@
 
 assign      = require 'object-assign'
 _           = require './utils/lodash'
-
+polyfill    = require './utils/load-polyfills'
 Client      = require './client'
 CurrentUser = require './client/current-user'
 Channel     = require './client/channel'
@@ -78,10 +78,12 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
   client  = {}
   channel = {}
 
-
   currentUser =  new CurrentUser()
 
+  # Ensure we have everything we need before starting Hull
   configCheck(config)
+  .then ()->
+    polyfill(config)
   .then ()=>
     channel = new Channel(config, currentUser)
     channel.promise
@@ -105,6 +107,7 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
 # Hull.ready promise chain
 readyDfd = promises.deferred()
 readyDfd.promise.catch (err)-> throw new Error('Hull.ready callback error', err)
+
 hullReady = (callback, errback)->
   callback = callback || ->
   errback = errback   || ->
@@ -135,12 +138,11 @@ _.map eeMethods, (m)->
   hull[m] = (args...) -> EventBus[m](args...)
 
 
-autostart = ->
-  if !hull._initialized && !window.Hull
-    autoStartConfig = getScriptTagConfig()
-    autoStartConfig && autoStartConfig.autoStart && init(autoStartConfig)
+autoStartConfig = getScriptTagConfig()
 
-autostart()
+if autoStartConfig && autoStartConfig.autoStart
+  if !hull._initialized
+    autoStartConfig && autoStartConfig.autoStart && init(autoStartConfig)
 
 window.Hull = hull
 module.exports = hull

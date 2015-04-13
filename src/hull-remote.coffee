@@ -1,3 +1,4 @@
+polyfill            = require './utils/load-polyfills'
 EventBus            = require './utils/eventbus'
 ConfigNormalizer    = require './utils/config-normalizer'
 Services            = require './remote/services'
@@ -19,69 +20,70 @@ RemoteSettingsActions   = require './flux/actions/RemoteSettingsActions'
 
 RemoteConstants     = require './flux/constants/RemoteConstants'
 
+
 hull = undefined
 
 
 Hull = (remoteConfig)->
   return hull if hull
-
   config = ConfigNormalizer(remoteConfig)
-  # The access token stuff is a Safari hack:
-  # Safari doesn't send response tokens for remote exchange
-  RemoteHeaderActions.setAppIdHeader(config.appId)
-  RemoteHeaderActions.setTokenHeader(config.access_token) if config?.access_token
-  RemoteConfigActions.updateRemoteConfig(config)
+  polyfill(config).then ()->
+    # The access token stuff is a Safari hack:
+    # Safari doesn't send response tokens for remote exchange
+    RemoteHeaderActions.setAppIdHeader(config.appId)
+    RemoteHeaderActions.setTokenHeader(config.access_token) if config?.access_token
+    RemoteConfigActions.updateRemoteConfig(config)
 
-  hull        = {config}
-  gateway     = new Gateway(config)
-  services    = new Services(config, gateway)
-  channel     = new Channel(config, services)
+    hull        = {config}
+    gateway     = new Gateway(config)
+    services    = new Services(config, gateway)
+    channel     = new Channel(config, services)
 
-  request = services.services.hull.request
+    request = services.services.hull.request
 
-  hideOnClick = (e)-> channel.rpc.hide()
+    hideOnClick = (e)-> channel.rpc.hide()
 
-  subscribeToEvents  = (clientConfig)->
+    subscribeToEvents  = (clientConfig)->
 
-    if document.addEventListener
-      document.addEventListener('click', hideOnClick)
-    else if document.attachEvent
-      document.attachEvent('onclick', hideOnClick)
+      if document.addEventListener
+        document.addEventListener('click', hideOnClick)
+      else if document.attachEvent
+        document.attachEvent('onclick', hideOnClick)
 
-    EventBus.on 'remote.iframe.show',  -> channel.rpc.show()
-    EventBus.on 'remote.iframe.hide',  -> channel.rpc.hide()
-    EventBus.on 'remote.track',        (args...)->
-      channel.rpc.track(args...)
-      services.services.track.request(args...)
-    clientConfig
+      EventBus.on 'remote.iframe.show',  -> channel.rpc.show()
+      EventBus.on 'remote.iframe.hide',  -> channel.rpc.hide()
+      EventBus.on 'remote.track',        (args...)->
+        channel.rpc.track(args...)
+        services.services.track.request(args...)
+      clientConfig
 
 
-  RemoteSettingsStore.addChangeListener (change)=>
-    state = RemoteSettingsStore.getState()
-    # Notify client whenever settings change
-    switch change
-      when RemoteConstants.UPDATE_SETTINGS
-        channel.rpc.settingsUpdate(state.settings)
-        break
+    RemoteSettingsStore.addChangeListener (change)=>
+      state = RemoteSettingsStore.getState()
+      # Notify client whenever settings change
+      switch change
+        when RemoteConstants.UPDATE_SETTINGS
+          channel.rpc.settingsUpdate(state.settings)
+          break
 
-  RemoteUserStore.addChangeListener (change)=>
-    state = RemoteUserStore.getState()
-    # Notify client whenever user changes
-    switch change
-      when RemoteConstants.UPDATE_USER, RemoteConstants.CLEAR_USER
-        channel.rpc.userUpdate(state.user)
-        break
+    RemoteUserStore.addChangeListener (change)=>
+      state = RemoteUserStore.getState()
+      # Notify client whenever user changes
+      switch change
+        when RemoteConstants.UPDATE_USER, RemoteConstants.CLEAR_USER
+          channel.rpc.userUpdate(state.user)
+          break
 
-  channel.promise
-  .then(subscribeToEvents)
+    channel.promise
+    .then(subscribeToEvents)
 
-  .then (clientConfig)->
-    RemoteConfigActions.updateClientConfig(clientConfig)
+    .then (clientConfig)->
+      RemoteConfigActions.updateClientConfig(clientConfig)
 
-  .fail (err)->
-    console.error("Could not initialize Hull: #{err.message}")
+    .fail (err)->
+      console.error("Could not initialize Hull: #{err.message}")
 
-  .done()
+    .done()
 
 
 Hull.version = VERSION

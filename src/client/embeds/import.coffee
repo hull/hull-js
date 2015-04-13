@@ -2,10 +2,6 @@ _ = require '../../utils/lodash'
 
 fjs = document.getElementsByTagName("script")[0]
 
-require './shims/event'
-require './shims/xhr-xdr'
-require './shims/webcomponents'
-
 class Import
 
 

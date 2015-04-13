@@ -1,21 +1,10 @@
 _ = require '../../utils/lodash'
 Import = require './import'
+Iframe = require './iframe'
 assign = require 'object-assign'
-findUrl = require '../../utils/find-url'
-SandboxedShare = require '../sharer/sandboxed-sharer';
+setStyle = require '../../utils/set-style'
 
 registry = {}
-
-setStyle = (el,style) ->
-  if _.isObject(style)
-    _.map style, (value,key)->
-      setDimension(el,key,value)
-
-setDimension = (el, dim, val)->
-  if val?
-    val = "#{val}px" if /[0-9]+$/.test(val.toString())
-    el.style[dim] = val
-
 resetDeployments = () ->
   deployment.remove() for own key, deployment of registry
   registry = {}
@@ -47,6 +36,7 @@ class Deployment
     @_elements  = []
     @_callbacks = []
 
+  # Fetches all targets specified in a deployment
   getTargets : (opts={})->
     selector = @settings._selector
     targets = []
@@ -59,12 +49,13 @@ class Deployment
       target = document.querySelector selector
       targets = [target] if target
 
+  # calls the specified callback for each target in the deployment
   forEachTarget: (callback, args...)=>
-    targets = @getTargets()
-    return unless targets?.length
-    callback.apply(@, [target].concat(args)) for target in targets
+    return unless @targets?.length
+    callback.apply(@, [target].concat(args)) for target in @targets
     @flushCallbacks()
 
+  # executes a callback from the callback stack
   flushCallbacks : ()=>
     callbacks = @_callbacks.slice()
     cb = callbacks.shift()
@@ -73,83 +64,41 @@ class Deployment
       cb = callbacks.shift()
     @_callbacks = []
 
-  # Build a sandbox for the current ship.
-  # Will contain :
-  # an enhanced version of Hull, with methods that resolve locally
-  # - setShipSize
-  # - getTargetUrl
-  prepareIframeSandbox : (iframe)->
-    w = iframe.contentWindow
-    setShipStyle = (style={})-> setStyle(iframe,style)
-    setShipSize = (size={})=>
-      setDimension(iframe, 'width', size.width) if size.width?
-      setDimension(iframe, 'height', size.height) if size.height?
-      true
-
-    # Start resolving from the containing iframe up
-
-    # TODO architecture could be better herer
-    sandboxedShare = new SandboxedShare({
-      share: Hull.share,
-      ship: @ship,
-      domRoot: iframe
-    })
-
-    sandboxedFindUrl = ()->
-      findUrl(iframe)
-
-    w.location.hash = '/'
-    w.Hull = assign({}, window.Hull, {
-      setShipSize: setShipSize
-      setShipStyle: setShipStyle
-      share   : sandboxedShare.share
-      findUrl : sandboxedFindUrl
-    });
 
   embed : (opts={}, embedCompleteCallback)->
+    # if we're refreshing, rebuild the target list
     @targets = @getTargets({refresh:opts.refresh}) if opts.refresh
     @_callbacks.push(embedCompleteCallback) if _.isFunction(embedCompleteCallback)
+    targetCallback = ()->
     if @settings._sandbox
-      @forEachTarget (target, args...)=>
-        iframe = @embedIframe(target)
-        @insert(target, iframe)
-        embedIframeImport = ()=>
-          doc = iframe.contentDocument
-          if doc and doc.readyState=='complete'
-            @prepareIframeSandbox(iframe)
-            @_imports.push = new Import {href: @ship.index, sandbox:iframe}, (imprt)=>
-              body = doc.getElementsByTagName('body')[0]
-              ship = document.createElement('div')
-              ship.id = 'ship'
-              body.appendChild(ship)
-              el = @embedImport(ship, imprt);
-          else
-            setTimeout ()->
-              embedIframeImport()
-            ,10
-        embedIframeImport()
+      targetCallback = (target, args...)=>
+        onIframeReady = (iframe)=>
+          iframe.setAttribute('data-hull-deployment', @id)
+          iframe.setAttribute('data-hull-ship', @ship.id)
+
+          # Embed iframe in the page
+
+          # Create the import inside the frame
+          @_imports.push = new Import {href: @ship.index, sandbox:iframe}, (imprt)=>
+            # Iframe imports are done on a #ship element directly inside the body;
+            body = iframe.contentDocument.getElementsByTagName('body')[0]
+            rootEl = document.createElement('div')
+            rootEl.id = 'ship'
+            body.appendChild(rootEl)
+            el = @embedImport(rootEl, imprt);
+        iframe = new Iframe({target, ship}, onIframeReady)
+        @insert(target, iframe.getIframe())
+
     else
-      @forEachTarget (target, args...)=>
+
+      targetCallback = (target, args...)=>
         @_imports.push = new Import {href: @ship.index}, (imprt)=>
           el = document.createElement 'div'
-          @embedImport(el, imprt)
+          @embedShadow(el, imprt)
           @insert(target, el)
 
+    @forEachTarget targetCallback
 
-  embedIframe : (target, src)->
-    frame = document.createElement 'iframe'
-    frame.src                    = src if src?
-    frame.vspace                 = 0
-    frame.hspace                 = 0
-    frame.marginWidth            = 0
-    frame.marginHeight           = 0
-    frame.scrolling              = 'no'
-    frame.border                 = 0
-    frame.frameBorder            = 0
-    frame.setAttribute('data-hull-deployment', @id)
-    frame.setAttribute('data-hull-ship', @ship.id)
-    @insert target, frame
-    frame
 
   embedImport : (el, link)->
     doc = link.import
@@ -178,6 +127,34 @@ class Deployment
         body.removeChild child
     doc.onEmbed(el, @) if doc?.onEmbed
 
+  embedShadow : (el, link)->
+    shadow = el.createShadowRoot();
+    doc = link.import
+    body = doc.body.cloneNode true
+    el.setAttribute('data-hull-deployment', @id)
+    el.setAttribute('data-hull-ship', @ship.id)
+    hull_in_ship = doc.getElementById('hull-js-sdk')
+    msg = """
+      It seems the ship "#{@ship.name}" is trying to load #{@ship.index} that contains a copy of Hull.js.
+      This can't happen. Skipping ship.
+    """
+    if hull_in_ship?
+      err = new Error(msg)
+      return console.error(err.message)
+    if body.hasChildNodes()
+      while child = body.firstChild
+        # http://www.html5rocks.com/en/tutorials/webcomponents/imports/
+        child.scoped = true if child.nodeName == "STYLE"
+        # https://github.com/thingsinjars/jQuery-Scoped-CSS-plugin
+        # https://github.com/PM5544/scoped-polyfill
+        # https://www.npmjs.com/package/css-transform#readme
+        # https://github.com/MaxGfeller/apply-css
+        # https://github.com/reworkcss/css
+        # https://cssnext.github.io/cssnext-playground/
+        shadow.appendChild wrap(child.cloneNode(true)) if child.nodeName && child.nodeName != 'SCRIPT'
+        body.removeChild wrap(child)
+    doc.onEmbed(shadow, @) if doc?.onEmbed
+
   remove: ()=>
     @targets = false
     el = @_elements.shift()
@@ -187,9 +164,9 @@ class Deployment
       el?.parentNode?.removeChild el
       el = @_elements.shift()
 
+  # insert an element at the right position relative to a target.
   insert: (target, el)->
-    setDimension(el, 'width', @settings._width || '100%')
-    setDimension(el, 'height', @settings._height)
+    setStyle.style(el, {width:@settings._width || '100%', height:@settings.height})
     @_elements.push el
     switch @settings._placement
       when 'before' then target.parentNode.insertBefore(el, target)
