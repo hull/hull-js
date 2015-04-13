@@ -1,5 +1,6 @@
 _     = require '../utils/lodash'
 clone = require '../utils/clone'
+analyticsId = require '../utils/analytics-id'
 
 flattenSettings = (settings, name)->
   nameArray = name.split('_')
@@ -22,7 +23,13 @@ sortServicesByType= (settings, types)->
 module.exports = (_config={})->
   config = clone(_config)
   config.debug ?= false
-  config.settings        = sortServicesByType config.services.settings, config.services.types
+  config.settings       = sortServicesByType config.services.settings, config.services.types
   config.settings.auth ?= {}
   config.settings.auth = applyUserCredentials config.settings.auth, config.data.credentials
+
+  config.identify = {
+    browser: analyticsId.getBrowserId(),
+    session: analyticsId.getSessionId()
+  }
+
   config

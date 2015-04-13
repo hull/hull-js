@@ -14,7 +14,8 @@ fixCookies = (userSig)->
 
 
 class CurrentUser
-  constructor : ()->
+
+  constructor: ->
     @currentUser = null
 
   get: (field) =>
@@ -22,7 +23,11 @@ class CurrentUser
       returned = if field? then @currentUser[field] else @currentUser
       JSON.parse(JSON.stringify(returned))
 
+  getId: ->
+    @currentUser && @currentUser.id
+
   hasIdentity : (identity)=>
+    return false unless identity?
     identities = @currentUser?.identities
     identity = identity.toLowerCase()
     return false unless identities and identity
