@@ -1,83 +1,112 @@
+assign            = require 'object-assign'
+Treasure          = require 'td-js-sdk'
+uuid              = require('../../utils/uuid')
 cookies           = require '../../utils/cookies'
 analyticsId       = require '../../utils/analytics-id'
 getWrappedRequest = require '../wrapped-request'
 RemoteConfigStore = require '../../flux/stores/RemoteConfigStore'
+RemoteUserStore     = require '../../flux/stores/RemoteUserStore'
 GenericService    = require './generic_service'
 Base64            = require '../../utils/base64'
 
-# Analytics.js methods
-# initializeAnalytics = (appSettings={})->
-#   settings = _.reduce (appSettings), (settings,s)->
-#     settings[s.name] = s
-#     return settings
-#   , {}
 
-#   # analytics.init(settings)
+StructuredEventProps = ['category', 'action', 'label', 'property', 'value']
+MarketingProps = ['campaign', 'source', 'medium', 'term', 'content']
 
-# identifyWithAnalytics = (me={}) ->
-#   identified = !!me.id?
-#   return unless identified
-
-#   signInCount = me.stats?.sign_in_count || 0
-#   # analytics.alias(me.id) if identified && signInCount == 1
-
-#   ident = _.pick(me, 'name', 'email', 'id', 'picture')
-#   ident.created = me.created_at
-#   ident.distinct_id = me.id
-#   # analytics.identify(me.id, ident)
-
-# identifyResponse = (response={})->
-#   return unless response.request.url == '/api/v1/me'
-#   identifyWithAnalytics(response.me)
 
 class HullTrackService extends GenericService
   name : 'hull'
 
   constructor: (config, gateway)->
     super(config, gateway)
+
+    db = config.assetsUrl.split('.')
+    db.shift()
+    db = db.join('_')
+
     @_request = @wrappedRequest
-    # initializeAnalytics(config.settings.analytics)
-    # @analyticsDefaults =
-    #   url              : @config.data.request.url.href
-    #   path             : @config.data.request.url.path
-    #   referrer         : @config.data.request.referrer?.href
-    #   referring_domain : @config.data.request.referrer?.host
-    #   browser_id       : analyticsId.getBrowserId()
-    #   session_id       : analyticsId.getSessionId()
-    #TODO : move this elsewhere;
-    # identifyWithAnalytics(config.data.me) if config.data.me?
-    # @trackWithAnalytics('hull.app.init')
+    td = @td = new Treasure({
+      database: db
+      writeKey: '6115/02eed5a653111c8321161b894dc066a7f0f929b7'
+      clientId: analyticsId.getBrowserId()
+      storage: 'none'
+      track: {
+        values: {
+          td_url: config.data.request.url.href
+          td_host:  config.data.request.url.host
+          td_path: config.data.request.url.path
+          td_referrer:  config.data.request.referrer.href || ""
+        }
+      }
+    })
+
+    td_context = {
+      td_user_agent: window.navigator && window.navigator.userAgent,
+      hull_app_id: config.appId,
+      hull_organization_id: config.data.org.id,
+      hull_session_id: analyticsId.getSessionId(),
+      hull_user_id: config.data.me?.id
+    }
 
 
-  # trackWithAnalytics : (event, params={})->
-  #     return unless @trackMatcher.isTracked(event)
-  #     params.hull_app_id    = @config?.appId
-  #     params.hull_app_name  = @config?.data?.app?.name
-  #     _.defaults params, @analyticsDefaults
-  #     # analytics.track(event, params)
+    pageUrlParams = config.data.request.url?.params
+
+    if !_.isEmpty(pageUrlParams)
+      MarketingProps.map (k)->
+        v = pageUrlParams["utm_#{k}"]
+        v && td_context["mkt_#{k}"] = v
+
+    td.set(td_context)
+
+    td.trackPageview()
+
+    RemoteUserStore.addChangeListener (change)=>
+      tdUserId = td.get().hull_user_id
+      currentUser = RemoteUserStore.getState().user
+      currentUserId = currentUser?.id
+      td.set({ hull_user_id: currentUserId })
+      if change == 'UPDATE_USER' && currentUserId != tdUserId
+        td.trackEvent('identify')
 
 
-  identitfy: (me)->
+  trackEvent: (eventName, params)->
+
+    structuredProperties = StructuredEventProps.reduce (se,prop)->
+      se["se_#{prop}"] = params[prop] if params[prop]
+      se
+    , {}
+
+    unstructuredProperties = _.omit(params, StructuredEventProps...)
+    unstructuredEvent = {}
+
+    if !_.isEmpty(unstructuredProperties)
+      unstructuredEvent = { unstruct_event: unstructuredProperties }
+
+    payload = assign(
+      { event: eventName },
+      structuredProperties,
+      unstructuredEvent
+    )
+
+    @td.trackEvent('tracks', payload)
 
   request: (opts, callback, errback) =>
-    {event, params} = opts
-    params ?= {}
-    return false unless event?
-    # @trackWithAnalytics(event,params)
-    config = RemoteConfigStore.getState().remoteConfig
-    referrer = RemoteConfigStore.getState().clientConfig?.track?.referrer
 
-    method               = 'post'
-    params.event        ?= event
-    params.referrer      = referrer if referrer?
-    params.hull_app_id   = config?.appId
-    params.hull_app_name = config?.data?.app?.name
+    { params, path } = opts
 
-    data = {t: Base64.encode(JSON.stringify(params))}
+    event = path
 
-    @_request({path: "t", method, params:data, nocallback: true})
-    .then (response)=>
+    @trackEvent(event, params)
+
+    @_request({
+      path: 't',
+      method: 'post',
+      params: { t: Base64.encode(JSON.stringify(assign({ event }, params))) },
+      nocallback: true
+    }).then (response)=>
       response.provider = 'track'
       response
     .then callback, errback
+
+
 module.exports = HullTrackService

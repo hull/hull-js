@@ -24,7 +24,7 @@ class Client
 
     api   = new Api(config, channel, currentUser)
     auth  = new Auth(api)
-    tracker = new Tracker(api)
+    tracker = new Tracker(api, @remoteConfig, @config)
 
     sharer = new Sharer(api, auth, currentUser, @remoteConfig.data, @config)
     flag  = new Flag(api)

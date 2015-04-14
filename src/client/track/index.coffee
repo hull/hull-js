@@ -3,9 +3,11 @@ assign   = require 'object-assign'
 
 
 class Tracker
-  constructor : (api)->
+  constructor : (api, remoteConfig, config)->
     @api = api
     @setupTracking()
+
+  getCurrentUserId: -> @api.currentUser.getId()
 
   setupTracking : () ->
 
@@ -24,9 +26,8 @@ class Tracker
     EventBus.on 'hull.user.logout', ()->
       track('hull.user.logout')
 
-  track : (event,params)=>
-    # Enrich Data before sending
-    data = assign {url:window.location.href,referrer:document.referrer}, params
+  track : (event,params, success, failure)=>
+    data = assign {}, params
     @api.message
       provider:'track'
       path: event

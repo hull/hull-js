@@ -50,11 +50,11 @@ Hull = (remoteConfig)->
       else if document.attachEvent
         document.attachEvent('onclick', hideOnClick)
 
-      EventBus.on 'remote.iframe.show',  -> channel.rpc.show()
-      EventBus.on 'remote.iframe.hide',  -> channel.rpc.hide()
-      EventBus.on 'remote.track',        (args...)->
-        channel.rpc.track(args...)
-        services.services.track.request(args...)
+      EventBus.on 'remote.iframe.show',  ()-> channel.rpc.show()
+      EventBus.on 'remote.iframe.hide',  ()-> channel.rpc.hide()
+      EventBus.on 'remote.track',        (payload)->
+        channel.rpc.track(payload)
+        services.services.track.request(payload.event, payload.params)
       clientConfig
 
 
@@ -84,7 +84,6 @@ Hull = (remoteConfig)->
       console.error("Could not initialize Hull: #{err.message}")
 
     .done()
-
 
 Hull.version = VERSION
 module.exports = Hull

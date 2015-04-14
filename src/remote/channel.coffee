@@ -7,7 +7,7 @@ RemoteUserActions   = require '../flux/actions/RemoteUserActions'
 catchAll = (res)-> res
 
 class Channel
-  constructor :(config, services)->
+  constructor: (config, services)->
     dfd = promises.deferred()
     @rpc = null;
     @promise = dfd.promise
@@ -32,12 +32,13 @@ class Channel
       # Send config to client
       @rpc.ready(config)
       @rpc.getClientConfig(dfd.resolve)
+
     catch e
       try
         whitelisted = config.appDomains.join('\n').replace(/\(\:\[0-9\]\+\)\?\$/g,'').replace(/\^\(https\?\:\/\/\)\?/g,'').replace(/\\/g,'')
         e = new Error("#{e.message}, You should whitelist this domain. The following domains are authorized : \n#{whitelisted}");
         dfd.reject(e)
-        @rpc = new xdm.Rpc({}, remote: { loadError: {} });
+        @rpc = new xdm.Rpc({}, remote: { loadError: {} })
         @rpc.loadError e
       catch e
         throw new Error("Unable to establish communication between Hull Remote and your page. #{e.message}")
