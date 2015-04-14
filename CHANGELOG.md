@@ -110,10 +110,26 @@ Hull.unlinkIdentity({provider:'xxxx',params:{...}}, callback, errback)
 returns a promise. Please end with `.done()` here too.
 
 ###### `Hull.embed(deploymentsArray)` and `Hull.onEmbed(document, callback)` 
-New methods for Ship Deployment
+New methods for Ship Deployment. Ships can be either HTML Imports or `.js` files. They need to call `Hull.onEmbed(document, callback)`.
+`callback` has the follwing signature : 
+
+```js
+function callback(element, deployment, hull){
+  //element == domElement
+  //deployment = {
+  //  settings: {}
+  //  platform: {}
+  //  ship : {}
+  //}
+  //hull = {local Hull instance, scoped to the current Ship}
+}
+```
 
 ###### `Hull.setShipSize({width,height})`
 From inside a sandboxed ship to allow setting container size 
+
+###### `Hull.autoSize()`
+Recalculates iframe height to fit content without scrolling
 
 ###### `Hull.setShipStyle({style_hash})`
 From inside a sandboxed ship to allow setting ship style (Useful to manage modals)
