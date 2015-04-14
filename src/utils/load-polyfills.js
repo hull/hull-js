@@ -16,6 +16,7 @@ var polyfills = {
   "Function.prototype.bind"  : function(){ return "bind"    in Function.prototype; },
   "Object.keys"              : function(){ return "keys"    in Object;             },
   "HTMLImports"              : function(){ return "import" in document.createElement("link");},
+  "Element.prototype.classList" : function(){ return "classList" in document.documentElement},
   "Object.defineProperty"    : function(){
     if (Object.defineProperty){ return true;}
     return false;
@@ -48,7 +49,7 @@ module.exports = function(config){
       dfd.reject(error);
     }, 10000);
     scriptLoader({
-      src:`//localhost:3000/v1/${file}?features=${_.keys(polyfills).join(",")}`,
+      src:`//hull-polyfills.herokuapp.com/v1/${file}?features=${_.keys(polyfills).join(",")}`,
       document:config.document
     }, function(){
       clearTimeout(errorTimeout);

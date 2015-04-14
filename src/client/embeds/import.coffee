@@ -6,10 +6,10 @@ class Import
 
 
   constructor: (opts={}, callback)->
-    {href, sandbox} = opts
-    if sandbox
-      @window = sandbox.contentWindow
-      @document = sandbox.contentDocument
+    {href, container} = opts
+    if container
+      @window = container.contentWindow
+      @document = container.contentDocument
     else
       @window = window
       @document = document
@@ -27,7 +27,7 @@ class Import
       @document.getElementsByTagName('head')[0].parentNode.appendChild el
     if  _.isFunction callback
       if el.import
-        callback el
+        callback(el.import)
       else
         el.addEventListener 'load', (ev)=>
           callback ev.target

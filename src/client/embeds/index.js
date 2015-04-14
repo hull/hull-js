@@ -4,6 +4,7 @@
 import _ from "../../utils/lodash";
 import Deployment from "./deployment";
 
+
 function embedDeployments(deployments, opts={}, callback) {
   if (!deployments || !deployments.length){return;}
   if (opts.reset !== false) { Deployment.resetDeployments()}
@@ -31,8 +32,19 @@ module.exports = {
   },
   onEmbed: function(doc, fn) {
     var cs = doc && doc._currentScript || doc.currentScript;
-    if (cs && cs.ownerDocument) {
-      cs.ownerDocument.onEmbed = fn;
+    if(doc===window.document){
+      if(cs.getAttribute('data-hull-deployment')){
+        var dpl = Deployment.getDeployment(cs.getAttribute('data-hull-deployment'));
+        if(dpl){
+          _.map(dpl.getTargets(),function(target){
+            dpl.performCallback(target, fn)
+          })
+        }
+      }
+    } else {
+      if (cs && cs.ownerDocument) {
+        cs.ownerDocument.onEmbed = fn;
+      }
     }
   }
 };

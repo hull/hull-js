@@ -84,6 +84,7 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
   configCheck(config)
   .then ()->
     polyfill(config)
+
   .then ()=>
     channel = new Channel(config, currentUser)
     channel.promise
@@ -118,19 +119,20 @@ hullReady = (callback, errback)->
   .catch (err)->
     console.error err.stack
 
+shimmedMethod = (method)->
+  console.log("Hull.#{method} is only useful when Ships are sandboxed. This method does nothing here")
+  false
+
 hull =
-  _initialized: false
-  initRemote  : HullRemote
-  init        : init
-  ready       : hullReady
-  version     : VERSION
-  track       : Pool.create('track')
-  setShipStyle : ->
-    console.log("Hull.setShipStyle is only useful when Ships are sandboxed. This method does nothing here")
-    false
-  setShipSize : ->
-    console.log("Hull.setShipSize is only useful when Ships are sandboxed. This method does nothing here")
-    false
+  _initialized : false
+  initRemote   : HullRemote
+  init         : init
+  ready        : hullReady
+  version      : VERSION
+  track        : Pool.create('track')
+  autoSize     : -> shimmedMethod("autoSize")
+  setShipStyle : -> shimmedMethod("setShipStyle")
+  setShipSize  : -> shimmedMethod("setShipSize")
 
 # Assign EventBus methods to Hull
 eeMethods = ['on', 'onAny', 'offAny', 'once', 'many', 'off', 'emit']

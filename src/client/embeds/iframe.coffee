@@ -1,8 +1,6 @@
-SandboxedShare = require '../sharer/sandboxed-sharer';
-findUrl        = require '../../utils/find-url'
-setStyle       = require '../../utils/set-style'
-assign         = require 'object-assign'
 polyfill       = require '../../utils/load-polyfills'
+sandbox        = require './sandbox'
+
 
 class Iframe
 
@@ -12,33 +10,35 @@ class Iframe
     @target = opts.target
     @ship = opts.ship
     @src = opts.src
-    @frame = @buildIframe()
-    @onIframeReady(@frame, callback)
+    @id = opts.id
+    @iframe = @buildIframe()
+    @onIframeReady(@iframe, callback)
 
 
   buildIframe : (target, src)->
-    @frame = document.createElement 'iframe'
-    @frame.src                    = src if src?
-    @frame.vspace                 = 0
-    @frame.hspace                 = 0
-    @frame.marginWidth            = 0
-    @frame.marginHeight           = 0
-    @frame.scrolling              = 'no'
-    @frame.border                 = 0
-    @frame.frameBorder            = 0
-    @frame
+    @iframe = document.createElement 'iframe'
+    @iframe.name                   = "ship_#{@id}"
+    @iframe.src                    = src if src?
+    @iframe.vspace                 = 0
+    @iframe.hspace                 = 0
+    @iframe.marginWidth            = 0
+    @iframe.marginHeight           = 0
+    @iframe.scrolling              = 'no'
+    @iframe.border                 = 0
+    @iframe.frameBorder            = 0
+    @iframe
 
   getIframe: ()->
-    @frame
+    @iframe
 
-  onIframeReady : (frame, callback)=>
-    doc = frame.contentDocument
+  onIframeReady : (iframe, callback)=>
+    doc = iframe.contentDocument
     if doc and doc.readyState=='complete'
-      @prepareIframeSandbox frame, =>
-        callback(@frame)
+      @sandboxIframe iframe, =>
+        callback(@iframe)
     else
       setTimeout ()=>
-        @onIframeReady(frame, callback)
+        @onIframeReady(iframe, callback)
       , 10
 
   # Build a sandbox for the current ship.
@@ -46,36 +46,14 @@ class Iframe
   # an enhanced version of Hull, with methods that resolve locally
   # - setShipSize
   # - getTargetUrl
-  prepareIframeSandbox : (frame, callback)->
-    w = frame.contentWindow
-
+  sandboxIframe : (iframe, callback)->
     # Start resolving from the containing iframe up
     # TODO architecture could be better herer
-    sandboxedShare = new SandboxedShare({
-      share: Hull.share,
-      ship: @ship,
-      domRoot: frame
-    })
-    setShipSize = (size={})=>
-      style = assign({},size)
-      style.width = size.width if size.width?
-      style.height = size.height if size.height?
-      setStyle.style(frame,style)
-      true
-    setShipStyle = (style={})->
-      setStyle.style(frame,style)
-      true
-    findUrl = ()-> findUrl(frame)
 
-    polyfill({document:w.document, debug:Hull.config().debug}).then ()=>
-      w.location.hash = '/'
-      w.Hull = assign({}, window.Hull, {
-        setShipSize  : setShipSize
-        setShipStyle : setShipStyle
-        share        : sandboxedShare.share
-        findUrl      : findUrl
-      });
-      callback(@frame)
+    polyfill({
+      document:iframe.contentDocument,
+      debug:Hull.config().debug
+    }).then ()=> callback(@iframe)
 
 
 module.exports = Iframe
