@@ -19,7 +19,10 @@ class HullTrackService extends GenericService
 
   constructor: (config, gateway)->
     super(config, gateway)
-    db = "organization_#{config.data.org.id}"
+
+    db = config.assetsUrl.split('.')
+    db.shift()
+    db = db.join('_')
 
     @_request = @wrappedRequest
     td = @td = new Treasure({
@@ -40,6 +43,7 @@ class HullTrackService extends GenericService
     td_context = {
       td_user_agent: window.navigator && window.navigator.userAgent,
       hull_app_id: config.appId,
+      hull_organization_id: config.data.org.id,
       hull_session_id: analyticsId.getSessionId(),
       hull_user_id: config.data.me?.id
     }
