@@ -12,6 +12,7 @@ Base64            = require '../../utils/base64'
 
 StructuredEventProps = ['category', 'action', 'label', 'property', 'value']
 MarketingProps = ['campaign', 'source', 'medium', 'term', 'content']
+TopLevelProps = ['hull_ship_id'].concat(StructuredEventProps)
 
 
 class HullTrackService extends GenericService
@@ -20,32 +21,30 @@ class HullTrackService extends GenericService
   constructor: (config, gateway)->
     super(config, gateway)
 
-    db = config.assetsUrl.split('.')
-    db.shift()
-    db = db.join('_')
-
     @_request = @wrappedRequest
+
     td = @td = new Treasure({
-      database: db
+      database: "org_#{config.data.org.id}"
       writeKey: '6115/02eed5a653111c8321161b894dc066a7f0f929b7'
       clientId: analyticsId.getBrowserId()
       storage: 'none'
       track: {
         values: {
-          td_url: config.data.request.url.href
-          td_host:  config.data.request.url.host
-          td_path: config.data.request.url.path
-          td_referrer:  config.data.request.referrer.href || ""
+          td_url     : config.data.request.url.href
+          td_host    : config.data.request.url.host
+          td_path    : config.data.request.url.path
+          td_referrer: config.data.request.referrer.href || ""
+          td_referring_domain: config.data.request.referrer.host || ""
         }
       }
     })
 
     td_context = {
-      td_user_agent: window.navigator && window.navigator.userAgent,
-      hull_app_id: config.appId,
+      td_user_agent       : window.navigator && window.navigator.userAgent,
+      hull_platform_id    : config.appId,
       hull_organization_id: config.data.org.id,
-      hull_session_id: analyticsId.getSessionId(),
-      hull_user_id: config.data.me?.id
+      hull_session_id     : analyticsId.getSessionId(),
+      hull_user_id        : config.data.me?.id
     }
 
 
@@ -56,7 +55,7 @@ class HullTrackService extends GenericService
         v = pageUrlParams["utm_#{k}"]
         v && td_context["mkt_#{k}"] = v
 
-    td.set(td_context)
+    td.set('$global', td_context)
 
     td.trackPageview()
 
@@ -76,19 +75,25 @@ class HullTrackService extends GenericService
       se
     , {}
 
-    unstructuredProperties = _.omit(params, StructuredEventProps...)
+    unstructuredProperties = _.omit(params, TopLevelProps...)
+
     unstructuredEvent = {}
+    unstructuredEvent = { unstruct_event: unstructuredProperties } if !_.isEmpty(unstructuredProperties)
 
-    if !_.isEmpty(unstructuredProperties)
-      unstructuredEvent = { unstruct_event: unstructuredProperties }
+    shipProps = {}
+    shipProps.hull_ship_id = params.hull_ship_id if params.hull_ship_id?
 
-    payload = assign(
-      { event: eventName },
+    payload = assign({}
       structuredProperties,
-      unstructuredEvent
+      unstructuredEvent,
+      shipProps,
+      { event: eventName }
     )
 
+
     @td.trackEvent('tracks', payload)
+
+
 
   request: (opts, callback, errback) =>
 

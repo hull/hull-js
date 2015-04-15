@@ -57,7 +57,6 @@ Hull = (remoteConfig)->
         services.services.track.request(payload.event, payload.params)
       clientConfig
 
-
     RemoteSettingsStore.addChangeListener (change)=>
       state = RemoteSettingsStore.getState()
       # Notify client whenever settings change

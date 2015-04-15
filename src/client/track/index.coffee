@@ -26,7 +26,7 @@ class Tracker
     EventBus.on 'hull.user.logout', ()->
       track('hull.user.logout')
 
-  track : (event,params, success, failure)=>
+  track : (event, params, success, failure)=>
     data = assign {}, params
     @api.message
       provider:'track'
