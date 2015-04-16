@@ -6,9 +6,6 @@ class Iframe
 
 
   constructor: (opts={}, callback)->
-    return false unless opts.target
-    @target = opts.target
-    @ship = opts.ship
     @src = opts.src
     @id = opts.id
     @iframe = @buildIframe()
@@ -21,11 +18,23 @@ class Iframe
     @iframe.src                    = src if src?
     @iframe.vspace                 = 0
     @iframe.hspace                 = 0
+    @iframe.width                  = '1px'
+    @iframe.width                  = '1px'
+    @iframe.height                 = '1px'
     @iframe.marginWidth            = 0
     @iframe.marginHeight           = 0
     @iframe.scrolling              = 'no'
     @iframe.border                 = 0
     @iframe.frameBorder            = 0
+    @iframe.style.position         = "fixed";
+    @iframe.style.width            = "1px";
+    @iframe.style.height           = "1px";
+    @iframe.style.top              = "-20px";
+    @iframe.style.left             = "-20px";
+    @iframe.style.overflow         = "hidden";
+    @iframe.style.margin           = "0px";
+    @iframe.style.padding          = "0px";
+    @iframe.style.border           = "0px";
     @iframe
 
   getIframe: ()->
@@ -34,8 +43,10 @@ class Iframe
   onIframeReady : (iframe, callback)=>
     doc = iframe.contentDocument
     if doc and doc.readyState=='complete'
-      @sandboxIframe iframe, =>
-        callback(@iframe)
+      iframe.contentDocument.open();
+      iframe.contentDocument.write "<!DOCTYPE html><html><head></head><body>body</body></html>"
+      iframe.contentDocument.close();
+      @sandboxIframe iframe, callback
     else
       setTimeout ()=>
         @onIframeReady(iframe, callback)
@@ -49,11 +60,13 @@ class Iframe
   sandboxIframe : (iframe, callback)->
     # Start resolving from the containing iframe up
     # TODO architecture could be better herer
-
     polyfill({
       document:iframe.contentDocument,
       debug:Hull.config().debug
-    }).then ()=> callback(@iframe)
+    }).then ()=>
+      callback(iframe)
 
 
 module.exports = Iframe
+
+

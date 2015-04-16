@@ -1,7 +1,7 @@
 _        = require './lodash'
 
 module.exports = (opts={},callback)->
-  document = opts.document || window.document
+  doc = opts.document || window.document
   sc = document.createElement "script"
 
   if opts.attributes
@@ -10,5 +10,5 @@ module.exports = (opts={},callback)->
   sc.id = opts.id if opts.id
   sc.onload = callback
   sc.src =  opts.src
-  document.getElementsByTagName("head")[0].appendChild(sc)
+  doc.getElementsByTagName('head')[0]?.appendChild(sc)
   sc

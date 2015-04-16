@@ -22,7 +22,7 @@ function embedDeployments(deployments, opts={}, callback) {
 
   for (var d = 0, l = deployments.length; d < l; d++) {
     dpl = new Deployment(deployments[d]);
-    dpl.embed({refresh:true}, allEmbedCompleteCallback);
+    dpl.embed({refresh: true}, allEmbedCompleteCallback);
   }
 }
 
@@ -31,20 +31,18 @@ module.exports = {
     embedDeployments(deployments, opts, callback);
   },
   onEmbed: function(doc, fn) {
-    var cs = doc && doc._currentScript || doc.currentScript;
-    if(doc===window.document){
-      if(cs.getAttribute('data-hull-deployment')){
-        var dpl = Deployment.getDeployment(cs.getAttribute('data-hull-deployment'));
-        if(dpl){
-          _.map(dpl.getTargets(),function(target){
-            dpl.performCallback(target, fn)
-          })
-        }
-      }
+    var deploymentId = null;
+    if(fn===undefined){
+      // loaded file.js 
+      fn = doc
+      deploymentId = currentScript.getAttribute('data-hull-deployment');
     } else {
-      if (cs && cs.ownerDocument) {
-        cs.ownerDocument.onEmbed = fn;
-      }
+      // loaded file.html
+      deploymentId = doc.deploymentId;
+    }
+    var deployment = Deployment.getDeployment(deploymentId);
+    if(deployment){
+      deployment.onEmbed(fn);
     }
   }
 };

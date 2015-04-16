@@ -1,5 +1,5 @@
 xdm      = require 'xdm.js'
-domready = require 'domready'
+domready = require '../utils/domready'
 _        = require '../utils/lodash'
 EventBus = require '../utils/eventbus'
 promises = require '../utils/promises'

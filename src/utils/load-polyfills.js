@@ -48,6 +48,7 @@ module.exports = function(config){
       console.error(error);
       dfd.reject(error);
     }, 10000);
+
     scriptLoader({
       src:`//hull-polyfills.herokuapp.com/v1/${file}?features=${_.keys(polyfills).join(",")}`,
       document:config.document
