@@ -2,7 +2,7 @@
 # # and providing pooled methods to the user while
 # # Hull is actually loading.
 
-assign      = require 'object-assign'
+assign      = require './polyfills/assign'
 _           = require './utils/lodash'
 polyfill    = require './utils/load-polyfills'
 Client      = require './client'

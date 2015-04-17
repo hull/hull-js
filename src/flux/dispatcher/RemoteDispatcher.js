@@ -1,5 +1,5 @@
 var flux = require('flux');
-var assign = require('object-assign');
+var assign = require('../../polyfills/assign');
 
 
 var RemoteDispatcher = assign(new flux.Dispatcher(), {

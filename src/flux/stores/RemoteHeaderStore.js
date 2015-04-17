@@ -1,5 +1,5 @@
 var EventEmitter     = require('events').EventEmitter;
-var assign           = require('object-assign');
+var assign           = require('../../polyfills/assign');
 var RemoteDispatcher = require('../dispatcher/RemoteDispatcher');
 var RemoteConstants  = require('../constants/RemoteConstants');
 var RemoteUserStore  = require('../stores/RemoteUserStore');

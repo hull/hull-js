@@ -1,5 +1,5 @@
 EventBus = require '../../utils/eventbus'
-assign   = require 'object-assign'
+assign   = require '../../polyfills/assign'
 
 
 class Tracker

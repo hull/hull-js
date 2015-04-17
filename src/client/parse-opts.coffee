@@ -1,5 +1,5 @@
 _      = require '../utils/lodash'
-assign = require 'object-assign'
+assign = require '../polyfills/assign'
 
 ###
 # Parses the parameters for an API call. At this point, they can have two forms

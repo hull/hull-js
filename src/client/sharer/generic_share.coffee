@@ -1,5 +1,5 @@
-assign = require 'object-assign'
-_ = require '../../utils/lodash'
+assign   = require '../../polyfills/assign'
+_        = require '../../utils/lodash'
 promises = require '../../utils/promises'
 
 to_qs = (params)->

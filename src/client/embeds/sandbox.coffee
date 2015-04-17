@@ -1,10 +1,10 @@
+assign         = require '../../polyfills/assign'
 _              = require '../../utils/lodash'
 getIframeWindow= require '../../utils/get-iframe-window'
 findUrl        = require '../../utils/find-url'
 setStyle       = require '../../utils/set-style'
 clone          = require '../../utils/clone'
 SandboxedShare = require '../sharer/sandboxed-sharer'
-assign         = require 'object-assign'
 ScopedCss      = require 'scopedcss/lib/';
 MutationSummary = require 'mutation-summary'
 

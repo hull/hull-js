@@ -1,4 +1,4 @@
-assign   = require 'object-assign'
+assign   = require '../../polyfills/assign'
 _        = require '../../utils/lodash'
 promises = require '../../utils/promises'
 

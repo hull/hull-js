@@ -1,4 +1,4 @@
-assign            = require 'object-assign'
+assign            = require '../../polyfills/assign'
 Treasure          = require 'td-js-sdk'
 uuid              = require('../../utils/uuid')
 cookies           = require '../../utils/cookies'

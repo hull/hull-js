@@ -1,10 +1,10 @@
 module.exports = {
   q             : require("q"),
   cookies       : require("cookies-js"),
-  assign        : require("object-assign"),
   eventemitter2 : require("eventemitter2"),
+  assign        : require("../polyfills/assign"),
   _             : require("./lodash"),
   isMobile      : require("./is-mobile"),
   uuid          : require("./uuid"),
-  domready      : require("domready")
+  domready      : require("./domready")
 };

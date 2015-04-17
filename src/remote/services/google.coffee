@@ -1,4 +1,4 @@
-assign       = require 'object-assign'
+assign       = require '../../polyfills/assign'
 GenericService    = require './generic_service'
 
 class GoogleService extends GenericService

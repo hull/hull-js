@@ -1,4 +1,4 @@
-assign              = require 'object-assign'
+assign              = require '../polyfills/assign'
 _                   = require '../utils/lodash'
 EventBus            = require '../utils/eventbus'
 promises            = require '../utils/promises'

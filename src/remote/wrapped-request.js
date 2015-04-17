@@ -1,7 +1,7 @@
 "use strict";
 
-import _ from "../utils/lodash";
-import assign from "object-assign";
+import _      from "../utils/lodash";
+import assign from "../polyfills/assign";
 
 var wrappedRequest = function(service, gateway, middlewares=[]){
   return function query(request, callback, errback){

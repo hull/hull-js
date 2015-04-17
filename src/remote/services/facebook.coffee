@@ -1,4 +1,4 @@
-assign            = require 'object-assign'
+assign            = require '../../polyfills/assign'
 _                 = require '../../utils/lodash'
 cookies           = require '../../utils/cookies'
 EventBus          = require '../../utils/eventbus'

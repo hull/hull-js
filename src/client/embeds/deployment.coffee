@@ -1,4 +1,4 @@
-assign   = require 'object-assign'
+assign   = require '../../polyfills/assign'
 _        = require '../../utils/lodash'
 setStyle = require '../../utils/set-style'
 scriptLoader = require '../../utils/script-loader'
