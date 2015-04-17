@@ -2,7 +2,7 @@
 /*global import, module*/
 import _            from "./lodash";
 import scriptLoader from "./script-loader";
-
+import promises     from './promises'
 // Hardcoded Polyfills
 require("../polyfills/xhr-xdr");
 
@@ -34,7 +34,7 @@ var allGood = _.every(polyfills, function(tst){ return !!tst(); });
 
 module.exports = function(config){
   if(allGood){
-    dfd = promises.deferred()
+    var dfd = promises.deferred();
     dfd.resolve();
     return dfd.promise;
   }

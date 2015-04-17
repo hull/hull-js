@@ -31,7 +31,7 @@ class HullAdminService extends GenericService
 
     if (method=='GET' and params?) then s.query(QSEncoder.encode(params)) else s.send(params)
     s.end (response)->
-      return errback(response.error) if response.error
+      return errback(response.body, response.error) if response.error
       callback
         provider: 'admin'
         body: response.body

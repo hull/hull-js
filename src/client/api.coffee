@@ -34,9 +34,9 @@ class Api
       callback(res.body)
       deferred.resolve(res.body)
 
-    onError = (error={})=>
-      errback(error.message.response)
-      deferred.reject(error.message.response)
+    onError = (response, error)=>
+      errback(response.message, error)
+      deferred.reject(response.message, error)
 
     @channel.rpc.message(opts, onSuccess, onError)
     deferred.promise
