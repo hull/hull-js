@@ -8,18 +8,15 @@ require("../polyfills/xhr-xdr");
 
 var polyfills = {
   "WeakMap"                  : function(){ return typeof WeakMap !== "undefined";  },
-  "Array.prototype.indexOf"  : function(){ return "indexOf" in Array.prototype;    },
-  "Array.prototype.map"      : function(){ return "map"     in Array.prototype;    },
-  "Array.prototype.reduce"   : function(){ return "reduce"  in Array.prototype;    },
-  "Array.prototype.some"     : function(){ return "some"    in Array.prototype;    },
+  "Array.prototype.indexOf"  : function(){ return "indexOf" in Array.prototype; },
+  "Array.prototype.map"      : function(){ return "map"     in Array.prototype; },
+  "Array.prototype.reduce"   : function(){ return "reduce"  in Array.prototype; },
+  "Array.prototype.some"     : function(){ return "some"    in Array.prototype; },
   "Function.prototype.bind"  : function(){ return "bind"    in Function.prototype; },
-  "Object.keys"              : function(){ return "keys"    in Object;             },
-  "HTMLImports"              : function(){ return "import" in document.createElement("link");},
-  "Element.prototype.classList" : function(){ return "classList" in document.documentElement},
-  "Object.defineProperty"    : function(){
-    if (Object.defineProperty){ return true;}
-    return false;
-  },
+  "Object.keys"              : function(){ return "keys"    in Object; },
+  "HTMLImports"              : function(){ return "import" in document.createElement("link"); },
+  "Element.prototype.classList" : function(){ return "classList" in document.documentElement; },
+  "Object.defineProperty"    : function(){ return 'defineProperty' in Object; },
   "Event"                    : function(){
     if (!("Event" in global)){ return false; }
     if (typeof global.Event === "function"){ return true; }
