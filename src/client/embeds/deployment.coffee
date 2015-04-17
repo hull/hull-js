@@ -68,7 +68,7 @@ class Deployment
       'data-hull-deployment': @id
       'data-hull-ship'      : @ship.id
 
-    sc = scriptLoader {src:@ship.index, attributes}, (event)=>
+    scriptLoader({src:@ship.index, attributes}).then (scriptTag)->
 
     true
 

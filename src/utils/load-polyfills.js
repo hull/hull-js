@@ -2,7 +2,6 @@
 /*global import, module*/
 import _            from "./lodash";
 import scriptLoader from "./script-loader";
-import promises     from './promises'
 
 // Hardcoded Polyfills
 require("../polyfills/xhr-xdr");
@@ -37,26 +36,14 @@ var polyfills = {
 var allGood = _.every(polyfills, function(tst){ return !!tst(); });
 
 module.exports = function(config){
-  var dfd = promises.deferred();
   if(allGood){
+    dfd = promises.deferred()
     dfd.resolve();
-  } else{
-    var file = (config.debug)?"polyfill.min.js":"polyfill.js";
-    // Reject loading polyfills after 10 seconds, 
-    var errorTimeout = setTimeout(function(){
-      var error = new Error("Couldn't load some parts of the libray (polyfills). Probably a connectivity issue")
-      console.error(error);
-      dfd.reject(error);
-    }, 10000);
-
-    scriptLoader({
-      src:`//hull-polyfills.herokuapp.com/v1/${file}?features=${_.keys(polyfills).join(",")}`,
-      document:config.document
-    }, function(){
-      clearTimeout(errorTimeout);
-      dfd.resolve();
-    });
+    return dfd.promise;
   }
-  return dfd.promise;
-  // scriptLoader('//cdn.polyfill.io/v1/polyfill.min.js?#{_.keys(polyfills).join(,)}', callback)
+
+  var file = (config.debug)?"polyfill.min.js":"polyfill.js";
+  var url = `//2ee5883f.ngrok.com/v1/${file}?features=${_.keys(polyfills).join(",")}`
+  return scriptLoader({ src:url, document:config.document });
+
 };
