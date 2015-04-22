@@ -128,8 +128,11 @@ function callback(element, deployment, hull){
 ###### `Hull.setShipSize({width,height})`
 From inside a sandboxed ship to allow setting container size 
 
-###### `Hull.autoSize()`
-Recalculates iframe height to fit content without scrolling
+###### `Hull.autoSize(int|undefined|false)`
+Recalculates iframe height to fit content without scrolling.
+* If value == `INTEGER` then recalculates automatically every `INTEGER` milliseconds
+* If value == `undefined`, recalculates once, and stops timers.
+* If value == `false` then stops timers and does not resize one last time
 
 ###### `Hull.setShipStyle({style_hash})`
 From inside a sandboxed ship to allow setting ship style (Useful to manage modals)
