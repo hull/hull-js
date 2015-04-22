@@ -10,8 +10,7 @@
       src="hull.js"
       id="hull-js-sdk"
       platform-id="550aa67c96f452f4c4000bea"
-      org-url="http://hull-demos.hullapp.io"
-      js-url="http://js.hull.dev/hull.js"></script>
+      org-url="https://hull-demos.hullapp.io"></script>
   </head>
   <body>
     <div className="container-fluid mt-1">
@@ -19,20 +18,5 @@
           <a href="#" id="share">Share</a>
       </div>
     </div>
-    <script>
-      document.getElementById('share').addEventListener('click', function(e){
-        Hull.share({
-          provider:'facebook',
-          url: 'http://google.com',
-          params: {
-            display: 'popup',
-            url: 'http://google.com'
-          }
-        }, e).then(function() {
-           console.log('VOILA');
-        });
-      });
-    </script>
-
   </body>
 </html>
