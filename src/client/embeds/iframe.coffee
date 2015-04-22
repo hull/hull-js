@@ -9,23 +9,13 @@ class Iframe
     @src = opts.src
     @id = opts.id
     @iframe = @buildIframe()
+    @hide() if opts.hidden
     @onIframeReady(@iframe, callback)
 
 
-  buildIframe : (target, src)->
-    @iframe = document.createElement 'iframe'
-    @iframe.name                   = "ship_#{@id}"
-    @iframe.src                    = src if src?
-    @iframe.vspace                 = 0
-    @iframe.hspace                 = 0
-    @iframe.width                  = '1px'
+  hide : () ->
     @iframe.width                  = '1px'
     @iframe.height                 = '1px'
-    @iframe.marginWidth            = 0
-    @iframe.marginHeight           = 0
-    @iframe.scrolling              = 'no'
-    @iframe.border                 = 0
-    @iframe.frameBorder            = 0
     @iframe.style.position         = "fixed";
     @iframe.style.width            = "1px";
     @iframe.style.height           = "1px";
@@ -35,16 +25,27 @@ class Iframe
     @iframe.style.margin           = "0px";
     @iframe.style.padding          = "0px";
     @iframe.style.border           = "0px";
+
+  buildIframe : (target, src)->
+    @iframe = document.createElement 'iframe'
+    @iframe.name                   = "ship_#{@id}"
+    @iframe.src                    = src if src?
+    @iframe.vspace                 = 0
+    @iframe.hspace                 = 0
+    @iframe.marginWidth            = 0
+    @iframe.marginHeight           = 0
+    @iframe.scrolling              = 'no'
+    @iframe.border                 = 0
+    @iframe.frameBorder            = 0
     @iframe
 
-  getIframe: ()->
-    @iframe
+  getIframe: ()-> @iframe
 
   onIframeReady : (iframe, callback)=>
     doc = iframe.contentDocument
     if doc and doc.readyState=='complete'
       iframe.contentDocument.open();
-      iframe.contentDocument.write "<!DOCTYPE html><html><head></head><body>body</body></html>"
+      iframe.contentDocument.write "<!DOCTYPE html><html><head></head><body></body></html>"
       iframe.contentDocument.close();
       @sandboxIframe iframe, callback
     else

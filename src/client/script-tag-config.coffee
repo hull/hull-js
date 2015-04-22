@@ -13,11 +13,10 @@ valid =
 
   https: (val, key)->
     check = /^https:|^\/\//.test(val)
-    if document.location.protocol == 'https:'
-      return check
-    else
-      check or console.warn("[Hull.init] #{key} should be loaded via https. Current value is ", val)
-      true
+    return check if document.location.protocol == 'https:' and check
+    console.warn("[Hull.init] #{key} should be loaded via https. Current value is ", val)
+    check
+    true
 
 
 transform =

@@ -5,7 +5,6 @@ scriptLoader = require '../../utils/script-loader'
 Import   = require './import'
 Iframe   = require './iframe'
 Sandbox  = require './sandbox'
-ScopedCss = require 'scopedcss/lib/'
 promises = require '../../utils/promises'
 
 registry = {}
@@ -18,6 +17,7 @@ getDeployment = (id)-> registry[id]
 
 class Deployment
   @resetDeployments: resetDeployments
+
   @getDeployment : getDeployment
 
   constructor: (dpl, context)->
@@ -38,8 +38,10 @@ class Deployment
     # "_sandbox" : true //Wether to sandbox the platform : true
     # "_width" : "100%", //Dimensions to give the containing element. Passed as-is as style tag
     # "_height" : "50px", //Dimensions to give the containing element. Passed as-is as style tag
+    # 
 
     @targets    = @getTargets()
+    @_onEmbeds  = []
     @_styles    = []
     @_imports   = []
     @_elements  = []
@@ -47,98 +49,152 @@ class Deployment
 
   # Fetches all targets specified in a deployment
   getTargets : (opts={})->
-    selector = @settings._selector
-    targets = []
-    return [] if !selector || selector.length == 0
-    return @targets if @targets and !opts.refresh
+    selector = @settings._selector || ""
+    @targets ||= []
+    return @targets if (@targets and !opts.refresh) || !selector
 
     if @settings._multi
-      targets = document.querySelectorAll selector
+      @targets = document.querySelectorAll selector
     else
       target = document.querySelector selector
-      targets = [target] if target
+      @targets = [target] if target
+    @targets
 
+  ###*
+   * embeds a Script in the page
+   * @return {promise} a promise for the onLoad event
+  ###
   embedScript : ()->
     # sc = document.getElementById(id)
     # return if sc
     sc = document.querySelector("[data-hull-deployment=\"#{@id}\"]");
     return if sc?
 
-    attributes =
+    attributes = 
       'data-hull-deployment': @id
       'data-hull-ship'      : @ship.id
 
-    scriptLoader({src:@ship.index, attributes}).then (scriptTag)->
+    return scriptLoader({src:@ship.index, attributes})
 
-    true
+  ###*
+   * Embeds an Import into a container (iframe or main window)
+   * @param  {Node | undefined} container Where to load the HTML Import. Window or empty iframe
+   * @return {promise}          A promise resolved onLoad with the container, the newly created element
+  ###
+  embedImport : (container)=>
+    readyDfd = promises.deferred()
+    loadDfd  = promises.deferred()
+
+    el=null
+
+    ###*
+     * Import "ready" callback
+     * @param  {Node} doc the Document Node inside the Import 
+    ###
+    readyCallback = (doc)=>
+      doc.deploymentId = @id
+      el = @cloneImport(doc)
+      # Insert a copy of this Node into container
+      readyDfd.resolve(el)
+
+    # Boot the ship
+    loadCallback  = ()=>
+      # Return elements, targets and iframe element.
+      # readyCallback is guaranteed to have been executed here.
+      loadDfd.resolve({el, container})
+
+    new Import {href: @ship.index, container: container}, readyCallback, loadCallback
+    {ready:readyDfd.promise, load: loadDfd.promise}
+
+
+  ###*
+   * Embeds an iframe in the DOM, and inside this iframe, inserts an Import
+   * Targets can be:
+   * - a Node : insert the iframe in the node
+   * - an Array of nodes
+   * 
+   * @param  {Node|NodeArray} targets A single node or an array of Nodes
+   * @return {object}         an object containing a promise for when the import is loaded, the elements created and the target node(s)
+  ###
+  embedIframe : (container)=>
+    dfd = promises.deferred()
+    iframe  = new Iframe {id: @id, hidden: !@settings._sandbox}, (iframe)=>
+      iframe.contentDocument.deploymentId = @id
+      dfd.resolve(iframe)
+
+    # Insert Iframe into main window
+    # Needs to be done otherwise iframe won't get initialized
+    if container then @insert(iframe.getIframe(),container) else document.body.appendChild(iframe.getIframe())
+    dfd.promise
 
   embed : (opts={}, embedCompleteCallback)=>
-    # if we're refreshing, rebuild the target list
+    # If we're refreshing, rebuild the target list
     @targets = @getTargets({refresh:opts.refresh}) if opts.refresh
     @_callbacks.push(embedCompleteCallback) if _.isFunction(embedCompleteCallback)
 
-
     if @ship.index.match(/\.js/)
-      @embedScript()
+      @embedScript().then @initPromise.resolve
     else
-      @localHull = new Sandbox(@ship, @)
-      @_iframe  = new Iframe {id: @id}, (iframe)=>
-        iframe.contentDocument.deploymentId = @id
-        @localHull.setContainer(iframe)
+      if @settings._sandbox
+        # Sandboxed : Multiple Iframes, one for each target, completely isolated
 
-        readyCallback = (doc)=>
-          doc.deploymentId = @id
-          el = @import(doc, el)
-          @scopeStyles()
-          @addShipClasses(el)
-          @localHull.get().applyStyles(iframe.contentDocument.head)
-          @insert(el.cloneNode(true), target) for target in @targets
+        # For each target, embed a new Iframe, that will in turn embed the Import
+        readyPromises = _.map @targets, (target)=>
+          @embedIframe(target).then (iframe)=>
+            sandbox = new Sandbox(@ship, @, @settings._sandbox, iframe)
+            imprt = @embedImport(iframe)
+            imprt.ready.then (el)=>
+              # Insert import into Iframe
+              d = iframe.contentDocument.createElement 'div'
+              iframe.contentDocument.body.appendChild d
+              @insert(el, d)
 
-        # Boot the ship
-        loadCallback  = ()=>
-          @_ready = true
-          @bootShip(el, @localHull.get()) for el in @_elements
+            # Boot Ship inside Import
+            imprt.load.then (imprt)=>
+              sandbox.addElement(imprt.el)
+              sandbox.boot()
 
-        new Import {href: @ship.index, container: iframe}, readyCallback, loadCallback
+            imprt.load
 
-      # prs = if @settings._sandbox
-      #   @embedIframe(target) for target in @targets
-      # else
-      #   @embedImport(target) for target in @targets
-      # promises.allSettled(prs).then @scopeStyles
-      document.getElementsByTagName('body')[0].appendChild(@_iframe.getIframe())
+
+        # promises.allSettled(readyPromises).then (imports)=>
+        #   @dfd.resolve(_.pluck(imports,'el'))
+      else
+        debugger
+        # Scoped : One hidden Iframe holds JS and Style, callback method called for each target
+        @embedIframe().then (iframe)=>
+          sandbox = new Sandbox(@ship, @, @settings._sandbox, iframe)
+          sandbox.watch(iframe.contentDocument.head)
+          imprt = @embedImport(iframe)
+          elements = []
+          imprt.ready.then (el)=>
+            _.map @targets, (target)=>
+              elements.push(@insert(el.cloneNode(true), target))
+
+          imprt.load.then (imprt)=>
+            sandbox.addElement(element) for element in elements
+            sandbox.boot()
+
+        # @readyPromise.then (embed)=> @bootShip(el, _hull) for el in embed.elements
 
     cb.call(@) for cb in @_callbacks
     @_callbacks = []
     return true
-
-  scopeStyles : ()=> _.map @_styles, (style)=>
-    scoped = new ScopedCss(".ship-#{@ship.id}", null, style.tag);
-    style.scoped = scoped
-    scoped.process();
-    scoped
-
-  onEmbed: (fn)->
-    @_onEmbed = fn
-    if @_ready
-      sandbox = @localHull.get()
-      @bootShip(el, sandbox) for el in @_elements
-
-  bootShip : (el, sandbox)=>
-    if @_onEmbed
-      sandbox.applyStyles(el)
-      sandbox.track('hull.app.init')
-      @_onEmbed(el, @, sandbox)
 
   addShipClasses : (el)->
     el.classList.add('ship',"ship-#{@ship.id}", "ship-deployment-#{@id}")
     el.setAttribute('data-hull-deployment', @id)
     el.setAttribute('data-hull-ship', @ship.id)
 
-  # Inserts the content of a HTML import into a given dom node.
-  import : (doc)->
+  ###*
+   * Inserts the content of a HTML import into a given dom node.
+   * @param  {Node} doc   Import Document Element
+   * @return {Node}       An Element containing a cloned instance of the Import
+  ###
+  cloneImport : (doc)->
     # Import Container
     el = document.createElement('div')
+    @addShipClasses(el)
 
     hull_in_ship = doc.getElementById('hull-js-sdk')
 
@@ -151,25 +207,16 @@ class Deployment
       console.error(err.message)
       return el
 
-    body = doc.body
-    head = doc.head
-    @parseChildren(head, document.getElementsByTagName('head')[0], ['SCRIPT', '#comment', '#text', 'META', 'TITLE', 'LINK'])
-    @parseChildren(body, el, ['SCRIPT','#comment'])
+    @parseChildren(doc.head, document.head, ['SCRIPT', '#comment', '#text', 'META', 'TITLE', 'LINK'])
+    @parseChildren(doc.body, el, ['SCRIPT','#comment'])
     el
 
-  parseChildren : (root, el, skip=[]) ->
+  parseChildren : (root, el, ignores=[]) ->
     return true unless root.hasChildNodes()
-    children = root.childNodes
-    # Don't use a for ... in here since we might remove stuff and throw it off
-    _.map children, (child)=>
-      unless !child or _.contains(skip, child.nodeName)
-        if child.nodeName == "STYLE"
-          # Reference Style tags for later usage and postprocessing
-          root.removeChild(child)
-          @_styles.push {tag : child}
-        else
-          el.appendChild child.cloneNode(true)
-
+    _.map root.childNodes, (child)=>
+      el.appendChild(child.cloneNode(true)) if child and not _.contains(ignores, child.nodeName)
+        # if child.nodeName == "STYLE"
+  
   remove: ()=>
     @targets = false
     el = @_elements.shift()
@@ -179,10 +226,16 @@ class Deployment
       el?.parentNode?.removeChild el
       el = @_elements.shift()
 
-  # insert an element at the right position relative to a target.
+
+
+  ###*
+   * Insert an element at the right position relative to a target.
+   * @param  {Node} el     The element to insert
+   * @param  {Node} target The target where to insert the content
+   * @return {Node}        el
+  ###
   insert: (el, target)->
     setStyle.style(el, {width:@settings._width || '100%', height:@settings.height})
-    @_elements.push el
     switch @settings._placement
       when 'before' then target.parentNode.insertBefore(el, target)
       when 'after'  then target.parentNode.insertBefore(el, target.nextSibling)
@@ -196,5 +249,6 @@ class Deployment
       else
         # Embed at append
         target.appendChild(el)
+    el
 
 module.exports = Deployment
