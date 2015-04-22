@@ -1,5 +1,20 @@
 # Hull.js [ ![Codeship Status for hull/hull-js](https://circleci.com/gh/hull/hull-js/tree/develop.png?circle-token=26a17dad6ac378f6028a460a5857d5ca15a8aa13) ](https://circleci.com/gh/hull/hull-js)
 
+# Compatibility
+* ✔ Chrome (w/o Polyfills)
+* ✔ Firefox (w/ Hull Polyfill Service)
+* ✔ Safari (w/ Hull Polyfill Service)
+* ? IE 10+
+* ? IE 9+
+* ? IE 8+
+
+# Sandboxing: 
+
+# Supported Features for Style Sandboxing
+Inline Style Tags
+In-document Style Tags
+
+
 # Building the library
 
 Checkout
