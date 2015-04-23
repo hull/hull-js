@@ -18,15 +18,15 @@ getDeployment = (id)-> registry[id]
 
 class Deployment
   @resetDeployments: resetDeployments
-
   @getDeployment : getDeployment
 
-  constructor: (dpl)->
+  constructor: (dpl, context)->
     return registry[dpl.id] if registry[dpl.id]
     registry[dpl.id] = @
     @id         = dpl.id
     @name       = dpl.ship.name
 
+    @organization = assign({}, context.org)
     @platform   = dpl.platform
     @ship       = dpl.ship
     # "index"-> href for embed
@@ -64,7 +64,7 @@ class Deployment
     sc = document.querySelector("[data-hull-deployment=\"#{@id}\"]");
     return if sc?
 
-    attributes = 
+    attributes =
       'data-hull-deployment': @id
       'data-hull-ship'      : @ship.id
 
@@ -122,7 +122,7 @@ class Deployment
     @_onEmbed = fn
     if @_ready
       sandbox = @localHull.get()
-      @bootShip(el, sandbox) for el in @_elements 
+      @bootShip(el, sandbox) for el in @_elements
 
   bootShip : (el, sandbox)=>
     if @_onEmbed
@@ -169,7 +169,7 @@ class Deployment
           @_styles.push {tag : child}
         else
           el.appendChild child.cloneNode(true)
-  
+
   remove: ()=>
     @targets = false
     el = @_elements.shift()

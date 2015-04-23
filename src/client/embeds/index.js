@@ -4,6 +4,8 @@
 import _ from "../../utils/lodash";
 import Deployment from "./deployment";
 
+let _initialized = false;
+let _context = {};
 
 function embedDeployments(deployments, opts={}, callback) {
   if (!deployments || !deployments.length){return;}
@@ -21,19 +23,23 @@ function embedDeployments(deployments, opts={}, callback) {
   var dpl;
 
   for (var d = 0, l = deployments.length; d < l; d++) {
-    dpl = new Deployment(deployments[d]);
-    dpl.embed({refresh: true}, allEmbedCompleteCallback);
+    dpl = new Deployment(deployments[d], _context);
+    dpl.embed({ refresh: true }, allEmbedCompleteCallback);
   }
 }
 
 module.exports = {
+  initialize: function(context) {
+    _initialized = true;
+    _context = context;
+  },
   embed: function(deployments, opts, callback) {
     embedDeployments(deployments, opts, callback);
   },
   onEmbed: function(doc, fn) {
     var deploymentId = null;
     if(fn===undefined){
-      // loaded file.js 
+      // loaded file.js
       fn = doc
       deploymentId = currentScript.getAttribute('data-hull-deployment');
     } else {

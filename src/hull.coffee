@@ -29,6 +29,7 @@ onInitSuccess = (userSuccessCallback, _hull, data)->
   hull = _hull
   {me, app, org} = data
 
+  embeds.initialize({ org });
   hull.embed = embeds.embed
   hull.onEmbed = embeds.onEmbed
 
