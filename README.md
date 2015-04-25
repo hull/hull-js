@@ -9,6 +9,11 @@
 * ? IE 8+
 
 # Sandboxing: 
+We have 4 embed modes, from less to more isolation :
+- JS, (manifest.index == `*.js`) : Dumps the JS in the page at the Insertion point.
+- Raw (settings.sandbox = `raw`) : Dumps the HTML import content in the page executes SCRIPTS in the page, doesnt do any Style manipulation). STYLE, LINKS are embedded once in the HEAD, SCRIPTs are executed in the page.
+- Scoped (settings.sandbox = `Falsy`) (Isolates JS, Scopes Styles automatically)
+- Sandboxed (settings.sandbox = `Truthy`)(Renders everything into a completely isolated container)
 
 # Supported Features for Style Sandboxing
 Inline Style Tags
