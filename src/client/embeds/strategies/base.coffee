@@ -109,7 +109,7 @@ class BaseDeploymentStrategy
     ###
     readyCallback = (doc)=>
       doc.deploymentId = @deploymentId
-      el = @cloneImport(doc, container.contentDocument)
+      el = @cloneImport(doc, container?.contentDocument)
       # Insert a copy of this Node into container
       readyDfd.resolve({el, doc})
 

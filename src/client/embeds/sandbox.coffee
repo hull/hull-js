@@ -30,7 +30,7 @@ class Sandbox
       watchDocument  : @watchDocument
     });
 
-    @setContainer(iframe)
+    @setContainer(iframe) if iframe
 
   sandboxedTrack : (name, event={})=>
     event.ship_id = @ship.id

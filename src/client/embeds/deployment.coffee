@@ -68,10 +68,14 @@ class Deployment
     @getTargets({refresh:opts.refresh}) if opts.refresh
     @_callbacks.push(embedCompleteCallback) if _.isFunction(embedCompleteCallback)
 
+
+    @settings._sandbox = 'raw'
     
-    DS = if @ship.index.match(/\.js/)
+    DS = if @ship.index.match(/\.js^/)
       JSDeploymentStrategy
-    else if @settings._sandbox
+    else if @settings._sandbox == 'raw'
+      RawDeploymentStrategy
+    else if !!@settings._sandbox
       SandboxedDeploymentStrategy
     else
       ScopedDeploymentStrategy
