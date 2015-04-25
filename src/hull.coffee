@@ -20,13 +20,20 @@ getScriptTagConfig = require './client/script-tag-config'
 
 require './utils/console-shim'
 
-# Wraps the success callback
-# * Extends the global object
-# * Reinjects events in the live app from the pool
-# * Replays the track events
-onInitSuccess = (userSuccessCallback, _hull, data)->
+
+###*
+ * Wraps the success callback
+ * 
+ * Extends the global object
+ * Reinjects events in the live app from the pool
+ * Replays the track events
+ * @param  {function} userSuccessCallback the function that will be called if everything went well
+ * @param  {object} _hull               an partial build of the Hull object
+ * @param  {object} data                config data coming from the Remote
+ * @return {object}                     the Hull object
+###
+onInitSuccess = (userSuccessCallback, hull, data)->
   userSuccessCallback = userSuccessCallback || ->
-  hull = _hull
   {me, app, org} = data
 
   embeds.initialize({ org });
@@ -40,7 +47,7 @@ onInitSuccess = (userSuccessCallback, _hull, data)->
   Pool.run('track', hull)
 
   # Execute Hull.init callback
-  readyDfd.resolve {hull, me, app, org}
+  ready.resolve {hull, me, app, org}
 
   EventBus.emit('hull.ready', hull, me, app, org)
   EventBus.emit('hull.init', hull, me, app, org)
@@ -57,7 +64,15 @@ onInitSuccess = (userSuccessCallback, _hull, data)->
 # Wraps init failure
 onInitFailure = (err)-> throw err
 
-#Main Hull Entry Point
+###*
+ * Main Hull Entry Point
+ *
+ * Will only be executed once.
+ * @param  {[type]} config={}         [description]
+ * @param  {[type]} userSuccessCallback [description]
+ * @param  {[type]} userFailureCallback [description]
+ * @return {[type]}                     [description]
+###
 init = (config={}, userSuccessCallback, userFailureCallback)->
   if !!hull._initialized
     throw new Error('Hull.init can be called only once')
@@ -82,43 +97,45 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
   currentUser =  new CurrentUser()
 
   # Ensure we have everything we need before starting Hull
-  configCheck(config)
-  .then ()->
+  configCheck(config) .then ()->
+    # Load polyfills
     polyfill(config)
-
   .then ()=>
+    # Create the communication channel with Remote
     channel = new Channel(config, currentUser)
     channel.promise
-
   .then (channel)=>
+    # Create the Hull client that stores the API, Auth, Sharing and Tracking objects.
     client = new Client(config, channel, currentUser)
   , onInitFailure
-
   .then (hullClient)=>
+    # Initialize
     client.hull = assign(hull,client.hull)
     data = client.remoteConfig.data
     currentUser.init(data.me)
     onInitSuccess(userSuccessCallback, client.hull, data)
-
   ,(err)->
+    # Something was wrong while initializing
     console.error(err.stack);
     userFailureCallback = userFailureCallback || ->
     userFailureCallback(err)
-    readyDfd.reject(err)
+    ready.reject(err)
 
-# Hull.ready promise chain
-readyDfd = promises.deferred()
-readyDfd.promise.catch (err)-> throw new Error('Hull.ready callback error', err)
+ready = {}
+ready.promise = new Promise (resolve, reject)=>
+  ready.reject = reject
+  ready.resolve = resolve
+
+# readyDfd = promises.deferred()
+ready.promise.catch (err)-> throw new Error('Hull.ready callback error', err)
 
 hullReady = (callback, errback)->
   callback = callback || ->
   errback = errback   || ->
-  readyDfd.promise
-  .then (res)->
+  ready.promise.then (res)->
     callback(res.hull, res.me, res.app, res.org)
   , errback
-  .catch (err)->
-    console.error err.stack
+  .catch (err)-> console.error err.message, err.stack
 
 shimmedMethod = (method)->
   console.log("Hull.#{method} is only useful when Ships are sandboxed. This method does nothing here")
