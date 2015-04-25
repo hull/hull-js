@@ -16,12 +16,12 @@ var polyfills = {
   "Object.keys"                 : function(){ return "keys"    in Object; },
   "HTMLImports"                 : function(){ return "import" in document.createElement("link"); },
   "Element.prototype.classList" : function(){ return "classList" in document.documentElement; },
-  "Object.defineProperty"       : function(){ return 'defineProperty' in Object; },
-  // "Xdomain"                  : function(){
-  //   if ('withCredentials' in new window.XMLHttpRequest()) {return true;}
-  //   if (window.XMLHttpRequest.supportsXDR === true) {return true; }
-  //   return false;
-  // },
+  "Object.defineProperty"       : function(){ return "defineProperty" in Object; },
+  "Xdomain"                  : function(){
+    if ("withCredentials" in new window.XMLHttpRequest()) {return true; }
+    if (window.XMLHttpRequest.supportsXDR === true)       {return true; }
+    return false;
+  },
   "Event"                    : function(){
     if (!("Event" in global)){ return false; }
     if (typeof global.Event === "function"){ return true; }

@@ -29,7 +29,6 @@ class Deployment
     @organization = assign({}, context.org)
     @platform   = dpl.platform
     @ship       = dpl.ship
-    # "index"-> href for embed
 
     @settings   = dpl.settings
     # "_selector" : ".ship", //CSS3 Selector on which to embed the ship(s)
@@ -38,7 +37,6 @@ class Deployment
     # "_sandbox" : true //Wether to sandbox the platform : true
     # "_width" : "100%", //Dimensions to give the containing element. Passed as-is as style tag
     # "_height" : "50px", //Dimensions to give the containing element. Passed as-is as style tag
-    # 
 
     @targets    = @getTargets()
     @_onEmbeds  = []
@@ -47,7 +45,11 @@ class Deployment
     @_elements  = []
     @_callbacks = []
 
-  # Fetches all targets specified in a deployment
+  ###*
+   * Fetches all targets specified in a deployment
+   * @param  {object} opts options object. opts.refresh = true|false // Force Refresh
+   * @return {Nodes Array} A memoized array of Nodes matching the Query Selector (this.targets) 
+  ###
   getTargets : (opts={})->
     selector = @settings._selector || ""
     @targets ||= []
@@ -61,7 +63,7 @@ class Deployment
     @targets
 
   ###*
-   * embeds a Script in the page
+   * Embeds a Script in the page
    * @return {promise} a promise for the onLoad event
   ###
   embedScript : ()->
@@ -93,25 +95,21 @@ class Deployment
     ###
     readyCallback = (doc)=>
       doc.deploymentId = @id
-      el = @cloneImport(doc)
+      el = @cloneImport(doc, container.contentDocument)
       # Insert a copy of this Node into container
-      readyDfd.resolve(el)
+      readyDfd.resolve({el, doc})
 
     # Boot the ship
     loadCallback  = ()=>
-      # Return elements, targets and iframe element.
-      # readyCallback is guaranteed to have been executed here.
-      loadDfd.resolve({el, container})
+      loadDfd.resolve(el)
+    # Return elements, targets and container element.
+    # readyCallback is guaranteed to have been executed here.
 
     new Import {href: @ship.index, container: container}, readyCallback, loadCallback
     {ready:readyDfd.promise, load: loadDfd.promise}
 
-
   ###*
-   * Embeds an iframe in the DOM, and inside this iframe, inserts an Import
-   * Targets can be:
-   * - a Node : insert the iframe in the node
-   * - an Array of nodes
+   * Embeds an iframe in a DOM container or directly in the Body
    * 
    * @param  {Node|NodeArray} targets A single node or an array of Nodes
    * @return {object}         an object containing a promise for when the import is loaded, the elements created and the target node(s)
@@ -119,6 +117,7 @@ class Deployment
   embedIframe : (container)=>
     dfd = promises.deferred()
     iframe  = new Iframe {id: @id, hidden: !@settings._sandbox}, (iframe)=>
+      @addShipClasses(iframe)
       iframe.contentDocument.deploymentId = @id
       dfd.resolve(iframe)
 
@@ -126,6 +125,60 @@ class Deployment
     # Needs to be done otherwise iframe won't get initialized
     if container then @insert(iframe.getIframe(),container) else document.body.appendChild(iframe.getIframe())
     dfd.promise
+
+  ###*
+   * Sandboxed : Multiple Iframes, one for each target, completely isolated
+   * @return {promises} a promise that will resolve when all imports have been loaded in each iframe
+  ###
+  sandboxedDeployment: ()->
+    allDeployed = promises.deferred()
+
+    # For each target, embed a new Iframe, that will in turn embed the Import
+    readyPromises = _.map @targets, (target)=>
+      @embedIframe(target).then (iframe)=>
+        sandbox = new Sandbox(@ship, @, false, iframe)
+        imprt = @embedImport(iframe)
+
+        imprt.ready.then (imprt)=>
+          # Insert import into Iframe
+          d = iframe.contentDocument.createElement 'div'
+          iframe.contentDocument.body.appendChild d
+          @insert(imprt.el, d)
+        .done()
+
+        # Boot Ship inside Import
+        imprt.load.then (el)=>
+          sandbox.addElement(el)
+          sandbox.boot()
+        .done()
+
+        imprt.load
+      .done()
+
+    promises.allSettled(readyPromises).then ()=> allDeployed.resolve()
+
+    allDeployed.promise
+
+  ###*
+   * Scoped : One hidden Iframe holds JS and Style, callback method called for each target
+   * @return {promise} A promise for when the import is loaded inside the iframe
+  ###
+  scopedDeployment: ()->
+    @embedIframe().then (iframe)=>
+      sandbox = new Sandbox(@ship, @, true, iframe)
+      imprt = @embedImport(iframe)
+      elements = []
+      imprt.ready.then (imprt)=>
+        _.map @targets, (target)=>
+          elements.push(@insert(imprt.el.cloneNode(true), target))
+      .done()
+
+      imprt.load.then ()=>
+        sandbox.addElement(element) for element in elements
+        sandbox.boot()
+    .done()
+
+    # @readyPromise.then (embed)=> @bootShip(el, _hull) for el in embed.elements
 
   embed : (opts={}, embedCompleteCallback)=>
     # If we're refreshing, rebuild the target list
@@ -135,47 +188,7 @@ class Deployment
     if @ship.index.match(/\.js/)
       @embedScript().then @initPromise.resolve
     else
-      if @settings._sandbox
-        # Sandboxed : Multiple Iframes, one for each target, completely isolated
-
-        # For each target, embed a new Iframe, that will in turn embed the Import
-        readyPromises = _.map @targets, (target)=>
-          @embedIframe(target).then (iframe)=>
-            sandbox = new Sandbox(@ship, @, @settings._sandbox, iframe)
-            imprt = @embedImport(iframe)
-            imprt.ready.then (el)=>
-              # Insert import into Iframe
-              d = iframe.contentDocument.createElement 'div'
-              iframe.contentDocument.body.appendChild d
-              @insert(el, d)
-
-            # Boot Ship inside Import
-            imprt.load.then (imprt)=>
-              sandbox.addElement(imprt.el)
-              sandbox.boot()
-
-            imprt.load
-
-
-        # promises.allSettled(readyPromises).then (imports)=>
-        #   @dfd.resolve(_.pluck(imports,'el'))
-      else
-        debugger
-        # Scoped : One hidden Iframe holds JS and Style, callback method called for each target
-        @embedIframe().then (iframe)=>
-          sandbox = new Sandbox(@ship, @, @settings._sandbox, iframe)
-          sandbox.watch(iframe.contentDocument.head)
-          imprt = @embedImport(iframe)
-          elements = []
-          imprt.ready.then (el)=>
-            _.map @targets, (target)=>
-              elements.push(@insert(el.cloneNode(true), target))
-
-          imprt.load.then (imprt)=>
-            sandbox.addElement(element) for element in elements
-            sandbox.boot()
-
-        # @readyPromise.then (embed)=> @bootShip(el, _hull) for el in embed.elements
+      if @settings._sandbox then @sandboxedDeployment() else @scopedDeployment()
 
     cb.call(@) for cb in @_callbacks
     @_callbacks = []
@@ -191,7 +204,7 @@ class Deployment
    * @param  {Node} doc   Import Document Element
    * @return {Node}       An Element containing a cloned instance of the Import
   ###
-  cloneImport : (doc)->
+  cloneImport : (doc, container=document)->
     # Import Container
     el = document.createElement('div')
     @addShipClasses(el)
@@ -207,15 +220,31 @@ class Deployment
       console.error(err.message)
       return el
 
-    @parseChildren(doc.head, document.head, ['SCRIPT', '#comment', '#text', 'META', 'TITLE', 'LINK'])
-    @parseChildren(doc.body, el, ['SCRIPT','#comment'])
+    # Like with Shrimps, HEAD is not interesting in HTML Imports. Don't use it
+    @parseChildren({
+      imprt  : doc.body
+      body   : el
+      ignore : ['#comment','SCRIPT']
+      head   : container.head
+      move   : ['STYLE', 'LINK']
+    })
     el
 
-  parseChildren : (root, el, ignores=[]) ->
-    return true unless root.hasChildNodes()
-    _.map root.childNodes, (child)=>
-      el.appendChild(child.cloneNode(true)) if child and not _.contains(ignores, child.nodeName)
-        # if child.nodeName == "STYLE"
+  parseChildren : (opts={}) ->
+    # You need to take the following into account when manipulating imports : 
+    # "Real" (Chrome) HTML imports will be isolated from the main document.
+    # Polyfilled ones will return their content when querying the main document (I.E document.styleSheets)
+    # Tread wisely
+    {imprt, body, ignore, head, move} = opts
+    return true unless imprt.hasChildNodes()
+    _.map imprt.childNodes, (child)=>
+      if child
+        unless _.contains(ignore, child.nodeName)
+          if _.contains move, child.nodeName
+            child.parentNode.removeChild(child)
+            head.appendChild(child.cloneNode(true))
+          else
+            body.appendChild(child.cloneNode(true))
   
   remove: ()=>
     @targets = false
@@ -225,8 +254,6 @@ class Deployment
     while el
       el?.parentNode?.removeChild el
       el = @_elements.shift()
-
-
 
   ###*
    * Insert an element at the right position relative to a target.
