@@ -1,7 +1,7 @@
 BaseDeploymentStrategy = require './base'
 
 throwErr = (err)->
-  console.log 'Something wrong happened', err
+  console.log 'Something wrong happened', err.message, err.stack
 
 class RawDeploymentStrategy extends BaseDeploymentStrategy
   scopeStyles : true
@@ -14,16 +14,20 @@ class RawDeploymentStrategy extends BaseDeploymentStrategy
     # For each target, embed a new Iframe, that will in turn embed the Import
     imprt = @embedImport()
 
-    imprt.ready.then (imported)=>
+    ready = imprt.ready.then (imported)=>
       # Insert import into Iframe
       @sandbox.setDocument(imported.doc)
       @addElement(@insert(imported.el.cloneNode(true), target)) for target in targets
-    , throwErr
+
 
     # Boot Ship inside Import
-    imprt.load.then ()=>
+    load = imprt.load.then ()=>
       @sandbox.boot(@elements)
       @sandbox.scopeStyles()
-    , throwErr
+
+    ready.catch throwErr
+    load.catch throwErr
+
+    load
 
 module.exports = RawDeploymentStrategy
