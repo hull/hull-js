@@ -1,20 +1,29 @@
 _        = require '../../../utils/lodash'
-promises = require '../../../utils/promises'
 setStyle = require '../../../utils/set-style'
 Import   = require '../import'
 Iframe   = require '../iframe'
+Sandbox  = require '../sandbox'
 
 class BaseDeploymentStrategy
-  constructor : (opts={})->
-    @dfd = promises.deferred()
-    @ship = opts.ship
-    @settings = opts.settings
-    @deploymentId = opts.id
+  scopeStyles : false
+
+  constructor : (deployment)->
+    @deployment   = deployment
+    @sandbox      = new Sandbox(deployment, @scopeStyles)
+    @elements     = []
 
   addShipClasses : (el)->
-    el.classList.add('ship',"ship-#{@ship.id}", "ship-deployment-#{@deploymentId}")
-    el.setAttribute('data-hull-deployment', @deploymentId)
-    el.setAttribute('data-hull-ship', @ship.id)
+    el.classList.add("ship-#{@deployment.ship.id}", "ship-deployment-#{@deployment.id}")
+    el.setAttribute('data-hull-deployment', @deployment.id)
+    el.setAttribute('data-hull-ship', @deployment.ship.id)
+
+  addElement : (el)=>
+    @sandbox.addElement el
+    @elements.push el
+
+  onEmbed : (args...)=> @sandbox.onEmbed(args...)
+
+  deploy : ()->
 
   ###*
    * Inserts the content of a HTML import into a given dom node.
@@ -30,7 +39,7 @@ class BaseDeploymentStrategy
 
     if hull_in_ship?
       msg = """
-        It seems the ship "#{@ship.name}" is trying to load #{@ship.index} that contains a copy of Hull.js.
+        It seems the ship "#{@deployment.ship.name}" is trying to load #{@deployment.ship.index} that contains a copy of Hull.js.
         This can't happen. Skipping ship.
       """
       err = new Error(msg)
@@ -39,14 +48,38 @@ class BaseDeploymentStrategy
 
     # Like with Shrimps, HEAD is not interesting in HTML Imports. Don't use it
     @parseChildren({
-      imprt  : doc.body
-      body   : el
-      ignore : ['#comment','SCRIPT']
-      head   : container.head
-      move   : ['STYLE', 'LINK']
+      imported  : doc.body
+      body      : el
+      ignore    : ['#comment','SCRIPT', 'LINK', 'STYLE']
+      head      : container.head
+      move      : []
     })
     el
 
+
+  ###*
+   * shuffles DOM elements from an Import, moves them or copy them to the right place
+   * @param  {[type]} opts={} [description]
+   * @return {[type]}           [description]
+  ###
+  parseChildren : (opts={}) ->
+    # You need to take the following into account when manipulating imports : 
+    # "Real" (Chrome) HTML imports will be isolated from the main document.
+    # Polyfilled ones will return their content when querying the main document (I.E document.styleSheets)
+    # Tread wisely
+    {imported, body, ignore, head, move} = opts
+    return true unless imported.hasChildNodes()
+    _.map imported.childNodes, (child)=>
+      if child
+        unless _.contains(ignore, child.nodeName)
+          console.log child.nodeName, child
+          if _.contains move, child.nodeName
+            console.log 'Moving to', head
+            child.parentNode.removeChild(child)
+            head.appendChild(child.cloneNode(true))
+          else
+            console.log 'Moving', body
+            body.appendChild(child.cloneNode(true))
 
   ###*
    * Insert an element at the right position relative to a target.
@@ -55,8 +88,8 @@ class BaseDeploymentStrategy
    * @return {Node}        el
   ###
   insert: (el, target)->
-    setStyle.style(el, {width:@settings._width || '100%', height:@settings.height})
-    switch @settings._placement
+    setStyle.style(el, {width:@deployment.settings._width || '100%', height:@deployment.settings.height})
+    switch @deployment.settings._placement
       when 'before' then target.parentNode.insertBefore(el, target)
       when 'after'  then target.parentNode.insertBefore(el, target.nextSibling)
       when 'top'    then target.insertBefore(el, target.firstChild)
@@ -71,26 +104,6 @@ class BaseDeploymentStrategy
         target.appendChild(el)
     el
 
-  ###*
-   * shuffles DOM elements from an Import, moves them or copy them to the right place
-   * @param  {[type]} opts={} [description]
-   * @return {[type]}           [description]
-  ###
-  parseChildren : (opts={}) ->
-    # You need to take the following into account when manipulating imports : 
-    # "Real" (Chrome) HTML imports will be isolated from the main document.
-    # Polyfilled ones will return their content when querying the main document (I.E document.styleSheets)
-    # Tread wisely
-    {imprt, body, ignore, head, move} = opts
-    return true unless imprt.hasChildNodes()
-    _.map imprt.childNodes, (child)=>
-      if child
-        unless _.contains(ignore, child.nodeName)
-          if _.contains move, child.nodeName
-            child.parentNode.removeChild(child)
-            head.appendChild(child.cloneNode(true))
-          else
-            body.appendChild(child.cloneNode(true))
 
   ###*
    * Embeds an Import into a container (iframe or main window)
@@ -98,8 +111,15 @@ class BaseDeploymentStrategy
    * @return {promise}          A promise resolved onLoad with the container, the newly created element
   ###
   embedImport : (container)=>
-    readyDfd = promises.deferred()
-    loadDfd  = promises.deferred()
+    ready = {}
+    ready.promise = new Promise (resolve, reject)->
+      ready.resolve = resolve
+      ready.reject = reject
+
+    load = {}
+    load.promise = new Promise (resolve, reject)->
+      load.resolve = resolve
+      load.reject = reject
 
     el=null
 
@@ -108,19 +128,18 @@ class BaseDeploymentStrategy
      * @param  {Node} doc the Document Node inside the Import 
     ###
     readyCallback = (doc)=>
-      doc.deploymentId = @deploymentId
+      doc.deploymentId = @deployment.id
       el = @cloneImport(doc, container?.contentDocument)
       # Insert a copy of this Node into container
-      readyDfd.resolve({el, doc})
+      ready.resolve({el, doc})
 
     # Boot the ship
-    loadCallback  = ()=>
-      loadDfd.resolve(el)
+    loadCallback  = load.resolve
     # Return elements, targets and container element.
     # readyCallback is guaranteed to have been executed here.
 
-    new Import {href: @ship.index, container: container}, readyCallback, loadCallback
-    {ready:readyDfd.promise, load: loadDfd.promise}
+    new Import {href: @deployment.ship.index, container: container}, readyCallback, loadCallback
+    {ready:ready.promise, load: load.promise}
 
   ###*
    * Embeds an iframe in a DOM container or directly in the Body
@@ -129,16 +148,19 @@ class BaseDeploymentStrategy
    * @return {object}         an object containing a promise for when the import is loaded, the elements created and the target node(s)
   ###
   embedIframe : (container)=>
-    dfd = promises.deferred()
-    iframe  = new Iframe {id: @deploymentId, hidden: !@settings._sandbox}, (iframe)=>
+    embed = {}
+    embed.promise = new Promise (resolve, reject)->
+      embed.resolve = resolve
+      embed.reject = reject
+    iframe  = new Iframe {id: @deployment.id, hidden: !@deployment.settings._sandbox}, (iframe)=>
       @addShipClasses(iframe)
-      iframe.contentDocument.deploymentId = @deploymentId
-      dfd.resolve(iframe)
+      iframe.contentDocument.deploymentId = @deployment.id
+      embed.resolve(iframe)
 
     # Insert Iframe into main window
     # Needs to be done otherwise iframe won't get initialized
     if container then @insert(iframe.getIframe(),container) else document.body.appendChild(iframe.getIframe())
-    dfd.promise
+    embed.promise
 
 
 module.exports = BaseDeploymentStrategy

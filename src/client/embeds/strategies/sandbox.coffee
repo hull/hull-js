@@ -1,5 +1,7 @@
+promises               = require '../../../utils/promises'
+_                      = require '../../../utils/lodash'
 BaseDeploymentStrategy = require './base'
-Sandbox  = require '../sandbox'
+Sandbox                = require '../sandbox'
 
 class SandboxDeploymentStrategy extends BaseDeploymentStrategy
   ###*
@@ -10,26 +12,28 @@ class SandboxDeploymentStrategy extends BaseDeploymentStrategy
 
     # For each target, embed a new Iframe, that will in turn embed the Import
     readyPromises = _.map targets, (target)=>
+
+
       @embedIframe(target).then (iframe)=>
-        sandbox = new Sandbox(@ship, @, false, iframe)
+
+        @elements.push(iframe)
+
+        el = null
+        sandbox = new Sandbox(@deployment, false, iframe)
         imprt = @embedImport(iframe)
 
-        imprt.ready.then (imprt)=>
+        imprt.ready.then (imported)=>
           # Insert import into Iframe
           d = iframe.contentDocument.createElement 'div'
           iframe.contentDocument.body.appendChild d
-          @insert(imprt.el, d)
-        .done()
+          sandbox.addElement(imported.el)
+          d.appendChild imported.el
+          el = imported.el
 
         # Boot Ship inside Import
-        imprt.load.then (el)=>
-          sandbox.addElement(el)
-          sandbox.boot()
-      .done()
+        imprt.load.then ()=> sandbox.boot([el])
 
-    promises.allSettled(readyPromises).then @dfd.resolve
-
-    @dfd.promise
+    promises.allSettled(readyPromises)
   
 
 module.exports = SandboxDeploymentStrategy

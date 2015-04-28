@@ -1,6 +1,5 @@
 assign   = require '../../polyfills/assign'
 _        = require '../../utils/lodash'
-promises = require '../../utils/promises'
 
 SandboxedDeploymentStrategy = require './strategies/sandbox'
 RawDeploymentStrategy       = require './strategies/raw'
@@ -38,12 +37,11 @@ class Deployment
     # "_width" : "100%", //Dimensions to give the containing element. Passed as-is as style tag
     # "_height" : "50px", //Dimensions to give the containing element. Passed as-is as style tag
 
-    @getTargets()
-    @_onEmbeds  = []
-    @_styles    = []
-    @_imports   = []
-    @_elements  = []
-    @_callbacks = []
+    @settings._sandbox = 'raw'
+    @targets = @getTargets()
+    @deploymentStrategy = @getDeploymentStrategy()
+    @elements  = []
+    @callbacks = []
 
   ###*
    * Fetches all targets specified in a deployment
@@ -51,27 +49,20 @@ class Deployment
    * @return {Nodes Array} A memoized array of Nodes matching the Query Selector (this.targets) 
   ###
   getTargets : (opts={})->
-    @targets ||= []
-    return @targets if (@targets and !opts.refresh) || !@settings._selector
+    return @targets if @targets and !opts.refresh
+    return [] unless @settings._selector
 
-    @targets = if @settings._multi
+    if @settings._multi
       document.querySelectorAll(@settings._selector)
     else
       target = document.querySelector(@settings._selector)
       if target then [target] else []
 
 
-  embed : (opts={}, embedCompleteCallback)=>
-    dfd = promises.deferred()
+  getDeploymentStrategy : ()->
+    return @deploymentStrategy if @deploymentStrategy
 
-    # If we're refreshing, rebuild the target list
-    @getTargets({refresh:opts.refresh}) if opts.refresh
-    @_callbacks.push(embedCompleteCallback) if _.isFunction(embedCompleteCallback)
-
-
-    @settings._sandbox = 'raw'
-    
-    DS = if @ship.index.match(/\.js^/)
+    DS = if @ship.index.match(/\.js$/)
       JSDeploymentStrategy
     else if @settings._sandbox == 'raw'
       RawDeploymentStrategy
@@ -80,26 +71,25 @@ class Deployment
     else
       ScopedDeploymentStrategy
 
-    ds = new DS
-      id       : @id
-      settings : @settings
-      ship     : @ship          
+    new DS(@)
 
-    ds.deploy(@targets).then ()=>
-      cb.call(@) for cb in @_callbacks
-      @_callbacks = []
-    .done()
+  onEmbed : (args...) => @deploymentStrategy.onEmbed(args...)
 
-    dfd.promise
+  embed : (opts={})=>
+    new Promise (resolve, reject)=>
+      # If we're refreshing, rebuild the target list
+      @targets = @getTargets(opts)
+      ds = @getDeploymentStrategy().deploy(@targets)
+      ds.then (args...)=> resolve(@)
 
   remove: ()=>
     @targets = false
-    el = @_elements.shift()
+    el = @elements.shift()
     link = document.querySelector("link[rel=\"import\"][href=\"#{@ship.index}\"]")
     link.parentNode.removeChild link if link?.parentNode?
     while el
       el?.parentNode?.removeChild el
-      el = @_elements.shift()
+      el = @elements.shift()
 
   
 module.exports = Deployment

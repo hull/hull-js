@@ -7,17 +7,19 @@ class JSDeploymentStrategy extends BaseDeploymentStrategy
    * Embeds a Script in the page
    * @return {promise} a promise for the onLoad event
   ###
-  embedScript : ()->
+  deploy : (targets)->
     # sc = document.getElementById(id)
     # return if sc
-    sc = document.querySelector("[data-hull-deployment=\"#{@deploymentId}\"]");
+    sc = document.querySelector("[data-hull-deployment=\"#{@deployment.id}\"]");
     return if sc?
 
     attributes = 
-      'data-hull-deployment': @deploymentId
-      'data-hull-ship'      : @ship.id
+      'data-hull-deployment': @deployment.id
+      'data-hull-ship'      : @deployment.ship.id
 
-    return scriptLoader({src:@ship.index, attributes}).then @dfd.resolve
+    @addElement(target) for target in targets
 
+    return scriptLoader({src:@deployment.ship.index, attributes}).then ()=>
+      @sandbox.boot(@elements)
 
 module.exports = JSDeploymentStrategy

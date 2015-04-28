@@ -1,31 +1,29 @@
 BaseDeploymentStrategy = require './base'
-Sandbox  = require '../sandbox'
+
+throwErr = (err)->
+  console.log 'Something wrong happened', err
 
 class RawDeploymentStrategy extends BaseDeploymentStrategy
+  scopeStyles : true
+
   ###*
-   * Sandboxed : Multiple Iframes, one for each target, completely isolated
-   * @return {promises} a promise that will resolve when all imports have been loaded in each iframe
+   * Raw : Directly in the page
+   * @return {promises} a promise that will resolve when all elements have been loaded.
   ###
   deploy: (targets)->
-    debugger
-    sandbox = new Sandbox(@ship, @, false)
-
     # For each target, embed a new Iframe, that will in turn embed the Import
     imprt = @embedImport()
 
-    imprt.ready.then (imprt)=>
+    imprt.ready.then (imported)=>
       # Insert import into Iframe
-      debugger
-      @insert(imprt.el.cloneNode(true), target) for target in targets
-    .done()
+      @sandbox.setDocument(imported.doc)
+      @addElement(@insert(imported.el.cloneNode(true), target)) for target in targets
+    , throwErr
 
     # Boot Ship inside Import
-    imprt.load.then (el)=>
-      debugger
-      sandbox.addElement(el)
-      sandbox.boot()
-      @dfd.resolve(el)
-
-    @dfd.promise
+    imprt.load.then ()=>
+      @sandbox.boot(@elements)
+      @sandbox.scopeStyles()
+    , throwErr
 
 module.exports = RawDeploymentStrategy

@@ -1,7 +1,7 @@
 "use strict";
 /*global require, module*/
 
-import _ from "../../utils/lodash";
+import _          from "../../utils/lodash";
 import Deployment from "./deployment";
 
 let _initialized = false;
@@ -10,22 +10,20 @@ let _context = {};
 function embedDeployments(deployments, opts={}, callback) {
   if (!deployments || !deployments.length){return;}
   if (opts.reset !== false) { Deployment.resetDeployments()}
-  var dpll = deployments.length;
+
   var embeds = [];
-
-  var allEmbedCompleteCallback = function() {
-    embeds.push(this);
-    if (embeds.length === dpll && _.isFunction(callback)) {
-      callback(embeds);
-    }
-  };
-
-  var dpl;
+  var deploymentPromises = [];
 
   for (var d = 0, l = deployments.length; d < l; d++) {
-    dpl = new Deployment(deployments[d], _context);
-    dpl.embed({ refresh: true }, allEmbedCompleteCallback);
+    var dpl = new Deployment(deployments[d], _context);
+    deploymentPromises.push(dpl.embed({ refresh: true }));
   }
+
+  Promise.all(deploymentPromises).then((deployments)=>{
+    if (_.isFunction(callback)){
+      callback(_.pluck(deployments, 'value'))
+    }
+  })
 }
 
 module.exports = {
@@ -36,19 +34,19 @@ module.exports = {
   embed: function(deployments, opts, callback) {
     embedDeployments(deployments, opts, callback);
   },
-  onEmbed: function(doc, fn) {
+  onEmbed: function(fn) {
     var deploymentId = null;
-    if(fn===undefined){
-      // loaded file.js
-      fn = doc
-      deploymentId = currentScript.getAttribute('data-hull-deployment');
-    } else {
-      // loaded file.html
+    var cs = document._currentScript || document.currentScript;
+    var doc = cs.ownerDocument;
+    if (doc!==document){
+      // we're inside an Import
       deploymentId = doc.deploymentId;
+    } else {
+      // We're executing a Raw script.
+      deploymentId = cs.getAttribute("data-hull-deployment");
     }
+
     var deployment = Deployment.getDeployment(deploymentId);
-    if(deployment){
-      deployment.onEmbed(fn);
-    }
+    if(deployment){ deployment.onEmbed(fn); }
   }
 };

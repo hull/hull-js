@@ -17,7 +17,6 @@ class Import
 
 
   doImport : (href, readyCallback, loadCallback)=>
-    window.HTMLImports?.flags = {debug:true, load:true}
     el = @document.querySelector "link[rel=\"import\"][href=\"#{href}\"]"
 
     unless el
@@ -44,10 +43,9 @@ class Import
       , 10
 
       el.addEventListener 'load', (ev)=>
-        onEmbed = el.import.onEmbed || ->
         readyCallback(el.import) unless ready
         ready=true
-        loadCallback(onEmbed)
+        loadCallback(el.import.body)
     el
 
 module.exports = Import

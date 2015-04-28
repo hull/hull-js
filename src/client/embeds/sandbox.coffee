@@ -9,74 +9,95 @@ StyleObserver  = require '../style/observer'
 styleSandbox   = require '../style/sandbox'
 
 class Sandbox
-  constructor : (ship, deployment, scopeStyles, iframe)->
-    @ship = ship
+  constructor : (deployment, scopeStyle, iframe)->
+    @ship = deployment.ship
     @shipClassName = ".ship-#{@ship.id}"
-    @scopeStyles = scopeStyles
+    @scopeStyle = scopeStyle
     @deployment = deployment
 
     @callbacks = []
-    @elements  = []
-    @_sandboxedShare =  new SandboxedShare({ share: Hull.share });
+    @sandboxedShare =  new SandboxedShare({ share: Hull.share });
 
     sandboxedTrack = 
 
-    @_hull = assign({}, window.Hull, {
+    @hull = assign({}, window.Hull, {
       onEmbed        : @onEmbed
       track          : @sandboxedTrack
-      share          : @_sandboxedShare.share
+      share          : @sandboxedShare.share
       shipClassName  : @getShipClassName 
-      watchNode      : @watchNode
-      watchDocument  : @watchDocument
+      observe        : @observe
     });
 
-    @setContainer(iframe) if iframe
+    @booted = {}
+    @booted.promise = new Promise (resolve, reject)=>
+      @booted.resolve = resolve
+      @booted.reject = reject
 
+    @booted.promise.then => @hull.track('hull.app.init')
+
+    @setContainer(iframe) if !!iframe
+
+  boot: (elements)=> @booted.resolve(elements)
+
+  ###*
+   * Performs a track that has the `ship_id` field set correctly
+   * @param  {[type]} name       [description]
+   * @param  {[type]} event={} [description]
+   * @return {[type]}            [description]
+  ###
   sandboxedTrack : (name, event={})=>
     event.ship_id = @ship.id
     Hull.track(name, event)
 
-  getShipClassName : ()=> @shipClassName
+  getShipClassName : => @shipClassName
 
-  _getWatcher : ()=>
-    @_styleObserver ||= new StyleObserver(@shipClassName)
-    @_styleObserver
-  watchNode:     (node)=> @_getWatcher().observeNode(node) if @scopeStyles
-  watchDocument: (container)=> @_getWatcher().observeDocument(container) if @scopeStyles
+  _getObserver : =>
+    @_observer ||= new StyleObserver(@shipClassName)
+    @_observer
 
-  addElement: (element)->
-    if element
-      @watchNode(element)
-      @elements.push(element)
+  observe : (target)->
+    return unless @scopeStyle
+    @_getObserver().observe(target)
 
+  scopeStyles : ()->
+    return unless @scopeStyle
+    @_observer.process(@_document)
+
+  setDocument : (doc)->
+    @_document = doc
+    @observe(doc)
+
+  ###*
+   * Adds an element to the array of elements owned by the sandbox.
+   * Monitors it for Style Tags so they can be autoprefixed
+   * @param {Node} element DOM Node
+  ###
+  addElement: (element)-> @observe(element) if element
+
+  ###*
+   * Add a Callback to the callback queue.
+   * Tries to perform it immediately
+   * The right signature is onEmbed(fn) so remove the eventual `doc` that can be there (legacy)
+   * @param {function} fn callback to add
+   * @return {[type]}  [description]
+  ###
   onEmbed: (args...)=>
     args.shift() if args.length == 2
     callback = args[0]
-    @boot(callback)
-    @callbacks.push(callback)
-    true
-
-  boot: (callback)=>
-    # Only perform boot if we have both Elements and Callbacks
-    _.map @elements, (element)=>
-      @_hull.track('hull.app.init')
-      if callback
-        callback(element, @deployment, @_hull)
-      else
-        _.map @callbacks, (callback)=> callback(element, @deployment, @_hull)
-      @_hull.autoSize()
+    @booted.promise.then (elements)=>
+      callback(element, @deployment, @hull) for element in elements
 
   setContainer : (iframe)->
     @_container = iframe.contentDocument || document
 
-    return @_hull unless iframe
+    return @hull unless iframe
 
-    @watchDocument(@_container)
+    @observe(@_container)
 
-    @_sandboxedShare.setContainer(iframe)
-    @_autoSizeInterval = null;
+    @sandboxedShare.setContainer(iframe)
+    @autoSizeInterval = null;
 
-    @_hull = assign(@_hull, {
+    @hull = assign(@hull, {
 
       # onEmbed : (args...)->
       #   args.shift() if args.length == 2
@@ -96,20 +117,26 @@ class Sandbox
 
       autoSize : (interval)=>
         if (interval)
-          setInterval ()=>
-            @_hull.autoSize()
+          setInterval =>
+            @hull.autoSize()
           , interval
         else
-          clearInterval(@_autoSizeInterval) if interval==false
+          clearInterval(@autoSizeInterval) if interval==false
         setStyle.autoSize(iframe) unless interval==false
         true
 
       findUrl : ()-> findUrl(iframe)
     });
 
-    w = getIframeWindow(iframe)
-    w.Hull = @_hull
+    @booted.promise.then =>
+      @hull.autoSize()
 
-  get : ()-> @_hull
+    w = getIframeWindow(iframe)
+    # debugger
+    # w.open = window.open
+    iframe.contentWindow = assign(iframe.contentWindow, window, {Hull:@hull})
+    # w.Hull = @hull
+
+  get : ()-> @hull
 
 module.exports = Sandbox
