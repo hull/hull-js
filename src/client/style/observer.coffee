@@ -37,12 +37,15 @@ hasStyleMutations = (mutations) ->
     false
 
 processDocumentMutations = (prefix, doc, mutations)->
-  styleSandbox.processDocument(prefix, doc) if hasStyleMutations(mutations)
+  if hasStyleMutations(mutations)
+    styleSandbox.processDocument(prefix, doc)
 
 # Collect all style mutations in the mutation batch, and add / remove them
 processNodeMutations = (prefix, mutations)->
   _.map mutations, (mutation)->
-    return styleSandbox.addStyle(prefix, mutation.target) if isStyleTag(mutation.target)
+    # Style mutations don't interest us for now. we just skip them
+    # return styleSandbox.addStyle(prefix, mutation.target) if isStyleTag(mutation.target)
+
     # Can't be a style and also have addedNodes...
     _.map mutation.addedNodes, (node)->
       styleSandbox.addStyle(prefix, style) for style in getStyles(node)
@@ -54,15 +57,15 @@ class StyleObserver
 
   observe : (target)->
     @observeDocument(target) if target.nodeType==9 # document
-    @observeNode(target)     if target.nodeType==3 # node
+    @observeNode(target)     if target.nodeType==1 # node
 
   process : (target)->
     @processDocument(target) if target.nodeType==9 # document
-    @processNode(target)     if target.nodeType==3 # node
+    @processNode(target)     if target.nodeType==1 # node
       
 
   processNode : (node)->
-    _.map node.querySelectorAll('style'), styleSandbox.processStyle.bind(@, @prefix)
+    _.map node.querySelectorAll('style'), styleSandbox.addStyle.bind(@, @prefix)
     
   observeNode: (node)->
     return unless node
