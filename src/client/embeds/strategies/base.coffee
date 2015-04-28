@@ -72,13 +72,10 @@ class BaseDeploymentStrategy
     _.map imported.childNodes, (child)=>
       if child
         unless _.contains(ignore, child.nodeName)
-          console.log child.nodeName, child
           if _.contains move, child.nodeName
-            console.log 'Moving to', head
             child.parentNode.removeChild(child)
             head.appendChild(child.cloneNode(true))
           else
-            console.log 'Moving', body
             body.appendChild(child.cloneNode(true))
 
   ###*
