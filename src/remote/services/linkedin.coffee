@@ -1,5 +1,5 @@
 assign            = require '../../polyfills/assign'
-GenericService    = require './generic_service'
+GenericService    = require './generic-service'
 
 class LinkedInService extends GenericService
   name : 'linkedin'

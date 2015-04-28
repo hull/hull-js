@@ -2,14 +2,11 @@
 /* global require */
 
 export default {
-  bind: require("lodash/function/bind"),
   compact: require("lodash/array/compact"),
   contains: require("lodash/collection/contains"),
   reject: require("lodash/collection/reject"),
   toArray: require("lodash/lang/toArray"),
   defaults: require("lodash/object/defaults"),
-  delay: require("lodash/function/delay"),
-  defer: require("lodash/function/defer"),
   each: require("lodash/collection/each"),
   partition: require("lodash/collection/partition"),
   every: require("lodash/collection/every"),
@@ -23,7 +20,6 @@ export default {
   keys: require("lodash/object/keys"),
   map: require("lodash/collection/map"),
   find: require("lodash/collection/find"),
-  findWhere: require("lodash/collection/findWhere"),
   filter: require("lodash/collection/filter"),
   omit: require("lodash/object/omit"),
   pick: require("lodash/object/pick"),

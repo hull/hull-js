@@ -1,5 +1,4 @@
 _        = require '../../utils/lodash'
-promises = require '../../utils/promises'
 track    = require '../track/index'
 findUrl  = require '../../utils/find-url'
 

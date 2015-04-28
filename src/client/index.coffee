@@ -1,5 +1,4 @@
 _            = require '../utils/lodash'
-promises     = require '../utils/promises'
 clone        = require '../utils/clone'
 EventBus     = require '../utils/eventbus'
 Entity       = require '../utils/entity'

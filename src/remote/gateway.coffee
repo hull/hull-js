@@ -1,7 +1,6 @@
 assign              = require '../polyfills/assign'
 _                   = require '../utils/lodash'
 EventBus            = require '../utils/eventbus'
-promises            = require '../utils/promises'
 clone               = require '../utils/clone'
 RemoteConfigStore   = require '../flux/stores/RemoteConfigStore'
 RemoteHeaderStore   = require '../flux/stores/RemoteHeaderStore'
@@ -19,7 +18,7 @@ normalizePath = (path) ->
   path = path.substring(1) if path[0] == '/'
   API_PATH + path
 
-batchable = (threshold, fn) ->
+batchable = (threshold, callback) ->
   timeout = null
   args = []
 
@@ -27,7 +26,7 @@ batchable = (threshold, fn) ->
     args.push Array::slice.call(arguments)
     clearTimeout timeout
     delayed = =>
-      fn.call(@, args)
+      callback.call(@, args)
       timeout = null
       args = []
     timeout = setTimeout delayed, threshold
@@ -50,14 +49,14 @@ formatBatchParams = (requests) ->
 
   params
 
-resolveResponse = (request, response, deferred)->
+resolveResponse = (request, response, resolve, reject)->
   headers = reduceHeaders(response.headers)
   h = { body: response.body, headers: headers, request: request }
   if (response.status >= 200 && response.status < 300)
-    return deferred.resolve(h)
+    return resolve(h)
   else
     err = {response:response.body, headers: response.headers}
-    return deferred.reject(err)
+    return reject(err)
 
 class Gateway
 
@@ -67,8 +66,6 @@ class Gateway
     @queue = batchable @options.delay, (requests) -> @flush(requests)
 
   fetch : (options={}) =>
-    dfd = promises.deferred()
-
     {method, headers, path, params} = options
 
     method = (method||'get').toUpperCase()
@@ -81,22 +78,19 @@ class Gateway
 
     if params? and method=='GET' then s.query(QSEncoder.encode(params)) else s.send(params)
 
-    d = new promises.deferred()
+    new Promise (resolve, reject)->
+      console.log(">", method, path, params, headers) if config.debug?.enable?
 
-    console.log(">", method, path, params, headers) if config.debug?.enable?
-
-    s.end (response)=>
-      console.log("<", method, path, response) if config.debug?.enable?
-      h = {body:response.body, headers: response.headers, status: response.status}
-      if (response.ok) then d.resolve(h) else d.reject(h)
-
-    d.promise
+      s.end (response)=>
+        console.log("<", method, path, response) if config.debug?.enable?
+        h = {body:response.body, headers: response.headers, status: response.status}
+        if (response.ok) then resolve(h) else reject(h)
 
   flush: (requests) ->
     if requests.length <= @options.min
       while requests.length
-        [request, deferred] = requests.pop()
-        @handleOne(request, deferred)
+        [request, resolve, reject] = requests.pop()
+        @handleOne(request, resolve, reject)
     else
       @handleMany(requests.splice(0, @options.max))
       @flush(requests) if requests.length
@@ -117,40 +111,42 @@ class Gateway
 
   handle: (request) ->
     request.path = normalizePath request.path
-    d = new promises.deferred()
-    _.each @before_middlewares, (middleware)-> middleware(request)
-    @queue(request, d)
-    promise = d.promise
+
+    promise = new Promise (resolve, reject)=>
+      _.each @before_middlewares, (middleware)-> middleware(request)
+      @queue(request, resolve, reject)
+
     unless request.nocallback
       _.each @after_middlewares, (middleware)->
         promise
         .then middleware
         .fail (err)->
           throw new Error("Error: in request : #{err.response.message}")
+
     promise
 
   # Single request posting
-  handleOne: (request, deferred) ->
+  handleOne: (request, resolve, reject) ->
     success = (response)->
-      resolveResponse(request, response, deferred)
+      resolveResponse(request, response, resolve, reject)
 
     error = (error)->
       response = error.body
-      deferred.reject({response,  request, headers: {}})
+      reject({response,  request, headers: {}})
 
-    @fetch(request).then(success, error).done()
+    @fetch(request).then(success, error)
 
   # Batching API posting
   handleMany: (requests) ->
     params = formatBatchParams(requests)
 
     success = (responses)->
-      resolveResponse(requests[i], response, requests[i][1]) for response, i in responses.body.results
+      resolveResponse(requests[i], response, requests[i][1], requests[i][2]) for response, i in responses.body.results
       undefined #Don't forget this to keep the promise chain alive
 
     error = (response)->
       request[1].reject({response:response, headers: {}, request: request}) for request in requests
 
-    @fetch({method: 'post', path: '/api/v1/batch', params }).then(success, error).done()
+    @fetch({method: 'post', path: '/api/v1/batch', params }).then(success, error)
 
 module.exports = Gateway

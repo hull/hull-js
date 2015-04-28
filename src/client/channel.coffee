@@ -2,7 +2,6 @@ xdm      = require 'xdm.js'
 domready = require '../utils/domready'
 _        = require '../utils/lodash'
 EventBus = require '../utils/eventbus'
-promises = require '../utils/promises'
 
 hiddenFrameStyle =
   top: '-20px'
@@ -59,9 +58,11 @@ class Channel
     @timeout  = null
     @rpc     = null
     @config  = config
-    @deferred = promises.deferred()
+    @_ready = {}
+    @promise = new Promise (resolve, reject)=>
+      @_ready.resolve = resolve
+      @_ready.reject = reject
     domready(@onDomReady)
-    @promise = @deferred.promise
 
   onDomReady : ()=>
     @timeout = setTimeout(@loadingFailed, 30000);
@@ -90,15 +91,19 @@ class Channel
 
   loadError       : (err)=>
     window.clearTimeout @timeout
-    @deferred.reject err
+    @_ready.reject err
+
   loadingFailed   : (err) =>
-    @deferred.reject('Remote loading has failed. Please check "orgUrl" and "appId" in your configuration. This may also be about connectivity.')
+    @_ready.reject('Remote loading has failed. Please check "orgUrl" and "appId" in your configuration. This may also be about connectivity.')
+
   onMessage       : (e)->
-    if e.error then @deferred.reject(e.error) else console.warn("RPC Message", arguments)
+    if e.error then @_ready.reject(e.error) else console.warn("RPC Message", arguments)
+
   ready           : (remoteConfig)   =>
     window.clearTimeout(@timeout)
     @remoteConfig = remoteConfig
-    @deferred.resolve @
+    @_ready.resolve @
+
   getClientConfig : ()  => @config
   showIframe      : ()  => @applyFrameStyle(shownFrameStyle)
   hideIframe      : ()  => @applyFrameStyle(hiddenFrameStyle)

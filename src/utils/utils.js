@@ -1,5 +1,4 @@
 module.exports = {
-  q             : require("q"),
   cookies       : require("cookies-js"),
   eventemitter2 : require("eventemitter2"),
   assign        : require("../polyfills/assign"),

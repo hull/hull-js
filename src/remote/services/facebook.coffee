@@ -2,9 +2,8 @@ assign            = require '../../polyfills/assign'
 _                 = require '../../utils/lodash'
 cookies           = require '../../utils/cookies'
 EventBus          = require '../../utils/eventbus'
-promises          = require '../../utils/promises'
 clone             = require '../../utils/clone'
-GenericService    = require './generic_service'
+GenericService    = require './generic-service'
 
 FB_EVENTS = ["auth.authResponseChanged", "auth.statusChange", "auth.login", "auth.logout", "comment.create", "comment.remove", "edge.create", "edge.remove", "message.send", "xfbml.render"]
 
@@ -19,17 +18,16 @@ class FacebookService extends GenericService
     @ensureLoggedIn().then ()=> @performRequest(args...)
 
   ensureLoggedIn : ()->
-    dfd = promises.deferred()
-    args = Array.prototype.slice.call(arguments)
-    if @fbUser?.status=='connected'
-      dfd.resolve()
-    else
-      FB.getLoginStatus (res)->
-        @updateFBUserStatus(res)
-        if res.status=='connected' then dfd.resolve() else dfd.reject()
-      , true
-    # , true ~ Maybe we dont need a roundtrip each time.
-    dfd.promise
+    new Promise (resolve, reject)=>
+      args = Array.prototype.slice.call(arguments)
+      if @fbUser?.status=='connected'
+        resolve()
+      else
+        FB.getLoginStatus (res)->
+          @updateFBUserStatus(res)
+          if res.status=='connected' then resolve() else reject()
+        , true
+      # , true ~ Maybe we dont need a roundtrip each time.
 
   performRequest: (request,callback,errback)=>
 
@@ -52,7 +50,7 @@ class FacebookService extends GenericService
       trackParams = { ui_request_id: utils?.uuid?() || (new Date()).getTime() }
       @track "facebook.#{path}.open", assign({}, request.params, trackParams)
 
-      _.delay =>
+      setTimeout ()=>
         FB.ui params, (response)=>
           path = "facebook.#{path}."
           path += if !response || response.error_code then "error" else "success"
@@ -99,23 +97,22 @@ class FacebookService extends GenericService
 
 
   loadFbSdk: (config)->
-    dfd = promises.deferred()
-    config = _.omit(assign({},config,{status:true}), 'credentials')
-    if config.appId
-      fb = document.createElement 'script'
-      fb.type = 'text/javascript'
-      fb.async = true
-      fb.src =  "https://connect.facebook.net/en_US/all.js"
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(fb);
-      window.fbAsyncInit = ()=>
-        @fb = true
-        FB.init config
-        FB.getLoginStatus @updateFBUserStatus
-        @subscribeToFBEvents()
-        dfd.resolve({})
-    else
-      dfd.reject({})
-    dfd.promise
+    new Promise (resolve, reject)=>
+      config = _.omit(assign({},config,{status:true}), 'credentials')
+      if config.appId
+        fb = document.createElement 'script'
+        fb.type = 'text/javascript'
+        fb.async = true
+        fb.src =  "https://connect.facebook.net/en_US/all.js"
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(fb);
+        window.fbAsyncInit = ()=>
+          @fb = true
+          FB.init config
+          FB.getLoginStatus @updateFBUserStatus
+          @subscribeToFBEvents()
+          resolve({})
+      else
+        reject({})
 
 
 module.exports = FacebookService

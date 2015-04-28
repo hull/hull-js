@@ -1,4 +1,4 @@
-GenericService    = require './generic_service'
+GenericService    = require './generic-service'
 
 class TwitterService extends GenericService
   name : 'twitter'

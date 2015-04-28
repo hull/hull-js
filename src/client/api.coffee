@@ -1,4 +1,3 @@
-promises = require '../utils/promises'
 cookie = require '../utils/cookies'
 EventBus = require '../utils/eventbus'
 parseOpts = require './parse-opts'
@@ -28,34 +27,32 @@ class Api
   message: ()=>
     return console.error("Hull Api is not initialized yet. You should run your app from the callback of Hull.ready()") unless @channel.rpc
     {opts, callback, errback} = parseOpts(Array.prototype.slice.call(arguments))
-    deferred = promises.deferred()
-    onSuccess = (res={})=>
-      @updateCurrentUserCookies(res.headers, res.provider)
-      callback(res.body)
-      deferred.resolve(res.body)
+    new Promise (resolve, reject)=>
 
-    onError = (response, error)=>
-      errback(response.message, error)
-      deferred.reject(response.message, error)
+      onSuccess = (res={})=>
+        @updateCurrentUserCookies(res.headers, res.provider)
+        callback(res.body)
+        resolve(res.body)
 
-    @channel.rpc.message(opts, onSuccess, onError)
-    deferred.promise
+      onError = (response, error)=>
+        errback(response.message, error)
+        reject(response.message, error)
+
+      @channel.rpc.message(opts, onSuccess, onError)
 
   clearToken    : (args...)=>
     @channel.rpc.clearUserToken(args...) # No need to be exposed, IMO
 
   refreshUser   : ()=>
-    deferred = promises.deferred()
+    new Promise (resolve, reject)=>
+      onSuccess  = (res={})=>
+        @currentUser.update(res)
+        resolve(res)
 
-    onSuccess  = (res={})=>
-      @currentUser.update(res)
-      deferred.resolve(res)
+      onError   = (err={})=>
+        reject(err)
 
-    onError   = (err={})=>
-      deferred.reject(err)
-
-    @channel.rpc.refreshUser(onSuccess, onError)
-    return deferred.promise
+      @channel.rpc.refreshUser(onSuccess, onError)
 
   updateCurrentUserCookies: (headers, provider)=>
     @currentUser.updateCookies(headers, @config.appId) if (headers? and provider == 'hull')

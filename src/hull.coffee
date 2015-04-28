@@ -10,16 +10,12 @@ CurrentUser = require './client/current-user'
 Channel     = require './client/channel'
 Api         = require './client/api'
 
-promises    = require './utils/promises'
 EventBus    = require './utils/eventbus'
 Pool        = require './utils/pool'
 HullRemote  = require './hull-remote'
 embeds      = require './client/embeds'
 configCheck = require './client/config-check'
 getScriptTagConfig = require './client/script-tag-config'
-
-require './utils/console-shim'
-
 
 ###*
  * Wraps the success callback
@@ -126,7 +122,6 @@ ready.promise = new Promise (resolve, reject)=>
   ready.reject = reject
   ready.resolve = resolve
 
-# readyDfd = promises.deferred()
 ready.promise.catch (err)-> throw new Error('Hull.ready callback error', err)
 
 hullReady = (callback, errback)->
@@ -159,7 +154,6 @@ _.map eeMethods, (m)->
 
 
 autoStartConfig = getScriptTagConfig()
-
 if autoStartConfig && autoStartConfig.autoStart
   if !hull._initialized
     autoStartConfig && autoStartConfig.autoStart && init(autoStartConfig)

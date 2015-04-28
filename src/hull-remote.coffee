@@ -79,10 +79,8 @@ Hull = (remoteConfig)->
     .then (clientConfig)->
       RemoteConfigActions.updateClientConfig(clientConfig)
 
-    .fail (err)->
+    .catch (err)->
       console.error("Could not initialize Hull: #{err.message}")
-
-    .done()
 
 Hull.version = VERSION
 module.exports = Hull

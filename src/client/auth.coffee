@@ -1,6 +1,5 @@
 assign   = require '../polyfills/assign'
 _        = require '../utils/lodash'
-promises = require '../utils/promises'
 EventBus = require '../utils/eventbus'
 isMobile = require '../utils/is-mobile'
 Base64   = require '../utils/base64'
@@ -14,13 +13,12 @@ try
       window.close()
 
 getNoUserPromise = ()->
-  noUserDfd = promises.deferred()
-  noUserDfd.promise.fail(->)
-  noUserDfd.reject(
-    reason: 'no_current_user',
-    message: 'User must be logged in to perform this action'
-  )
-  noUserDfd.promise
+  promise = new Promise (resolve, reject)->
+    reject    
+      reason: 'no_current_user',
+      message: 'User must be logged in to perform this action'
+  promise.fail(->)
+  promise
 
 getUser = ()->
   user = Hull.currentUser()
@@ -148,9 +146,10 @@ class Auth
           w.close()
 
     # 30 seconds after creating popup, reject promise if still active.
-    _.delay ()=>
-      @onAuthComplete
-    , 30000, { success: false, error: { reason: 'timeout', message: 'Timeout for login (after 30 seconds), User never finished the auth' } }
+    
+    setTimeout ()=>
+      @onAuthComplete({ success: false, error: { reason: 'timeout', message: 'Timeout for login (after 30 seconds), User never finished the auth' } })
+    , 30000
 
     # Reject Promise if window has been closed
     @_popupInterval = w? && setInterval =>
@@ -176,13 +175,16 @@ class Auth
     isAuthenticating = @isAuthenticating()
     return isAuthenticating if isAuthenticating
 
-    @_authenticating = promises.deferred()
+    @_authenticating = {}
+    promise = new Promise (resolve, reject)=>
+      @_authenticating.resolve = resolve
+      @_authenticating.reject = reject
 
     unless ~(_.indexOf(@authServices, opts.provider))
       @_authenticating.reject
         message: "No authentication service #{opts.provider} configured for the app"
         reason: 'no_such_service'
-      return @_authenticating.promise
+      return promise
 
     @_authenticating.provider = opts.provider.toLowerCase()
 
@@ -195,7 +197,7 @@ class Auth
       # Classic Popup Strategy
       @popupAuthWindow(authUrl, opts)
 
-    @_authenticating.promise
+    promise
 
   login : () =>
 
@@ -203,9 +205,8 @@ class Auth
       # Return promise even if login is in progress.
       msg = "Login in progress. Use `Hull.on('hull.user.login', callback)` to call `callback` when done."
       console.info msg
-      dfd = promises.deferred()
-      dfd.reject {error: {reason:'in_progress', message: msg}}
-      return dfd.promise;
+      return new Promise (resolve, reject)->
+        reject({error: {reason:'in_progress', message: msg}})
 
     # Handle Legacy Format,
     # Ensure New Format: Hash signature

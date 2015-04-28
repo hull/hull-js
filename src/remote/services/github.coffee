@@ -1,4 +1,4 @@
-GenericService    = require './generic_service'
+GenericService    = require './generic-service'
 superagent        = require 'superagent'
 QSEncoder           = require '../../utils/query-string-encoder'
 

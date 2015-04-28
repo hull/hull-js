@@ -1,12 +1,12 @@
 assign            = require '../../polyfills/assign'
-Treasure          = require 'td-js-sdk'
+# Treasure          = require 'td-js-sdk'
 uuid              = require('../../utils/uuid')
 cookies           = require '../../utils/cookies'
 analyticsId       = require '../../utils/analytics-id'
 getWrappedRequest = require '../wrapped-request'
 RemoteConfigStore = require '../../flux/stores/RemoteConfigStore'
 RemoteUserStore     = require '../../flux/stores/RemoteUserStore'
-GenericService    = require './generic_service'
+GenericService    = require './generic-service'
 Base64            = require '../../utils/base64'
 
 
@@ -23,75 +23,75 @@ class HullTrackService extends GenericService
 
     @_request = @wrappedRequest
 
-    td = @td = new Treasure({
-      database: "org_#{config.data.org.id}"
-      writeKey: '6115/02eed5a653111c8321161b894dc066a7f0f929b7'
-      clientId: analyticsId.getBrowserId()
-      storage: 'none'
-      track: {
-        values: {
-          td_url     : config.data.request.url.href
-          td_host    : config.data.request.url.host
-          td_path    : config.data.request.url.path
-          td_referrer: config.data.request.referrer.href || ""
-          td_referring_domain: config.data.request.referrer.host || ""
-        }
-      }
-    })
+    # td = @td = new Treasure({
+    #   database: "org_#{config.data.org.id}"
+    #   writeKey: '6115/02eed5a653111c8321161b894dc066a7f0f929b7'
+    #   clientId: analyticsId.getBrowserId()
+    #   storage: 'none'
+    #   track: {
+    #     values: {
+    #       td_url     : config.data.request.url.href
+    #       td_host    : config.data.request.url.host
+    #       td_path    : config.data.request.url.path
+    #       td_referrer: config.data.request.referrer.href || ""
+    #       td_referring_domain: config.data.request.referrer.host || ""
+    #     }
+    #   }
+    # })
 
-    td_context = {
-      td_user_agent       : window.navigator && window.navigator.userAgent,
-      hull_platform_id    : config.appId,
-      hull_organization_id: config.data.org.id,
-      hull_session_id     : analyticsId.getSessionId(),
-      hull_user_id        : config.data.me?.id
-    }
+    # td_context = {
+    #   td_user_agent       : window.navigator && window.navigator.userAgent,
+    #   hull_platform_id    : config.appId,
+    #   hull_organization_id: config.data.org.id,
+    #   hull_session_id     : analyticsId.getSessionId(),
+    #   hull_user_id        : config.data.me?.id
+    # }
 
 
-    pageUrlParams = config.data.request.url?.params
+    # pageUrlParams = config.data.request.url?.params
 
-    if !_.isEmpty(pageUrlParams)
-      MarketingProps.map (k)->
-        v = pageUrlParams["utm_#{k}"]
-        v && td_context["mkt_#{k}"] = v
+    # if !_.isEmpty(pageUrlParams)
+    #   MarketingProps.map (k)->
+    #     v = pageUrlParams["utm_#{k}"]
+    #     v && td_context["mkt_#{k}"] = v
 
-    td.set('$global', td_context)
+    # td.set('$global', td_context)
 
-    td.trackPageview()
+    # td.trackPageview()
 
     RemoteUserStore.addChangeListener (change)=>
-      tdUserId = td.get().hull_user_id
+      # tdUserId = td.get().hull_user_id
       currentUser = RemoteUserStore.getState().user
       currentUserId = currentUser?.id
-      td.set({ hull_user_id: currentUserId })
-      if change == 'UPDATE_USER' && currentUserId != tdUserId
-        td.trackEvent('identify')
+      # td.set({ hull_user_id: currentUserId })
+      # if change == 'UPDATE_USER' && currentUserId != tdUserId
+      # td.trackEvent('identify')
 
 
   trackEvent: (eventName, params)->
 
-    structuredProperties = StructuredEventProps.reduce (se,prop)->
-      se["se_#{prop}"] = params[prop] if params[prop]
-      se
-    , {}
+    # structuredProperties = StructuredEventProps.reduce (se,prop)->
+    #   se["se_#{prop}"] = params[prop] if params[prop]
+    #   se
+    # , {}
 
-    unstructuredProperties = _.omit(params, TopLevelProps...)
+    # unstructuredProperties = _.omit(params, TopLevelProps...)
 
-    unstructuredEvent = {}
-    unstructuredEvent = { unstruct_event: unstructuredProperties } if !_.isEmpty(unstructuredProperties)
+    # unstructuredEvent = {}
+    # unstructuredEvent = { unstruct_event: unstructuredProperties } if !_.isEmpty(unstructuredProperties)
 
-    shipProps = {}
-    shipProps.hull_ship_id = params.hull_ship_id if params.hull_ship_id?
+    # shipProps = {}
+    # shipProps.hull_ship_id = params.hull_ship_id if params.hull_ship_id?
 
-    payload = assign({}
-      structuredProperties,
-      unstructuredEvent,
-      shipProps,
-      { event: eventName }
-    )
+    # payload = assign({}
+    #   structuredProperties,
+    #   unstructuredEvent,
+    #   shipProps,
+    #   { event: eventName }
+    # )
 
 
-    @td.trackEvent('tracks', payload)
+    # @td.trackEvent('tracks', payload)
 
 
 

@@ -1,98 +1,142 @@
 _              = require '../../utils/lodash'
 ScopedCss      = require 'scopedcss/lib/';
 ScopedCssRule  = require 'scopedcss/lib/cssRule';
+superagent          = require 'superagent'
 
 StyleMap = [];
-MergedStyles = null;
+MergedStyles   = null;
+BufferedStyles = null;
 
-# https://github.com/cssstats/get-css
-# getCss = require 'get-css'
-# https://github.com/iadramelk/css-url-edit
-# cssUrlEdit = require 'css-url-edit'
-# https://github.com/bigpipe/async-asset
-# asyncAsset = require 'async-asset'
+rewriteCSSURLs = require('css-url-rewriter')
+
+createStyleSheet = (content="", disabled=false)->
+  style = document.createElement('style')
+  style.disabled = true if disabled
+  style.setAttribute('id','hull-style')
+  style.appendChild(document.createTextNode(content)); # Webkit Hack
+  document.head.appendChild(style)
+  style
+
+removeStyleSheet = (style)->
+  style.parentNode?.removeChild(style)
 
 getRules = (sheet)->
   sheet.cssRules || sheet.rules
 
-emptySheet = (sheet)->
-  return unless sheet?
+empty = (sheet)->
   if sheet.deleteRule?
     sheet.deleteRule(0) while getRules(sheet).length > 0
   else if sheet.removeRule?
     sheet.removeRule(0) while getRules(sheet).length > 0
 
-addCSSRule = (sheet, rule)->
-  selector = rule.selectorText
-  style = rule?.style?.cssText
-  return unless sheet and style
-  # and (!rule.type || rule.type==1)
-  if sheet.insertRule?
-    sheet.insertRule(rule.cssText,0)
-  else if sheet.addRule?
-    sheet.addRule(selector, style,0)
+fetch = (href)->
+  new Promise (resolve, reject)->
+    superagent.get(href).end (err, res)-> resolve(res.text)
 
-addRule = (sheet, rule={})->
-  if sheet.insertRule?
-    sheet.insertRule(rule.cssText,0)
-  else if sheet.addRule? and rule?.style
-    sheet.addRule(selector, rule.style,0)
+replaceRule = (sheet, selector, cssText, index)->
+    if sheet.removeRule then sheet.removeRule(index) else sheet.deleteRule(index);
+    rule = if selector then selector + '{' + cssText + '}' else cssText
+    if sheet.addRule then sheet.addRule(selector, cssText, index) else sheet.insertRule(rule, index);
 
+urlMatcher = /url\(\s*['"]?([^)'"]+)['"]?\s*\)/g;
+
+prefixRule = (prefix, sheet, rule, index)->
+  return unless rule and sheet
+  if rule.selectorText
+    # Manipulate insert Prefix here.
+    selectorText = rule.selectorText?.split(',').map (r)->
+      # Only replace if we haven't done it before first.
+      r = r.replace(':host', prefix)
+      if r.indexOf(prefix)>-1 then r else "#{prefix} #{r}"
+    .join(', ')
+    "#{selectorText} {#{rule.style.cssText}}"
+  else
+    subSheet = rule.cssRules || rule.rules
+    if subSheet
+      prefixRule(prefix, rule, subRule, j) for subRule, j in subSheet
+    rule.cssText
+
+appendStyle = (prefix, sheet, uri=window.location.href)->
+  uri = getUriFromHref(sheet.href || uri)
+  if !!sheet.href and !(sheet.cssRules || sheet.rules)
+    # Loading External stylesheets (out of current domain)
+    href = sheet.href
+    sheet.ownerNode.parentNode.removeChild(sheet.ownerNode)
+    fetch(href).then (text)->
+      console.log "Loaded", href
+      style = createStyleSheet(replaceLinkTagUrls(uri, text), true)
+      appendRules sheet.cssRules, uri
+      removeStyleSheet(style)
+      true
+  else
+    rules = sheet.cssRules || sheet.rules
+    appendRules(rules, uri)
+
+replaceLinkTagUrls = (uri, text)->
+  re = new RegExp "url\\(['\"]?([^)]*?)['\"]?\\)", "g"
+  text.replace(re, "url('#{uri}$1')")
+
+appendRules = (rules, uri)->
+  _.map _.toArray(rules).reverse(), (rule)->
+    cssText = rule.cssText
+    BufferedStyles.sheet.insertRule(rule.cssText, 0)
+  true
+
+getUriFromHref = (href)->
+  uri = href.split('/')
+  uri.pop()
+  uri.join('/')+'/'
+
+addLink = (prefix, node)->
+  appendStyle(prefix, node.sheet, getUriFromHref(node.href))
+
+###*
+ * Processes a complete document and writes a merged, prefixed stylesheet into the Main Document's HEAD.
+ * @param  {string} prefix prefix to add to every style
+ * @param  {[type]} doc    document to collapse into a single Stylesheet
+###
 processDocument = (prefix, doc)->
-
-  # Create and initialize a new global styleshee tthat will receive merged styles in the right order
-  unless MergedStyles
-    MergedStyles = document.createElement('style')
-    MergedStyles.setAttribute('id','hull-style')
-    MergedStyles.appendChild(document.createTextNode("")); # Webkit Hack
-    document.head.appendChild(MergedStyles)
+  # Create and initialize a new global stylesheet that will receive merged styles in the right order
+  MergedStyles = createStyleSheet("") unless MergedStyles
+  BufferedStyles = createStyleSheet("") unless BufferedStyles
+  BufferedStyles.disabled=true
 
   # Under Firefox, you can't change css Rules or the containing
   # style tag or those will be reset when touching anything else.
   # Resort to building an entirely new stylesheet without copying cssRules
 
   # Clear the Merged Styles
-  emptySheet(MergedStyles.sheet)
+  empty(BufferedStyles.sheet)
+
+  # Promise manipulation ensures stylesheets are loaded in the correct order even if they are async.
+  promise = new Promise (resolve, reject)-> resolve()
+
   # IE doens't support inserting at any position.
   # Reverse stylesheets and insert from the end first.
-  _.map _.toArray(doc.styleSheets).reverse(), (sheet)->
-    _.map _.toArray(sheet.cssRules).reverse(), (rule)->
-      # Manipulate insert Prefix here.
-      selectorText = rule.selectorText?.split(',').map (r)->
-        # Only replace if we haven't done it before first.
-        r = r.replace(':host', prefix)
-        if r.indexOf(prefix)>-1 then r else "#{prefix} #{r}"
-      .join(', ')
+  _.map doc.styleSheets, (sheet)->
+    unless sheet.disabled
+      sheet.disabled=true
+      t = promise.then ()->
+        o = appendStyle(prefix, sheet)
+        console.log o
+        o
+      , (err)-> console.log err
+      console.log t
+      promise = t
 
-      if selectorText
-        style = rule.style.cssText
-        addRule(MergedStyles.sheet, {selectorText:selectorText, cssText: "#{selectorText} {#{style}}", style: style})
+  promise.then ()-> 
+    for rule, i in BufferedStyles.sheet.cssRules
+      cssText = prefixRule(prefix, BufferedStyles.sheet, rule, i);
+      MergedStyles.sheet.insertRule(cssText, MergedStyles.sheet.cssRules.length)
+    true
 
 processStyle = (prefix, node)->
   Array.prototype.slice.call(node.querySelectorAll('style:not([data-scoped])')).forEach (node)->
     node.setAttribute('data-scoped',true);
     new ScopedCss(prefix, null, node).process()
-  # # Search for the node into already prefixed styles
-  # n = _.findWhere StyleMap, {original : node}
-  # # Prefix newly added styles
-  # if !n or !n.scoped.processed 
-  #   # Scope the stylesheet in place.
-  #   scoped = new ScopedCss(prefix, null, node)
-  #   n = {original:node, scoped:scoped}
-  #   StyleMap.push(n)
-  
-  # n.scoped.process() if n
-  # # Add dummy media query to make the browser ignore the style
-  # # _.defer processStylesNow
-
-removeStyle = (node)->
-  # if node.nodeName=='STYLE'
-  #   [removed, StyleMap] = _.partition StyleMap, (n)-> n.original == node || n.scoped == node
-  #   _.defer processStylesNow
-
 
 module.exports = {
   processDocument: processDocument
   processStyle: processStyle,
-  removeStyle: removeStyle  
+  addLink: addLink,
 }

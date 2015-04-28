@@ -1,9 +1,14 @@
-q = require 'q'
+# q = require 'q'
 
-q.longStackSupport = true
+
+buildPromise = ()->
+  dfd = {}
+  dfd.promise = new Promise (resolve, reject)=>
+    dfd.resolve = resolve
+    dfd.reject = reject
+  dfd
+
 module.exports =   {
-  deferred: q.defer
-  when: q.when
-  all: q.all
-  allSettled: q.allSettled
+  deferred: buildPromise
+  all: Promise.all
 }
