@@ -104,24 +104,35 @@ class Sandbox
       #   Hull.onEmbed(iframe.contentDocument, args...)
       #   true
 
-      setShipSize : (size={})=>
+      setSize : (size={})=>
         style = assign({},size)
-        style.width = size.width if size.width?
-        style.height = size.height if size.height?
+        if size.width || size.height
+          style.width = size.width if size.width?
+          style.height = size.height if size.height?
+          setStyle.style(iframe,style)
+        else
+          setStyle.autoSize(iframe)
+        true
+
+      setStyle : (style={})->
         setStyle.style(iframe,style)
         true
 
-      setShipStyle : (style={})->
-        setStyle.style(iframe,style)
-        true
-
+      ###*
+       * autoSize method for sandboxed instances
+       * @param  {Boolean|Int} interval a refresh interval or 'false'.
+       *                                Interval : Autosize every xx milliseconds.
+       *                                False    : Turns off autoUpdating immediately.
+       *                                undefined: updates once, stops auto updating  
+       * @return {Boolean} true to let ships detect if the method has an effect.
+      ###
       autoSize : (interval)=>
-        if (interval)
+        if (!isNaN(parseFloat(interval)))
           setInterval =>
             @hull.autoSize()
           , interval
         else
-          clearInterval(@autoSizeInterval) if interval==false
+          clearInterval(@autoSizeInterval)
         setStyle.autoSize(iframe) unless interval==false
         true
 
@@ -134,8 +145,8 @@ class Sandbox
     w = getIframeWindow(iframe)
     # debugger
     # w.open = window.open
-    iframe.contentWindow = assign(iframe.contentWindow, window, {Hull:@hull})
-    # w.Hull = @hull
+    # iframe.contentWindow = assign(iframe.contentWindow, window, {Hull:@hull})
+    w.Hull = @hull
 
   get : ()-> @hull
 
