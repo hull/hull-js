@@ -14,11 +14,13 @@ setDimension = (el, dim, val)->
 
 module.exports = 
   autoSize : (iframe)->
-    iframe.style.visibility = 'hidden'
-    iframe.style.height = "10px" # reset to minimal height ...
+    # iframe.style.height = "10px" # reset to minimal height ...
     # IE opt. for bing/msn needs a bit added or scrollbar appears
-    iframe.style.height = getDocHeight(iframe.contentDocument || iframe.contentWindow.document) + 4 + "px"
-    iframe.style.visibility = 'visible'
+    contentHeight = getDocHeight(iframe.contentDocument || iframe.contentWindow.document)
+    if contentHeight != iframe.offsetHeight
+      iframe.style.visibility = 'hidden'
+      iframe.style.height = contentHeight + "px"
+      iframe.style.visibility = 'visible'
 
   style : (el,style) ->
     if _.isObject(style)
