@@ -1,18 +1,18 @@
 # Hull.js [ ![Codeship Status for hull/hull-js](https://circleci.com/gh/hull/hull-js/tree/develop.png?circle-token=26a17dad6ac378f6028a460a5857d5ca15a8aa13) ](https://circleci.com/gh/hull/hull-js)
 
-# Compatibility
+# Compatibility Status
 * ✔ Chrome (w/o Polyfills)
-* ✔ Firefox (w/ Hull Polyfill Service)
-* ✔ Safari (w/ Hull Polyfill Service)
-* ? IE 10+
-* ? IE 9+
-* ? IE 8+
+* ✔ Firefox
+* ✔ Safari 
+* ˜ IE 11+ : Broken Styles
+* ˜ IE 10+ : Broken Styles
+* ˜ IE 9+  : Broken Styles
+* X IE 8+  : Crashes
 
 # Sandboxing: 
-We have 4 embed modes, from less to more isolation :
+We have 3 embed modes, from less to more isolation :
 - JS, (manifest.index == `*.js`) : Dumps the JS in the page at the Insertion point.
-- Raw (settings.sandbox = `raw`) : Dumps the HTML import content in the page executes SCRIPTS in the page, doesnt do any Style manipulation). STYLE, LINKS are embedded once in the HEAD, SCRIPTs are executed in the page.
-- Scoped (settings.sandbox = `Falsy`) (Isolates JS, Scopes Styles automatically)
+- Scoped (settings.sandbox = `Falsy`) (Scopes Styles automatically)
 - Sandboxed (settings.sandbox = `Truthy`)(Renders everything into a completely isolated container)
 
 # Supported Features for Style Sandboxing

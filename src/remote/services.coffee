@@ -89,7 +89,7 @@ class Services
       throw new Error(err)
       undefined
 
-    promises.allSettled([me, settings]).then onSuccess, onError
+    promises.all([me, settings]).then onSuccess, onError
 
     undefined
 

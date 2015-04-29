@@ -37,7 +37,7 @@ class Deployment
     # "_width" : "100%", //Dimensions to give the containing element. Passed as-is as style tag
     # "_height" : "50px", //Dimensions to give the containing element. Passed as-is as style tag
 
-    @settings._sandbox = true
+    # @settings._sandbox = false
     @targets = @getTargets()
     @deploymentStrategy = @getDeploymentStrategy()
     @elements  = []

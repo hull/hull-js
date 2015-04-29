@@ -1,7 +1,5 @@
 BaseDeploymentStrategy = require './base'
-
-throwErr = (err)->
-  console.log 'Something wrong happened', err.message, err.stack
+throwErr               = require '../../../utils/throw'
 
 class RawDeploymentStrategy extends BaseDeploymentStrategy
   scopeStyles : true

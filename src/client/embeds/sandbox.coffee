@@ -7,6 +7,7 @@ clone          = require '../../utils/clone'
 SandboxedShare = require '../sharer/sandboxed-sharer'
 StyleObserver  = require '../style/observer'
 styleSandbox   = require '../style/sandbox'
+throwErr       = require '../../utils/throw'
 
 class Sandbox
   constructor : (deployment, scopeStyle, iframe)->
@@ -22,6 +23,7 @@ class Sandbox
 
     @hull = assign({}, window.Hull, {
       onEmbed        : @onEmbed
+      getDocument    : @getDocument
       track          : @sandboxedTrack
       share          : @sandboxedShare.share
       shipClassName  : @getShipClassName 
@@ -33,7 +35,9 @@ class Sandbox
       @booted.resolve = resolve
       @booted.reject = reject
 
-    @booted.promise.then => @hull.track('hull.app.init')
+    @booted.promise.then =>
+      @hull.track('hull.app.init')
+    , throwErr
 
     @setContainer(iframe) if !!iframe
 
@@ -67,6 +71,9 @@ class Sandbox
     @_document = doc
     @observe(doc)
 
+  getDocument : ()=>
+    @_document
+
   ###*
    * Adds an element to the array of elements owned by the sandbox.
    * Monitors it for Style Tags so they can be autoprefixed
@@ -84,8 +91,11 @@ class Sandbox
   onEmbed: (args...)=>
     args.shift() if args.length == 2
     callback = args[0]
-    @booted.promise.then (elements)=>
+    booted = @booted.promise.then (elements)=>
       callback(element, @deployment, @hull) for element in elements
+    , throwErr
+    booted.catch throwErr
+
 
   setContainer : (iframe)->
     @_container = iframe.contentDocument || document
@@ -141,6 +151,7 @@ class Sandbox
 
     @booted.promise.then =>
       @hull.autoSize()
+    , throwErr
 
     w = getIframeWindow(iframe)
     # debugger

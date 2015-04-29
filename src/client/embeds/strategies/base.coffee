@@ -6,6 +6,8 @@ Sandbox  = require '../sandbox'
 
 class BaseDeploymentStrategy
   scopeStyles : false
+  ignoredTags : ['#comment','SCRIPT', 'LINK', 'STYLE']
+  movedTags   : []
 
   constructor : (deployment)->
     @deployment   = deployment
@@ -50,9 +52,9 @@ class BaseDeploymentStrategy
     @parseChildren({
       imported  : doc.body
       body      : el
-      ignore    : ['#comment','SCRIPT', 'LINK', 'STYLE']
+      ignore    : @ignoredTags
+      move      : @movedTags
       head      : container.head
-      move      : []
     })
     el
 

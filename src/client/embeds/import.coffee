@@ -42,7 +42,8 @@ class Import
           , 10
       , 10
 
-      el.addEventListener 'load', (ev)=>
+      # addEventListener doesnt work with IE 11 :(
+      el.onload = (ev)=>
         readyCallback(el.import) unless ready
         ready=true
         loadCallback(el.import.body)

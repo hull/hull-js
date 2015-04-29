@@ -17,6 +17,7 @@ class ScopeDeploymentStrategy extends BaseDeploymentStrategy
       imprt = @embedImport(iframe)
 
       imprt.ready.then (imported)=>
+        @sandbox.setDocument(imported.doc)
         @addElement(@insert(imported.el.cloneNode(true), target)) for target in targets
 
       imprt.load.then (el)=>

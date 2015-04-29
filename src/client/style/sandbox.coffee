@@ -101,7 +101,7 @@ processDocument = (prefix, doc)->
   # Resort to building an entirely new stylesheet without copying cssRules
 
   # Promise manipulation ensures stylesheets are loaded in the correct order even if they are async.
-  styles = doc.querySelectorAll('style,link')
+  styles = _.toArray(doc.querySelectorAll('style,link'))
   # IE doens't support inserting at any position.
   # Reverse stylesheets and insert from the end first.
   _.map styles, (style)->
