@@ -18,6 +18,14 @@ polyfills =
   "Object.defineProperty"       : -> Object.defineProperty?
   "HTMLImports"                 : -> document.createElement("link").import?
   "Element.prototype.classList" : -> document.documentElement.classList
+  "Element.prototype.cloneNode" : -> 
+    test = ()->
+      test = document.createElement('input')
+      test.checked = true
+      result = test.cloneNode()
+      !!result.checked
+    this.document? && document.documentElement.cloneNode? && test()
+
   "Xdomain"                     : -> 
     return true if new window.XMLHttpRequest().withCredentials?
     return true if window.XMLHttpRequest.supportsXDR == true
