@@ -37,7 +37,7 @@ class Deployment
     # "_width" : "100%", //Dimensions to give the containing element. Passed as-is as style tag
     # "_height" : "50px", //Dimensions to give the containing element. Passed as-is as style tag
 
-    @settings._sandbox = 'raw'
+    @settings._sandbox = true
     @targets = @getTargets()
     @deploymentStrategy = @getDeploymentStrategy()
     @elements  = []
@@ -64,12 +64,12 @@ class Deployment
 
     DS = if @ship.index.match(/\.js$/)
       JSDeploymentStrategy
-    else if @settings._sandbox == 'raw'
-      RawDeploymentStrategy
-    else if !!@settings._sandbox
+    else if @settings._sandbox
       SandboxedDeploymentStrategy
     else
-      ScopedDeploymentStrategy
+      RawDeploymentStrategy
+    # else
+    #   ScopedDeploymentStrategy
 
     new DS(@)
 
