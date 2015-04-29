@@ -46,5 +46,5 @@ module.exports = (config)->
   return new Promise (resolve, reject)->
     return resolve() if allGood
     file = if (config.debug) then "polyfill.js" else "polyfill.js"
-    url = "//polyfills.ngrok.com/v1/#{file}?features=#{_.keys(polyfills).join(",")}"
+    url = "//hull-polyfills.heroku.com/v1/#{file}?features=#{_.keys(polyfills).join(",")}"
     return scriptLoader({ src:url, document:config.document}).then(shimHTMLImports).then(resolve, reject)
