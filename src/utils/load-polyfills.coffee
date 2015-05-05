@@ -20,12 +20,14 @@ polyfills =
     try
       if window.URL
         nativeURL = new window.URL('http://example.com')
-        return true if nativeURL.href? && nativeURL.searchParams?
+        return true if nativeURL.href?
       return false
     catch e
       return false
-  "HTMLImports"                 : -> document.createElement("link").import?
-  "Element.prototype.classList" : -> document.documentElement.classList
+  "HTMLImports"                 : ->
+    link = document.createElement("link")
+    link.import!=undefined
+  "Element.prototype.classList" : -> document.documentElement.classList?
   "Element.prototype.cloneNode" : -> 
     test = ()->
       test = document.createElement('input')
@@ -33,9 +35,9 @@ polyfills =
       result = test.cloneNode()
       !!result.checked
     this.document? && document.documentElement.cloneNode? && test()
-
   "Xdomain"                     : -> 
-    return true if new window.XMLHttpRequest().withCredentials?
+    xhr = new window.XMLHttpRequest()
+    return true if xhr.withCredentials?
     return true if window.XMLHttpRequest.supportsXDR == true
     false
   "Event"                       : -> 
