@@ -34,7 +34,7 @@ module.exports = {
   embed: function(deployments, opts, callback) {
     embedDeployments(deployments, opts, callback);
   },
-  onEmbed: function(fn) {
+  onEmbed: function() {
     var deploymentId = null;
     var cs = document._currentScript || document.currentScript;
     var doc = cs.ownerDocument;
@@ -47,6 +47,6 @@ module.exports = {
     }
 
     var deployment = Deployment.getDeployment(deploymentId);
-    if(deployment){ deployment.onEmbed(fn); }
+    if(deployment){ deployment.onEmbed.apply(this, arguments); }
   }
 };

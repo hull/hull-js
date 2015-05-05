@@ -91,6 +91,7 @@ class Sandbox
   onEmbed: (args...)=>
     args.shift() if args.length == 2
     callback = args[0]
+    return unless _.isFunction(callback)
     booted = @booted.promise.then (elements)=>
       callback(element, @deployment, @hull) for element in elements
     , throwErr
