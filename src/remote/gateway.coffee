@@ -120,7 +120,7 @@ class Gateway
       _.each @after_middlewares, (middleware)->
         promise
         .then middleware
-        .fail (err)->
+        .catch (err)->
           throw new Error("Error: in request : #{err.response.message}")
 
     promise
