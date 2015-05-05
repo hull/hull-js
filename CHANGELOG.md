@@ -109,7 +109,7 @@ Hull.unlinkIdentity({provider:'xxxx',params:{...}}, callback, errback)
 ###### `Hull.ready(callback)`
 returns a promise. Please end with `.done()` here too.
 
-###### `Hull.embed(deploymentsArray)` and `Hull.onEmbed(document, callback)` 
+###### `Hull.embed(deploymentsArray)` and `Hull.onEmbed(callback)` 
 New methods for Ship Deployment. Ships can be either HTML Imports or `.js` files. They need to call `Hull.onEmbed(document, callback)`.
 `callback` has the follwing signature : 
 
@@ -117,6 +117,7 @@ New methods for Ship Deployment. Ships can be either HTML Imports or `.js` files
 function callback(element, deployment, hull){
   //element == domElement
   //deployment = {
+  //  org : {}
   //  settings: {}
   //  platform: {}
   //  ship : {}
@@ -124,6 +125,13 @@ function callback(element, deployment, hull){
   //hull = {local Hull instance, scoped to the current Ship}
 }
 ```
+
+
+###### `Hull.getDocument()`
+From inside a ship, gets the HTMLImport `document`. Useful to manipulate import content and add stylesheets to: They will be scoped automatically
+
+###### `Hull.getShipClassName()`
+Returns a string in the form `.ship-SHIP_ID` that you can use to find all instances of this ship, or to prefix CSS and scope styles inside it. We use this internally to automatically prefix all CSS injected in the HTML Import and inside the instanciated ship's tree.
 
 ###### `Hull.setSize({width,height})`
 From inside a sandboxed ship to allow setting container size 

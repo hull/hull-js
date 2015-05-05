@@ -10,10 +10,10 @@ styleSandbox   = require '../style/sandbox'
 throwErr       = require '../../utils/throw'
 
 class Sandbox
-  constructor : (deployment, scopeStyle, iframe)->
+  constructor : (deployment, scope, iframe)->
     @ship = deployment.ship
     @shipClassName = ".ship-#{@ship.id}"
-    @scopeStyle = scopeStyle
+    @scope = scope
     @deployment = deployment
 
     @callbacks = []
@@ -22,12 +22,12 @@ class Sandbox
     sandboxedTrack = 
 
     @hull = assign({}, window.Hull, {
-      onEmbed        : @onEmbed
-      getDocument    : @getDocument
-      track          : @sandboxedTrack
-      share          : @sandboxedShare.share
-      shipClassName  : @getShipClassName 
-      observe        : @observe
+      onEmbed          : @onEmbed
+      getDocument      : @getDocument
+      getShipClassName : @getShipClassName
+      track            : @sandboxedTrack
+      share            : @sandboxedShare.share
+      observe          : @observe
     });
 
     @booted = {}
@@ -60,11 +60,11 @@ class Sandbox
     @_observer
 
   observe : (target)->
-    return unless @scopeStyle
+    return unless @scope
     @_getObserver().observe(target)
 
   scopeStyles : ()->
-    return unless @scopeStyle
+    return unless @scope
     @_observer.process(@_document)
 
   setDocument : (doc)->
