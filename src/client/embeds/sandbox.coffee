@@ -15,7 +15,7 @@ class Sandbox
     @deployment = deployment
 
     @callbacks = []
-    @scopes = []
+    @_scopes = []
 
     @hull = assign({}, window.Hull, {
       getDocument      : @getDocument
@@ -71,7 +71,7 @@ class Sandbox
     @iframe = iframe
 
     sandbox = Object.create(@)
-    @scopes.push sandbox
+    @_scopes.push sandbox
     sandbox.observe(iframe.contentDocument)
     sandbox.autoSizeInterval = null;
     sandbox.hull = assign(@hull, {
@@ -139,7 +139,8 @@ class Sandbox
   get : ()-> @hull
 
   destroy: ()=>
-    scope.destroy() for scope in @scopes
+    scope.destroy() for scope in @_scopes
+    @_scopes = []
     @getObserver().destroy()
 
 module.exports = Sandbox
