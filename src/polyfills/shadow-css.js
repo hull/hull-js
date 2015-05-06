@@ -18,25 +18,24 @@ module.exports = function(){
     HTMLImports.parser.parseGeneric = function(elt) {
       if (elt[SHIMMED_ATTRIBUTE]) { return; }
 
-      var style = elt.__importElement || elt;
+      // var style = elt.__importElement || elt;
+      // if(!(style.nodeName=='STYLE' || style.nodeName=='LINK')){
+      //   originalParseGeneric.call(this, elt);
+      //   return;
+      // }
 
-      if(!(style.nodeName=='STYLE' || style.nodeName=='LINK')){
-        originalParseGeneric.call(this, elt);
-        return;
-      }
+      // if (elt.__resource) {
+      //   style = elt.ownerDocument.createElement('style');
+      //   style.textContent = elt.__resource;
+      // }
 
-      if (elt.__resource) {
-        style = elt.ownerDocument.createElement('style');
-        style.textContent = elt.__resource;
-      }
+      // // relay on HTMLImports for path fixup
+      // HTMLImports.path.resolveUrlsInStyle(style, elt.href);
 
-      // relay on HTMLImports for path fixup
-      HTMLImports.path.resolveUrlsInStyle(style, elt.href);
+      // style.setAttribute(SHIMMED_ATTRIBUTE, '');
+      // style[SHIMMED_ATTRIBUTE] = true;
 
-      style.setAttribute(SHIMMED_ATTRIBUTE, '');
-      style[SHIMMED_ATTRIBUTE] = true;
-
-      elt.ownerDocument.body.appendChild(style)
+      // elt.ownerDocument.body.appendChild(style)
 
       this.markParsingComplete(elt);
       this.parseNext();
