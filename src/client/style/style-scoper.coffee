@@ -6,6 +6,31 @@ superagent          = require 'superagent'
 
 Styles     = []
 
+CSS_URL_REGEXP = /(url\()([^)]*)(\))/g;
+CSS_IMPORT_REGEXP = /(@import[\s]+(?!url\())([^;]*)(;)/g;
+resolveUrlsInStyle= (style, linkUrl)->
+  doc = style.ownerDocument
+  resolver = doc.createElement("a")
+  style.textContent = resolveUrlsInCssText(style.textContent, linkUrl, resolver)
+  style
+
+resolveUrlsInCssText= (cssText, linkUrl, urlObj)->
+  r = replaceUrls(cssText, urlObj, linkUrl, CSS_URL_REGEXP)
+  r = replaceUrls(r, urlObj, linkUrl, CSS_IMPORT_REGEXP)
+  r
+
+replaceUrls= (text, urlObj, linkUrl, regexp)->
+  text.replace regexp, (m, pre, url, post)->
+    urlPath = url.replace(/["']/g, "")
+    urlPath = new URL(urlPath, linkUrl).href if (linkUrl) 
+    urlObj.href = urlPath
+    urlPath = urlObj.href
+    "#{pre}'#{urlPath}'#{post}"
+
+resolveUrls = (text, href, doc)->
+  resolver = doc.createElement("a")
+  resolveUrlsInCssText(text, href, resolver);
+
 createStyleSheet = (content="", disabled=false)->
   style = document.createElement('style')
   style.disabled = true if disabled
@@ -27,19 +52,13 @@ getRules = (sheet)->
   return unless sheet?
   sheet.cssRules || sheet.rules
 
-appendRules = (entry, rules)->
-  entry.style = rulesToText(entry.prefix, rules)
-  true
-
 fetch = (href)->
   new Promise (resolve, reject)->
     return reject() unless !!href
     superagent.get(href).end (err, res)->
       resolve(res.text)
 
-replaceLinkTagUrls = (uri, text)->
-  re = new RegExp "url\\(['\"]?([^)]*?)['\"]?\\)", "g"
-  text.replace(re, "url('#{uri}$1')")
+
 prefixRule = (prefix, rule)->
   return unless rule
   if rule.selectorText
@@ -67,30 +86,34 @@ textToRules = (text)->
   rules = getRules(style.sheet)
   removeStyleSheet(style)
   rules
-rulesToText = (prefix, rules)->
+prefixRules = (prefix, rules)->
   r = _.map rules, (rule)-> prefixRule(prefix, rule);
   r.join(' ');
 
+appendText = (entry, text)->
+  rules = textToRules(resolveUrls(text, entry.node.href, entry.doc))
+  entry.style = prefixRules(entry.prefix, rules) if rules
+  true
+
 appendStyle = (entry)->
-  rules = getRules(entry.node.sheet)
-  if rules
-    appendRules(entry, rules) if rules
-  else if !!entry.node.href
-    href = entry.node.href
-    uri = getUriFromHref(href)
-    if entry.node.__resource
+  if !!entry.node.href
+    if entry.node.__importParsed
       # Polyfills go through here.
-      rules = textToRules(replaceLinkTagUrls(uri,entry.node.__resource))
-      appendRules(entry, rules) if rules
+      # Skip links since we'll have them as Styles from the polyfill
+      appendText(entry, entry.node.__resource)
     else
       # Chrome goes here
       # Loading External stylesheets (out of current domain)
       # Only Chrome will use this, since we have tweaked the Polyfill to avoid 2 requests.
       removeStyleSheet(entry.node)
-      fetch(href).then (text)->
-        rules = textToRules(replaceLinkTagUrls(uri, text))
-        appendRules(entry, rules) if rules
-        true
+      fetch(entry.node.href).then appendText.bind(this, entry)
+  else
+    resolveUrlsInStyle(entry.node)
+    # Disable again to prevent infinite loops
+    entry.node.disabled=true
+    rules = getRules(entry.node.sheet)
+    entry.style = prefixRules(entry.prefix, rules) if rules
+
 addSheet = (prefix, node, doc)->
   entry = findNode(prefix, node)
   unless entry
@@ -138,7 +161,7 @@ addStyle = (prefix, node)->
   new ScopedCss(prefix, null, node).process()
 
 addLink = (prefix, node)->
-  addSheet(prefix, node)
+  addSheet(prefix, node, node.ownerDocument)
   finalize()
 
 removeLink = (node)->
