@@ -6,7 +6,6 @@ superagent          = require 'superagent'
 
 Styles     = []
 
-
 createStyleSheet = (content="", disabled=false)->
   style = document.createElement('style')
   style.disabled = true if disabled
@@ -15,7 +14,8 @@ createStyleSheet = (content="", disabled=false)->
   document.head.appendChild(style)
   style
 
-removeStyleSheet = (style)-> style.parentNode?.removeChild(style)
+removeStyleSheet = (style)->
+  style.parentNode?.removeChild(style)
 
 # Create and initialize a new global stylesheet that will receive merged styles in the right order
 MergedStyles = createStyleSheet("") unless MergedStyles
@@ -26,19 +26,17 @@ promise = new Promise (resolve, reject)-> resolve()
 getRules = (sheet)->
   return unless sheet?
   sheet.cssRules || sheet.rules
+
 appendRules = (entry, rules)->
-  r = _.map rules, (rule)->
-    prefixRule(entry.prefix, rule);
-  entry.style = r.join(' ');
+  entry.style = rulesToText(entry.prefix, rules)
   true
-empty = (sheet)->
-  if sheet.deleteRule?
-    sheet.deleteRule(0) while getRules(sheet).length > 0
-  else if sheet.removeRule?
-    sheet.removeRule(0) while getRules(sheet).length > 0
+
 fetch = (href)->
   new Promise (resolve, reject)->
-    superagent.get(href).end (err, res)-> resolve(res.text)
+    return reject() unless !!href
+    superagent.get(href).end (err, res)->
+      resolve(res.text)
+
 replaceLinkTagUrls = (uri, text)->
   re = new RegExp "url\\(['\"]?([^)]*?)['\"]?\\)", "g"
   text.replace(re, "url('#{uri}$1')")
@@ -63,22 +61,36 @@ getUriFromHref = (href)->
   uri.pop()
   uri.join('/')+'/'
 
+
+textToRules = (text)->
+  style = createStyleSheet(text, true)
+  rules = getRules(style.sheet)
+  removeStyleSheet(style)
+  rules
+rulesToText = (prefix, rules)->
+  r = _.map rules, (rule)-> prefixRule(prefix, rule);
+  r.join(' ');
+
 appendStyle = (entry)->
   rules = getRules(entry.node.sheet)
   if rules
     appendRules(entry, rules) if rules
   else if !!entry.node.href
-    # Loading External stylesheets (out of current domain)
-    # Only Chrome will use this, since we have tweaked the Polyfill to avoid 2 requests.
     href = entry.node.href
-    uri = getUriFromHref(entry.node.href)
-    entry.node.parentNode.removeChild(entry.node)
-    fetch(href).then (text)->
-      style = createStyleSheet(replaceLinkTagUrls(uri, text), true)
-      rules = getRules(style.sheet)
-      appendRules(entry, rules)
-      removeStyleSheet(style)
-      true
+    uri = getUriFromHref(href)
+    if entry.node.__resource
+      # Polyfills go through here.
+      rules = textToRules(replaceLinkTagUrls(uri,entry.node.__resource))
+      appendRules(entry, rules) if rules
+    else
+      # Chrome goes here
+      # Loading External stylesheets (out of current domain)
+      # Only Chrome will use this, since we have tweaked the Polyfill to avoid 2 requests.
+      removeStyleSheet(entry.node)
+      fetch(href).then (text)->
+        rules = textToRules(replaceLinkTagUrls(uri, text))
+        appendRules(entry, rules) if rules
+        true
 addSheet = (prefix, node, doc)->
   entry = findNode(prefix, node)
   unless entry
