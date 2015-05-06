@@ -10,22 +10,52 @@ class BaseDeploymentStrategy
   movedTags   : []
 
   constructor : (deployment)->
-    @deployment   = deployment
-    @sandbox      = new Sandbox(deployment, @scopeStyles)
-    @elements     = []
+    @deployment      = deployment
+    @sandbox         = new Sandbox(deployment, @scopeStyles)
+
+    @ready           = {}
+    @ready.promise   = new Promise (resolve, reject)=>
+      @ready.resolve = resolve
+      @ready.reject  = reject
+
+    @insertions      = []
+    @callbacks       = []
 
   addShipClasses : (el)->
     el.classList.add("ship-#{@deployment.ship.id}", "ship-deployment-#{@deployment.id}")
     el.setAttribute('data-hull-deployment', @deployment.id)
     el.setAttribute('data-hull-ship', @deployment.ship.id)
 
-  addElement : (el)=>
-    @sandbox.addElement el
-    @elements.push el
+  addInsertion : (el, iframe)=>
+    @insertions.push {el:el, iframe:iframe, ready:false, callbacks:new WeakMap()}
 
-  onEmbed : (args...)=> @sandbox.onEmbed(args...)
+  getCallbacks : ()=>
+    # We retreive callbacks from the document
+    # because when removing an Import, and readding it, the scripts aren't reloaded, so Callbacks don't get registered again.
+    @document._hullCallbacks || []
 
-  deploy : ()->
+  onEmbed: ()=>
+    # Use WeakMaps to ensure every insertion has been called with every callback just once.
+    for insertion in @insertions
+      for callback in (@getCallbacks())
+        unless insertion.callbacks.has(callback)
+          callback(insertion.el, @deployment, @sandbox.hull)
+          insertion.callbacks.set(callback,true)
+
+  boot: (callbacks=[]) =>
+    @sandbox.setDocument(@document)
+    @sandbox.track('hull.app.init')
+    # @sandbox.scopeStyles()
+    all = for insertion in @insertions
+      @ready.promise.then =>
+        unless insertion.ready
+          sandbox = @sandbox.scope(insertion.iframe)
+          sandbox.addElement(insertion.el)
+          insertion.ready = true
+    Promise.all(all)
+
+
+  embed : ()->
 
   ###*
    * Inserts the content of a HTML import into a given dom node.
@@ -51,7 +81,7 @@ class BaseDeploymentStrategy
     # Like with Shrimps, HEAD is not interesting in HTML Imports. Don't use it
     @parseChildren({
       imported  : doc.body
-      body      : el
+      el        : el
       ignore    : @ignoredTags
       move      : @movedTags
       head      : container.head
@@ -69,16 +99,17 @@ class BaseDeploymentStrategy
     # "Real" (Chrome) HTML imports will be isolated from the main document.
     # Polyfilled ones will return their content when querying the main document (I.E document.styleSheets)
     # Tread wisely
-    {imported, body, ignore, head, move} = opts
+    {imported, el, ignore, head, move} = opts
     return true unless imported.hasChildNodes()
     _.map imported.childNodes, (child)=>
       if child
-        unless _.contains(ignore, child.nodeName)
-          if _.contains move, child.nodeName
+        nodeName = child.nodeName
+        unless _.contains(ignore, nodeName)
+          if _.contains move, nodeName
             child.parentNode.removeChild(child)
             head.appendChild(child.cloneNode(true))
           else
-            body.appendChild(child.cloneNode(true))
+            el.appendChild(child.cloneNode(true))
 
   ###*
    * Insert an element at the right position relative to a target.
@@ -110,35 +141,9 @@ class BaseDeploymentStrategy
    * @return {promise}          A promise resolved onLoad with the container, the newly created element
   ###
   embedImport : (container)=>
-    ready = {}
-    ready.promise = new Promise (resolve, reject)->
-      ready.resolve = resolve
-      ready.reject = reject
-
-    load = {}
-    load.promise = new Promise (resolve, reject)->
-      load.resolve = resolve
-      load.reject = reject
-
-    el=null
-
-    ###*
-     * Import "ready" callback
-     * @param  {Node} doc the Document Node inside the Import 
-    ###
-    readyCallback = (doc)=>
-      doc.deploymentId = @deployment.id
-      el = @cloneImport(doc, container?.contentDocument)
-      # Insert a copy of this Node into container
-      ready.resolve({el, doc})
-
-    # Boot the ship
-    loadCallback  = load.resolve
-    # Return elements, targets and container element.
-    # readyCallback is guaranteed to have been executed here.
-
-    new Import {href: @deployment.ship.index, container: container}, readyCallback, loadCallback
-    {ready:ready.promise, load: load.promise}
+    imprt = new Import {deploymentId: @deployment.id, href: @deployment.ship.index, container: container}
+    imprt.when.loaded.then @ready.resolve
+    imprt
 
   ###*
    * Embeds an iframe in a DOM container or directly in the Body
@@ -161,5 +166,9 @@ class BaseDeploymentStrategy
     if container then @insert(iframe.getIframe(),container) else document.body.appendChild(iframe.getIframe())
     embed.promise
 
+
+  destroy: ()=>
+    _.map @insertions, (insertion)-> insertion.el?.parentNode?.removeChild(insertion.el)
+    @insertions = {}
 
 module.exports = BaseDeploymentStrategy

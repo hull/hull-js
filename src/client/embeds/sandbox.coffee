@@ -4,44 +4,25 @@ getIframeWindow= require '../../utils/get-iframe-window'
 findUrl        = require '../../utils/find-url'
 setStyle       = require '../../utils/set-style'
 clone          = require '../../utils/clone'
-SandboxedShare = require '../sharer/sandboxed-sharer'
 StyleObserver  = require '../style/observer'
-styleSandbox   = require '../style/sandbox'
 throwErr       = require '../../utils/throw'
 
 class Sandbox
-  constructor : (deployment, scope, iframe)->
+  constructor : (deployment, scopeStyle)->
     @ship = deployment.ship
     @shipClassName = ".ship-#{@ship.id}"
-    @scope = scope
+    @scopeStyle = scopeStyle
     @deployment = deployment
 
     @callbacks = []
-    @sandboxedShare =  new SandboxedShare({ share: Hull.share });
-
-    sandboxedTrack = 
+    @scopes = []
 
     @hull = assign({}, window.Hull, {
-      onEmbed          : @onEmbed
       getDocument      : @getDocument
       getShipClassName : @getShipClassName
-      track            : @sandboxedTrack
-      share            : @sandboxedShare.share
-      observe          : @observe
+      track            : @track
+      share            : @share
     });
-
-    @booted = {}
-    @booted.promise = new Promise (resolve, reject)=>
-      @booted.resolve = resolve
-      @booted.reject = reject
-
-    @booted.promise.then =>
-      @hull.track('hull.app.init')
-    , throwErr
-
-    @setContainer(iframe) if !!iframe
-
-  boot: (elements)=> @booted.resolve(elements)
 
   ###*
    * Performs a track that has the `ship_id` field set correctly
@@ -49,72 +30,52 @@ class Sandbox
    * @param  {[type]} event={} [description]
    * @return {[type]}            [description]
   ###
-  sandboxedTrack : (name, event={})=>
+  track : (name, event={})=>
     event.ship_id = @ship.id
     Hull.track(name, event)
 
+  share: (opts={}, event={})=>
+
+    event = assign({}, event, {hull_ship_id: @ship.id})
+
+    # We place a fallback for the sharing target event
+    # and pass in the iframe.
+    # This way the Hull.share method will walk from the iframe container up.
+    event = assign(event, {target: @iframe}) if @iframe?
+
+    # Enrich UTM Tags Defaults
+    opts.tags = assign({}, opts.tags, {utm_campaign:@ship.name})
+
+    @hull.share(opts,event)
+
   getShipClassName : => @shipClassName
 
-  _getObserver : =>
-    @_observer ||= new StyleObserver(@shipClassName)
-    @_observer
+  getObserver : =>
+    @observer ||= new StyleObserver(@shipClassName)
+    @observer
 
   observe : (target)->
-    return unless @scope
-    @_getObserver().observe(target)
+    return unless @scopeStyle
+    @getObserver().observe(target)
 
-  scopeStyles : ()->
-    return unless @scope
-    @_observer.process(@_document)
+  process : (target)->
+    return unless @scopeStyle
+    @getObserver().process(target)
 
-  setDocument : (doc)->
-    @_document = doc
-    @observe(doc)
+  unobserve : (target)->
+    return unless @scopeStyle
+    @getObserver().unobserve(target)
 
-  getDocument : ()=>
-    @_document
+  scope : (iframe)->
+    return @ unless iframe?.contentDocument
+    @iframe = iframe
 
-  ###*
-   * Adds an element to the array of elements owned by the sandbox.
-   * Monitors it for Style Tags so they can be autoprefixed
-   * @param {Node} element DOM Node
-  ###
-  addElement: (element)-> @observe(element) if element
-
-  ###*
-   * Add a Callback to the callback queue.
-   * Tries to perform it immediately
-   * The right signature is onEmbed(fn) so remove the eventual `doc` that can be there (legacy)
-   * @param {function} fn callback to add
-   * @return {[type]}  [description]
-  ###
-  onEmbed: (args...)=>
-    args.shift() if args.length == 2
-    callback = args[0]
-    return unless _.isFunction(callback)
-    booted = @booted.promise.then (elements)=>
-      callback(element, @deployment, @hull) for element in elements
-    , throwErr
-    booted.catch throwErr
-
-
-  setContainer : (iframe)->
-    @_container = iframe.contentDocument || document
-
-    return @hull unless iframe
-
-    @observe(@_container)
-
-    @sandboxedShare.setContainer(iframe)
-    @autoSizeInterval = null;
-
-    @hull = assign(@hull, {
-
-      # onEmbed : (args...)->
-      #   args.shift() if args.length == 2
-      #   Hull.onEmbed(iframe.contentDocument, args...)
-      #   true
-
+    sandbox = Object.create(@)
+    @scopes.push sandbox
+    sandbox.observe(iframe.contentDocument)
+    sandbox.autoSizeInterval = null;
+    sandbox.hull = assign(@hull, {
+      findUrl : ()-> findUrl(iframe)
       setSize : (size={})=>
         style = assign({},size)
         if size.width || size.height
@@ -124,7 +85,6 @@ class Sandbox
         else
           setStyle.autoSize(iframe)
         true
-
       setStyle : (style={})->
         setStyle.style(iframe,style)
         true
@@ -140,26 +100,46 @@ class Sandbox
       autoSize : (interval)=>
         if (!isNaN(parseFloat(interval)))
           setInterval =>
-            @hull.autoSize()
+            sandbox.hull.autoSize()
           , interval
         else
-          clearInterval(@autoSizeInterval)
+          clearInterval(sandbox.autoSizeInterval)
         setStyle.autoSize(iframe) unless interval==false
         true
-
-      findUrl : ()-> findUrl(iframe)
     });
 
-    @booted.promise.then =>
-      @hull.autoSize()
-    , throwErr
+    sandbox.hull.autoSize()
 
     w = getIframeWindow(iframe)
-    # debugger
-    # w.open = window.open
-    # iframe.contentWindow = assign(iframe.contentWindow, window, {Hull:@hull})
-    w.Hull = @hull
+    w.Hull = sandbox.hull
+    sandbox
+
+  scopeStyles : ()->
+    @process(@_document)
+
+  setDocument : (doc)->
+    return unless doc?
+    @_document = doc
+    @observe(doc)
+
+  getDocument : ()=>
+    @_document
+
+  ###*
+   * Adds an element to the array of elements owned by the sandbox.
+   * Monitors it for Style Tags so they can be autoprefixed
+   * @param {Node} element DOM Node
+  ###
+  addElement: (element)->
+    @observe(element) if element
+
+  removeElement: (element)->
+    @unobserve(element) if element
 
   get : ()-> @hull
+
+  destroy: ()=>
+    scope.destroy() for scope in @scopes
+    @getObserver().destroy()
 
 module.exports = Sandbox

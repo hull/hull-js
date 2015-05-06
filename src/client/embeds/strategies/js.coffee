@@ -8,18 +8,19 @@ class JSDeploymentStrategy extends BaseDeploymentStrategy
    * @return {promise} a promise for the onLoad event
   ###
   deploy : (targets)->
+    @elements = []
+
     # sc = document.getElementById(id)
     # return if sc
     sc = document.querySelector("[data-hull-deployment=\"#{@deployment.id}\"]");
-    return if sc?
+    @addElement(target) for target in targets
+
+    return @boot() if sc?
 
     attributes = 
       'data-hull-deployment': @deployment.id
       'data-hull-ship'      : @deployment.ship.id
 
-    @addElement(target) for target in targets
-
-    return scriptLoader({src:@deployment.ship.index, attributes}).then ()=>
-      @sandbox.boot(@elements)
+    scriptLoader({src:@deployment.ship.index, attributes})
 
 module.exports = JSDeploymentStrategy

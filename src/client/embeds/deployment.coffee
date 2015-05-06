@@ -1,22 +1,21 @@
 assign   = require '../../polyfills/assign'
 _        = require '../../utils/lodash'
 
-SandboxedDeploymentStrategy = require './strategies/sandbox'
 RawDeploymentStrategy       = require './strategies/raw'
-ScopedDeploymentStrategy    = require './strategies/scope'
+ScopeDeploymentStrategy    = require './strategies/scope'
+IframeDeploymentStrategy = require './strategies/iframe'
 JSDeploymentStrategy        = require './strategies/js'
 
 registry = {}
 
 resetDeployments = () ->
-  deployment.remove() for own key, deployment of registry
+  deployment.destroy() for own key, deployment of registry
   registry = {}
 
 getDeployment = (id)-> registry[id]
 
 class Deployment
   @resetDeployments: resetDeployments
-
   @getDeployment : getDeployment
 
   constructor: (dpl, context)->
@@ -37,10 +36,8 @@ class Deployment
     # "_width" : "100%", //Dimensions to give the containing element. Passed as-is as style tag
     # "_height" : "50px", //Dimensions to give the containing element. Passed as-is as style tag
 
-    @targets = @getTargets()
-    @deploymentStrategy = @getDeploymentStrategy()
-    @elements  = []
-    @callbacks = []
+    # @targets = @getTargets()
+    # @deploymentStrategy = @getDeploymentStrategy()
 
   ###*
    * Fetches all targets specified in a deployment
@@ -58,37 +55,37 @@ class Deployment
       if target then [target] else []
 
 
-  getDeploymentStrategy : ()->
-    return @deploymentStrategy if @deploymentStrategy
+  getDeploymentStrategy : ()=>
+    return @deploymentStrategy if @deploymentStrategy?
 
     DS = if @ship.index.match(/\.js$/)
       JSDeploymentStrategy
     else if !!@settings._sandbox
-      SandboxedDeploymentStrategy
+      IframeDeploymentStrategy
     else
       RawDeploymentStrategy
     # else
-    #   ScopedDeploymentStrategy
+    #   ScopeDeploymentStrategy
 
-    new DS(@)
-
-  onEmbed : (args...) => @deploymentStrategy.onEmbed(args...)
+    @deploymentStrategy = new DS(@)
+    @deploymentStrategy
 
   embed : (opts={})=>
-    new Promise (resolve, reject)=>
-      # If we're refreshing, rebuild the target list
-      @targets = @getTargets(opts)
-      ds = @getDeploymentStrategy().deploy(@targets)
-      ds.then (args...)=> resolve(@)
+    # If we're refreshing, rebuild the target list
+    @targets = @getTargets(opts)
+    ds = @getDeploymentStrategy()
+    ds.embed(@targets, opts)
+    .then @boot
+    .then @onEmbed
 
-  remove: ()=>
-    @targets = false
-    el = @elements.shift()
-    link = document.querySelector("link[rel=\"import\"][href=\"#{@ship.index}\"]")
-    link.parentNode.removeChild link if link?.parentNode?
-    while el
-      el?.parentNode?.removeChild el
-      el = @elements.shift()
+  boot: ()=>
+    @getDeploymentStrategy().boot()
 
+  onEmbed : ()=>
+    @getDeploymentStrategy().onEmbed()
+
+  destroy: ()=>
+    @getDeploymentStrategy().destroy()
+    @deploymentStrategy = null
   
 module.exports = Deployment

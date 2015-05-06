@@ -9,18 +9,23 @@ class ScopeDeploymentStrategy extends BaseDeploymentStrategy
    * @return {promise} A promise for when the import is loaded inside the iframe
   ###
   deploy: (targets)->
+    @insertions = []
 
     @embedIframe().then (iframe)=>
+      @import = @embedImport(iframe)
 
-      @sandbox.setContainer(iframe)
+      @import.when.ready.then (doc)=>
+        @document = doc
+        el = @cloneImport(doc)
+        @addInsertion(@insert(el.cloneNode(true), target), iframe) for target in targets
+      .catch throwErr
 
-      imprt = @embedImport(iframe)
+      @import.when.loaded.catch throwErr
+      @import.when.loaded
 
-      imprt.ready.then (imported)=>
-        @sandbox.setDocument(imported.doc)
-        @addElement(@insert(imported.el.cloneNode(true), target)) for target in targets
-
-      imprt.load.then (el)=>
-        @sandbox.boot(@elements)
+  destroy: ()=>
+    @import.destroy()
+    @sandbox.destroy()
+    super()
 
 module.exports = ScopeDeploymentStrategy

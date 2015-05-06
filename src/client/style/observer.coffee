@@ -1,5 +1,5 @@
 _              = require '../../utils/lodash'
-styleSandbox   = require './sandbox'
+styleScoper   = require './style-scoper'
 
 observerOptions = 
   subtree          : true
@@ -18,11 +18,13 @@ isOrHasStyleTag = (node)-> isStyleTag(node)  || hasStyleTag(node)
 isOrHasLinkSheet= (node)-> isLinkSheet(node) || hasLinkSheet(node)
 
 getStyles         = (node)->
+  return unless node?
   return [] if node.nodeType != 1
   return [node] if isStyleTag(node)
   return node.querySelectorAll('style')
 
 getLinks = (node)->
+  return unless node?
   return [] if node.nodeType != 1
   return [node] if isLinkSheet(node)
   return node.querySelectorAll('link[rel=stylesheet]')
@@ -38,17 +40,17 @@ hasStyleMutations = (mutations) ->
 
 processDocumentMutations = (prefix, doc, mutations)->
   if hasStyleMutations(mutations)
-    styleSandbox.processDocument(prefix, doc)
+    styleScoper.addDocument(prefix, doc)
 
 # Collect all style mutations in the mutation batch, and add / remove them
 processNodeMutations = (prefix, mutations)->
   _.map mutations, (mutation)->
     # Style mutations don't interest us for now. we just skip them
-    # return styleSandbox.addStyle(prefix, mutation.target) if isStyleTag(mutation.target)
+    # return styleScoper.addStyle(prefix, mutation.target) if isStyleTag(mutation.target)
 
     # Can't be a style and also have addedNodes...
     _.map mutation.addedNodes, (node)->
-      styleSandbox.addStyle(prefix, style) for style in getStyles(node)
+      styleScoper.addStyle(prefix, style) for style in getStyles(node)
 
 class StyleObserver
   constructor : (prefix)->
@@ -62,10 +64,12 @@ class StyleObserver
   process : (target)->
     @processDocument(target) if target.nodeType==9 # document
     @processNode(target)     if target.nodeType==1 # node
-      
+    
+  destroy : ()->
+    @unobserve(root) for root in @_observers
 
   processNode : (node)->
-    _.map node.querySelectorAll('style'), styleSandbox.addStyle.bind(@, @prefix)
+    _.map node.querySelectorAll('style'), styleScoper.addStyle.bind(@, @prefix)
     
   observeNode: (node)->
     return unless node
@@ -80,13 +84,13 @@ class StyleObserver
     observer
 
   processDocument : (doc)->
-    styleSandbox.processDocument @prefix, doc
+    styleScoper.addDocument @prefix, doc
 
   observeDocument: (doc)->
     return unless doc
 
     # Only useful for Native HTML imports. Polyfills put link tags in the main DOM
-    # _.map doc.querySelectorAll('link[rel=stylesheet]'), styleSandbox.processLink.bind(@, @prefix)
+    # _.map doc.querySelectorAll('link[rel=stylesheet]'), styleScoper.processLink.bind(@, @prefix)
 
     # Do it once at the beginning to ensure we catch what's already in there.
     @processDocument(doc)
@@ -101,5 +105,9 @@ class StyleObserver
   unobserve : (root)->
     observer = _.find @_observers, (obs)->obs.root==root
     observer.observer.disconnect()
+
+  destroy: ()->
+    observer.observer.disconnect() for observer in @_observers
+    @_observers = []
 
 module.exports = StyleObserver

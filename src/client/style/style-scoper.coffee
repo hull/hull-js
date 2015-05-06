@@ -1,11 +1,11 @@
 _              = require '../../utils/lodash'
+throwErr       = require '../../utils/throw'
 ScopedCss      = require 'scopedcss/lib/';
 ScopedCssRule  = require 'scopedcss/lib/cssRule';
 superagent          = require 'superagent'
 
-StyleMap = [];
-MergedStyles   = null;
-Buffer = "";
+Styles     = {}
+MergedStyles  = null;
 
 # replaceRule = (sheet, selector, cssText, index)->
 #     if sheet.removeRule then sheet.removeRule(index) else sheet.deleteRule(index);
@@ -58,7 +58,8 @@ replaceLinkTagUrls = (uri, text)->
   text.replace(re, "url('#{uri}$1')")
 
 appendRules = (prefix, rules)->
-  _.map rules, (rule)-> Buffer += prefixRule(prefix, rule);
+  _.map rules, (rule)->
+    Styles[prefix].style += prefixRule(prefix, rule);
   true
 
 prefixRule = (prefix, rule)->
@@ -94,15 +95,9 @@ promise = new Promise (resolve, reject)-> resolve()
  * @param  {[type]} doc    document to collapse into a single Stylesheet
 ###
 processDocument = (prefix, doc)->
-  # Create and initialize a new global stylesheet that will receive merged styles in the right order
-  MergedStyles = createStyleSheet("") unless MergedStyles
-  # Under Firefox, you can't change css Rules or the containing
-  # style tag or those will be reset when touching anything else.
-  # Resort to building an entirely new stylesheet without copying cssRules
-
   # Promise manipulation ensures stylesheets are loaded in the correct order even if they are async.
   styles = _.toArray(doc.querySelectorAll('style,link'))
-  # IE doens't support inserting at any position.
+  # IE doesn't support inserting at any position.
   # Reverse stylesheets and insert from the end first.
   _.map styles, (style)->
     unless style.disabled
@@ -112,11 +107,18 @@ processDocument = (prefix, doc)->
       , (err)-> console.log err.message, err.stack
 
   promise.then ()->
-    MergedStyles.textContent = "#{MergedStyles.textContent} #{Buffer}"
-    Buffer=""
-    true
-  , (err)->
-    console.log 'Something failed', err, err.stack
+    MergedStyles.textContent = _.pluck(Styles,'style').join(' ');
+  , throwErr
+
+
+addDocument = (prefix, doc)->
+  # Create and initialize a new global stylesheet that will receive merged styles in the right order
+  MergedStyles = createStyleSheet("") unless MergedStyles
+  # Under Firefox, you can't change css Rules or the containing
+  # style tag or those will be reset when touching anything else.
+  # Resort to building an entirely new stylesheet without copying cssRules
+  Styles[prefix] = {doc: doc, style:""}
+  processDocument(prefix, hash.doc) for prefix, hash of Styles
 
 addStyle = (prefix, node)->
   # Array.prototype.slice.call(node.querySelectorAll('style:not([data-scoped])')).forEach (node)->
@@ -124,7 +126,7 @@ addStyle = (prefix, node)->
   new ScopedCss(prefix, null, node).process()
 
 module.exports = {
-  processDocument: processDocument
-  addStyle: addStyle,
-  addLink: addLink,
+  addDocument : addDocument
+  addStyle    : addStyle
+  addLink     : addLink
 }
