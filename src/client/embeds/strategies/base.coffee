@@ -19,7 +19,6 @@ class BaseDeploymentStrategy
       @ready.reject  = reject
 
     @insertions      = []
-    @callbacks       = []
 
   addShipClasses : (el)->
     el.classList.add("ship-#{@deployment.ship.id}", "ship-deployment-#{@deployment.id}")
@@ -27,20 +26,21 @@ class BaseDeploymentStrategy
     el.setAttribute('data-hull-ship', @deployment.ship.id)
 
   addInsertion : (el, iframe)=>
-    @insertions.push {el:el, iframe:iframe, ready:false, callbacks:new WeakMap()}
+    @insertions.push {el:el, iframe:iframe, ready:false, callbacks:[]}
 
   getCallbacks : ()=>
     # We retreive callbacks from the document
     # because when removing an Import, and readding it, the scripts aren't reloaded, so Callbacks don't get registered again.
-    @document._hullCallbacks || []
+    @document._hullCallbacks
 
   onEmbed: ()=>
-    # Use WeakMaps to ensure every insertion has been called with every callback just once.
-    for insertion in @insertions
-      for callback in (@getCallbacks())
-        unless insertion.callbacks.has(callback)
+    callbacks = @getCallbacks() || []
+    # Ensure every insertion has been called with every callback just once.
+    _.map @insertions, (insertion)=>
+      _.map callbacks, (callback)=>
+        unless _.find(insertion.callbacks, (d)-> d==callback)
           callback(insertion.el, @deployment, @sandbox.hull)
-          insertion.callbacks.set(callback,true)
+          insertion.callbacks.push(callback)
 
   boot: (callbacks=[]) =>
     @sandbox.setDocument(@document)
