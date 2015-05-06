@@ -37,17 +37,18 @@ class BaseDeploymentStrategy
     callbacks = @getCallbacks() || []
     # Ensure every insertion has been called with every callback just once.
     _.map @insertions, (insertion)=>
-      _.map callbacks, (callback)=>
-        unless _.find(insertion.callbacks, (d)-> d==callback)
-          callback(insertion.el, @deployment, @sandbox.hull)
-          insertion.callbacks.push(callback)
+      @ready.promise.then ()=>
+        _.map callbacks, (callback)=>
+          unless _.find(insertion.callbacks, (d)-> d==callback)
+            callback(insertion.el, @deployment, @sandbox.hull)
+            insertion.callbacks.push(callback)
 
   boot: (callbacks=[]) =>
     @sandbox.setDocument(@document)
     @sandbox.track('hull.app.init')
     # @sandbox.scopeStyles()
-    all = for insertion in @insertions
-      @ready.promise.then =>
+    all = _.map @insertions, (insertion)=>
+      @ready.promise.then ()=>
         unless insertion.ready
           sandbox = @sandbox.scope(insertion.iframe)
           sandbox.addElement(insertion.el)
