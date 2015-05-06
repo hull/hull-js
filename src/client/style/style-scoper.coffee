@@ -4,13 +4,8 @@ ScopedCss      = require 'scopedcss/lib/';
 ScopedCssRule  = require 'scopedcss/lib/cssRule';
 superagent          = require 'superagent'
 
-Styles     = {}
-MergedStyles  = null;
+Styles     = []
 
-# replaceRule = (sheet, selector, cssText, index)->
-#     if sheet.removeRule then sheet.removeRule(index) else sheet.deleteRule(index);
-#     rule = if selector then selector + '{' + cssText + '}' else cssText
-#     if sheet.addRule then sheet.addRule(selector, cssText, index) else sheet.insertRule(rule, index);
 
 createStyleSheet = (content="", disabled=false)->
   style = document.createElement('style')
@@ -22,46 +17,31 @@ createStyleSheet = (content="", disabled=false)->
 
 removeStyleSheet = (style)-> style.parentNode?.removeChild(style)
 
+# Create and initialize a new global stylesheet that will receive merged styles in the right order
+MergedStyles = createStyleSheet("") unless MergedStyles
+
+# A single promise will guarantee execution order;
+promise = new Promise (resolve, reject)-> resolve()
+
 getRules = (sheet)->
   return unless sheet?
   sheet.cssRules || sheet.rules
-
+appendRules = (entry, rules)->
+  r = _.map rules, (rule)->
+    prefixRule(entry.prefix, rule);
+  entry.style = r.join(' ');
+  true
 empty = (sheet)->
   if sheet.deleteRule?
     sheet.deleteRule(0) while getRules(sheet).length > 0
   else if sheet.removeRule?
     sheet.removeRule(0) while getRules(sheet).length > 0
-
 fetch = (href)->
   new Promise (resolve, reject)->
     superagent.get(href).end (err, res)-> resolve(res.text)
-
-appendStyle = (prefix, node, uri=window.location.href)->
-  rules = getRules(node.sheet)
-  if rules
-    appendRules(prefix, rules) if rules
-  else if !!node.href
-    # Loading External stylesheets (out of current domain)
-    # Only Chrome will use this, since we have tweaked the Polyfill to avoid 2 requests.
-    href = node.href
-    uri = getUriFromHref(node.href || uri)
-    node.parentNode.removeChild(node)
-    fetch(href).then (text)->
-      style = createStyleSheet(replaceLinkTagUrls(uri, text), true)
-      rules = getRules(style.sheet)
-      appendRules(prefix, rules)
-      removeStyleSheet(style)
-      true
-
 replaceLinkTagUrls = (uri, text)->
   re = new RegExp "url\\(['\"]?([^)]*?)['\"]?\\)", "g"
   text.replace(re, "url('#{uri}$1')")
-
-appendRules = (prefix, rules)->
-  _.map rules, (rule)->
-    Styles[prefix].style += prefixRule(prefix, rule);
-  true
-
 prefixRule = (prefix, rule)->
   return unless rule
   if rule.selectorText
@@ -78,55 +58,86 @@ prefixRule = (prefix, rule)->
     content = (prefixRule(prefix, subRule) for subRule, j in subSheet)
     query = rule.cssText.split('{');
     return "#{query[0]} {#{content.join(' ')}} "
-
 getUriFromHref = (href)->
   uri = href.split('/')
   uri.pop()
   uri.join('/')+'/'
 
-addLink = (prefix, node)->
-  appendStyle(prefix, node, getUriFromHref(node.href))
+appendStyle = (entry)->
+  rules = getRules(entry.node.sheet)
+  if rules
+    appendRules(entry, rules) if rules
+  else if !!entry.node.href
+    # Loading External stylesheets (out of current domain)
+    # Only Chrome will use this, since we have tweaked the Polyfill to avoid 2 requests.
+    href = entry.node.href
+    uri = getUriFromHref(entry.node.href)
+    entry.node.parentNode.removeChild(entry.node)
+    fetch(href).then (text)->
+      style = createStyleSheet(replaceLinkTagUrls(uri, text), true)
+      rules = getRules(style.sheet)
+      appendRules(entry, rules)
+      removeStyleSheet(style)
+      true
+addSheet = (prefix, node, doc)->
+  entry = findNode(prefix, node)
+  unless entry
+    entry = {prefix: prefix, node:node, doc:doc, style:""}
+    Styles.push(entry)
+  unless node.disabled
+    node.disabled=true
+    promise = promise.then ()->
+      appendStyle(entry)
+    ,throwErr
 
-promise = new Promise (resolve, reject)-> resolve()
 
-###*
- * Processes a complete document and writes a merged, prefixed stylesheet into the Main Document's HEAD.
- * @param  {string} prefix prefix to add to every style
- * @param  {[type]} doc    document to collapse into a single Stylesheet
-###
-processDocument = (prefix, doc)->
-  # Promise manipulation ensures stylesheets are loaded in the correct order even if they are async.
-  styles = _.toArray(doc.querySelectorAll('style,link'))
-  # IE doesn't support inserting at any position.
-  # Reverse stylesheets and insert from the end first.
-  _.map styles, (style)->
-    unless style.disabled
-      style.disabled=true
-      promise = promise.then ()->
-        appendStyle(prefix, style)
-      , throwErr
+# findDoc = (prefix, doc)->
+#   _.find Styles, (d)-> d.doc==doc && d.prefix == prefix
 
+findNode = (prefix, node)->
+  _.find Styles, (d)-> d.node==node && d.prefix == prefix
+
+finalize = ()->
   promise.then ()->
     MergedStyles.textContent = _.pluck(Styles,'style').join(' ');
   , throwErr
 
-
+###*
+ * Adds a whole document's styles to the Styles tag
+ * 
+ * Under Firefox, you can't change css Rules or the containing
+ * style tag or those will be reset when touching anything else.
+ * Resort to building an entirely new stylesheet without copying cssRules
+ * @param {[type]} prefix [description]
+ * @param {[type]} doc    [description]
+###
 addDocument = (prefix, doc)->
-  # Create and initialize a new global stylesheet that will receive merged styles in the right order
-  MergedStyles = createStyleSheet("") unless MergedStyles
-  # Under Firefox, you can't change css Rules or the containing
-  # style tag or those will be reset when touching anything else.
-  # Resort to building an entirely new stylesheet without copying cssRules
-  Styles[prefix] = {doc: doc, style:""}
-  processDocument(prefix, hash.doc) for prefix, hash of Styles
+  styles = _.toArray(doc.querySelectorAll('style,link'))
+  addSheet(prefix, node, doc) for index, node of styles
+  finalize()
+
+removeDocument = (prefix, doc)->
+  Styles = _.omit Styles, (style)-> style.doc == doc
+  finalize()
 
 addStyle = (prefix, node)->
   # Array.prototype.slice.call(node.querySelectorAll('style:not([data-scoped])')).forEach (node)->
   node.setAttribute('data-scoped',true);
   new ScopedCss(prefix, null, node).process()
 
+addLink = (prefix, node)->
+  addSheet(prefix, node)
+  finalize()
+
+removeLink = (node)->
+  Styles = _.omit Styles, (style)-> style.node == node
+  finalize()
+
+
+
 module.exports = {
-  addDocument : addDocument
-  addStyle    : addStyle
-  addLink     : addLink
+  addDocument    : addDocument
+  removeDocument : removeDocument
+  addStyle       : addStyle
+  addLink        : addLink
 }
