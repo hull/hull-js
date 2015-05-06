@@ -36,9 +36,6 @@ class Deployment
     # "_width" : "100%", //Dimensions to give the containing element. Passed as-is as style tag
     # "_height" : "50px", //Dimensions to give the containing element. Passed as-is as style tag
 
-    # @targets = @getTargets()
-    # @deploymentStrategy = @getDeploymentStrategy()
-
   ###*
    * Fetches all targets specified in a deployment
    * @param  {object} opts options object. opts.refresh = true|false // Force Refresh
