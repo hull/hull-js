@@ -1,2 +1,2 @@
 module.exports = (err)->
-  console.log err.message, err.stack
+  console.error err.message, err.stack

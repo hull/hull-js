@@ -17,7 +17,7 @@ getNoUserPromise = ()->
     reject    
       reason: 'no_current_user',
       message: 'User must be logged in to perform this action'
-  promise.fail(->)
+  promise.catch(->)
   promise
 
 getUser = ()->

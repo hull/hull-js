@@ -104,7 +104,7 @@ processDocument = (prefix, doc)->
       style.disabled=true
       promise = promise.then ()->
         appendStyle(prefix, style)
-      , (err)-> console.log err.message, err.stack
+      , throwErr
 
   promise.then ()->
     MergedStyles.textContent = _.pluck(Styles,'style').join(' ');

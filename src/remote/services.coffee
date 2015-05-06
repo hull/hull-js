@@ -85,7 +85,7 @@ class Services
 
     onError = (err)->
       xdmErrback(err)
-      console.log 'Promise Fail', err, err.stack
+      console.warn 'Promise Fail', err, err.stack
       throw new Error(err)
       undefined
 
