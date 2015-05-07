@@ -1,9 +1,9 @@
 # Hull.js [ ![Codeship Status for hull/hull-js](https://circleci.com/gh/hull/hull-js/tree/develop.png?circle-token=26a17dad6ac378f6028a460a5857d5ca15a8aa13) ](https://circleci.com/gh/hull/hull-js)
 
 # Compatibility Status
-* ✔ Chrome (w/o Polyfills)
-* ✔ Firefox
-* ✔ Safari 
+* ✔ Chrome (w/o Polyfills) Scoped + Raw
+* ˜ Firefox: Broken Styles
+* ˜ Safari : Broken Styles
 * ˜ IE 11+ : Broken Styles
 * ˜ IE 10+ : Broken Styles
 * ˜ IE 9+  : Broken Styles
