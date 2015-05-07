@@ -1,7 +1,6 @@
 _        = require '../../../utils/lodash'
 setStyle = require '../../../utils/set-style'
 Import   = require '../import'
-Iframe   = require '../iframe'
 Sandbox  = require '../sandbox'
 
 class BaseDeploymentStrategy
@@ -20,43 +19,18 @@ class BaseDeploymentStrategy
 
     @insertions      = []
 
+
+  addInsertion : ()->
+  embed        : ()->
+  onEmbed      : ()->
   addShipClasses : (el)->
     el.classList.add("ship-#{@deployment.ship.id}", "ship-deployment-#{@deployment.id}")
     el.setAttribute('data-hull-deployment', @deployment.id)
     el.setAttribute('data-hull-ship', @deployment.ship.id)
-
-  addInsertion : (el, iframe)=>
-    @insertions.push {el:el, iframe:iframe, ready:false, callbacks:[]}
-
-  getCallbacks : ()=>
-    # We retreive callbacks from the document
-    # because when removing an Import, and readding it, the scripts aren't reloaded, so Callbacks don't get registered again.
-    @document._hullCallbacks
-
-  onEmbed: ()=>
-    callbacks = @getCallbacks() || []
-    # Ensure every insertion has been called with every callback just once.
-    _.map @insertions, (insertion)=>
-      @ready.promise.then ()=>
-        _.map callbacks, (callback)=>
-          unless _.find(insertion.callbacks, (d)-> d==callback)
-            callback(insertion.el, @deployment, @sandbox.hull)
-            insertion.callbacks.push(callback)
-
-  boot: (callbacks=[]) =>
-    @sandbox.setDocument(@document)
+  setupSandbox: (doc) =>
+    @sandbox.setDocument(doc)
     @sandbox.track('hull.app.init')
-    # @sandbox.scopeStyles()
-    all = _.map @insertions, (insertion)=>
-      @ready.promise.then ()=>
-        unless insertion.ready
-          sandbox = @sandbox.scope(insertion.iframe)
-          sandbox.addElement(insertion.el)
-          insertion.ready = true
-    Promise.all(all)
 
-
-  embed : ()->
 
   ###*
    * Inserts the content of a HTML import into a given dom node.
@@ -108,7 +82,7 @@ class BaseDeploymentStrategy
         unless _.contains(ignore, nodeName)
           if _.contains move, nodeName
             child.parentNode.removeChild(child)
-            head.appendChild(child.cloneNode(true))
+            head.appendChild(child)
           else
             el.appendChild(child.cloneNode(true))
 
@@ -145,28 +119,6 @@ class BaseDeploymentStrategy
     imprt = new Import {deploymentId: @deployment.id, href: @deployment.ship.index, container: container}
     imprt.when.loaded.then @ready.resolve
     imprt
-
-  ###*
-   * Embeds an iframe in a DOM container or directly in the Body
-   * 
-   * @param  {Node|NodeArray} targets A single node or an array of Nodes
-   * @return {object}         an object containing a promise for when the import is loaded, the elements created and the target node(s)
-  ###
-  embedIframe : (container)=>
-    embed = {}
-    embed.promise = new Promise (resolve, reject)->
-      embed.resolve = resolve
-      embed.reject = reject
-    iframe  = new Iframe {id: @deployment.id, hidden: !@deployment.settings._sandbox}, (iframe)=>
-      @addShipClasses(iframe)
-      iframe.contentDocument.deploymentId = @deployment.id
-      embed.resolve(iframe)
-
-    # Insert Iframe into main window
-    # Needs to be done otherwise iframe won't get initialized
-    if container then @insert(iframe.getIframe(),container) else document.body.appendChild(iframe.getIframe())
-    embed.promise
-
 
   destroy: ()=>
     _.map @insertions, (insertion)-> insertion.el?.parentNode?.removeChild(insertion.el)

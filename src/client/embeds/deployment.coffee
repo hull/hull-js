@@ -1,10 +1,10 @@
-assign   = require '../../polyfills/assign'
-_        = require '../../utils/lodash'
+assign                   = require '../../polyfills/assign'
+_                        = require '../../utils/lodash'
 
-RawDeploymentStrategy       = require './strategies/raw'
-ScopeDeploymentStrategy    = require './strategies/scope'
+RawDeploymentStrategy    = require './strategies/raw'
+ScopeDeploymentStrategy  = require './strategies/scope'
 IframeDeploymentStrategy = require './strategies/iframe'
-JSDeploymentStrategy        = require './strategies/js'
+JSDeploymentStrategy     = require './strategies/js'
 
 registry = {}
 
@@ -59,10 +59,10 @@ class Deployment
       JSDeploymentStrategy
     else if !!@settings._sandbox
       IframeDeploymentStrategy
-    else
+    else if @settings._sandbox == 'raw'
       RawDeploymentStrategy
-    # else
-    #   ScopeDeploymentStrategy
+    else
+      ScopeDeploymentStrategy
 
     @deploymentStrategy = new DS(@)
     @deploymentStrategy
@@ -72,8 +72,8 @@ class Deployment
     @targets = @getTargets(opts)
     ds = @getDeploymentStrategy()
     ds.embed(@targets, opts)
-    .then @boot
-    .then @onEmbed
+    .then ()=>
+      @onEmbed()
 
   boot: ()=>
     @getDeploymentStrategy().boot()

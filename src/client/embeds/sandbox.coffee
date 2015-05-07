@@ -41,7 +41,6 @@ class Sandbox
     # We place a fallback for the sharing target event
     # and pass in the iframe.
     # This way the Hull.share method will walk from the iframe container up.
-    event = assign(event, {target: @iframe}) if @iframe?
 
     # Enrich UTM Tags Defaults
     opts.tags = assign({}, opts.tags, {utm_campaign:@ship.name})
@@ -59,22 +58,36 @@ class Sandbox
     @getObserver().observe(target)
 
   process : (target)->
-    return unless @scopeStyle
+    return unless @scopeStyle and target
     @getObserver().process(target)
 
   unobserve : (target)->
     return unless @scopeStyle
     @getObserver().unobserve(target)
 
-  scope : (iframe)->
+  scope : (insertion)->
+    iframe = insertion.iframe
+
     return @ unless iframe?.contentDocument
-    @iframe = iframe
 
     sandbox = Object.create(@)
     @_scopes.push sandbox
-    sandbox.observe(iframe.contentDocument)
+
+    doc = iframe.contentDocument
+    # sandbox.observe(doc)
+    # sandbox.addElement(insertion.el)
+
     sandbox.autoSizeInterval = null;
-    sandbox.hull = assign(@hull, {
+    hull = assign({}, @hull, {
+      onEmbed : (args...)=>
+        callback = args.shift() while (args.length>0 && !_.isFunction(callback))
+        return unless callback
+        insertion.callbacks.push callback
+        @deployment.onEmbed()
+      getDocument : ()=> doc
+      share : (opts, event={})->
+        event = assign(event, {target: iframe})
+        @share(opts,event);
       findUrl : ()-> findUrl(iframe)
       setSize : (size={})=>
         style = assign({},size)
@@ -88,7 +101,6 @@ class Sandbox
       setStyle : (style={})->
         setStyle.style(iframe,style)
         true
-
       ###*
        * autoSize method for sandboxed instances
        * @param  {Boolean|Int} interval a refresh interval or 'false'.
@@ -108,19 +120,17 @@ class Sandbox
         true
     });
 
+    sandbox.hull = hull
     sandbox.hull.autoSize()
-
     w = getIframeWindow(iframe)
     w.Hull = sandbox.hull
     sandbox
-
-  scopeStyles : ()->
-    @process(@_document)
 
   setDocument : (doc)->
     return unless doc?
     @_document = doc
     @observe(doc)
+    @process(@_document)
 
   getDocument : ()=>
     @_document

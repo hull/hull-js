@@ -48,23 +48,26 @@ class Import
       @ready.resolve(@el.import)
       @load.resolve(@el.import.body)
     else
-      loadInterval = setInterval ()=>
+
+      onReady = (doc)=>
+        @el.import.removeEventListener 'DOMContentLoaded', onReady
+        ready = true
+        @ready.resolve(@el.import)
+      # addEventListener doesnt work with IE 11 :(
+      onLoad = (ev)=>
+        ready=true
+        @ready.resolve(@el.import)
+        @load.resolve(@el.import.body)
+
+      @el.onload = onLoad
+
+      importInterval = setInterval ()=>
         if @el.import
           @el.import.deploymentId = @deploymentId
-          clearInterval(loadInterval)
-          rsInterval = setInterval ()=>
-            if(@el.import.body)
-              clearInterval(rsInterval)
-              @ready.resolve(@el.import)
-              ready = true
-          , 10
-      , 10
+          @el.import.addEventListener 'DOMContentLoaded', onReady
+          clearInterval(importInterval)
+      , 5
 
-      # addEventListener doesnt work with IE 11 :(
-      @el.onload = (ev)=>
-        @ready.resolve(@el.import)
-        ready=true
-        @load.resolve(@el.import.body)
     @el
 
   destroy : ()=>
