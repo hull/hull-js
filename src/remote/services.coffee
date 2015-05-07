@@ -76,8 +76,8 @@ class Services
 
     onSuccess =  (res)=>
       # Refreshing the User results in us setting everything up again
-      me = res[0].value.body;
-      settings = res[1].value.body
+      me = res[0].body;
+      settings = res[1].body
       RemoteUserActions.update(me)
       RemoteSettingsActions.update(settings)
       xdmCallback(me)
@@ -89,7 +89,9 @@ class Services
       throw new Error(err)
       undefined
 
-    promises.all([me, settings]).then onSuccess, onError
+    Promise.all([me, settings])
+    .then onSuccess, onError
+    .catch onError
 
     undefined
 

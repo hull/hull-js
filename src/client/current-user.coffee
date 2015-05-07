@@ -52,17 +52,14 @@ class CurrentUser
 
     # User was updated. Emit Update
     EventBus.emit('hull.user.update',  me) if prevUpdatedAt != me?.updated_at
-
-    if me?.id?
+    if me?.id
       # We have a user
       # User changed. Do the full update.
-      if prevId != me.id
-        @updateLoginStatus(me)
+      @updateLoginStatus(me) if prevId != me.id
     else
       # We have no user anymore
       # Emit logout event
-      if prevId
-        EventBus.emit('hull.user.logout')
+      EventBus.emit('hull.user.logout') if prevId
 
     me
 
