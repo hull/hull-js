@@ -23,7 +23,7 @@ module.exports = (opts={})->
     # http://stackoverflow.com/questions/4845762/onload-handler-for-script-tag-in-internet-explorer
     sc.onload = sc.onreadystatechange = () ->
       if !done && (!@readyState || @readyState == "loaded" || @readyState == "complete")
-        # clearTimeout(errorTimeout)
+        clearTimeout(errorTimeout)
         done = true;
         resolve(sc)
         # Handle memory leak in IE
