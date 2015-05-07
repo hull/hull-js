@@ -1,9 +1,11 @@
+methods = ["assert", "clear", "count", "debug", "dir", "dirxml", "error", "exception", "group", "groupCollapsed", "groupEnd", "info", "log", "markTimeline", "profile", "profileEnd", "markTimeline", "table", "time", "timeEnd", "timeStamp", "trace", "warn"]
+
 unless window.console and console.log
   (->
-    noop = ->
-
-    methods = ["assert", "clear", "count", "debug", "dir", "dirxml", "error", "exception", "group", "groupCollapsed", "groupEnd", "info", "log", "markTimeline", "profile", "profileEnd", "markTimeline", "table", "time", "timeEnd", "timeStamp", "trace", "warn"]
-    length = methods.length
+    noop = ()-> 
     console = window.console = {}
-    console[methods[length]] = noop  while length--
+    console[method] = noop for method in methods
   )()
+else if typeof console.log=='object'
+  log = console.log
+  console.log = (args...)-> log(args)

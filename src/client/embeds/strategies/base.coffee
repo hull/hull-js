@@ -40,7 +40,6 @@ class BaseDeploymentStrategy
   cloneImport : (doc, container=document)->
     # Import Container
     el = document.createElement('div')
-    @addShipClasses(el)
 
     hull_in_ship = doc.getElementById('hull-js-sdk')
 
@@ -53,13 +52,14 @@ class BaseDeploymentStrategy
       console.error(err.message)
       return el
 
+    head = container.getElementsByTagName('head')[0];
     # Like with Shrimps, HEAD is not interesting in HTML Imports. Don't use it
     @parseChildren({
       imported  : doc.body
       el        : el
       ignore    : @ignoredTags
       move      : @movedTags
-      head      : container.head
+      head      : head
     })
     el
 
@@ -93,6 +93,7 @@ class BaseDeploymentStrategy
    * @return {Node}        el
   ###
   insert: (el, target)->
+    @addShipClasses(el)
     setStyle.style(el, {width:@deployment.settings._width || '100%', height:@deployment.settings.height})
     switch @deployment.settings._placement
       when 'before' then target.parentNode.insertBefore(el, target)

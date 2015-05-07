@@ -2,6 +2,7 @@
 # # and providing pooled methods to the user while
 # # Hull is actually loading.
 
+require("babel/polyfill");
 assign      = require './polyfills/assign'
 _           = require './utils/lodash'
 polyfill    = require './utils/load-polyfills'
@@ -47,7 +48,7 @@ onInitSuccess = (userSuccessCallback, hull, data)->
 
   EventBus.emit('hull.ready', hull, me, app, org)
   EventBus.emit('hull.init', hull, me, app, org)
-  console.info("Hull.js version \"#{hull.version}\" started")
+  console.log("Hull.js version \"#{hull.version}\" started")
 
   # Do Hull.embed(platform.deployments) automatically
   embeds.embed(app.deployments) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
@@ -92,6 +93,13 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
 
   currentUser =  new CurrentUser()
 
+  err = (err)->
+    # Something was wrong while initializing
+    console.error(err.stack);
+    userFailureCallback = userFailureCallback || ->
+    userFailureCallback(err)
+    ready.reject(err)
+
   # Ensure we have everything we need before starting Hull
   configCheck(config) .then ()->
     # Load polyfills
@@ -100,22 +108,20 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
     # Create the communication channel with Remote
     channel = new Channel(config, currentUser)
     channel.promise
+  ,err
   .then (channel)=>
     # Create the Hull client that stores the API, Auth, Sharing and Tracking objects.
     client = new Client(config, channel, currentUser)
   , onInitFailure
+  ,err
   .then (hullClient)=>
     # Initialize
     client.hull = assign(hull,client.hull)
     data = client.remoteConfig.data
     currentUser.init(data.me)
     onInitSuccess(userSuccessCallback, client.hull, data)
-  ,(err)->
-    # Something was wrong while initializing
-    console.error(err.stack);
-    userFailureCallback = userFailureCallback || ->
-    userFailureCallback(err)
-    ready.reject(err)
+  ,err
+  .catch err 
 
 ready = {}
 ready.promise = new Promise (resolve, reject)=>

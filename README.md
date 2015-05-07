@@ -5,8 +5,8 @@
 * ✔ Firefox: Broken Styles on Sandboxed
 * ✔ Safari : Broken Styles on Sandboxed
 * ✔ IE 11+ : Broken Styles on Sandboxed
-* ˜ IE 10+ : Broken Styles
-* ˜ IE 9+  : Broken Styles
+* ✔ IE 10+ : Broken Styles on Sandboxed
+* ✔ IE 9+  : Broken Styles on Sandboxed; Assets must be on same domain (xdr limitation)
 * X IE 8+  : Crashes
 
 # Sandboxing: 

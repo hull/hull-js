@@ -43,30 +43,28 @@ class Import
       @el.async = true #Will this break stuff ? if not - lets do it
       @document.getElementsByTagName('head')[0].parentNode.appendChild @el
 
-    if @el.import && @el.import?.body?
-      @el.import.deploymentId = @deploymentId
-      @ready.resolve(@el.import)
-      @load.resolve(@el.import.body)
+    onReady = (doc)=>
+      @el['import'].removeEventListener 'DOMContentLoaded', onReady
+      ready = true
+      @ready.resolve(@el['import'])
+
+    # addEventListener doesnt work with IE 11 :(
+    onLoad = (ev)=>
+      ready=true
+      @ready.resolve(@el['import'])
+      @load.resolve(@el['import'].body)
+
+    if @el['import'] && @el['import']?.body?
+      @el['import'].deploymentId = @deploymentId
+      onLoad()
     else
-
-      onReady = (doc)=>
-        @el.import.removeEventListener 'DOMContentLoaded', onReady
-        ready = true
-        @ready.resolve(@el.import)
-      # addEventListener doesnt work with IE 11 :(
-      onLoad = (ev)=>
-        ready=true
-        @ready.resolve(@el.import)
-        @load.resolve(@el.import.body)
-
       @el.onload = onLoad
-
       importInterval = setInterval ()=>
-        if @el.import
-          @el.import.deploymentId = @deploymentId
-          @el.import.addEventListener 'DOMContentLoaded', onReady
+        if @el['import']
+          @el['import'].deploymentId = @deploymentId
+          @el['import'].addEventListener 'DOMContentLoaded', onReady
           clearInterval(importInterval)
-      , 5
+      , 10
 
     @el
 

@@ -65,6 +65,6 @@ module.exports = {
       deploymentId = cs.getAttribute("data-hull-deployment");
     }
     let deployment = Deployment.getDeployment(deploymentId);
-    if (deployment){ deployment.onEmbed(); }
+    if (deployment){ deployment.onEmbed(callback); }
   }
 };

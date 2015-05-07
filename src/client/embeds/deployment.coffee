@@ -78,8 +78,8 @@ class Deployment
   boot: ()=>
     @getDeploymentStrategy().boot()
 
-  onEmbed : ()=>
-    @getDeploymentStrategy().onEmbed()
+  onEmbed : (callback)=>
+    @getDeploymentStrategy().onEmbed(callback)
 
   destroy: ()=>
     @getDeploymentStrategy().destroy()

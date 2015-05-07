@@ -11,7 +11,8 @@ CSS_IMPORT_REGEXP = /(@import[\s]+(?!url\())([^;]*)(;)/g;
 resolveUrlsInStyle= (style, linkUrl)->
   doc = style.ownerDocument
   resolver = doc.createElement("a")
-  style.textContent = resolveUrlsInCssText(style.textContent, linkUrl, resolver)
+  tc = getTextContent(style)
+  setTextContent style, resolveUrlsInCssText(tc, linkUrl, resolver)
   style
 
 resolveUrlsInCssText= (cssText, linkUrl, urlObj)->
@@ -31,12 +32,26 @@ resolveUrls = (text, href, doc)->
   resolver = doc.createElement("a")
   resolveUrlsInCssText(text, href, resolver);
 
-createStyleSheet = (content="", disabled=false)->
+# Those methods are there so we can handle IE8
+getTextContent = (node)->
+  return node.textContent if node.textContent?
+  return node.innerText
+
+setTextContent = (tag, content="")->
+  if (tag.styleSheet) # for IE
+    tag.styleSheet.cssText = content;
+  else
+    textnode = document.createTextNode(content);
+    tag.appendChild(textnode);
+
+createStyleSheet = (content, disabled=false)->
   style = document.createElement('style')
   style.disabled = true if disabled
+  style.setAttribute("type", "text/css");
   style.setAttribute('id','hull-style')
-  style.appendChild(document.createTextNode(content)); # Webkit Hack
-  document.head.appendChild(style)
+  document.getElementsByTagName('head')[0].appendChild(style);
+  # document.head.appendChild(style) -> IE8 incompatible
+  setTextContent(style, content)
   style
 
 removeStyleSheet = (style)->
@@ -134,7 +149,7 @@ findNode = (prefix, node)->
 
 finalize = ()->
   promise.then ()->
-    MergedStyles.textContent = _.pluck(Styles,'style').join(' ');
+    setTextContent MergedStyles, _.pluck(Styles,'style').join(' ');
   , throwErr
 
 ###*

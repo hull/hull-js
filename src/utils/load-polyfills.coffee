@@ -26,7 +26,7 @@ polyfills =
       return false
   "HTMLImports"                 : ->
     link = document.createElement("link")
-    link.import!=undefined
+    link['import']!=undefined
   "Element.prototype.classList" : -> document.documentElement.classList?
   "Element.prototype.cloneNode" : -> 
     test = ()->
@@ -56,5 +56,5 @@ module.exports = (config)->
   return new Promise (resolve, reject)->
     return resolve() if allGood
     file = if (config.debug) then "polyfill.js" else "polyfill.js"
-    url = "//hull-polyfills.herokuapp.com/v1/#{file}?features=#{_.keys(polyfills).join(",")}"
+    url = "//polyfills.ngrok.com/v1/#{file}?features=#{_.keys(polyfills).join(",")}"
     return scriptLoader({ src:url, document:config.document}).then(shimHTMLImports).then(resolve, reject)

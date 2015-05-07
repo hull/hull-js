@@ -1,6 +1,6 @@
-BaseDeploymentStrategy = require './base'
 _                      = require '../../../utils/lodash'
 throwErr               = require '../../../utils/throw'
+BaseDeploymentStrategy = require './base'
 
 class RawDeploymentStrategy extends BaseDeploymentStrategy
   scopeStyles : false
