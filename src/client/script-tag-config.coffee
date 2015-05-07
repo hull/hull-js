@@ -52,6 +52,7 @@ initParams = {
     transform: transform.url
     validation: valid.regex(new RegExp("^" + document.location.origin + "/"))
   },
+  debug: { default: false, transform: transform.bool },
   embed: { default: true, transform: transform.bool },
   autoStart: { default: true, transform: transform.bool },
   accessToken: { default: null }
