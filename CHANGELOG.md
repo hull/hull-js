@@ -58,6 +58,7 @@ We're phasing out in favor of auto-initialized code, You can get the same result
 ##### Events
 * `hull.ready` event now returns `hull, me, platform, org`
 * `hull.auth.update`, `hull.auth.login`, `hull.auth.logout`, `hull.auth.create` events are renamed `hull.user.update`, `hull.user.login`, `hull.user.logout`, `hull.user.create` and are emitted more reliably.
+* A `hull.*.share` event is emitted when sharing using a network. an example would be `hull.facebook.share`
 * A `hull.track` event is now emitted every time tracking happens, so you can subscribe to them and implement your own track handlers Hull.on(`hull.track`,{event:[String], data:[Object]});
 * The `jsUrl` entry in the `Hull.init()` configuration hash now takes a full url (I.E. https://d3f5pyioow99x0.cloudfront.net/version/hull.js).
 * Access the event's name from inside the event callback with `this.event`:
@@ -92,7 +93,7 @@ Hull.share({provider:'google', params:{url:'http://example.com'}}) //Shares exam
 ##### Methods
 
 ###### `Hull.login()`, `Hull.logout()`, `Hull.linkIdentity()`, `Hull.unlinkIdentity()` 
-All those now return promises. When using Promises, please don't forget to add `.done()` at the end of your promise chain, so errors are not swallowed without notice.
+All those now return promises. When using Promises, please don't forget to add `.catch()` on your promise chain, so errors are not swallowed without notice.
 
 These methods have the following signatures :
 
