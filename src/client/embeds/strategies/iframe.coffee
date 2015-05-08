@@ -72,7 +72,7 @@ class IframeDeploymentStrategy extends BaseDeploymentStrategy
     embed.promise
 
   destroy: ()=>
-    insertion.iframe.parentNode?.removeChild(iframe) for insertion in @insertions
+    insertion.iframe?.parentNode?.removeChild(insertion.iframe) for insertion in @insertions
     @insertions = []
     @sandbox.destroy()
     super()
