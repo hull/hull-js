@@ -149,7 +149,8 @@ class Sandbox
   get : ()-> @hull
 
   destroy: ()=>
-    scope.destroy() for scope in @_scopes
+    for scope in @_scopes
+      scope.hull.autoSize(false)
     @_scopes = []
     @getObserver().destroy()
 
