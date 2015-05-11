@@ -56,8 +56,8 @@ initParams = {
   embed: { default: true, transform: transform.bool },
   autoStart: { default: true, transform: transform.bool },
   accessToken: { default: null }
+  customerId: { default: null }
 }
-
 
 getParamValue = (el, param, key)->
   keys = [key].concat(param.altKeys || [])
@@ -74,7 +74,6 @@ getParamValue = (el, param, key)->
 
 
 module.exports = ->
-
   hull_js_sdk = document.getElementById('hull-js-sdk')
 
   return unless hull_js_sdk
