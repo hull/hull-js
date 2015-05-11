@@ -1,6 +1,6 @@
 assign         = require '../../polyfills/assign'
 _              = require '../../utils/lodash'
-getIframeWindow= require '../../utils/get-iframe-window'
+getIframe      = require '../../utils/get-iframe'
 findUrl        = require '../../utils/find-url'
 setStyle       = require '../../utils/set-style'
 clone          = require '../../utils/clone'
@@ -122,7 +122,7 @@ class Sandbox
 
     sandbox.hull = hull
     sandbox.hull.autoSize()
-    w = getIframeWindow(iframe)
+    w = getIframe.window(iframe)
     w.Hull = sandbox.hull
     sandbox
 

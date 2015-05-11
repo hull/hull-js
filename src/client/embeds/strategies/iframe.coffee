@@ -1,10 +1,10 @@
 promises               = require '../../../utils/promises'
 _                      = require '../../../utils/lodash'
 throwErr               = require '../../../utils/throw'
+getIframe              = require '../../../utils/get-iframe'
 Sandbox                = require '../sandbox'
 Iframe                 = require '../iframe'
 BaseDeploymentStrategy = require './base'
-
 class IframeDeploymentStrategy extends BaseDeploymentStrategy
   scopeStyles : false
   ignoredTags : ['#comment','SCRIPT']
@@ -29,17 +29,16 @@ class IframeDeploymentStrategy extends BaseDeploymentStrategy
 
         imprt.when.ready.then (doc)=>
           insertion.doc = doc
-          el = @cloneImport(doc, iframe.contentDocument)
-
+          iframeDoc = getIframe.document(iframe)
+          el = @cloneImport(doc, iframeDoc)
           insertion.el = el
-          # div = iframe.contentDocument.createElement 'div'
-          iframe.contentDocument.body.appendChild el
-          # div.appendChild el
+          iframeDoc.body.appendChild el
           @insertions.push insertion
         .catch throwErr
 
         imprt.when.loaded.catch throwErr
         imprt.when.loaded
+      .catch throwErr
 
     Promise.all(readyPromises)
   
@@ -58,18 +57,14 @@ class IframeDeploymentStrategy extends BaseDeploymentStrategy
   ###
   embedIframe : (container)=>
     embed = {}
-    embed.promise = new Promise (resolve, reject)->
-      embed.resolve = resolve
-      embed.reject = reject
-    iframe  = new Iframe {id: @deployment.id, hidden: !@deployment.settings._sandbox}, (iframe)=>
-      @addShipClasses(iframe)
-      iframe.contentDocument.deploymentId = @deployment.id
-      embed.resolve(iframe)
-
-    # Insert Iframe into main window
-    # Needs to be done otherwise iframe won't get initialized
-    if container then @insert(iframe.getIframe(),container) else document.body.appendChild(iframe.getIframe())
-    embed.promise
+    new Promise (resolve, reject)=>
+      iframe  = new Iframe {id: @deployment.id, hidden: !@deployment.settings._sandbox}, (iframe)=>
+        @addShipClasses(iframe)
+        getIframe.document(iframe).deploymentId = @deployment.id
+        resolve(iframe)
+      # Insert Iframe into main window
+      # Needs to be done otherwise iframe won't get initialized
+      if container then @insert(iframe.getIframe(),container) else document.body.appendChild(iframe.getIframe())
 
   destroy: ()=>
     insertion.iframe?.parentNode?.removeChild(insertion.iframe) for insertion in @insertions

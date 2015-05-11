@@ -1,4 +1,5 @@
 polyfill       = require '../../utils/load-polyfills'
+getIframe      = require '../../utils/get-iframe'
 sandbox        = require './sandbox'
 
 
@@ -11,7 +12,6 @@ class Iframe
     @iframe = @buildIframe()
     @hide() if opts.hidden
     @onIframeReady(@iframe, callback)
-
 
   hide : () ->
     @iframe.width                  = '1px'
@@ -42,12 +42,13 @@ class Iframe
   getIframe: ()-> @iframe
 
   onIframeReady : (iframe, callback)=>
-    doc = iframe.contentDocument
+    doc = getIframe.document(iframe)
     if doc and doc.readyState=='complete'
-      iframe.contentDocument.open();
-      iframe.contentDocument.write "<!DOCTYPE html><html><head></head><body></body></html>"
-      iframe.contentDocument.close();
-      @sandboxIframe iframe, callback
+      getIframe.window(iframe).location.href='/'
+      doc.open();
+      doc.write "<!DOCTYPE html><html><head></head><body></body></html>"
+      doc.close();
+      @polyfill(doc).then -> callback(iframe)
     else
       setTimeout ()=>
         @onIframeReady(iframe, callback)
@@ -58,14 +59,13 @@ class Iframe
   # an enhanced version of Hull, with methods that resolve locally
   # - setShipSize
   # - getTargetUrl
-  sandboxIframe : (iframe, callback)->
+  polyfill : (doc)->
     # Start resolving from the containing iframe up
     # TODO architecture could be better herer
     polyfill({
-      document:iframe.contentDocument,
+      document:doc,
       debug:Hull.config().debug
-    }).then ()=>
-      callback(iframe)
+    })
 
 
 module.exports = Iframe

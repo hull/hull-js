@@ -43,6 +43,7 @@ class Import
       @el.async = true #Will this break stuff ? if not - lets do it
       @document.getElementsByTagName('head')[0].parentNode.appendChild @el
 
+
     onReady = (doc)=>
       @el['import'].removeEventListener 'DOMContentLoaded', onReady
       ready = true
