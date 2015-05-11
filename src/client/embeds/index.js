@@ -55,10 +55,10 @@ module.exports = {
     let deploymentId = null;
     let cs = document._currentScript || document.currentScript;
 
-    if(cs && cs.ownerDocument !== document){
+    if(cs && cs.ownerDocument && cs.ownerDocument !== document){
       // we're inside an Import
-      deploymentId = doc.deploymentId;
-      attachCallback(doc, callback);
+      deploymentId = cs.ownerDocument.deploymentId;
+      attachCallback(cs.ownerDocument, callback);
     } else {
       // We're executing a script.
       deploymentId = cs.getAttribute("data-hull-deployment");
