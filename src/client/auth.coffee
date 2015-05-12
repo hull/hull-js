@@ -14,7 +14,7 @@ try
 
 getNoUserPromise = ()->
   promise = new Promise (resolve, reject)->
-    reject    
+    reject
       reason: 'no_current_user',
       message: 'User must be logged in to perform this action'
   promise.catch(->)
@@ -146,7 +146,7 @@ class Auth
           w.close()
 
     # 30 seconds after creating popup, reject promise if still active.
-    
+
     setTimeout ()=>
       @onAuthComplete({ success: false, error: { reason: 'timeout', message: 'Timeout for login (after 30 seconds), User never finished the auth' } })
     , 30000

@@ -17,10 +17,11 @@ HullRemote  = require './hull-remote'
 embeds      = require './client/embeds'
 configCheck = require './client/config-check'
 getScriptTagConfig = require './client/script-tag-config'
+initializePlatform = require './client/initialize-platform'
 
 ###*
  * Wraps the success callback
- * 
+ *
  * Extends the global object
  * Reinjects events in the live app from the pool
  * Replays the track events
@@ -101,7 +102,7 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
     ready.reject(err)
 
   # Ensure we have everything we need before starting Hull
-  configCheck(config) .then ()->
+  configCheck(config).then ()->
     # Load polyfills
     polyfill(config)
   .then ()=>
@@ -119,9 +120,10 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
     client.hull = assign(hull,client.hull)
     data = client.remoteConfig.data
     currentUser.init(data.me)
+    initializePlatform(data, config, client.hull)
     onInitSuccess(userSuccessCallback, client.hull, data)
   ,err
-  .catch err 
+  .catch err
 
 ready = {}
 ready.promise = new Promise (resolve, reject)=>
@@ -157,7 +159,6 @@ hull =
 eeMethods = ['on', 'onAny', 'offAny', 'once', 'many', 'off', 'emit']
 _.map eeMethods, (m)->
   hull[m] = (args...) -> EventBus[m](args...)
-
 
 autoStartConfig = getScriptTagConfig()
 if autoStartConfig && autoStartConfig.autoStart
