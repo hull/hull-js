@@ -5,7 +5,6 @@ var _ = require('lodash');
 var webpack = require('webpack');
 var path = require('path');
 var pkg = require('./package.json');
-var hullConfig = require('./demokeys.json');
 var moment = require('moment');
 
 // DO NOT CHANGE FOLDERS
@@ -119,7 +118,6 @@ var plugins = [
     'VERSION'    : JSON.stringify(pkg.version),
     'BUILD_DATE' : JSON.stringify(moment().format('MMMM, DD, YYYY, HH:mm:ss')),
     'PUBLIC_PATH': JSON.stringify(output.publicPath),
-    'hullConfig' : JSON.stringify(hullConfig)
   }),
   new webpack.ResolverPlugin(
     new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("bower.json", ["main"])
@@ -137,7 +135,6 @@ module.exports = {
   displayName        : displayName,
   version            : pkg.version,
 
-  hullConfig         : hullConfig,
   files              : files,
 
   outputFolder       : outputFolder,
