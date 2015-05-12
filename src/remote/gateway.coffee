@@ -79,10 +79,10 @@ class Gateway
     if params? and method=='GET' then s.query(QSEncoder.encode(params)) else s.send(params)
 
     new Promise (resolve, reject)->
-      console.log(">", method, path, params, headers) if config.debug?.enable?
+      console.debug(">", method, path, params, headers) if config.debug?.enable?
 
       s.end (response)=>
-        console.log("<", method, path, response) if config.debug?.enable?
+        console.debug("<", method, path, response) if config.debug?.enable?
         h = {body:response.body, headers: response.headers, status: response.status}
         if (response.ok) then resolve(h) else reject(h)
 

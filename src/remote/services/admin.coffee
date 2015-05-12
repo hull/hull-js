@@ -26,7 +26,7 @@ class HullAdminService extends GenericService
     token = @getSettings().credentials?.access_token
     headers['AccessToken'] = token if token
 
-    console.log(url, method, params) if config?.debug?
+    console.debug(url, method, params) if config?.debug?
     s = superagent(method, url).set(headers)
 
     if (method=='GET' and params?) then s.query(QSEncoder.encode(params)) else s.send(params)
