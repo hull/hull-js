@@ -26,7 +26,7 @@ class JSDeploymentStrategy extends BaseDeploymentStrategy
       'data-hull-ship'      : @deployment.ship.id
 
     scriptLoader({src:@deployment.ship.index, attributes})
-    .then @ready.resolve, throwErr
+    .then @ready.resolve
     .catch throwErr
 
   addInsertion : (el)=>
@@ -37,6 +37,6 @@ class JSDeploymentStrategy extends BaseDeploymentStrategy
     if callback
       @ready.promise.then ()=>
         _.map @insertions, (insertion)=>
-          callback(insertion.el, @deployment, @sandbox.hull)
+          callback(insertion.el, @deployment.getPublicData(), @sandbox.hull)
 
 module.exports = JSDeploymentStrategy

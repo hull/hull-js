@@ -40,7 +40,8 @@ class RawDeploymentStrategy extends BaseDeploymentStrategy
         _.map callbacks, (callback)=>
           unless _.find(insertion.callbacks, (d)-> d==callback)
             insertion.callbacks.push(callback)
-            callback(insertion.el, @deployment, @sandbox.hull)
+            callback(insertion.el, @deployment.getPublicData(), @sandbox.hull)
+    .catch throwErr
 
   destroy: ()=>
     @import.destroy()

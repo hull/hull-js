@@ -46,7 +46,8 @@ class IframeDeploymentStrategy extends BaseDeploymentStrategy
     # Ensure every insertion has been called with every callback just once.
     @ready.promise.then ()=>
       _.map @insertions, (insertion)=>
-        callback(insertion.el, @deployment, insertion.sandbox.hull) while callback = insertion.callbacks.shift()
+        callback(insertion.el, @deployment.getPublicData(), insertion.sandbox.hull) while callback = insertion.callbacks.shift()
+    .catch throwErr
 
 
   ###*

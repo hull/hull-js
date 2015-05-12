@@ -1,5 +1,6 @@
 assign                   = require '../../polyfills/assign'
 _                        = require '../../utils/lodash'
+clone                    = require '../../utils/clone'
 
 RawDeploymentStrategy    = require './strategies/raw'
 ScopeDeploymentStrategy  = require './strategies/scope'
@@ -51,6 +52,14 @@ class Deployment
       target = document.querySelector(@settings._selector)
       if target then [target] else []
 
+
+  getPublicData: ()=>
+    clone({
+      ship         : @ship
+      organization : @organization
+      platform     : @platform
+      settings     : @settings
+    })
 
   getDeploymentStrategy : ()=>
     return @deploymentStrategy if @deploymentStrategy?
