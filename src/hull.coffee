@@ -17,7 +17,7 @@ HullRemote  = require './hull-remote'
 embeds      = require './client/embeds'
 configCheck = require './client/config-check'
 getScriptTagConfig = require './client/script-tag-config'
-initializeApp = require './client/initialize-app'
+initializePlatform = require './client/initialize-platform'
 
 ###*
  * Wraps the success callback
@@ -120,7 +120,7 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
     client.hull = assign(hull,client.hull)
     data = client.remoteConfig.data
     currentUser.init(data.me)
-    initializeApp(data, config, client.hull)
+    initializePlatform(data, config, client.hull)
     onInitSuccess(userSuccessCallback, client.hull, data)
   ,err
   .catch err

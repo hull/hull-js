@@ -6,7 +6,7 @@ function initializeShopifyPlatform(context, options, hull) {
   const { customerId, accessToken } = options;
 
   if (/^[0-9]+$/.test(customerId) && !accessToken) {
-    hull.api.put('services/shopify/customers/' + customerId).then(function() {
+    hull.api('services/shopify/customers/' + customerId, 'put').then(function() {
       document.location.reload();
     });
   }
@@ -16,19 +16,19 @@ function initializeShopifyPlatform(context, options, hull) {
   });
 }
 
-function getAppInitializer(app) {
-  if (app.type === 'platforms/shopify_shop') {
+function getPlatformInitializer(platform) {
+  if (platform.type === 'platforms/shopify_shop') {
     return initializeShopifyPlatform;
   } else {
     return emptyFunction;
   }
 }
 
-function initializeApp(context, options, hull) {
-  const initializer = getAppInitializer(context.app);
+function initializePlatform(context, options, hull) {
+  const initializer = getPlatformInitializer(context.app);
 
   return initializer(context, options, hull);
 }
 
-export default initializeApp;
+export default initializePlatform;
 
