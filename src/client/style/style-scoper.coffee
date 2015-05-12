@@ -8,6 +8,7 @@ Styles     = []
 
 CSS_URL_REGEXP = /(url\()([^)]*)(\))/g;
 CSS_IMPORT_REGEXP = /(@import[\s]+(?!url\())([^;]*)(;)/g;
+
 resolveUrlsInStyle= (style, linkUrl)->
   doc = style.ownerDocument
   resolver = doc.createElement("a")
@@ -42,6 +43,7 @@ setTextContent = (tag, content="")->
     tag.styleSheet.cssText = content;
   else
     textnode = document.createTextNode(content);
+    tag.removeChild(tag.firstChild) while tag.firstChild
     tag.appendChild(textnode);
 
 createStyleSheet = (content, disabled=false)->
