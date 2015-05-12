@@ -21,6 +21,7 @@ export default {
   map: require("lodash/collection/map"),
   find: require("lodash/collection/find"),
   filter: require("lodash/collection/filter"),
+  values: require("lodash/object/values"),
   omit: require("lodash/object/omit"),
   pick: require("lodash/object/pick"),
   pluck: require("lodash/collection/pluck"),
