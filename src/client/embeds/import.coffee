@@ -41,7 +41,7 @@ class Import
       @el.rel = 'import'
       @el.href = @href
       @el.async = true #Will this break stuff ? if not - lets do it
-      @document.getElementsByTagName('head')[0].parentNode.appendChild @el
+      @document.getElementsByTagName('head')[0].appendChild @el
 
 
     onReady = (doc)=>
