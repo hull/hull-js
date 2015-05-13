@@ -4,9 +4,9 @@ fjs = document.getElementsByTagName("script")[0]
 
 class Import
   constructor: (opts={})->
-    {href, deploymentId, container} = opts
+    {href, shipId, container} = opts
 
-    @deploymentId = deploymentId
+    @shipId = shipId
     @href = href
 
     if container
@@ -45,24 +45,26 @@ class Import
 
 
     onReady = (doc)=>
-      @el['import'].removeEventListener 'DOMContentLoaded', onReady
-      ready = true
-      @ready.resolve(@el['import'])
+      unless ready
+        @el['import'].removeEventListener 'DOMContentLoaded', onReady
+        ready = true
+        @ready.resolve(@el['import'])
 
     # addEventListener doesnt work with IE 11 :(
     onLoad = (ev)=>
-      ready=true
-      @ready.resolve(@el['import'])
+      onReady()
+      @el.removeEventListener 'load', onLoad
       @load.resolve(@el['import'].body)
 
     if @el['import'] && @el['import']?.body?
-      @el['import'].deploymentId = @deploymentId
+      @el['import'].shipId = @shipId
       onLoad()
     else
-      @el.onload = onLoad
+      @el.addEventListener 'load', onLoad
       importInterval = setInterval ()=>
         if @el['import']
-          @el['import'].deploymentId = @deploymentId
+          @el['import'].shipId = @shipId
+          # TODO : SetTimeout to have an error when import doesnt load.
           @el['import'].addEventListener 'DOMContentLoaded', onReady
           clearInterval(importInterval)
       , 10

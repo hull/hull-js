@@ -7,27 +7,35 @@ ScopeDeploymentStrategy  = require './strategies/scope'
 IframeDeploymentStrategy = require './strategies/iframe'
 JSDeploymentStrategy     = require './strategies/js'
 
-registry = {}
+deploymentRegistry = {}
+shipRegistry = {}
 
 resetDeployments = () ->
-  deployment.destroy() for own key, deployment of registry
-  registry = {}
+  deployment.destroy() for own key, deployment of deploymentRegistry
+  shipRegistry = {}
+  deploymentRegistry = {}
 
-getDeployment = (id)-> registry[id]
+getDeployment = (id)-> deploymentRegistry[id]
+getDeployments = (id)-> _.values(shipRegistry[id])
 
 class Deployment
   @resetDeployments: resetDeployments
-  @getDeployment : getDeployment
+  @getDeployment   : getDeployment
+  @getDeployments  : getDeployments
 
   constructor: (dpl, context)->
-    return registry[dpl.id] if registry[dpl.id]
-    registry[dpl.id] = @
+    return deploymentRegistry[dpl.id] if deploymentRegistry[dpl.id]
+    deploymentRegistry[dpl.id] = @
+
     @id         = dpl.id
     @name       = dpl.ship.name
 
     @organization = assign({}, context.org)
     @platform   = dpl.platform
     @ship       = dpl.ship
+
+    shipRegistry[dpl.ship.id] ||= {}
+    shipRegistry[dpl.ship.id][dpl.id] = @
 
     @settings   = dpl.settings
     # "_selector" : ".ship", //CSS3 Selector on which to embed the ship(s)

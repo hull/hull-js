@@ -43,6 +43,7 @@ module.exports = {
     embedDeployments(deployments, opts, callback);
   },
   onEmbed: function() {
+
     let args = Array.prototype.slice.call(arguments);
     let callback;
 
@@ -52,18 +53,25 @@ module.exports = {
 
     if (!_.isFunction(callback)) return false;
 
-    let deploymentId = null;
+    let shipId = null;
     let cs = document._currentScript || document.currentScript;
 
     if(cs && cs.ownerDocument && cs.ownerDocument !== document){
       // we're inside an Import
-      deploymentId = cs.ownerDocument.deploymentId;
+      shipId = cs.ownerDocument.shipId;
       attachCallback(cs.ownerDocument, callback);
     } else {
       // We're executing a script.
-      deploymentId = cs.getAttribute("data-hull-deployment");
+      shipId = cs.getAttribute("data-hull-deployment");
     }
-    let deployment = Deployment.getDeployment(deploymentId);
-    if (deployment){ deployment.onEmbed(callback); }
+
+    let deployments = Deployment.getDeployments(shipId);
+    if(deployments && deployments.length){
+      for (var i = deployments.length - 1; i >= 0; i--) {
+        if(deployments[i]){
+          deployments[i].onEmbed()
+        }
+      };
+    }
   }
 };

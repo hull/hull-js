@@ -61,7 +61,7 @@ class IframeDeploymentStrategy extends BaseDeploymentStrategy
     new Promise (resolve, reject)=>
       iframe  = new Iframe {id: @deployment.id, hidden: !@deployment.settings._sandbox}, (iframe)=>
         @addShipClasses(iframe)
-        getIframe.document(iframe).deploymentId = @deployment.id
+        getIframe.document(iframe).shipId = @deployment.ship.id
         resolve(iframe)
       # Insert Iframe into main window
       # Needs to be done otherwise iframe won't get initialized

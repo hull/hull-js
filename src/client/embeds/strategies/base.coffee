@@ -117,7 +117,7 @@ class BaseDeploymentStrategy
    * @return {promise}          A promise resolved onLoad with the container, the newly created element
   ###
   embedImport : (container)=>
-    imprt = new Import {deploymentId: @deployment.id, href: @deployment.ship.index, container: container}
+    imprt = new Import {shipId: @deployment.ship.id, href: @deployment.ship.index, container: container}
     imprt.when.loaded.then @ready.resolve
     imprt
 
