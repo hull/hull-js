@@ -1,13 +1,15 @@
 # Hull.js [ ![Codeship Status for hull/hull-js](https://circleci.com/gh/hull/hull-js/tree/develop.png?circle-token=26a17dad6ac378f6028a460a5857d5ca15a8aa13) ](https://circleci.com/gh/hull/hull-js)
 
-# Compatibility Status
-* ✔ Chrome (w/o Polyfills) Sandboxed, Scoped, Raw
-* ✔ Firefox: Broken Styles on Sandboxed
-* ✔ Safari : Broken Styles on Sandboxed
-* ✔ IE 11+ : Broken Styles on Sandboxed
-* ✔ IE 10+ : Broken Styles on Sandboxed
-* ✔ IE 9+  : Broken Styles on Sandboxed; Assets must be on same domain (xdr limitation)
-* X IE 8+  : Crashes
+# Ship Deployment Compatibility Status
+|  | JS | Raw | Scoped (Scoped Styles) | Sandboxed (Iframe) | Note |
+|---------|----|-----|---------------------------------|--------------------|-----------------------------------------------------------------|
+| Chrome | ✔ | ✔ | ✔ | ✔ |  |
+| Firefox | ✔ | ✔ | ✔ | ✔ | Polyfills needed |
+| Safari | ✔ | ✔ | ✔ | ✔ | Polyfills needed |
+| IE 11 | ✔ | ✔ | ✔ | ✔ | Polyfills needed |
+| IE 10 | ✔ | ✔ | LINK tags at runtime don't work | ✔ | Polyfills needed |
+| IE 9 | ✔ | ✔ | LINK tags at runtime don't work | ✔ | Polyfills needed Assets must use same protocol (XDR limitation) |
+| IE 8 |  | ☹ | ☹ | ☹ | Polyfills needed |
 
 # Sandboxing: 
 We have 3 embed modes, from less to more isolation :
@@ -15,13 +17,7 @@ We have 3 embed modes, from less to more isolation :
 - Scoped (settings.sandbox = `Falsy`) (Scopes Styles automatically)
 - Sandboxed (settings.sandbox = `Truthy`)(Renders everything into a completely isolated container)
 
-# Supported Features for Style Sandboxing
-Inline Style Tags
-In-document Style Tags
-
-
 # Building the library
-
 Checkout
 
     git clone git@github.com:hull/hull-js.git
@@ -44,7 +40,7 @@ A boilerplate app is located in the `app` folder. Here's how to use it:
 
 ```
 cp app/app.example.js app/app.js
-gulp server
+gulp
 ```
 
 Gulp will automatically start a Webpack server with live reloading.
