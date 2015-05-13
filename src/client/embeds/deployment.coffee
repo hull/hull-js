@@ -1,6 +1,7 @@
 assign                   = require '../../polyfills/assign'
 _                        = require '../../utils/lodash'
 clone                    = require '../../utils/clone'
+throwErr                 = require '../../utils/throw'
 
 RawDeploymentStrategy    = require './strategies/raw'
 ScopeDeploymentStrategy  = require './strategies/scope'
@@ -54,11 +55,15 @@ class Deployment
     return @targets if @targets and !opts.refresh
     return [] unless @settings._selector
 
-    if @settings._multi
+    targets = if @settings._multi
       document.querySelectorAll(@settings._selector)
     else
       target = document.querySelector(@settings._selector)
       if target then [target] else []
+
+    console.debug("No deployment targets for selector #{@settings._selector}", @) if Hull.config().debug and !targets.length
+    targets
+
 
 
   getPublicData: ()=>
@@ -91,6 +96,8 @@ class Deployment
     ds.embed(@targets, opts)
     .then ()=>
       @onEmbed()
+    ,throwErr
+    .catch throwErr
 
   boot: ()=>
     @getDeploymentStrategy().boot()

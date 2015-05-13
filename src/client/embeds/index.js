@@ -2,6 +2,7 @@
 /*global require, module*/
 
 import _          from "../../utils/lodash";
+import throwErr   from "../../utils/throw";
 import Deployment from "./deployment";
 
 let _initialized = false;
@@ -31,7 +32,7 @@ function embedDeployments(deployments, opts={}, callback) {
     if (_.isFunction(callback)){
       callback(_.pluck(deployments, 'value'))
     }
-  })
+  }).catch(throwErr)
 }
 
 module.exports = {
