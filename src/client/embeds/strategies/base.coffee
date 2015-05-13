@@ -6,7 +6,7 @@ Sandbox  = require '../sandbox'
 class BaseDeploymentStrategy
   scopeStyles : false
   ignoredTags : ['#comment','SCRIPT', 'LINK', 'STYLE']
-  movedTags   : []
+  headTags   : []
 
   constructor : (deployment)->
     @deployment      = deployment
@@ -58,7 +58,7 @@ class BaseDeploymentStrategy
       imported  : doc.body
       el        : el
       ignore    : @ignoredTags
-      move      : @movedTags
+      move      : @headTags
       head      : head
     })
     el
