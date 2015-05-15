@@ -29,8 +29,7 @@ class FacebookService extends GenericService
         , true
       # , true ~ Maybe we dont need a roundtrip each time.
 
-  performRequest: (request,callback,errback)=>
-
+  performRequest: (request, callback, errback) =>
     path = request.path
     isUICall = (path=='ui' and request.params?.method?)
 
@@ -59,7 +58,7 @@ class FacebookService extends GenericService
       , 100
 
     else
-      FB.api path, request.method, request.params, fbCallback(request, {isUICall:false, path}, callback, fbErrback)
+      FB.api path, request.method, request.params, @fbRequestCallback(request, {isUICall:false, path}, callback, fbErrback)
 
 
   showIframe : ->
@@ -77,7 +76,7 @@ class FacebookService extends GenericService
       if !response or response?.error
         errorMsg = if (response) then "[Facebook Error] #{response.error.type}  : #{response.error.message}" else "[Facebook Error] Unknown error"
         return errback(errorMsg, { response, request })
-      callback({ response, provider: 'facebook' })
+      callback({ body: response, provider: 'facebook' })
 
   fbUiCallback : (req, res, path)=>
     @hideIframe()
