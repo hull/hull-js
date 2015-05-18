@@ -265,8 +265,6 @@ class Auth
     p = promise.then @api.refreshUser, @emitLoginFailure
     p.then callback, errback
 
-    p
-
 
   emitLoginFailure : (err)->
     EventBus.emit("hull.user.fail", err)
