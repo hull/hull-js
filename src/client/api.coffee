@@ -27,7 +27,7 @@ class Api
   message: ()=>
     return console.error("Hull Api is not initialized yet. You should run your app from the callback of Hull.ready()") unless @channel.rpc
     {opts, callback, errback} = parseOpts(Array.prototype.slice.call(arguments))
-    new Promise (resolve, reject)=>
+    p = new Promise (resolve, reject)=>
 
       onSuccess = (res={})=>
         @updateCurrentUserCookies(res.headers, res.provider)
@@ -39,6 +39,9 @@ class Api
         reject(response.message, error)
 
       @channel.rpc.message(opts, onSuccess, onError)
+
+    p.catch (err)->
+      console.warn err, err.stack
 
   clearToken    : (args...)=>
     @channel.rpc.clearUserToken(args...) # No need to be exposed, IMO
