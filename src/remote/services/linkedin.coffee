@@ -23,7 +23,7 @@ class LinkedInService extends GenericService
       success: (response)=>
         callback
           provider: @name
-          response: response.data
+          body: response.data
     @request_jsonp(params)
 
 module.exports = LinkedInService

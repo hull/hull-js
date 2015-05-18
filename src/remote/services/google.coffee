@@ -23,7 +23,7 @@ class GoogleService extends GenericService
       success: (response)=>
         callback
           provider: @name
-          response: response
+          body: response
     @request_jsonp(params)
 
 module.exports = GoogleService

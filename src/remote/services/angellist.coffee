@@ -20,7 +20,7 @@ class AngelListService  extends GenericService
       error:   (err)-> errback(err.url)
       success: (response)->
         callback
-          response: response.data
+          body: response.data
           provider: @name
     @request_jsonp(params)
 

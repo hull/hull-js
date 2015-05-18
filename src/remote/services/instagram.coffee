@@ -24,7 +24,7 @@ class InstagramService extends GenericService
         success: (response)->
           callback
             provider: @name
-            response: response.data
+            body: response.data
             headers: 
               pagination: response.pagination
               meta: response.meta

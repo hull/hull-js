@@ -24,6 +24,7 @@ class GithubService extends GenericService
       return errback(response.error.message) if response.error
       callback
         provider: @name
-        response: response.body
+        headers: response.headers
+        body: response.body
 
 module.exports = GithubService
