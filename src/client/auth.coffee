@@ -259,11 +259,12 @@ class Auth
     @completeLoginPromiseChain(promise,callback,errback)
 
   completeLoginPromiseChain: (promise, callback,errback)=>
-    callback = callback || ->
-    errback  = errback  || ->
+    callback = callback || -> 
+    errback  = errback  || -> 
 
     p = promise.then @api.refreshUser, @emitLoginFailure
     p.then callback, errback
+    p
 
 
   emitLoginFailure : (err)->

@@ -73,7 +73,7 @@ class Services
       RemoteActions.updateRemoteConfig(config)
       # Do not send the data back. We're just refreshing stuff.
       # Data will come back through even handlers on Flux Stores
-      # xdmCallback(res)
+      xdmCallback(me)
       undefined
 
     onError = (res)->
