@@ -26,11 +26,12 @@ var wrappedRequest = function(service, gateway, middlewares=[]){
         handle.then(m, m);
       });
     }
-
-    handle.then((response)=>{
+    handle.then((response={})=>{
       response.provider = service.name;
       callback(response);
-    }, errback);
+    }, (error)=>{
+      errback(error)
+    });
 
     return handle;
   };

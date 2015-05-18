@@ -83,7 +83,8 @@ class Gateway
       s.end (response)=>
         console.debug("<", method, path, response) if clientConfig.debug?.enable?
         h = {body:response.body, headers: response.headers, status: response.status}
-        if (response.ok) then resolve(h) else reject(h)
+        # if (response.ok) then resolve(h) else reject(h)
+        resolve(h)
 
   flush: (requests) ->
     if requests.length <= @options.min
@@ -122,6 +123,7 @@ class Gateway
         .catch (err)->
           msg = err?.response?.message || err?.response || err
           throw new Error("Error: in request : #{msg}")
+
 
     promise
 

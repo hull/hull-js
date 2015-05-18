@@ -40,9 +40,6 @@ class Api
 
       @channel.rpc.message(opts, onSuccess, onError)
 
-    p.catch (err)->
-      console.warn err, err.stack
-
   clearToken    : (args...)=>
     @channel.rpc.clearUserToken(args...) # No need to be exposed, IMO
 

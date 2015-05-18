@@ -79,7 +79,7 @@ class Services
     onError = (res)->
       error = new Error(res.response.message)
       xdmErrback(error)
-      console.warn 'Promise Fail', error.message, error.stack
+      console.warn 'Failed refreshing User', error.message, error.stack
       throw error
       error
       undefined
