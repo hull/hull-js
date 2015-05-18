@@ -121,7 +121,8 @@ class Gateway
         promise
         .then middleware
         .catch (err)->
-          throw new Error("Error: in request : #{err.response.message}")
+          msg = err?.response?.message || err?.response || err
+          throw new Error("Error: in request : #{msg}")
 
     promise
 

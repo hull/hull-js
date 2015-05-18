@@ -23,7 +23,7 @@ class HullAdminService extends GenericService
     url  = "#{protocol}//#{organization}.#{top_domain}/api/v1/#{path}"
 
     headers = {}
-    token = @getSettings().credentials?.access_token
+    token = @getSettings()?.credentials?.access_token
     headers['AccessToken'] = token if token
 
     console.debug(url, method, params) if config?.debug?

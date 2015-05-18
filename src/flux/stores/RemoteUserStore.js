@@ -10,7 +10,7 @@ var state = {
 };
 
 var isId = function(value){
-  return value === state.user.id;
+  return value === (state.user && state.user.id);
 }
 
 var isUpToDate = function(user){
