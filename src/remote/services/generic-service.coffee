@@ -10,7 +10,7 @@ class GenericService
     @gateway = gateway
     @wrappedRequest = getWrappedRequest({name:@name,path:@path},gateway)
 
-  getSettings: (provider)-> RemoteConfigStore.getAuthSetting(@name||provider)
+  getSettings: (provider)-> RemoteConfigStore.getAuth(@name||provider)
 
   request_jsonp : (request)=> jsonp(request)
 

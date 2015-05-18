@@ -50,12 +50,14 @@ trackResponse  = (response={})=>
       # Don't throw an error here but report what happened.
       "Invalid Tracking header : ${JSON.stringify(errror,null,2)}"
   return response
-identifyResponse= ()->
+
+# identifyResponse= ()->
+#   debugger
 
 class HullService
   constructor: (config, gateway)->
     @config       = config
-    middlewares   = [trackResponse, identifyResponse]
+    middlewares   = [trackResponse]
 
     @request      = getWrappedRequest({name:'hull',path:undefined}, gateway, middlewares)
     @trackMatcher = new TrackEventMatcher(config.track)

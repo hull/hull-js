@@ -4,7 +4,6 @@ uuid              = require('../../utils/uuid')
 cookies           = require '../../utils/cookies'
 analyticsId       = require '../../utils/analytics-id'
 getWrappedRequest = require '../wrapped-request'
-RemoteConfigStore = require '../../flux/stores/RemoteConfigStore'
 RemoteUserStore     = require '../../flux/stores/RemoteUserStore'
 GenericService    = require './generic-service'
 Base64            = require '../../utils/base64'

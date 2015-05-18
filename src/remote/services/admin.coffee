@@ -1,5 +1,3 @@
-RemoteConfigStore = require '../../flux/stores/RemoteConfigStore'
-RemoteHeaderStore = require '../../flux/stores/RemoteHeaderStore'
 superagent        = require 'superagent'
 GenericService    = require './generic-service'
 QSEncoder         = require '../../utils/query-string-encoder'

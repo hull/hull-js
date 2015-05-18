@@ -5,19 +5,11 @@ Services            = require './remote/services'
 Gateway             = require './remote/gateway'
 Channel             = require './remote/channel'
 
-
 RemoteHeaderStore   = require './flux/stores/RemoteHeaderStore'
-RemoteHeaderActions = require './flux/actions/RemoteHeaderActions'
-
-RemoteConfigStore   = require './flux/stores/RemoteConfigStore'
-RemoteConfigActions = require './flux/actions/RemoteConfigActions'
-
 RemoteUserStore     = require './flux/stores/RemoteUserStore'
-RemoteUserActions   = require './flux/actions/RemoteUserActions'
+RemoteConfigStore     = require './flux/stores/RemoteConfigStore'
 
-RemoteSettingsStore     = require './flux/stores/RemoteSettingsStore'
-RemoteSettingsActions   = require './flux/actions/RemoteSettingsActions'
-
+RemoteActions       = require './flux/actions/RemoteActions'
 RemoteConstants     = require './flux/constants/RemoteConstants'
 
 
@@ -30,14 +22,26 @@ Hull = (remoteConfig)->
   polyfill(config).then ()->
     # The access token stuff is a Safari hack:
     # Safari doesn't send response tokens for remote exchange
-    RemoteHeaderActions.setAppIdHeader(config.appId)
-    RemoteHeaderActions.setTokenHeader(config.access_token) if config?.access_token
-    RemoteConfigActions.updateRemoteConfig(config)
+    RemoteActions.updateRemoteConfig(config)
 
     hull        = {config}
     gateway     = new Gateway(config)
     services    = new Services(config, gateway)
     channel     = new Channel(config, services)
+
+    RemoteConfigStore.addChangeListener (change)=>
+      # Notify client whenever settings change
+      switch change
+        when RemoteConstants.UPDATE_REMOTE_CONFIG
+          channel.rpc.settingsUpdate(RemoteConfigStore.getState())
+          break
+
+    RemoteUserStore.addChangeListener (change)=>
+      # Notify client whenever user changes
+      switch change
+        when RemoteConstants.UPDATE_USER, RemoteConstants.CLEAR_USER
+          channel.rpc.userUpdate(RemoteUserStore.getState().user)
+          break
 
     request = services.services.hull.request
 
@@ -57,30 +61,11 @@ Hull = (remoteConfig)->
         services.services.track.request(payload.event, payload.params)
       clientConfig
 
-    RemoteSettingsStore.addChangeListener (change)=>
-      state = RemoteSettingsStore.getState()
-      # Notify client whenever settings change
-      switch change
-        when RemoteConstants.UPDATE_SETTINGS
-          channel.rpc.settingsUpdate(state.settings)
-          break
-
-    RemoteUserStore.addChangeListener (change)=>
-      state = RemoteUserStore.getState()
-      # Notify client whenever user changes
-      switch change
-        when RemoteConstants.UPDATE_USER, RemoteConstants.CLEAR_USER
-          channel.rpc.userUpdate(state.user)
-          break
 
     channel.promise
     .then(subscribeToEvents)
-
-    .then (clientConfig)->
-      RemoteConfigActions.updateClientConfig(clientConfig)
-
-    .catch (err)->
-      console.error("Could not initialize Hull: #{err.message}")
+    .then (clientConfig)-> RemoteActions.updateClientConfig(clientConfig)
+    .catch (err)-> console.error("Could not initialize Hull: #{err.message}")
 
 Hull.version = VERSION
 module.exports = Hull

@@ -37,11 +37,10 @@ var RemoteHeaderStore = assign({}, EventEmitter.prototype, {
     var text;
     switch(action.actionType) {
 
-      case RemoteConstants.UPDATE_SETTINGS:
+      case RemoteConstants.UPDATE_REMOTE_CONFIG:
         // When Settings Change, we need to update our AccessToken Header accordingly
-        if(action && action.settings && action.settings.auth && action.settings.auth.hull && action.settings.auth.hull.credentials){
-          var accessToken = action.settings.auth.hull.credentials.access_token;
-
+        if(action){
+          var accessToken = action.config.access_token || (action.config && action.config.settings && action.config.settings.auth && action.config.settings.auth.hull && action.config.settings.auth.hull.credentials && action.config.settings.auth.hull.credentials.access_token);
           // We're not logged in anymore probably : destroy the token
           if(!accessToken){
             destroyHeader(ACCESS_TOKEN_HEADER);
@@ -52,8 +51,12 @@ var RemoteHeaderStore = assign({}, EventEmitter.prototype, {
             RemoteHeaderStore.emitChange(action.actionType);
           }
 
-          break;
+          if(action.config && action.config.appId){
+            setHeader(APP_ID_HEADER, action.config.appId);
+          }
+
         }
+        break;
 
       case RemoteConstants.UPDATE_USER:
         if (action.user && action.user.access_token){
@@ -62,6 +65,23 @@ var RemoteHeaderStore = assign({}, EventEmitter.prototype, {
         }
         break;
 
+      case RemoteConstants.CLEAR_USER_TOKEN:
+        if(getHeader(ACCESS_TOKEN_HEADER)){
+          destroyHeader(ACCESS_TOKEN_HEADER);
+          RemoteHeaderStore.emitChange(action.actionType);
+        }
+        break;
+
+      case RemoteConstants.UPDATE_USER_IF_ME:
+        var id = action.data.headers && action.data.headers[USER_ID_HEADER];
+        if (id){
+          setHeader(USER_ID_HEADER, id)
+          if (!RemoteUserStore.isSameId(id)) {
+            destroyHeader(ACCESS_TOKEN_HEADER);
+          }
+          RemoteHeaderStore.emitChange(action.actionType);
+        }
+        break;
 
       case RemoteConstants.CLEAR_HEADER:
         destroyHeader(action.header);
@@ -75,25 +95,6 @@ var RemoteHeaderStore = assign({}, EventEmitter.prototype, {
         }
         break;
 
-      case RemoteConstants.SET_TOKEN_HEADER:
-        setHeader(ACCESS_TOKEN_HEADER,action.value);
-        RemoteHeaderStore.emitChange(RemoteConstants.SET_TOKEN_HEADER);
-        break;
-
-      case RemoteConstants.SET_APP_ID_HEADER:
-        setHeader(APP_ID_HEADER,action.value);
-        RemoteHeaderStore.emitChange(action.actionType);
-        break;
-
-      case RemoteConstants.SET_USER_ID_HEADER:
-        setHeader(USER_ID_HEADER, action.value)
-
-        if (!RemoteUserStore.isId(action.value)) {
-          destroyHeader(ACCESS_TOKEN_HEADER);
-        }
-
-        RemoteHeaderStore.emitChange(action.actionType);
-        break;
     }
     return true;
   })

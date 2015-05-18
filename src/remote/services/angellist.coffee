@@ -11,7 +11,7 @@ class AngelListService  extends GenericService
     method = method.toLowerCase()
     return errback('Unable to perform non-GET requests on AngelList') unless method=='get'
 
-    token = RemoteConfigStore.getSettings()
+    token = @getSettings()
     path   = path.substring(1) if (path[0] == "/")
 
     params = 

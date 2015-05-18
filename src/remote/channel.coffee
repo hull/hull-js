@@ -1,8 +1,4 @@
 xdm                 = require 'xdm.js'
-
-RemoteConfigActions = require '../flux/actions/RemoteConfigActions'
-RemoteUserActions   = require '../flux/actions/RemoteUserActions'
-
 catchAll = (res)-> res
 
 class Channel

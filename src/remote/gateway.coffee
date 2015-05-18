@@ -2,9 +2,8 @@ assign              = require '../polyfills/assign'
 _                   = require '../utils/lodash'
 EventBus            = require '../utils/eventbus'
 clone               = require '../utils/clone'
-RemoteConfigStore   = require '../flux/stores/RemoteConfigStore'
+ClientConfigStore   = require '../flux/stores/ClientConfigStore'
 RemoteHeaderStore   = require '../flux/stores/RemoteHeaderStore'
-RemoteHeaderActions = require '../flux/actions/RemoteHeaderActions'
 QSEncoder           = require '../utils/query-string-encoder'
 
 # require 'whatwg-fetch' #Polyfill for Global -> Not ready from primetime
@@ -70,7 +69,7 @@ class Gateway
 
     method = (method||'get').toUpperCase()
 
-    config= RemoteConfigStore.getState().clientConfig
+    clientConfig= ClientConfigStore.getState() || {}
     headers = assign({}, RemoteHeaderStore.getState(), headers)
 
     #TODO Check SuperAgent under IE8 and below
@@ -79,10 +78,10 @@ class Gateway
     if params? and method=='GET' then s.query(QSEncoder.encode(params)) else s.send(params)
 
     new Promise (resolve, reject)->
-      console.debug(">", method, path, params, headers) if config.debug?.enable?
+      console.debug(">", method, path, params, headers) if clientConfig.debug?.enable?
 
       s.end (response)=>
-        console.debug("<", method, path, response) if config.debug?.enable?
+        console.debug("<", method, path, response) if clientConfig.debug?.enable?
         h = {body:response.body, headers: response.headers, status: response.status}
         if (response.ok) then resolve(h) else reject(h)
 

@@ -1,43 +1,32 @@
 _                     = require '../utils/lodash'
+assign                = require '../polyfills/assign'
 
 ServiceList           = require './services/list'
 
 RemoteHeaderStore     = require '../flux/stores/RemoteHeaderStore'
-RemoteHeaderActions   = require '../flux/actions/RemoteHeaderActions'
-
-RemoteConfigStore     = require '../flux/stores/RemoteConfigStore'
-RemoteConfigActions   = require '../flux/actions/RemoteConfigActions'
-
 RemoteUserStore       = require '../flux/stores/RemoteUserStore'
-RemoteUserActions     = require '../flux/actions/RemoteUserActions'
+RemoteConfigStore   = require '../flux/stores/RemoteConfigStore'
 
-RemoteSettingsStore   = require '../flux/stores/RemoteSettingsStore'
-RemoteSettingsActions = require '../flux/actions/RemoteSettingsActions'
-
+RemoteActions         = require '../flux/actions/RemoteActions'
 RemoteConstants       = require '../flux/constants/RemoteConstants'
-
-promises              = require '../utils/promises'
 
 handleSpecialRoutes = (request)->
   switch request.path
     when '/api/v1/logout'
       request.nocallback = true
-      RemoteUserActions.clear()
+      RemoteActions.clearUser()
       break
 
   request
 
 maybeUpdateUser = (response)->
-  headerId = response.headers['Hull-User-Id']
-  RemoteHeaderActions.setUserIdHeader(headerId)
-
   # Pass every return call to the API to maybe update the User if the api call was a '/me' call
   # We do this because Me can have aliases such as the user's ID.
-  RemoteUserActions.updateIfMe(response.body) if response.body?.id?
+  RemoteActions.updateUserIfMe(response)
 
 class Services
   constructor : (remoteConfig, gateway)->
-    RemoteUserActions.update(remoteConfig.data.me) if (remoteConfig.data.me)
+    RemoteActions.updateUser(remoteConfig.data.me) if (remoteConfig.data.me)
     gateway.after(maybeUpdateUser)
     gateway.before(handleSpecialRoutes)
 
@@ -48,7 +37,7 @@ class Services
 
     RemoteHeaderStore.addChangeListener (change)=>
       switch change
-        when RemoteConstants.SET_USER_ID_HEADER
+        when RemoteConstants.UPDATE_USER_IF_ME
           # Auto-Fetch the user everytime the Hull-User-Id header changes
           userHeaderId = RemoteHeaderStore.getHeader('Hull-User-Id')
           user = RemoteUserStore.getState().user
@@ -64,8 +53,9 @@ class Services
     }
 
   onReady : (req, xdmCallback, xdmErrback) ->
+
   onClearUserToken : (args...)=>
-    RemoteUserActions.clearUserToken(args...)
+    RemoteActions.clearUserToken(args...)
 
   onRefreshUser : (xdmCallback, xdmErrback)=>
     xdmCallback ?=->
@@ -78,20 +68,24 @@ class Services
       # Refreshing the User results in us setting everything up again
       me = res[0].body;
       settings = res[1].body
-      RemoteUserActions.update(me)
-      RemoteSettingsActions.update(settings)
-      xdmCallback(me)
+      config = assign({},RemoteConfigStore.getState(),{settings:settings});
+      RemoteActions.updateUser(me)
+      RemoteActions.updateRemoteConfig(config)
+      # Do not send the data back. We're just refreshing stuff.
+      # Data will come back through even handlers on Flux Stores
+      # xdmCallback(res)
       undefined
 
-    onError = (err)->
-      xdmErrback(err)
-      console.warn 'Promise Fail', err, err.stack
-      throw new Error(err)
+    onError = (res)->
+      error = new Error(res.response.message)
+      xdmErrback(error)
+      console.warn 'Promise Fail', error.message, error.stack
+      throw error
+      error
       undefined
 
     Promise.all([me, settings])
     .then onSuccess, onError
-    .catch onError
 
     undefined
 

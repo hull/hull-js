@@ -9,7 +9,7 @@ var state = {
   user:null,
 };
 
-var isId = function(value){
+var isSameId = function(value){
   return value === (state.user && state.user.id);
 }
 
@@ -23,7 +23,7 @@ var RemoteUserStore = assign({}, EventEmitter.prototype, {
   addChangeListener   : function(callback) {this.on(CHANGE_EVENT, callback); },
   removeChangeListener: function(callback) {this.removeListener(CHANGE_EVENT, callback); },
   getState            : function() {return state;},
-  isId                : isId,
+  isSameId                : isSameId,
   isUpToDate          : isUpToDate,
 
   dispatcherIndex: RemoteDispatcher.register(function(payload) {
@@ -45,8 +45,8 @@ var RemoteUserStore = assign({}, EventEmitter.prototype, {
 
       case RemoteConstants.UPDATE_USER_IF_ME:
         // Updates a User if it's a Me request.
-        if(isId(action.data.id) && !isUpToDate(action.data)){
-          state.user = action.data
+        if(action.data.body && action.data.body.id && isSameId(action.data.body.id) && !isUpToDate(action.data.body)){
+          state.user = action.data.body
           RemoteUserStore.emitChange(action.actionType);
         }
         break;

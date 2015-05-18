@@ -5,12 +5,10 @@ var RemoteConstants  = require('../constants/RemoteConstants');
 
 var CHANGE_EVENT = 'change';
 
-var state = {
-  settings :{}
-};
+var state = {};
 
-var RemoteSettingsStore = assign({}, EventEmitter.prototype, {
-  emitChange          : function(changeEvent) {this.emit(CHANGE_EVENT, changeEvent); },
+var ClientConfigStore = assign({}, EventEmitter.prototype, {
+  emitChange          : function() {this.emit(CHANGE_EVENT); },
   addChangeListener   : function(callback) {this.on(CHANGE_EVENT, callback); },
   removeChangeListener: function(callback) {this.removeListener(CHANGE_EVENT, callback); },
   getState            : function() {return state;},
@@ -20,14 +18,9 @@ var RemoteSettingsStore = assign({}, EventEmitter.prototype, {
     var text;
 
     switch(action.actionType) {
-      case RemoteConstants.CLEAR_SETTINGS:
-        state.settings = null
-        RemoteSettingsStore.emitChange(action.actionType);
-        break;
-
-      case RemoteConstants.UPDATE_SETTINGS:
-        state.settings = action.settings
-        RemoteSettingsStore.emitChange(action.actionType);
+      case RemoteConstants.UPDATE_CLIENT_CONFIG:
+        state = action.config
+        ClientConfigStore.emitChange();
         break;
     }
     return true;
@@ -35,4 +28,4 @@ var RemoteSettingsStore = assign({}, EventEmitter.prototype, {
 
 });
 
-module.exports = RemoteSettingsStore;
+module.exports = ClientConfigStore;
