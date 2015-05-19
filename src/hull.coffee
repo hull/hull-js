@@ -52,7 +52,7 @@ onInitSuccess = (userSuccessCallback, hull, data)->
   console.debug("Hull.js version \"#{hull.version}\" started")
 
   # Do Hull.embed(platform.deployments) automatically
-  embeds.embed(app.deployments) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
+  embeds.embed(app.deployments,{},onEmbedComplete) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
 
   # Everything went well, call the init callback
   userSuccessCallback(hull, me, app, org)
@@ -61,6 +61,9 @@ onInitSuccess = (userSuccessCallback, hull, data)->
 
 # Wraps init failure
 onInitFailure = (err)-> throw err
+
+onEmbedComplete = ()->
+  console.debug("Hull Embeds Completed successfully") if hull.config().debug
 
 ###*
  * Main Hull Entry Point
