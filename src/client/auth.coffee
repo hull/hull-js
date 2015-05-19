@@ -270,6 +270,6 @@ class Auth
   emitLoginFailure : (err)->
     EventBus.emit("hull.user.fail", err)
     err
-    # throw err
+    throw err
 
 module.exports = Auth
