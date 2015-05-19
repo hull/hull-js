@@ -114,7 +114,7 @@ appendText = (entry, text)->
 
 appendStyle = (entry)->
   if !!entry.node.href
-    if entry.node.__importParsed
+    if entry.node.__resource
       # Polyfills go through here.
       # Skip links since we'll have them as Styles from the polyfill
       appendText(entry, entry.node.__resource)
