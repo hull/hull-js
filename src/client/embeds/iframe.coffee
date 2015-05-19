@@ -46,7 +46,7 @@ class Iframe
     if doc and doc.readyState=='complete'
       getIframe.window(iframe).location.href='/'
       doc.open();
-      doc.write "<!DOCTYPE html><html><head></head><body></body></html>"
+      doc.write '<!DOCTYPE html><html style="overflow:scroll;height:100%"><head></head><body style="overflow:scroll;height:100%"></body></html>'
       doc.close();
       @polyfill(doc).then -> callback(iframe)
     else
