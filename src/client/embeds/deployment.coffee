@@ -93,8 +93,7 @@ class Deployment
     # If we're refreshing, rebuild the target list
     @targets = @getTargets(opts)
     ds = @getDeploymentStrategy()
-    ds.embed(@targets, opts)
-    .then ()=>
+    ds.embed(@targets, opts).then ()=>
       @onEmbed()
     ,throwErr
     .catch throwErr

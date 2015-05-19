@@ -23,6 +23,7 @@ maybeUpdateUser = (response)->
   # Pass every return call to the API to maybe update the User if the api call was a '/me' call
   # We do this because Me can have aliases such as the user's ID.
   RemoteActions.updateUserIfMe(response)
+  response
 
 class Services
   constructor : (remoteConfig, gateway)->
@@ -76,16 +77,13 @@ class Services
       xdmCallback(me)
       undefined
 
-    onError = (res)->
-      error = new Error(res.response.message)
-      xdmErrback(error)
+    onError = (res={})->
+      xdmErrback(res.response || res)
+      error = new Error(res?.response?.message || res?.response || res)
       console.warn 'Failed refreshing User', error.message, error.stack
       throw error
-      error
-      undefined
 
-    Promise.all([me, settings])
-    .then onSuccess, onError
+    Promise.all([me, settings]).then onSuccess, onError
 
     undefined
 
@@ -97,7 +95,7 @@ class Services
     throw new Error("Path not recognized #{JSON.stringify(request, null, 2)}") unless request.path
     service = @services[request.provider]
     if _.isFunction service.request
-      service.request(request, xdmCallback, xdmErrback)
+      service.request request, xdmCallback, xdmErrback
       return undefined
     else
       xdmErrback request

@@ -29,8 +29,8 @@ var wrappedRequest = function(service, gateway, middlewares=[]){
     handle.then((response={})=>{
       response.provider = service.name;
       callback(response);
-    }, (error)=>{
-      errback(error)
+    }, (error={})=>{
+      errback(error.response || error)
     });
 
     return handle;

@@ -116,16 +116,13 @@ class Gateway
       _.each @before_middlewares, (middleware)-> middleware(request)
       @queue(request, resolve, reject)
 
+
     unless request.nocallback
       _.each @after_middlewares, (middleware)->
-        promise
-        .then middleware
-        .catch (err)->
-          msg = err?.response?.message || err?.response || err
-          throw new Error("Error: in request : #{msg}")
+        promise = promise.then middleware
 
-
-    promise
+    promise.catch (err)->
+      throw err
 
   # Single request posting
   handleOne: (request, resolve, reject) ->
