@@ -44,7 +44,6 @@ module.exports = {
     embedDeployments(deployments, opts, callback);
   },
   onEmbed: function() {
-
     let args = Array.prototype.slice.call(arguments);
     let callback;
 
@@ -63,14 +62,16 @@ module.exports = {
       attachCallback(cs.ownerDocument, callback);
     } else {
       // We're executing a script.
-      shipId = cs.getAttribute("data-hull-deployment");
+      shipId = cs.getAttribute("data-hull-ship-script");
     }
 
     let deployments = Deployment.getDeployments(shipId);
+    // In JS-mode, callbacks are passed down to the DeploymentStrategy,
+    // In theother modes, they are ignored because we retreive the callbacks from the import document.
     if(deployments && deployments.length){
       for (var i = deployments.length - 1; i >= 0; i--) {
         if(deployments[i]){
-          deployments[i].onEmbed()
+          deployments[i].onEmbed(callback)
         }
       };
     }

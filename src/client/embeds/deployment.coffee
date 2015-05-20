@@ -79,10 +79,10 @@ class Deployment
 
     DS = if @ship.index.match(/\.js$/)
       JSDeploymentStrategy
-    else if !!@settings._sandbox
-      IframeDeploymentStrategy
     else if @settings._sandbox == 'raw'
       RawDeploymentStrategy
+    else if !!@settings._sandbox
+      IframeDeploymentStrategy
     else
       ScopeDeploymentStrategy
 

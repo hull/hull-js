@@ -3,6 +3,11 @@ throwErr               = require '../../../utils/throw'
 scriptLoader = require '../../../utils/script-loader'
 BaseDeploymentStrategy = require './base'
 
+scripts = {}
+
+getScript = (deployment)-> scripts[deployment.ship.id]
+setScript = (deployment, sc) -> scripts[deployment.ship.id] = sc
+
 class JSDeploymentStrategy extends BaseDeploymentStrategy
   scopeStyles : false
 
@@ -19,15 +24,20 @@ class JSDeploymentStrategy extends BaseDeploymentStrategy
       @addInsertion(@insert(el, target))
 
 
-    sc = document.querySelector("[data-hull-deployment=\"#{@deployment.id}\"]");
+    sc = document.querySelector("[data-hull-ship-script=\"#{@deployment.ship.id}\"]");
+    if !getScript(@deployment)
+      setScript(@deployment, true)
+      attributes = 
+        'data-hull-deployment'       : @deployment.id
+        'data-hull-ship-script'      : @deployment.ship.id
 
-    attributes = 
-      'data-hull-deployment': @deployment.id
-      'data-hull-ship'      : @deployment.ship.id
-
-    scriptLoader({src:@deployment.ship.index, attributes})
-    .then @ready.resolve
-    .catch throwErr
+      scriptLoader({src:@deployment.ship.index, attributes})
+      .then @ready.resolve
+      .catch throwErr
+    else
+      new Promise (resolve, reject)=>
+        @ready.resolve()
+        resolve()
 
   addInsertion : (el)=>
     @sandbox.addElement(el)
