@@ -7,8 +7,8 @@ Iframe                 = require '../iframe'
 BaseDeploymentStrategy = require './base'
 class IframeDeploymentStrategy extends BaseDeploymentStrategy
   scopeStyles : false
-  ignoredTags : ['#comment','SCRIPT']
-  headTags   : ['LINK','STYLE']
+  ignoredTags : ['#comment','SCRIPT','LINK','STYLE']
+  headTags   : []
 
   ###*
    * Sandboxed : Multiple Iframes, one for each target, completely isolated
