@@ -121,7 +121,9 @@ class Sandbox
     });
 
     sandbox.hull = hull
-    sandbox.hull.autoSize()
+    # Default : autosize every 300ms.
+    # Can be prevented in Ship by calling hull.autoSize(false) or hull.autoSize()
+    sandbox.hull.autoSize(300)
     w = getIframe.window(iframe)
     w.Hull = sandbox.hull
     sandbox
