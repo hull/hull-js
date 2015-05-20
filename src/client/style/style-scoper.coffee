@@ -73,7 +73,7 @@ fetch = (href)->
   new Promise (resolve, reject)->
     return reject() unless !!href
     superagent.get(href).end (err, res)->
-      resolve(res.text)
+      resolve(res?.text)
 
 
 prefixRule = (prefix, rule)->
