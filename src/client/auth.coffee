@@ -57,6 +57,10 @@ parseParams = (argsArray)->
     # Hull.login({login:'abcd@ef.com', password:'passwd', strategy:'redirect|popup', redirect:'...'})
     throw new Error('Seems like something is wrong in your Hull.login() call, We need a login and password fields to login. Read up here: http://www.hull.io/docs/references/hull_js/#user-signup-and-login') unless opts.login? and opts.password?
 
+  isSafari = navigator.userAgent.indexOf('Safari') > -1 && navigator.userAgent.indexOf('Chrome') == -1
+  if isSafari
+    opts.strategy ||= 'redirect'
+
   if isMobile()
     # We're on mobile, setup defaults for Touch/Redirect login
     opts.strategy       ||= 'redirect'
@@ -200,7 +204,6 @@ class Auth
     promise
 
   login : () =>
-
     if @isAuthenticating()
       # Return promise even if login is in progress.
       msg = "Login in progress. Use `Hull.on('hull.user.login', callback)` to call `callback` when done."
@@ -231,8 +234,9 @@ class Auth
       # Hull.login({login:'user@host.com', password:'xxxx'})
       # Hull.login({access_token:'xxxxx'})
 
-      # Early return since we're leaving the page.
-      return postForm(@config.orgUrl+'/api/v1/users/login', 'post', options) if options.strategy=='redirect'
+      if options.strategy == 'redirect'
+        return postForm(@config.orgUrl+'/api/v1/users/login', 'post', options)
+
       promise = @api.message('users/login', 'post', _.pick(options, 'login', 'password', 'access_token'))
 
     @completeLoginPromiseChain(promise,callback,errback)
@@ -259,8 +263,8 @@ class Auth
     @completeLoginPromiseChain(promise,callback,errback)
 
   completeLoginPromiseChain: (promise, callback,errback)=>
-    callback = callback || -> 
-    errback  = errback  || -> 
+    callback = callback || ->
+    errback  = errback  || ->
 
     p = promise.then @api.refreshUser, @emitLoginFailure
     p.then callback, errback
