@@ -1,11 +1,13 @@
-require "es6-promise"
-require "../polyfills/xhr-xdr"
+Promise  = require('es6-promise').Promise
 shimHTMLImports = require "../polyfills/shadow-css"
+
+require "../polyfills/xhr-xdr" #TODO : Test if we can remove this now it's in Polyfill service
 require "../utils/console-shim"
 
 _ =  require "./lodash"
 scriptLoader = require "./script-loader"
 
+domain = "hull-polyfills.herokuapp.com"
 
 polyfills =
   "WeakMap"                     : -> window.WeakMap?
@@ -49,13 +51,16 @@ polyfills =
     catch e 
       return false
 
-
 allGood = _.every polyfills, (tst)-> !!tst()
 
-module.exports = (config)->
+fill = (config)->
   return new Promise (resolve, reject)->
     return resolve() if allGood
-    file = if (config.debug) then "polyfill.js" else "polyfill.min.js"
-    url = "//hull-polyfills.herokuapp.com/v1/#{file}?features=#{_.keys(polyfills).join(",")}"
+    file = if (config.debug) then "polyfill.js" else "polyfill.js"
+    url = "//#{domain}/v1/#{file}?features=#{_.keys(polyfills).join(",")}"
     return scriptLoader({ src:url, document:config.document}).then(shimHTMLImports).then(resolve, reject)
 
+
+module.exports = 
+  fill: fill
+  domain: domain

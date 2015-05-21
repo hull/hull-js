@@ -1,3 +1,5 @@
+Promise  = require('es6-promise').Promise
+
 # Wraps config failure
 onConfigFailure = (err)->
   throw err

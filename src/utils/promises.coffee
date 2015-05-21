@@ -1,5 +1,4 @@
-# q = require 'q'
-
+Promise  = require('es6-promise').Promise
 
 buildPromise = ()->
   dfd = {}

@@ -1,3 +1,4 @@
+Promise                = require('es6-promise').Promise
 _                      = require '../../../utils/lodash'
 throwErr               = require '../../../utils/throw'
 scriptLoader = require '../../../utils/script-loader'

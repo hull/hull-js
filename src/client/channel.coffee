@@ -1,3 +1,4 @@
+Promise  = require('es6-promise').Promise
 xdm      = require 'xdm.js'
 domready = require '../utils/domready'
 _        = require '../utils/lodash'

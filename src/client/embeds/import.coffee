@@ -1,4 +1,5 @@
-_ = require '../../utils/lodash'
+Promise  = require('es6-promise').Promise
+_        = require '../../utils/lodash'
 
 fjs = document.getElementsByTagName("script")[0]
 

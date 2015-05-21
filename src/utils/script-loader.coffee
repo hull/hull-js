@@ -1,3 +1,4 @@
+Promise  = require('es6-promise').Promise
 _        = require './lodash'
 
 module.exports = (opts={})->

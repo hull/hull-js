@@ -1,4 +1,6 @@
-xdm                 = require 'xdm.js'
+Promise  = require('es6-promise').Promise
+xdm      = require 'xdm.js'
+
 catchAll = (res)-> res
 
 class Channel

@@ -2,7 +2,7 @@
 # # and providing pooled methods to the user while
 # # Hull is actually loading.
 
-require("babel/polyfill");
+Promise     = require('es6-promise').Promise
 assign      = require './polyfills/assign'
 _           = require './utils/lodash'
 polyfill    = require './utils/load-polyfills'

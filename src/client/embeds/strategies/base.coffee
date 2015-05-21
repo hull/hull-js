@@ -1,3 +1,4 @@
+Promise  = require('es6-promise').Promise
 _        = require '../../../utils/lodash'
 setStyle = require '../../../utils/set-style'
 Import   = require '../import'

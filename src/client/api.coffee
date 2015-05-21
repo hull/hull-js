@@ -1,7 +1,8 @@
-cookie = require '../utils/cookies'
-EventBus = require '../utils/eventbus'
+Promise   = require('es6-promise').Promise
+cookie    = require '../utils/cookies'
+EventBus  = require '../utils/eventbus'
 parseOpts = require './parse-opts'
-channel = require './channel'
+channel   = require './channel'
 
 class Api
   constructor : (config, channel, currentUser)->

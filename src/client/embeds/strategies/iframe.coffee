@@ -1,4 +1,4 @@
-promises               = require '../../../utils/promises'
+Promise                = require('es6-promise').Promise
 _                      = require '../../../utils/lodash'
 throwErr               = require '../../../utils/throw'
 getIframe              = require '../../../utils/get-iframe'

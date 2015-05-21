@@ -1,3 +1,4 @@
+Promise        = require('es6-promise').Promise
 _              = require '../../utils/lodash'
 polyfill       = require '../../utils/load-polyfills'
 throwErr       = require '../../utils/throw'

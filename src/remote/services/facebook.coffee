@@ -1,3 +1,4 @@
+Promise           = require('es6-promise').Promise
 assign            = require '../../polyfills/assign'
 _                 = require '../../utils/lodash'
 cookies           = require '../../utils/cookies'
