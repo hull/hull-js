@@ -4,6 +4,8 @@ BaseDeploymentStrategy = require './base'
 
 class RawDeploymentStrategy extends BaseDeploymentStrategy
   scopeStyles : false
+  ignoredTags : ['#comment','SCRIPT']
+  headTags   : ['LINK', 'STYLE']
 
   ###*
    * Raw : Directly in the page

@@ -4,7 +4,6 @@ import emptyFunction from '../utils/empty-function';
 
 function initializeShopifyPlatform(context, options, hull) {
   const { customerId, accessToken } = options;
-
   if (/^[0-9]+$/.test(customerId) && !accessToken) {
     hull.api('services/shopify/customers/' + customerId, 'put').then(function() {
       document.location.reload();

@@ -4,10 +4,11 @@ fjs = document.getElementsByTagName("script")[0]
 
 class Import
   constructor: (opts={})->
-    {href, shipId, container} = opts
+    {href, shipId, container, scoped} = opts
 
     @shipId = shipId
     @href = href
+    @scoped = scoped
 
     if container
       @window   = container.contentWindow
@@ -38,6 +39,7 @@ class Import
 
     unless @el
       @el = @document.createElement 'link'
+      @el.setAttribute('scoped', @scoped) if !!@scoped
       @el.rel = 'import'
       @el.href = @href
       @el.async = true #Will this break stuff ? if not - lets do it

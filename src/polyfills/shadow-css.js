@@ -8,13 +8,31 @@ module.exports = function(){
 
     HTMLImports.importer.importsPreloadSelectors += ',' + LINK_STYLE_SELECTOR;
 
+    var originalLoadSelectorsForNode= HTMLImports.importer.loadSelectorsForNode;
+    HTMLImports.importer.loadSelectorsForNode = function(node){
+      if(node.__importLink && node.__importLink.hasAttribute('scoped')){
+        originalLoadSelectorsForNode.call(this, node);
+      } else {
+        return this.documentPreloadSelectors
+      }
+    }
+
+
+    var originalParseSelectorsForNode= HTMLImports.parser.parseSelectorsForNode;
+    HTMLImports.parser.parseSelectorsForNode = function(node){
+      if(node.__importLink && node.__importLink.hasAttribute('scoped')){
+        originalParseSelectorsForNode.call(this, node);
+      } else {
+        return `link[rel=import],script:not([type]),script[type="text/javascript"]`
+        // return this.documentSelectors
+      }
+    }
+
     var originalParseGeneric = HTMLImports.parser.parseGeneric;
+
     HTMLImports.parser.parseGeneric = function(elt) {
-
       if (elt[SHIMMED_ATTRIBUTE]) { return; }
-
       var style = elt.__importElement || elt;
-
       if(
           (style.nodeName=='STYLE' || style.nodeName=='LINK') &&
           (style.ownerDocument !== document || this.rootImportForElement(style).getAttribute('rel')==='import')
