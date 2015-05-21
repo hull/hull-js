@@ -19,7 +19,7 @@ hull = undefined
 Hull = (remoteConfig)->
   return hull if hull
   config = ConfigNormalizer(remoteConfig)
-  polyfill(config).then ()->
+  polyfill.fill(config).then ()->
     # The access token stuff is a Safari hack:
     # Safari doesn't send response tokens for remote exchange
     RemoteActions.updateRemoteConfig(config)

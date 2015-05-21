@@ -5,8 +5,8 @@ Sandbox  = require '../sandbox'
 
 class BaseDeploymentStrategy
   scopeStyles : false
-  ignoredTags : ['#comment','SCRIPT', 'LINK', 'STYLE']
-  headTags   : []
+  ignoredTags : ['#comment','SCRIPT']
+  headTags   : ['LINK', 'STYLE']
 
   constructor : (deployment)->
     @deployment      = deployment

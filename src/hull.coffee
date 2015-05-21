@@ -107,7 +107,7 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
   # Ensure we have everything we need before starting Hull
   configCheck(config).then ()->
     # Load polyfills
-    polyfill(config)
+    polyfill.fill(config)
   .then ()=>
     # Create the communication channel with Remote
     channel = new Channel(config, currentUser)

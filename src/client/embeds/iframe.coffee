@@ -62,7 +62,7 @@ class Iframe
   polyfill : (doc)->
     # Start resolving from the containing iframe up
     # TODO architecture could be better herer
-    polyfill({
+    polyfill.fill({
       document:doc,
       debug:Hull.config().debug
     })

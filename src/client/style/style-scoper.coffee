@@ -1,4 +1,5 @@
 _              = require '../../utils/lodash'
+polyfill       = require '../../utils/load-polyfills'
 throwErr       = require '../../utils/throw'
 ScopedCss      = require 'scopedcss/lib/';
 ScopedCssRule  = require 'scopedcss/lib/cssRule';
@@ -73,12 +74,11 @@ getRules = (sheet)->
 fetch = (href)->
   new Promise (resolve, reject)->
     return reject() unless !!href
-    try
-      superagent.get(href).end (err, res)->
-        return reject(err) if err?
+    superagent.get("http://#{polyfill.domain}/cors/#{encodeURIComponent(href)}").end (err, res)->
+      if err?
+        reject(err)
+      else
         resolve(res?.text)
-    catch e
-      reject(e)
     
 
 
