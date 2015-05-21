@@ -22,6 +22,7 @@ resolveUrlsInCssText= (cssText, linkUrl, urlObj)->
   r
 
 replaceUrls= (text, urlObj, linkUrl, regexp)->
+  return "" unless text
   text.replace regexp, (m, pre, url, post)->
     urlPath = url.replace(/["']/g, "")
     urlPath = new URL(urlPath, linkUrl).href if (linkUrl) 
@@ -72,8 +73,13 @@ getRules = (sheet)->
 fetch = (href)->
   new Promise (resolve, reject)->
     return reject() unless !!href
-    superagent.get(href).end (err, res)->
-      resolve(res?.text)
+    try
+      superagent.get(href).end (err, res)->
+        return reject(err) if err?
+        resolve(res?.text)
+    catch e
+      reject(e)
+    
 
 
 prefixRule = (prefix, rule)->
@@ -123,7 +129,8 @@ appendStyle = (entry)->
       # Loading External stylesheets (out of current domain)
       # Only Chrome will use this, since we have tweaked the Polyfill to avoid 2 requests.
       removeStyleSheet(entry.node)
-      fetch(entry.node.href).then appendText.bind(this, entry)
+      fetch(entry.node.href).then appendText.bind(this, entry), (err)->
+        console.debug "Could not fetch style (probably because of CORS), so we ignored it. #{err}"
   else
     resolveUrlsInStyle(entry.node)
     # Disable again to prevent infinite loops
