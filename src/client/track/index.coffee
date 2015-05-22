@@ -14,7 +14,7 @@ class Tracker
     return if @setup
     @setup=true
 
-    EventBus.on 'hull.*.share', (res)->
+    EventBus.on 'hull.*.share', (res)=>
       @track this.event, res
 
     EventBus.on 'hull.user.create', (me)=>
