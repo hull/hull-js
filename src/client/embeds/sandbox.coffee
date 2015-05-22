@@ -45,7 +45,7 @@ class Sandbox
     # Enrich UTM Tags Defaults
     opts.tags = assign({}, opts.tags, {utm_campaign:@ship.name})
 
-    @hull.share(opts,event)
+    Hull.share(opts,event)
 
   getShipClassName : => @shipClassName
 
@@ -78,6 +78,7 @@ class Sandbox
     # sandbox.addElement(insertion.el)
 
     sandbox.autoSizeInterval = null;
+    mainShare = @share
     hull = assign({}, @hull, {
       onEmbed : (args...)=>
         callback = args.shift() while (args.length>0 && !_.isFunction(callback))
@@ -87,7 +88,7 @@ class Sandbox
       getDocument : ()=> doc
       share : (opts, event={})->
         event = assign(event, {target: iframe})
-        @share(opts,event);
+        mainShare(opts,event);
       findUrl : ()-> findUrl(iframe)
       setSize : (size={})=>
         style = assign({},size)
