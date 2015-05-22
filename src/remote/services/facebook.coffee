@@ -48,13 +48,13 @@ class FacebookService extends GenericService
 
       @showIframe()
       trackParams = { ui_request_id: utils?.uuid?() || (new Date()).getTime() }
-      @track "facebook.#{path}.open", assign({}, request.params, trackParams)
+      @track {event:"facebook.#{path}.open", params:assign({}, request.params, trackParams)}
 
       setTimeout ()=>
         FB.ui params, (response)=>
-          path = "facebook.#{path}."
-          path += if !response || response.error_code then "error" else "success"
-          @track({path, params:assign({}, response, trackParams)})
+          event = "facebook.#{path}."
+          event += if !response || response.error_code then "error" else "success"
+          @track {event, params:assign({}, response, trackParams)}
           fbCallback(response)
       , 100
 
