@@ -1,6 +1,7 @@
 _        = require '../../utils/lodash'
 track    = require '../track/index'
 findUrl  = require '../../utils/find-url'
+EventBus = require '../../utils/eventbus'
 
 FacebookShare = require './facebook'
 EmailShare = require './email'
