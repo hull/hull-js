@@ -144,7 +144,7 @@ hullReady = (callback, errback)->
   .catch (err)-> console.error err.message, err.stack
 
 shimmedMethod = (method)->
-  console.debug("Hull.#{method} is only useful when Ships are sandboxed. This method does nothing here")
+  console.debug("Hull.#{method} is only useful when Ships are sandboxed. This method does nothing here") if hull.config().debug
   false
 
 hull =
