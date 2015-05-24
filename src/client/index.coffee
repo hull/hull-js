@@ -29,11 +29,11 @@ class Client
     flag  = new Flag(api)
     traits= new Traits(api)
 
-    if config.debug
+    if config?.debug
       EventBus.on 'hull.**', (arg0, arg1, arg2)->
         # Dont use spread because IE8 doesnt' treat console.log as a real function hence can't do console.log.apply.
         # Duh...
-        console.debug("--HULL EVENT--[#{@event}]--", arg0, arg1, arg2);
+        console.log("--HULL EVENT--[#{@event}]--", arg0, arg1, arg2);
 
     # Creating the complete hull object we'll send back to the API
     @hull =

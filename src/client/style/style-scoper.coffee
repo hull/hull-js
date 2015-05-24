@@ -131,7 +131,7 @@ appendStyle = (entry)->
       # Only Chrome will use this, since we have tweaked the Polyfill to avoid 2 requests.
       removeStyleSheet(entry.node)
       fetch(entry.node.href).then appendText.bind(this, entry), (err)->
-        console.debug "Could not fetch style (probably because of CORS), so we ignored it. #{err}"
+        console.log "Could not fetch style (probably because of CORS), so we ignored it. #{err}" if Hull.config()?.debug
   else
     resolveUrlsInStyle(entry.node)
     # Disable again to prevent infinite loops

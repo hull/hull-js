@@ -61,7 +61,7 @@ class Deployment
       target = document.querySelector(@settings._selector)
       if target then [target] else []
 
-    console.debug("No deployment targets for selector #{@settings._selector}", @) if Hull.config().debug and !targets.length
+    console.log("No deployment targets for selector #{@settings._selector}", @) if Hull?.config()?.debug and !targets.length
     targets
 
 

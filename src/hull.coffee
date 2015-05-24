@@ -49,7 +49,7 @@ onInitSuccess = (userSuccessCallback, hull, data)->
 
   EventBus.emit('hull.ready', hull, me, app, org)
   EventBus.emit('hull.init', hull, me, app, org)
-  console.debug("Hull.js version \"#{hull.version}\" started")
+  console?.log("Hull.js version \"#{hull.version}\" started")
 
   # Do Hull.embed(platform.deployments) automatically
   embeds.embed(app.deployments,{},onEmbedComplete) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
@@ -63,7 +63,7 @@ onInitSuccess = (userSuccessCallback, hull, data)->
 onInitFailure = (err)-> throw err
 
 onEmbedComplete = ()->
-  console.debug("Hull Embeds Completed successfully") if hull.config().debug
+  console.log("Hull Embeds Completed successfully") if hull.config().debug
 
 ###*
  * Main Hull Entry Point
@@ -144,7 +144,7 @@ hullReady = (callback, errback)->
   .catch (err)-> console.error err.message, err.stack
 
 shimmedMethod = (method)->
-  console.debug("Hull.#{method} is only useful when Ships are sandboxed. This method does nothing here") if hull.config().debug
+  console.log("Hull.#{method} is only useful when Ships are sandboxed. This method does nothing here") if hull.config().debug
   false
 
 hull =
