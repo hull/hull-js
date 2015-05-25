@@ -2,6 +2,7 @@ assign                   = require '../../polyfills/assign'
 _                        = require '../../utils/lodash'
 clone                    = require '../../utils/clone'
 throwErr                 = require '../../utils/throw'
+logger                   = require '../../utils/logger'
 
 RawDeploymentStrategy    = require './strategies/raw'
 ScopeDeploymentStrategy  = require './strategies/scope'
@@ -61,7 +62,7 @@ class Deployment
       target = document.querySelector(@settings._selector)
       if target then [target] else []
 
-    console.log("No deployment targets for selector #{@settings._selector}", @) if Hull?.config()?.debug and !targets.length
+    logger.info("No deployment targets for selector #{@settings._selector}", @) unless targets.length
     targets
 
 

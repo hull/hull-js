@@ -2,6 +2,7 @@ Promise        = require('es6-promise').Promise
 _              = require '../../utils/lodash'
 polyfill       = require '../../utils/load-polyfills'
 throwErr       = require '../../utils/throw'
+logger         = require '../../utils/logger'
 ScopedCss      = require 'scopedcss/lib/';
 ScopedCssRule  = require 'scopedcss/lib/cssRule';
 superagent          = require 'superagent'
@@ -131,7 +132,7 @@ appendStyle = (entry)->
       # Only Chrome will use this, since we have tweaked the Polyfill to avoid 2 requests.
       removeStyleSheet(entry.node)
       fetch(entry.node.href).then appendText.bind(this, entry), (err)->
-        console.log "Could not fetch style (probably because of CORS), so we ignored it. #{err}" if Hull.config()?.debug
+        logger.log "Could not fetch style (probably because of CORS), so we ignored it. #{err}"
   else
     resolveUrlsInStyle(entry.node)
     # Disable again to prevent infinite loops

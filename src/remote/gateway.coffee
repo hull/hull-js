@@ -1,9 +1,9 @@
 Promise             = require('es6-promise').Promise
 assign              = require '../polyfills/assign'
 _                   = require '../utils/lodash'
+logger              = require '../utils/logger'
 EventBus            = require '../utils/eventbus'
 clone               = require '../utils/clone'
-ClientConfigStore   = require '../flux/stores/ClientConfigStore'
 RemoteHeaderStore   = require '../flux/stores/RemoteHeaderStore'
 QSEncoder           = require '../utils/query-string-encoder'
 
@@ -12,6 +12,7 @@ superagent          = require 'superagent'
 API_PATH = '/api/v1/'
 API_PATH_REGEXP = /^\/?api\/v1\//
 RESPONSE_HEADERS = ['Hull-Auth-Scope', 'Hull-Track', 'Hull-User-Id', 'Hull-User-Sig', 'X-Hits-Count', 'Link']
+
 
 normalizePath = (path) ->
   return path.replace(API_PATH_REGEXP, API_PATH) if API_PATH_REGEXP.test(path)
@@ -65,12 +66,12 @@ class Gateway
     @options = _.defaults({},batching,{min:1,max:1,delay:2})
     @queue = batchable @options.delay, (requests) -> @flush(requests)
 
+
   fetch : (options={}) =>
     {method, headers, path, params} = options
 
     method = (method||'get').toUpperCase()
 
-    clientConfig= ClientConfigStore.getState() || {}
     headers = assign({}, RemoteHeaderStore.getState(), headers)
 
     #TODO Check SuperAgent under IE8 and below
@@ -79,10 +80,10 @@ class Gateway
     if params? and method=='GET' then s.query(QSEncoder.encode(params)) else s.send(params)
 
     new Promise (resolve, reject)->
-      console.log(">", method, path, params, headers) if clientConfig.debug?.enable?
+      logger.verbose(">", method, path, params, headers)
 
       s.end (response)=>
-        console.log("<", method, path, response) if clientConfig.debug?.enable?
+        logger.verbose("<", method, path, response)
         h = {body:response.body, headers: response.headers, status: response.status}
         # if (response.ok) then resolve(h) else reject(h)
         resolve(h)

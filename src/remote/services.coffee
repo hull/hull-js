@@ -1,4 +1,5 @@
 _                     = require '../utils/lodash'
+logger                = require '../utils/logger'
 assign                = require '../polyfills/assign'
 
 ServiceList           = require './services/list'
@@ -80,7 +81,7 @@ class Services
     onError = (res={})->
       xdmErrback(res.response || res)
       error = new Error(res?.response?.message || res?.response || res)
-      console.warn 'Failed refreshing User', error.message, error.stack
+      logger.error 'Failed refreshing User', error.message, error.stack
       throw error
 
     Promise.all([me, settings]).then onSuccess, onError

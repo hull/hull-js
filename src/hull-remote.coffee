@@ -1,16 +1,19 @@
-polyfill            = require './utils/load-polyfills'
-EventBus            = require './utils/eventbus'
-ConfigNormalizer    = require './utils/config-normalizer'
-Services            = require './remote/services'
-Gateway             = require './remote/gateway'
-Channel             = require './remote/channel'
+polyfill          = require './utils/load-polyfills'
+EventBus          = require './utils/eventbus'
+logger            = require './utils/logger'
+ConfigNormalizer  = require './utils/config-normalizer'
+Services          = require './remote/services'
+Gateway           = require './remote/gateway'
+Channel           = require './remote/channel'
 
-RemoteHeaderStore   = require './flux/stores/RemoteHeaderStore'
-RemoteUserStore     = require './flux/stores/RemoteUserStore'
-RemoteConfigStore     = require './flux/stores/RemoteConfigStore'
+ClientConfigStore = require './flux/stores/ClientConfigStore'
+RemoteHeaderStore = require './flux/stores/RemoteHeaderStore'
+RemoteUserStore   = require './flux/stores/RemoteUserStore'
+RemoteConfigStore = require './flux/stores/RemoteConfigStore'
 
-RemoteActions       = require './flux/actions/RemoteActions'
-RemoteConstants     = require './flux/constants/RemoteConstants'
+RemoteActions     = require './flux/actions/RemoteActions'
+RemoteConstants   = require './flux/constants/RemoteConstants'
+
 
 
 hull = undefined
@@ -28,6 +31,9 @@ Hull = (remoteConfig)->
     gateway     = new Gateway(config)
     services    = new Services(config, gateway)
     channel     = new Channel(config, services)
+
+    ClientConfigStore.addChangeListener (change)=>
+      logger.init((ClientConfigStore.getState()||{}).debug)
 
     RemoteConfigStore.addChangeListener (change)=>
       # Notify client whenever settings change
@@ -64,7 +70,8 @@ Hull = (remoteConfig)->
 
     channel.promise
     .then(subscribeToEvents)
-    .then (clientConfig)-> RemoteActions.updateClientConfig(clientConfig)
+    .then (clientConfig)->
+      RemoteActions.updateClientConfig(clientConfig)
     .catch (err)-> console.error("Could not initialize Hull: #{err.message}")
 
 Hull.version = VERSION

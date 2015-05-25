@@ -1,6 +1,7 @@
 superagent        = require 'superagent'
 GenericService    = require './generic-service'
 QSEncoder         = require '../../utils/query-string-encoder'
+logger            = require '../../utils/logger'
 
 class HullAdminService extends GenericService
   name : 'hull'
@@ -24,7 +25,6 @@ class HullAdminService extends GenericService
     token = @getSettings()?.credentials?.access_token
     headers['AccessToken'] = token if token
 
-    console.log(url, method, params) if config?.debug?
     s = superagent(method, url).set(headers)
 
     if (method=='GET' and params?) then s.query(QSEncoder.encode(params)) else s.send(params)

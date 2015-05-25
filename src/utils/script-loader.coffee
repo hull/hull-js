@@ -1,5 +1,6 @@
 Promise  = require('es6-promise').Promise
 _        = require './lodash'
+logger   = require './logger'
 
 module.exports = (opts={})->
   doc = opts.document || window.document
@@ -9,7 +10,7 @@ module.exports = (opts={})->
 
     errorTimeout = setTimeout ()->
       error = new Error("Couldn't load some parts of the libray \n(#{opts.src}).\nConnectivity issue?")
-      console.error(error, error.message, error.stack)
+      logger.error(error, error.message, error.stack)
       reject(error);
     , 10000
 

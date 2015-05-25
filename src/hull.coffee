@@ -6,6 +6,7 @@ Promise     = require('es6-promise').Promise
 assign      = require './polyfills/assign'
 _           = require './utils/lodash'
 polyfill    = require './utils/load-polyfills'
+logger      = require './utils/logger'
 Client      = require './client'
 CurrentUser = require './client/current-user'
 Channel     = require './client/channel'
@@ -16,7 +17,7 @@ Pool        = require './utils/pool'
 HullRemote  = require './hull-remote'
 embeds      = require './client/embeds'
 configCheck = require './client/config-check'
-getScriptTagConfig = require './client/script-tag-config'
+scriptTagConfig = require './client/script-tag-config'
 initializePlatform = require './client/initialize-platform'
 
 ###*
@@ -49,10 +50,10 @@ onInitSuccess = (userSuccessCallback, hull, data)->
 
   EventBus.emit('hull.ready', hull, me, app, org)
   EventBus.emit('hull.init', hull, me, app, org)
-  console?.log("Hull.js version \"#{hull.version}\" started")
+  logger.log("Hull.js version \"#{hull.version}\" started")
 
   # Do Hull.embed(platform.deployments) automatically
-  embeds.embed(app.deployments,{},onEmbedComplete) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
+  embeds.embed(app.deployments,{},onEmbedComplete, onEmbedError) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
 
   # Everything went well, call the init callback
   userSuccessCallback(hull, me, app, org)
@@ -63,7 +64,10 @@ onInitSuccess = (userSuccessCallback, hull, data)->
 onInitFailure = (err)-> throw err
 
 onEmbedComplete = ()->
-  console.log("Hull Embeds Completed successfully") if hull.config().debug
+  logger.log("Hull Embeds Completed successfully")
+
+onEmbedError = (err...)->
+  logger.error("Failed embedding Ships", err...)
 
 ###*
  * Main Hull Entry Point
@@ -80,7 +84,9 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
     return
 
   config.version = VERSION
-  config.debug   = config.debug && { enable: true }
+  # Process this as a single object we send to Remote side (cleaner)
+  config.debug   = if config.debug then { enabled: true, verbose: config.verbose } else { }
+  logger.init(config.debug)
   config.appId   = config.appId || config.platformId || config.shipId
   delete config.platformId if config.platformId?
   delete config.ship       if config.ship?
@@ -99,7 +105,7 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
 
   err = (err)->
     # Something was wrong while initializing
-    console.error(err.stack);
+    logger.error(err.stack)
     userFailureCallback = userFailureCallback || ->
     userFailureCallback(err)
     ready.reject(err)
@@ -141,10 +147,10 @@ hullReady = (callback, errback)->
   ready.promise.then (res)->
     callback(res.hull, res.me, res.app, res.org)
   , errback
-  .catch (err)-> console.error err.message, err.stack
+  .catch (err)-> logger.error err.message, err.stack
 
 shimmedMethod = (method)->
-  console.log("Hull.#{method} is only useful when Ships are sandboxed. This method does nothing here") if hull.config().debug
+  logger.log("Hull.#{method} is only useful when Ships are sandboxed. This method does nothing here")
   false
 
 hull =
@@ -163,7 +169,7 @@ eeMethods = ['on', 'onAny', 'offAny', 'once', 'many', 'off', 'emit']
 _.map eeMethods, (m)->
   hull[m] = (args...) -> EventBus[m](args...)
 
-autoStartConfig = getScriptTagConfig()
+autoStartConfig = scriptTagConfig()
 if autoStartConfig && autoStartConfig.autoStart
   if !hull._initialized
     autoStartConfig && autoStartConfig.autoStart && init(autoStartConfig)

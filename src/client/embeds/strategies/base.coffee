@@ -1,6 +1,7 @@
 Promise  = require('es6-promise').Promise
 _        = require '../../../utils/lodash'
 setStyle = require '../../../utils/set-style'
+logger   = require '../../../utils/logger'
 Import   = require '../import'
 Sandbox  = require '../sandbox'
 
@@ -50,7 +51,7 @@ class BaseDeploymentStrategy
         This can't happen. Skipping ship.
       """
       err = new Error(msg)
-      console.error(err.message)
+      logger.error(err.message)
       return el
 
     head = container.getElementsByTagName('head')[0];

@@ -7,5 +7,4 @@ Hull.init({
 });
 
 Hull.ready(function(hull, me, platform, org){
-  console.log(me)
 })

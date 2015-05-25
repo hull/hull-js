@@ -1,6 +1,7 @@
 Promise  = require('es6-promise').Promise
 assign   = require '../polyfills/assign'
 _        = require '../utils/lodash'
+logger   = require '../utils/logger'
 EventBus = require '../utils/eventbus'
 isMobile = require '../utils/is-mobile'
 Base64   = require '../utils/base64'
@@ -208,7 +209,7 @@ class Auth
     if @isAuthenticating()
       # Return promise even if login is in progress.
       msg = "Login in progress. Use `Hull.on('hull.user.login', callback)` to call `callback` when done."
-      console.info msg
+      logger.info msg
       return new Promise (resolve, reject)->
         reject({error: {reason:'in_progress', message: msg}})
 

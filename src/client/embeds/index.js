@@ -3,6 +3,7 @@
 
 import _          from "../../utils/lodash";
 import throwErr   from "../../utils/throw";
+import logger     from "../../utils/logger";
 import Deployment from "./deployment";
 
 let _initialized = false;
@@ -16,23 +17,25 @@ function attachCallback(doc, callback){
   }
 }
 
-function embedDeployments(deployments, opts={}, callback) {
+function embedDeployments(deployments, opts={}, callback, errback) {
   if (!deployments || !deployments.length){return;}
   if (opts.reset !== false) { Deployment.resetDeployments()}
 
   let embeds = [];
   let promises = [];
 
+  logger.log('Embedding Deployments', deployments)
   for (let d = 0, l = deployments.length; d < l; d++) {
     let dpl = new Deployment(deployments[d], _context);
     promises.push(dpl.embed({ refresh: true }));
   }
 
   Promise.all(promises).then((deployments)=>{
+    logger.log('Deployments resolved', deployments)
     if (_.isFunction(callback)){
       callback(_.pluck(deployments, 'value'))
     }
-  }).catch(throwErr)
+  },errback).catch(throwErr)
 }
 
 module.exports = {
@@ -40,8 +43,8 @@ module.exports = {
     _initialized = true;
     _context = context;
   },
-  embed: function(deployments, opts, callback) {
-    embedDeployments(deployments, opts, callback);
+  embed: function(deployments, opts, callback, errback) {
+    embedDeployments(deployments, opts, callback, errback);
   },
   onEmbed: function() {
     let args = Array.prototype.slice.call(arguments);

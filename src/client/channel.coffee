@@ -3,6 +3,7 @@ xdm      = require 'xdm.js'
 domready = require '../utils/domready'
 _        = require '../utils/lodash'
 EventBus = require '../utils/eventbus'
+logger   = require '../utils/logger'
 
 hiddenFrameStyle =
   top: '-20px'
@@ -98,7 +99,7 @@ class Channel
     @_ready.reject('Remote loading has failed. Please check "orgUrl" and "appId" in your configuration. This may also be about connectivity.')
 
   onMessage       : (e)->
-    if e.error then @_ready.reject(e.error) else console.warn("RPC Message", arguments)
+    if e.error then @_ready.reject(e.error) else logger.log("RPC Message", arguments)
 
   ready           : (remoteConfig)   =>
     window.clearTimeout(@timeout)

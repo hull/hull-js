@@ -1,6 +1,7 @@
 Promise   = require('es6-promise').Promise
 cookie    = require '../utils/cookies'
 EventBus  = require '../utils/eventbus'
+logger    = require '../utils/logger'
 parseOpts = require './parse-opts'
 channel   = require './channel'
 
@@ -26,7 +27,7 @@ class Api
   # @return {Promise}
   ###
   message: ()=>
-    return console.error("Hull Api is not initialized yet. You should run your app from the callback of Hull.ready()") unless @channel.rpc
+    return logger.error("Hull Api is not initialized yet. You should run your app from the callback of Hull.ready()") unless @channel.rpc
     {opts, callback, errback} = parseOpts(Array.prototype.slice.call(arguments))
     p = new Promise (resolve, reject)=>
 

@@ -1,4 +1,5 @@
 _ = require '../utils/lodash'
+logger = require '../utils/logger'
 
 dasherize = (str)->
   str.replace /[A-Z]/, (c) ->  "-" + c.toLowerCase()
@@ -8,13 +9,13 @@ valid =
   regex: (reg)-> (val, key)->
     check = reg.test(val)
     if !check
-      console.error("[Hull.init] invalid format for '#{key}'. Value '#{val}' should match #{reg.toString()}")
+      logger.error("[Hull.init] invalid format for '#{key}'. Value '#{val}' should match #{reg.toString()}")
     check
 
   https: (val, key)->
     check = /^https:|^\/\//.test(val)
     return check if document.location.protocol == 'https:' and check
-    console.warn("[Hull.init] #{key} should be loaded via https. Current value is ", val)
+    logger.warn("[Hull.init] #{key} should be loaded via https. Current value is ", val)
     check
     true
 
@@ -52,7 +53,8 @@ initParams = {
     transform: transform.url
     validation: valid.regex(new RegExp("^" + document.location.origin + "/"))
   },
-  debug: { default: false, transform: transform.bool },
+  debug:   { default: false, transform: transform.bool },
+  verbose: { default: false, transform: transform.bool },
   embed: { default: true, transform: transform.bool },
   autoStart: { default: true, transform: transform.bool },
   accessToken: { default: null }

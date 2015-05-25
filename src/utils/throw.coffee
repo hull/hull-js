@@ -1,2 +1,3 @@
+logger  = require './logger'
 module.exports = (err)->
-  console.error err.message, err.stack
+  logger.error err.message, err.stack
