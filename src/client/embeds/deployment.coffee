@@ -94,19 +94,25 @@ class Deployment
     # If we're refreshing, rebuild the target list
     @targets = @getTargets(opts)
     ds = @getDeploymentStrategy()
-    ds.embed(@targets, opts).then ()=>
-      @onEmbed()
-    ,throwErr
-    .catch throwErr
+    if @targets.length
+      ds.embed(@targets, opts).then ()=>
+        @onEmbed()
+      ,throwErr
+      .catch throwErr
+    else
+      Promise.resolve()
 
   boot: ()=>
-    @getDeploymentStrategy().boot()
+    if @targets.length
+      @getDeploymentStrategy().boot()
 
   onEmbed : (callback)=>
-    @getDeploymentStrategy().onEmbed(callback)
+    if @targets.length
+      @getDeploymentStrategy().onEmbed(callback)
 
   destroy: ()=>
-    @getDeploymentStrategy().destroy()
-    @deploymentStrategy = null
+    if @targets.length
+      @getDeploymentStrategy().destroy()
+      @deploymentStrategy = null
   
 module.exports = Deployment
