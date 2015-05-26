@@ -1,5 +1,6 @@
 Promise  = require('es6-promise').Promise
 _        = require '../../utils/lodash'
+logger   = require '../../utils/logger'
 
 fjs = document.getElementsByTagName("script")[0]
 
@@ -8,7 +9,8 @@ class Import
     {href, shipId, container, scoped} = opts
 
     @shipId = shipId
-    @href = href
+    protocol = document.location.protocol
+    @href = href.replace(/^https?:/,protocol)
     @scoped = scoped
 
     if container
