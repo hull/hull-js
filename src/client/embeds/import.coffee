@@ -51,6 +51,7 @@ class Import
 
     onReady = (doc)=>
       unless ready
+        logger.verbose("Import #{@href} Ready")
         @el['import'].removeEventListener 'DOMContentLoaded', onReady
         ready = true
         @ready.resolve(@el['import'])
@@ -58,6 +59,7 @@ class Import
     # addEventListener doesnt work with IE 11 :(
     onLoad = (ev)=>
       onReady()
+      logger.verbose("Import #{@href} Loaded")
       @el.removeEventListener 'load', onLoad
       @load.resolve(@el['import'].body)
 

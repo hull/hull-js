@@ -1,4 +1,5 @@
 polyfill       = require '../../utils/load-polyfills'
+logger         = require '../../utils/logger'
 getIframe      = require '../../utils/get-iframe'
 sandbox        = require './sandbox'
 
@@ -36,7 +37,7 @@ class Iframe
     @iframe.marginHeight           = 0
     @iframe.scrolling              = 'no'
     @iframe.border                 = 0
-    @iframe.frameBorder            = 0
+    @iframe.frameBorder            = 1
     @iframe
 
   getIframe: ()-> @iframe
@@ -44,9 +45,10 @@ class Iframe
   onIframeReady : (iframe, callback)=>
     doc = getIframe.document(iframe)
     if doc and doc.readyState=='complete'
+      logger.verbose("Iframe Ready")
       getIframe.window(iframe).location.href='/'
       doc.open();
-      doc.write '<!DOCTYPE html><html><head></head><body></body></html>'
+      doc.write '<!DOCTYPE html><html><head><script>window.HTMLImports={flags:{load:true, parse:true, debug:true}}</script></head><body></body></html>'
       doc.close();
       @polyfill(doc).then -> callback(iframe)
     else
