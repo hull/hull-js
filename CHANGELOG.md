@@ -7,6 +7,9 @@
 * Implements Smart login and Share strategy depending on device (popup or redirects)
 
 --------- 
+### Ships
+[Compatiblity Table](https://docs.google.com/spreadsheets/d/13lwZP8XmhIBA84bpmKd-96nC9nE9tQaM0c0WgyQNHXI/edit#gid=0.8)
+
 ### New
 
 Allow Initializing hull automatically with attributes in the `SCRIPT` tag,
