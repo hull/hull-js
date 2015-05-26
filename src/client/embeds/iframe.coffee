@@ -37,7 +37,7 @@ class Iframe
     @iframe.marginHeight           = 0
     @iframe.scrolling              = 'no'
     @iframe.border                 = 0
-    @iframe.frameBorder            = 1
+    @iframe.frameBorder            = 0
     @iframe
 
   getIframe: ()-> @iframe
@@ -46,11 +46,14 @@ class Iframe
     doc = getIframe.document(iframe)
     if doc and doc.readyState=='complete'
       logger.verbose("Iframe Ready")
-      getIframe.window(iframe).location.href='/'
+      w = getIframe.window(iframe)
+      w.location.href='/'
       doc.open();
       doc.write '<!DOCTYPE html><html><head><script>window.HTMLImports={flags:{load:true, parse:true, debug:true}}</script></head><body></body></html>'
       doc.close();
-      @polyfill(doc).then -> callback(iframe)
+      @polyfill(doc,w).then ->
+        logger.verbose("Iframe Polyfilled")
+        callback(iframe)
     else
       setTimeout ()=>
         @onIframeReady(iframe, callback)
@@ -61,11 +64,12 @@ class Iframe
   # an enhanced version of Hull, with methods that resolve locally
   # - setShipSize
   # - getTargetUrl
-  polyfill : (doc)->
+  polyfill : (doc, w)->
     # Start resolving from the containing iframe up
     # TODO architecture could be better herer
     polyfill.fill({
       document:doc,
+      window:w,
       debug:Hull.config().debug
     })
 

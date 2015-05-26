@@ -78,6 +78,8 @@ class BaseDeploymentStrategy
     # Tread wisely
     {imported, el, ignore, head, move} = opts
     return true unless imported.hasChildNodes()
+    # https://developer.mozilla.org/en-US/docs/Web/API/Document/importNode
+    # Shall we use importNode instead ? what about it's support...
     _.map imported.childNodes, (child)=>
       if child
         nodeName = child.nodeName
