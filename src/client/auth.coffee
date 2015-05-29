@@ -252,12 +252,27 @@ class Auth
     promise = @api.message('users', 'POST', user)
     @completeLoginPromiseChain(promise, callback, errback)
 
+  ###*
+   * link an Identity to a Hull User
+   * @param  {options} An options Hash
+   * @param  {callback} Success callback
+   * @param  {errback} error callback
+   * @return {Promise} A promise
+  ###
   linkIdentity   : ()=>
     return getNoUserPromise() unless getUser()
     {options, callback, errback} = parseParams(Array.prototype.slice.call(arguments))
     options.params.mode = 'connect'
     @login(options, callback, errback)
 
+  ###*
+   * unlink an Identity from a Hull User
+   * @param  {options} An options Hash
+   * @param  {callback} Success callback
+   * @param  {errback} error callback
+   * @return {Promise} A promise
+   * 
+  ###
   unlinkIdentity : ()=>
     return getNoUserPromise() unless getUser()
     {options, callback, errback} = parseParams(Array.prototype.slice.call(arguments))

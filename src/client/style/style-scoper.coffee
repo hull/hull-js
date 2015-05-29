@@ -3,8 +3,8 @@ _              = require '../../utils/lodash'
 polyfill       = require '../../utils/load-polyfills'
 throwErr       = require '../../utils/throw'
 logger         = require '../../utils/logger'
-ScopedCss      = require 'scopedcss/lib/';
-ScopedCssRule  = require 'scopedcss/lib/cssRule';
+# ScopedCss      = require 'scopedcss/lib/';
+# ScopedCssRule  = require 'scopedcss/lib/cssRule';
 superagent          = require 'superagent'
 
 Styles     = []
@@ -158,10 +158,12 @@ addSheet = (prefix, node, doc)->
 findNode = (prefix, node)->
   _.find Styles, (d)-> d.node==node && d.prefix == prefix
 
-finalize = ()->
+finalizeNow = ()->
   promise.then ()->
     setTextContent MergedStyles, _.pluck(Styles,'style').join(' ');
   , throwErr
+
+finalize = _.throttle finalizeNow, 20
 
 ###*
  * Adds a whole document's styles to the Styles tag
@@ -182,9 +184,9 @@ removeDocument = (prefix, doc)->
   finalize()
 
 addStyle = (prefix, node)->
-  # Array.prototype.slice.call(node.querySelectorAll('style:not([data-scoped])')).forEach (node)->
+  addSheet(prefix, node, node.ownerDocument);
   node.setAttribute('data-scoped',true);
-  new ScopedCss(prefix, null, node).process()
+  finalize()
 
 addLink = (prefix, node)->
   addSheet(prefix, node, node.ownerDocument)

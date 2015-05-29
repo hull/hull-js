@@ -8,8 +8,6 @@ module.exports = function(scope){
 
     var originalParseGeneric = scope.HTMLImports.parser.parseGeneric;
     scope.HTMLImports.parser.parseGeneric = function(elt) {
-      debugger
-      console.log('---------------parse generic', elt)
       var style = elt.__importElement || elt;
       if(
           (style.nodeName=='STYLE' ||

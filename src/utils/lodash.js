@@ -12,6 +12,7 @@ export default {
   every: require("lodash/collection/every"),
   indexOf: require("lodash/array/indexOf"),
   isEmpty: require("lodash/lang/isEmpty"),
+  throttle: require("lodash/function/throttle"),
   isArray: require("lodash/lang/isArray"),
   isFunction: require("lodash/lang/isFunction"),
   isObject: require("lodash/lang/isObject"),
