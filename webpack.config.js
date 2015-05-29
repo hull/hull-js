@@ -20,11 +20,29 @@ if(config.hotReload){
 
 debugOutput = assign({},config.output,{filename: '[name].debug.js',});
 
+var uglifyPlugin =  new webpack.optimize.UglifyJsPlugin({
+  comments: false,
+  minimize:true,
+  ascii_only:true,
+  quote_keys:true,
+  sourceMap: false,
+  beautify: false,
+  compress: {
+    warnings: false,
+    drop_console: false,
+    drop_debugger:false,
+    dead_code:true,
+    // comparisons: true,
+    // conditionals:true
+    join_vars:true
+  }
+})
+
 module.exports = {
   development:{
    browser: {
       name     : 'browser',
-      devtool  : '#inline-source-map',
+      devtool  : '#source-map',
       devServer: true,
       entry    : devEntry,
       output   : devOutput,
@@ -51,23 +69,7 @@ module.exports = {
       module  : {loaders: config.loaders},
       plugins : config.plugins.concat([
         new webpack.DefinePlugin({'process.env': {'NODE_ENV': JSON.stringify('production') } }),
-        new webpack.optimize.UglifyJsPlugin({
-          comments: false,
-          minimize:true,
-          ascii_only:true,
-          quote_keys:true,
-          sourceMap: false,
-          beautify: false,
-          compress: {
-            warnings: false,
-            drop_console: false,
-            drop_debugger:true,
-            dead_code:true,
-            // comparisons: true,
-            // conditionals:true
-            join_vars:true
-          }
-        }),
+        uglifyPlugin,
         new webpack.optimize.DedupePlugin(),
         new StatsPlugin(path.join(__dirname, config.outputFolder, 'stats.json'), { chunkModules: true, profile: true })
       ])
