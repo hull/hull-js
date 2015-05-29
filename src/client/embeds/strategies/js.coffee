@@ -49,5 +49,6 @@ class JSDeploymentStrategy extends BaseDeploymentStrategy
       @ready.promise.then ()=>
         _.map @insertions, (insertion)=>
           callback(insertion.el, @deployment.getPublicData(), @sandbox.hull)
+      .catch throwErr
 
 module.exports = JSDeploymentStrategy
