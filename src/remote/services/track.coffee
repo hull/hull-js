@@ -1,10 +1,11 @@
 assign            = require '../../polyfills/assign'
 # Treasure          = require 'td-js-sdk'
-uuid              = require('../../utils/uuid')
+EventBus          = require '../../utils/eventbus'
+uuid              = require '../../utils/uuid'
 cookies           = require '../../utils/cookies'
 analyticsId       = require '../../utils/analytics-id'
 getWrappedRequest = require '../wrapped-request'
-RemoteUserStore     = require '../../flux/stores/RemoteUserStore'
+RemoteUserStore   = require '../../flux/stores/RemoteUserStore'
 GenericService    = require './generic-service'
 Base64            = require '../../utils/base64'
 
@@ -101,6 +102,8 @@ class HullTrackService extends GenericService
     event = path
 
     @trackEvent(event, params)
+
+    EventBus.emit('remote.tracked',{event,params});
 
     @_request({
       path: 't',
