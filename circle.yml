@@ -5,6 +5,10 @@ deployment:
   releases:
     branch: /release\/.*/
     commands:
+      - ./node_modules/.bin/gulp deploy:release
+  feature:
+    branch: /feature\/.*/
+    commands:
       - ./node_modules/.bin/gulp deploy
 test:
   override:
