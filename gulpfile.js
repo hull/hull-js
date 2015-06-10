@@ -13,6 +13,7 @@ var parallelize      = require("concurrent-transform");
 var gutil            = require("gulp-util");
 var deploy           = require("gulp-gh-pages");
 var notifier         = require("node-notifier");
+var merge            = require('merge-stream');
 
 var ngrok            = require('ngrok');
 var webpack          = require("webpack");
@@ -170,40 +171,48 @@ gulp.task("webpack:server", function() {
   });
 });
 
+var publish = function(versions){
+  var aws = config.aws
+  var publisher = awspublish.create(aws.config);
+  var files  = path.join(config.outputFolder, config.assetsFolder, "*")
+  var streams = [];
+  for (var i = 0; i < versions.length; i++) {
+    var version = versions[i];
+    if(version){
+      console.log('Deploying to ',version);
+      var plain = gulp.src(files)
+      .pipe(rename(function(p){
+        p.dirname += '/'+version;
+        console.log('Publishing '+path.join(p.dirname,p.basename+p.extname))
+      }))
+      var gzip = gulp.src(files)
+      .pipe(rename(function(p){
+        p.dirname += '/'+version;
+        console.log('Publishing '+path.join(p.dirname,p.basename+p.extname))
+      }))
+      .pipe(awspublish.gzip(aws.gzip))
+
+      streams.push(plain);
+      streams.push(gzip);
+    }
+  };
+  return merge.apply(merge,streams)
+  .pipe(parallelize(publisher.publish(aws.publish.headers,aws.publish.options)))
+  .pipe(publisher.cache())
+  .pipe(awspublish.reporter())
+;
+}
+
 // Deploys to S3
 gulp.task('publish',function(){
-  if(!!config.aws){
-    var publisher = awspublish.create(config.aws.config);
-    var publishedFiles  = path.join(config.outputFolder, config.assetsFolder, "*")
-    return gulp.src(publishedFiles)
-    .pipe(rename(function(p){ p.dirname += config.aws.prefix;}))
-    .pipe(parallelize(publisher.publish(config.aws.publish.headers,config.aws.publish.options)))
-    .pipe(awspublish.gzip(config.aws.gzip))
-    .pipe(parallelize(publisher.publish(config.aws.publish.headers,config.aws.publish.options)))
-    .pipe(publisher.cache())
-    .pipe(awspublish.reporter())
-  }
+  var SHA1 = process.env.CIRCLE_SHA1;
+  // if( !SHA1 ){ return; }
+  return publish([SHA1]);
 });
 
-
-
-// gulp.task('release', function(){
-  // TODO
-  // version = 0.9.1
-  // run tests
-  // update package.json to version
-  // create tag on github
-  // publish to aws with:
-    // var aws = config.getAWSConfig(version);
-    // ....
-// })
-
-// gulp.task("jest", function(callback) {
-//     jest.runCLI({ config: jestConfig }, ".", function() {
-//         callback();
-//     });
-// });
-
-// gulp.task("jest:watch", function(){
-//   gulp.watch(["__tests__/**", config.sourceFolder+"/**"], ["jest"]);
-// });
+gulp.task('release',function(){
+  var SHA1 = process.env.CIRCLE_SHA1;
+  var RELEASE = config.pkg.version;
+  // if( !SHA1 || !RELEASE ){ return; }
+  return publish([SHA1,RELEASE]);
+});

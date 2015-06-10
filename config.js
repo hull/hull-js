@@ -39,36 +39,27 @@ var files = {
 var libName = pkg.name;
 var displayName = 'Hull.js';
 
-// Need to find a cool way to define where we're deploying.
-// var v = (process.env.CIRCLE_BRANCH=='master') ? pkg.version : process.env.CIRCLE_SHA1
-var getAWSConfig = function(version){
-  if(version){
-    return {
-      prefix : "/"+version,
-      gzip: { ext:".gz" },
-      config : {
-        "bucket": process.env.AWS_BUCKET,
-        "region": process.env.AWS_REGION,
-        "key"   : process.env.AWS_KEY,
-        "secret": process.env.AWS_SECRET
+var getAWSConfig = function(){
+  return {
+    gzip: { ext:".gz" },
+    config : {
+      "params":{
+        "Bucket": process.env.AWS_BUCKET,
       },
-      publish:{
-        options:{
-          simulate: false,
-        },
-        headers: {
-          "Cache-Control": "max-age=315360000, no-transform, public"
-        }
+      "region": process.env.AWS_REGION,
+      "accessKeyId":process.env.AWS_KEY,
+      "secretAccessKey":process.env.AWS_SECRET
+    },
+    publish:{
+      options:{
+        simulate: false,
+      },
+      headers: {
+        "Cache-Control": "max-age=315360000, no-transform, public"
       }
-    };
-  } else {
-    return null;
-  }
+    }
+  };
 };
-
-var v = process.env.CIRCLE_SHA1;
-var aws = getAWSConfig(v);
-
 
 // ------------------------------------------------
 // ------------------------------------------------
@@ -129,8 +120,7 @@ var externals = {}
 
 module.exports = {
   hotReload          : hotReload,
-  aws                : aws,
-  getAWSConfig       : getAWSConfig,
+  aws                : getAWSConfig(),
   libName            : libName,
   displayName        : displayName,
   version            : pkg.version,
