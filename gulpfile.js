@@ -60,7 +60,8 @@ gulp.task("clean",   function(callback) {del(["./"+config.outputFolder+"/**/*"],
 
 gulp.task("server",  function(callback) {runSequence("clean", "copy-files:watch", "webpack:server", callback); });
 gulp.task("build",   function(callback) {runSequence("clean", "copy-files", "webpack:build", callback); });
-gulp.task("deploy",  function(callback) {runSequence("build", "publish", callback); });
+gulp.task("deploy",  function(callback) {runSequence("build", "publish:sha", callback); });
+gulp.task("deploy:release",  function(callback) {runSequence("build", "publish:release", callback); });
 
 
 var notify = function(message){
@@ -204,13 +205,13 @@ var publish = function(versions){
 }
 
 // Deploys to S3
-gulp.task('publish',function(){
+gulp.task('publish:sha',function(){
   var SHA1 = process.env.CIRCLE_SHA1;
   // if( !SHA1 ){ return; }
   return publish([SHA1]);
 });
 
-gulp.task('release',function(){
+gulp.task('publish:release',function(){
   var SHA1 = process.env.CIRCLE_SHA1;
   var RELEASE = config.pkg.version;
   // if( !SHA1 || !RELEASE ){ return; }
