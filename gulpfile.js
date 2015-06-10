@@ -207,13 +207,13 @@ var publish = function(versions){
 // Deploys to S3
 gulp.task('publish:sha',function(){
   var SHA1 = process.env.CIRCLE_SHA1;
-  // if( !SHA1 ){ return; }
+  if( !SHA1 ){ return; }
   return publish([SHA1]);
 });
 
 gulp.task('publish:release',function(){
   var SHA1 = process.env.CIRCLE_SHA1;
   var RELEASE = config.pkg.version;
-  // if( !SHA1 || !RELEASE ){ return; }
+  if( !SHA1 || !RELEASE ){ return; }
   return publish([SHA1,RELEASE]);
 });
