@@ -37,9 +37,10 @@ var ngrokServe = function(subdomain){
   var env = process.env;
   if (env.NGROK_AUTHTOKEN) {
     options.authtoken = env.NGROK_AUTHTOKEN;
-  }
-  if(env.NGROK_SUBDOMAIN || subdomain){
-    options.subdomain = (env.NGROK_SUBDOMAIN || subdomain).replace(/-/g,'');
+
+    if(env.NGROK_SUBDOMAIN || subdomain){
+      options.subdomain = (env.NGROK_SUBDOMAIN || subdomain).replace(/-/g,'');
+    }
   }
   ngrok.connect(options, function (error, url) {
     if (error) {
