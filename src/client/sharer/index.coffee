@@ -26,11 +26,7 @@ popup = (location, opts={}, params={})->
 
 class Sharer
 
-  constructor: (api, auth, currentUser, data, config)->
-    @api = api
-    @auth = auth
-    @currentUser = currentUser
-    @data = data
+  constructor: (config)->
     @config = config
 
   share: (opts, event={})=>
@@ -51,12 +47,11 @@ class Sharer
     # 2. Find url from Click Targt
     # 3. Ship container node
 
-    opts.params.url ||= findUrl(event.target)
+    opts.params.url = opts.params.url || opts.params.href || findUrl(event.target)
 
     # Extract campaign tags from sharing hash
     tags = opts.tags
     delete opts.tags
-
 
     params = assign({
       platform_id: @config.appId
@@ -65,7 +60,7 @@ class Sharer
     # debugger
     # return
 
-    sharePromise = popup(this.config.orgUrl + "/api/v1/intent/share/" + opts.provider, { width: 550, height: 420}, params)
+    sharePromise = popup(@config.orgUrl + "/api/v1/intent/share/" + opts.provider, { width: 550, height: 420}, params)
 
     sharePromise.then (response)=>
       EventBus.emit("hull.#{opts.provider}.share", {params,response})
