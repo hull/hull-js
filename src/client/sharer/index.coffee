@@ -1,6 +1,7 @@
 _        = require '../../utils/lodash'
 findUrl  = require '../../utils/find-url'
 assign      = require '../../polyfills/assign'
+domWalker = require '../../utils/dom-walker'
 
 to_qs = (params)->
   _.map params, (v,k) ->
@@ -47,7 +48,11 @@ class Sharer
     # 2. Find url from Click Targt
     # 3. Ship container node
 
-    opts.params.url = opts.params.url || opts.params.href || findUrl(event.target)
+    opts.params.url = opts.params.url || opts.params.href
+
+    if (!opts.params.url)
+      opts.params.url = findUrl(event.target)
+      opts.params.title = opts.params.title || domWalker.getMetaValue('og:title') || document.title
 
     # Extract campaign tags from sharing hash
     tags = opts.tags
