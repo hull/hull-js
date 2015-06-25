@@ -49,6 +49,7 @@ class Client
       track          : tracker.track
       flag           : flag
       traits         : traits
+      trait          : traits
       share          : sharer.share
       findUrl        : findUrl
 
