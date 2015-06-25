@@ -32,31 +32,33 @@ initializePlatform = require './client/initialize-platform'
  * @return {object}                     the Hull object
 ###
 onInitSuccess = (userSuccessCallback, hull, data)->
-  userSuccessCallback = userSuccessCallback || ->
+
   {me, app, org} = data
+
+  # We're on the client.
+  delete hull.initRemote
+
+  # Execute Hull.init callback
+  ready.resolve {hull, me, app, org}
+
+  # Everything went well, call the init callback
+  userSuccessCallback(hull, me, app, org) if userSuccessCallback
 
   embeds.initialize({ org });
   hull.embed = embeds.embed
   hull.onEmbed = embeds.onEmbed
 
-  # We're on the client.
-  delete hull.initRemote
-
   # Prune init queue
   Pool.run('track', hull)
-
-  # Execute Hull.init callback
-  ready.resolve {hull, me, app, org}
 
   EventBus.emit('hull.ready', hull, me, app, org)
   EventBus.emit('hull.init', hull, me, app, org)
   logger.log("Hull.js version \"#{hull.version}\" started")
 
-  # Do Hull.embed(platform.deployments) automatically
-  embeds.embed(app.deployments,{},onEmbedComplete, onEmbedError) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
-
-  # Everything went well, call the init callback
-  userSuccessCallback(hull, me, app, org)
+  polyfill.fill(hull.config()).then ()->
+      # Load polyfills
+    # Do Hull.embed(platform.deployments) automatically
+    embeds.embed(app.deployments,{},onEmbedComplete, onEmbedError) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
 
   hull
 
@@ -111,9 +113,7 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
     ready.reject(err)
 
   # Ensure we have everything we need before starting Hull
-  configCheck(config).then ()->
-    # Load polyfills
-    polyfill.fill(config)
+  configCheck(config)
   .then ()=>
     # Create the communication channel with Remote
     channel = new Channel(config, currentUser)
