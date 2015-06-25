@@ -1,4 +1,3 @@
-polyfill          = require './utils/load-polyfills'
 EventBus          = require './utils/eventbus'
 logger            = require './utils/logger'
 ConfigNormalizer  = require './utils/config-normalizer'
