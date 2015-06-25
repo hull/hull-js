@@ -1,17 +1,12 @@
-_        = require '../../utils/lodash'
-findUrl  = require '../../utils/find-url'
-assign      = require '../../polyfills/assign'
+_         = require '../../utils/lodash'
+findUrl   = require '../../utils/find-url'
+assign    = require '../../polyfills/assign'
 domWalker = require '../../utils/dom-walker'
-
-to_qs = (params)->
-  _.map params, (v,k) ->
-    encodeURIComponent(k)+'='+encodeURIComponent(v)
-  .join('&')
+qs        = require '../../utils/query-string-encoder'
 
 popup = (location, opts={}, params={})->
   return unless location?
-  querystring = to_qs(params)
-  share = window.open("#{location}?#{querystring}", 'hull_share', "location=0,status=0,width=#{opts.width},height=#{opts.height}")
+  share = window.open("#{location}?#{qs.encode(params)}", 'hull_share', "location=0,status=0,width=#{opts.width},height=#{opts.height}")
   new Promise (resolve, reject)->
     interval = setInterval ->
       try
