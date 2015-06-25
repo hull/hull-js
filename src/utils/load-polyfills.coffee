@@ -11,15 +11,8 @@ scriptLoader = require "./script-loader"
 domain = "hull-polyfills.herokuapp.com"
 
 polyfills =
-  "WeakMap"                     : -> window.WeakMap?
-  "Array.prototype.indexOf"     : -> Array.prototype.indexOf?
-  "Array.prototype.map"         : -> Array.prototype.map?
-  "Array.prototype.reduce"      : -> Array.prototype.reduce?
-  "Array.prototype.some"        : -> Array.prototype.some?
   "Function.prototype.bind"     : -> Function.prototype.bind?
-  "Object.keys"                 : -> Object.keys?
   "MutationObserver"            : -> window.MutationObserver?
-  "Object.defineProperty"       : -> Object.defineProperty?
   "URL"                         : -> 
     try
       if window.URL
@@ -31,7 +24,6 @@ polyfills =
   "HTMLImports"                 : ->
     link = document.createElement("link")
     link['import']!=undefined
-  "Element.prototype.classList" : -> document.documentElement.classList?
   "Element.prototype.cloneNode" : -> 
     test = ()->
       test = document.createElement('input')

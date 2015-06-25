@@ -26,7 +26,7 @@ class BaseDeploymentStrategy
   embed        : ()->
   onEmbed      : ()->
   addShipClasses : (el)->
-    el.classList.add("ship-#{@deployment.ship.id}", "ship-deployment-#{@deployment.id}")
+    el.className = "#{el.className} ship-#{@deployment.ship.id} ship-deployment-#{@deployment.id}"
     el.setAttribute('data-hull-deployment', @deployment.id)
     el.setAttribute('data-hull-ship', @deployment.ship.id)
   setupSandbox: (doc) =>
