@@ -13,16 +13,14 @@ popup = (location, opts={}, params={})->
   querystring = to_qs(params)
   share = window.open("#{location}?#{querystring}", 'hull_share', "location=0,status=0,width=#{opts.width},height=#{opts.height}")
   new Promise (resolve, reject)->
-    interval = setInterval ()->
+    interval = setInterval ->
       try
         if share == null || share.closed
           window.clearInterval(interval)
-          resolve({display:"popup"})
+          resolve({})
        catch e
-        1 == 1
+        reject(e)
     , 500
-
-
 
 
 class Sharer
@@ -54,18 +52,12 @@ class Sharer
       opts.params.url = findUrl(event.target)
       opts.params.title = opts.params.title || domWalker.getMetaValue('og:title') || document.title
 
-    # Extract campaign tags from sharing hash
-    tags = opts.tags
-    delete opts.tags
-
     params = assign({
       platform_id: @config.appId
     }, opts.params)
 
-    # debugger
-    # return
-
-    sharePromise = popup(@config.orgUrl + "/api/v1/intent/share/" + opts.provider, { width: 550, height: 420}, params)
+    popupUrl = @config.orgUrl + "/api/v1/intent/share/" + opts.provider
+    sharePromise = popup(popupUrl, { width: 550, height: 420 }, params)
 
     sharePromise.then (response)=>
       EventBus.emit("hull.#{opts.provider}.share", {params,response})

@@ -35,17 +35,8 @@ class Sandbox
     Hull.track(name, event)
 
   share: (opts={}, event={})=>
-
-    event = assign({}, event, {hull_ship_id: @ship.id})
-
-    # We place a fallback for the sharing target event
-    # and pass in the iframe.
-    # This way the Hull.share method will walk from the iframe container up.
-
-    # Enrich UTM Tags Defaults
-    opts.tags = assign({}, opts.tags, {utm_campaign:@ship.name})
-
-    Hull.share(opts,event)
+    opts.params = assign({}, opts.params, { ship_id: @ship.id })
+    Hull.share(opts, event)
 
   getShipClassName : => @shipClassName
 
@@ -107,7 +98,7 @@ class Sandbox
        * @param  {Boolean|Int} interval a refresh interval or 'false'.
        *                                Interval : Autosize every xx milliseconds.
        *                                False    : Turns off autoUpdating immediately.
-       *                                undefined: updates once, stops auto updating  
+       *                                undefined: updates once, stops auto updating
        * @return {Boolean} true to let ships detect if the method has an effect.
       ###
       autoSize : (interval)=>
