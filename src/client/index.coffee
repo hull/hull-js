@@ -26,7 +26,7 @@ class Client
     auth  = new Auth(api)
     tracker = new Tracker(api, @remoteConfig, @config)
 
-    sharer = new Sharer(api, auth, currentUser, @remoteConfig.data, @config)
+    sharer = new Sharer(_.pick(@config, 'appId', 'orgUrl'))
     flag  = new Flag(api)
     traits= new Traits(api)
 

@@ -1,94 +1,27 @@
-_        = require '../../utils/lodash'
-track    = require '../track/index'
-findUrl  = require '../../utils/find-url'
-EventBus = require '../../utils/eventbus'
+_         = require '../../utils/lodash'
+findUrl   = require '../../utils/find-url'
+assign    = require '../../polyfills/assign'
+domWalker = require '../../utils/dom-walker'
+qs        = require '../../utils/query-string-encoder'
 
-FacebookShare = require './facebook'
-EmailShare = require './email'
-TwitterShare = require './twitter'
-GoogleShare = require './google'
-LinkedinShare = require './linkedin'
-WhatsappShare = require './whatsapp'
+popup = (location, opts={}, params={})->
+  return unless location?
+  share = window.open("#{location}?#{qs.encode(params)}", 'hull_share', "location=0,status=0,width=#{opts.width},height=#{opts.height}")
+  new Promise (resolve, reject)->
+    interval = setInterval ->
+      try
+        if share == null || share.closed
+          window.clearInterval(interval)
+          resolve({})
+       catch e
+        reject(e)
+    , 500
 
-# Organization coming from
-# http://www.degordian.com/blog/5-cool-examples-of-utm-tracking/
-#
-# TODO : Define whether if so, how to specify the URL where the User was shen he shared.
-# This can be different from the URL he shared
-
-utm_tags = {
-  # CAMPAIGN MEDIUM (UTM_MEDIUM)
-  # Identifies the way your ad appears on the web page (banner, PR) but I suggest you to use the Medium as you would use it within Google Analytics: Social, cpc, email, etc. This tag is also mandatory.
-  utm_medium   : (opts, config)->
-    ['utm_medium','social']
-
-  # CAMPAIGN SOURCE
-  # This tag is mandatory, it identifies where exactly did your ad appear. That can be a specific portal name, social network name or similar.
-  # TODO: Should we use "facebook" or "platform.name"?
-  # Former is more accurate from GA's point of view. Latter allows to understand where Share comes from.
-  utm_source   : (opts, config)->
-    ['utm_source',opts?.provider?.toLowerCase()]
-
-  # CAMPAIGN NAME (UTM_CAMPAIGN)
-  #  A group of your ads through various mediums (banners, newsletters, articles) that cover the same topic like “Autumn collection 2014” or “Early booking 2015”. This tag is also mandatory.
-  # When coming from a ship, this will be the ship name.
-  # Since it's mandatory, we handle fallback with the platform name.
-  utm_campaign : (opts, config)->
-    ['utm_campaign',config?.platform?.name]
-
-
-  #  CAMPAIGN TERM (UTM_TERM)
-  # This should be the keyword you use for identifying your ad. It will also appear as “keyword” within Google Analytics report.
-  # Further categorize the add with the platform name as a Term, in case it's obscured by the Ship name in utm_campaign
-  utm_term     : (opts, config)->
-    ['utm_term',config?.platform?.name]
-
-  # CAMPAIGN CONTENT (UTM_CONTENT)
-  # This tag is usually used for A/B testing, but it could be used for ad type, market, website language version or any other similar info that will help you distinguish one ad version from another.
-  utm_content  : (opts, config)->
-    id = config.user.get('id')
-
-    if id
-      ['utm_content', id]
-    else
-      []
-
-}
 
 class Sharer
-  constructor : (api, auth, currentUser, data, config)->
-    @api         = api
-    @auth        = auth
-    @currentUser = currentUser
-    @tagConfig   = {
-      platform: data.app || {}
-      org: data.org || {}
-      user: currentUser || {}
-    }
+
+  constructor: (config)->
     @config = config
-
-  # Injects into querystring some more variables
-  addToQueryString : (url, params)->
-    hashtagParts = url.split('#')
-    urlParts = hashtagParts[0].split('?')
-    host = urlParts[0]
-    query = urlParts.slice(1)
-    qs = _.map params, (param)->
-      tuple = _.map param, (v)->encodeURIComponent(v)
-      tuple.join('=')
-    query = query.concat(qs)
-    hashtagParts[0] = "#{host}?#{query.join('&')}"
-    hashtagParts.join('#')
-
-  buildUtmTags: (opts)=>
-    tags = opts.tags || {}
-    # Build UTM Tags from an existing link
-    # Allow User to override some tags.
-    _.reduce utm_tags, (arr, method, tagName)=>
-      tuple = tags[tagName] || method(opts, @tagConfig)
-      arr.push(tuple) if tuple? and tuple[1]!=undefined
-      arr
-    , []
 
   share: (opts, event={})=>
     if !_.isObject(opts)
@@ -108,32 +41,23 @@ class Sharer
     # 2. Find url from Click Targt
     # 3. Ship container node
 
-    opts.params.url ||= findUrl(event.target)
+    opts.params.url = opts.params.url || opts.params.href
 
-    # Extract campaign tags from sharing hash
-    tags = opts.tags
-    delete opts.tags
+    if (!opts.params.url)
+      opts.params.url = findUrl(event.target)
+      opts.params.title = opts.params.title || domWalker.getMetaValue('og:title') || document.title
 
-    # Enrich the Target URL, add UTM tags.
-    # Allow user-defined tags, enrich with automatic ones.
-    # Later iterations will build a short link that will hide this data for us.
-    utmTags = @buildUtmTags(opts)
-    opts.params.url = @addToQueryString(opts.params.url, utmTags)
+    params = assign({
+      platform_id: @config.appId
+    }, opts.params)
 
-    sharePromise = switch opts.provider
-      when 'email'    then new EmailShare(@api, @auth, @currentUser, opts, @config)
-      when 'facebook' then new FacebookShare(@api, @auth, @currentUser, opts, @config)
-      when 'twitter'  then new TwitterShare(@api, @auth, @currentUser, opts, @config)
-      when 'google'   then new GoogleShare(@api, @auth, @currentUser, opts, @config)
-      when 'linkedin' then new LinkedinShare(@api, @auth, @currentUser, opts, @config)
-      when 'whatsapp' then new WhatsappShare(@api, @auth, @currentUser, opts, @config)
-
-    params = opts.params
+    popupUrl = @config.orgUrl + "/api/v1/intent/share/" + opts.provider
+    sharePromise = popup(popupUrl, { width: 550, height: 420 }, params)
 
     sharePromise.then (response)=>
       EventBus.emit("hull.#{opts.provider}.share", {params,response})
       response
     , (err)-> throw err
 
-module.exports = Sharer
 
+module.exports = Sharer
