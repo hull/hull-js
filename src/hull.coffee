@@ -55,8 +55,8 @@ onInitSuccess = (userSuccessCallback, hull, data)->
   EventBus.emit('hull.init', hull, me, app, org)
   logger.log("Hull.js version \"#{hull.version}\" started")
 
-  polyfill.fill(hull.config()).then ()->
-      # Load polyfills
+  polyfillPromise.then ()->
+    # Load polyfills
     # Do Hull.embed(platform.deployments) automatically
     embeds.embed(app.deployments,{},onEmbedComplete, onEmbedError) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
 
@@ -70,6 +70,8 @@ onEmbedComplete = ()->
 
 onEmbedError = (err...)->
   logger.error("Failed embedding Ships", err...)
+
+polyfillPromise = undefined;
 
 ###*
  * Main Hull Entry Point
@@ -115,6 +117,7 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
   # Ensure we have everything we need before starting Hull
   configCheck(config)
   .then ()=>
+    polyfillPromise = polyfill.fill(config)
     # Create the communication channel with Remote
     channel = new Channel(config, currentUser)
     channel.promise
