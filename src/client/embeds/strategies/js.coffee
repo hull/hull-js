@@ -20,11 +20,6 @@ class JSDeploymentStrategy extends BaseDeploymentStrategy
     @elements = []
     @setupSandbox()
 
-    for target in targets
-      el = document.createElement('div')
-      @addInsertion(@insert(el, target))
-
-
     sc = document.querySelector("[data-hull-ship-script=\"#{@deployment.ship.id}\"]");
     if !getScript(@deployment)
       setScript(@deployment, true)
@@ -33,13 +28,20 @@ class JSDeploymentStrategy extends BaseDeploymentStrategy
         'data-hull-ship-script'      : @deployment.ship.id
 
       scriptLoader({src:@deployment.ship.index, attributes})
-      .then @ready.resolve
+      .then ()=>
+        @done(targets)
       .catch throwErr
     else
       new Promise (resolve, reject)=>
-        @ready.resolve()
+        @done(targets)
         resolve()
 
+  done: (targets)=>
+    for target in targets
+      el = document.createElement('div')
+      @addInsertion(@insert(el, target))
+
+    @ready.resolve()
   addInsertion : (el)=>
     @sandbox.addElement(el)
     @insertions.push {el, ready:false, callbacks:[]}
