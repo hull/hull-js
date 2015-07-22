@@ -15,10 +15,10 @@ class Trait
         @set value
 
   inc: (step = 1)->
-    @raw({ name: @name, operation: 'inc', value: value })
+    @raw({ name: @name, operation: 'inc', value: step })
 
   dec: (step = 1)->
-    @raw({ name: @name, operation: 'dec', value: value })
+    @raw({ name: @name, operation: 'dec', value: step })
 
   set: (value)->
     @raw({ name: @name, operation: 'set', value: value })
@@ -32,12 +32,12 @@ module.exports = (api)->
     # We've been passed a Hash, iterate on it to create a trait for each.
     if _.isObject(name)
         # Hull.traits({
-        #   'a_number'  : {value: 20, operation: 'dec'}
-        #   'a_number_2': {value: 20, operation: 'dec'}
+        #   'a_number'  : {value: 20, operation: 'dec'},
+        #   'a_number_2': {value: 20, operation: 'dec'},
         #   'a_number_3', 20
         # });
       _.map name, (value, key)-> new Trait(api, key, value)
     else
       # Hull.traits('a_number', {value: 20, operation: 'dec'});
-      # Hull.traits('a_number' 20);
+      # Hull.traits('a_number', 20);
       new Trait(api, name, value)
