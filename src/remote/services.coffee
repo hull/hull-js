@@ -29,8 +29,8 @@ maybeUpdateUser = (response)->
 class Services
   constructor : (remoteConfig, gateway)->
     RemoteActions.updateUser(remoteConfig.data.me) if (remoteConfig.data.me)
-    gateway.after(maybeUpdateUser)
     gateway.before(handleSpecialRoutes)
+    gateway.before(maybeUpdateUser)
 
     @services = _.reduce ServiceList, (memo,Service,key)->
       memo[key] = new Service(remoteConfig,gateway)

@@ -32,6 +32,8 @@ class Api
     p = new Promise (resolve, reject)=>
 
       onSuccess = (res={})=>
+        # intercept calls and update current user
+        @updateCurrentUser(res.body, res.headers);
         @updateCurrentUserCookies(res.headers, res.provider)
         callback(res.body)
         resolve(res.body)
@@ -55,6 +57,14 @@ class Api
         reject(err)
 
       @channel.rpc.refreshUser(onSuccess, onError)
+
+  updateCurrentUser: (user={}, headers={})=>
+    header = headers?['Hull-User-Id']
+    if header && user?.id == header
+      @currentUser.update(user)
+    else if !header && @currentUser.get('id')
+      # No header. we're logged out.
+      @currentUser.update(null)
 
   updateCurrentUserCookies: (headers, provider)=>
     @currentUser.updateCookies(headers, @config.appId) if (headers? and provider == 'hull')
