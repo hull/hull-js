@@ -76,7 +76,14 @@ var RemoteHeaderStore = assign({}, EventEmitter.prototype, {
         var id = action.data.headers && action.data.headers[USER_ID_HEADER];
         if (id){
           setHeader(USER_ID_HEADER, id)
-          if (!RemoteUserStore.isSameId(id)) {
+
+          // If the call returns the current a user profile 
+          if (RemoteUserStore.isSameId(id)) {
+            // If we have an access token in there, update it.
+            if(action.data.body && action.data.body.access_token){
+              setHeader(ACCESS_TOKEN_HEADER, action.data.body.access_token)
+            }
+          } else {
             destroyHeader(ACCESS_TOKEN_HEADER);
           }
           RemoteHeaderStore.emitChange(action.actionType);
