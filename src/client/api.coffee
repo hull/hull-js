@@ -60,11 +60,7 @@ class Api
 
   updateCurrentUser: (user={}, headers={})=>
     header = headers?['Hull-User-Id']
-    if header && user?.id == header
-      @currentUser.update(user)
-    else if !header && @currentUser.get('id')
-      # No header. we're logged out.
-      @currentUser.update(null)
+    @currentUser.update(user) if header && user?.id == header
 
   updateCurrentUserCookies: (headers, provider)=>
     @currentUser.updateCookies(headers, @config.appId) if (headers? and provider == 'hull')
