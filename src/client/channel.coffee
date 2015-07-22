@@ -64,13 +64,13 @@ class Channel
     @promise = new Promise (resolve, reject)=>
       @_ready.resolve = resolve
       @_ready.reject = reject
-    @onDomReady()
+    domready(@onDomReady)
 
   onDomReady : ()=>
     @timeout = setTimeout(@loadingFailed, 30000);
     @rpc = new xdm.Rpc
       remote    : getRemoteUrl(@config)
-      container : document.head
+      container : document.body
       channel   : @config.appId
       props     : rpcFrameInitStyle
     ,
