@@ -202,7 +202,7 @@ var publish = function(versions){
   };
 
   var invalidationBatch = {
-    CallerReference: new Date().now().toString(),
+    CallerReference: new Date().toString(),
     Paths:{
       Quantity:1,
       Items:cloudfrontInvalidations
