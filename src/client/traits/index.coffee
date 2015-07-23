@@ -34,10 +34,14 @@ module.exports = (api)->
         # Hull.traits({
         #   'a_number'  : {value: 20, operation: 'dec'},
         #   'a_number_2': {value: 20, operation: 'dec'},
-        #   'a_number_3', 20
+        #   'a_number_3': 20
         # });
       _.map name, (value, key)-> new Trait(api, key, value)
+      Hull.emit('hull.traits',name)
     else
       # Hull.traits('a_number', {value: 20, operation: 'dec'});
       # Hull.traits('a_number', 20);
+      traits = {}
+      traits[name] = value
+      Hull.emit('hull.traits',traits)
       new Trait(api, name, value)
