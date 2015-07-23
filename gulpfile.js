@@ -12,7 +12,7 @@ var rename           = require("gulp-rename");
 var parallelize      = require("concurrent-transform");
 var gutil            = require("gulp-util");
 var deploy           = require("gulp-gh-pages");
-var cloufront        = require('gulp-invalidate-cloudfront');
+var cloudfront       = require('gulp-invalidate-cloudfront');
 var notifier         = require("node-notifier");
 var merge            = require('merge-stream');
 
