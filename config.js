@@ -48,7 +48,15 @@ var getAWSConfig = function(){
       },
       "region": process.env.AWS_REGION,
       "accessKeyId":process.env.AWS_KEY,
-      "secretAccessKey":process.env.AWS_SECRET
+      "secretAccessKey":process.env.AWS_SECRET,
+    },
+    cloudfront:{
+      credentials:{
+        "accessKeyId":process.env.AWS_KEY,
+        "secretKeyId":process.env.AWS_SECRET,
+      },
+      distributionId:process.env.CLOUDFRONT_DISTRIBUTION_ID,
+      region:"us-east-1"
     },
     publish:{
       options:{
