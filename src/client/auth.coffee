@@ -4,15 +4,6 @@ _        = require '../utils/lodash'
 logger   = require '../utils/logger'
 EventBus = require '../utils/eventbus'
 isMobile = require '../utils/is-mobile'
-Base64   = require '../utils/base64'
-
-try
-  h = document.location.hash.replace('#', '')
-  if !!h
-    hash = JSON.parse(Base64.decode(h))
-    if window?.opener?.Hull? and window?.opener?.__hull_login_status__ and  !!hash
-      window.opener.__hull_login_status__(hash)
-      window.close()
 
 getNoUserPromise = ()->
   promise = new Promise (resolve, reject)->

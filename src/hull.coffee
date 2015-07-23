@@ -19,6 +19,8 @@ HullRemote  = require './hull-remote'
 embeds      = require './client/embeds'
 scriptTagConfig = require './client/script-tag-config'
 initializePlatform = require './client/initialize-platform'
+decodeHash  = require './utils/decode-hash'
+displayBanner = require './client/ui/display-banner'
 
 ###*
  * Wraps the success callback
@@ -55,6 +57,11 @@ onInitSuccess = (userSuccessCallback, hull, data)->
   # Do Hull.embed(platform.deployments) automatically
   embeds.embed(app.deployments,{},onEmbedComplete, onEmbedError) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
 
+  # {hull:{init:{platform:true}}}
+  hash = decodeHash()
+  if hash?.hull?.init?.platform
+    window.location.hash=""
+    displayBanner('platform')
   # Everything went well, call the init callback
   userSuccessCallback(hull, me, app, org)
 
@@ -69,6 +76,16 @@ onEmbedComplete = ()->
 onEmbedError = (err...)->
   logger.error("Failed embedding Ships", err...)
 
+parseHash = ()->
+  return if window.location.href.match('//.+\.hullapp\.io/.+/remote.html') # prevent this when in remote.html
+  hash = decodeHash()
+  if hash?.success && hash?.token
+    if window?.opener?.Hull? and window?.opener?.__hull_login_status__ and !!hash
+      window.opener.__hull_login_status__(hash)
+      window.close()
+
+parseHash()
+
 ###*
  * Main Hull Entry Point
  *
@@ -79,6 +96,7 @@ onEmbedError = (err...)->
  * @return {[type]}                     [description]
 ###
 init = (config={}, userSuccessCallback, userFailureCallback)->
+
   if !!hull._initialized
     throw new Error('Hull.init can be called only once')
     return
@@ -137,6 +155,8 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
     onInitSuccess(userSuccessCallback, client.hull, data)
   , throwErr
   .catch throwErr
+
+
 
 ready = {}
 ready.promise = new Promise (resolve, reject)=>
