@@ -1,0 +1,15 @@
+machine:
+  node:
+    version: 0.10.24
+deployment:
+  releases:
+    branch: /release\/.*/
+    commands:
+      - ./node_modules/.bin/gulp deploy:release
+  feature:
+    branch: /feature\/.*/
+    commands:
+      - ./node_modules/.bin/gulp deploy
+test:
+  override:
+    - echo "OK"

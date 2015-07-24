@@ -1,0 +1,11 @@
+{
+  "displayName": "Hull.js",
+  "index": "dist/index.html",
+  "version": "0.9.0",
+  "index": "index.html",
+  "demoKeys":{
+    "appId": "52fb86bedea4dfd8de000003",
+    "orgUrl": "https://super.hullbeta.io"
+  },
+  "settings": []
+}

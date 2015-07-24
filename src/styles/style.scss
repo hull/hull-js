@@ -1,0 +1,382 @@
+@mixin reset(){
+  div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, div.form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary, time, mark, audio, video, button, textarea, input, input[type]{
+    alignment-adjust:auto;
+    alignment-baseline:baseline;
+    animation-play-state:running;
+    animation:none 0 ease 0 1 normal;
+    appearance:normal;
+    azimuth:center;
+    backface-visibility:visible;
+    background-color:transparent;
+    background-image:none;
+    background:none 0 0 auto repeat scroll padding-box transparent;
+    baseline-shift:baseline;
+    binding:none;
+    bleed:6pt;
+    bookmark-label:content();
+    bookmark-level:none;
+    bookmark-state:open;
+    bookmark-target:none;
+    border-radius:0;
+    border:0 none transparent;
+    bottom:auto;
+    box-align:stretch;
+    box-decoration-break:slice;
+    box-direction:normal;
+    box-flex-group:1;
+    box-flex:0.0;
+    box-lines:single;
+    box-ordinal-group:1;
+    box-orient:inline-axis;
+    box-pack:start;
+    box-shadow:none;
+    box-sizing:content-box;
+    break-after:auto;
+    break-before:auto;
+    break-inside:auto;
+    caption-side:top;
+    clear:none;
+    clip:auto;
+    color-profile:auto;
+    color:inherit;
+    column-count:auto;
+    column-fill:balance;
+    column-gap:normal;
+    column-rule:medium medium #1f1f1f;
+    column-span:1;
+    column-width:auto;
+    columns:auto auto;
+    content:normal;
+    counter-increment:none;
+    counter-reset:none;
+    crop:auto;
+    cursor:auto;
+    direction:ltr;
+    display:inline;
+    dominant-baseline:auto;
+    drop-initial-after-adjust:text-after-edge;
+    drop-initial-after-align:baseline;
+    drop-initial-before-adjust:text-before-edge;
+    drop-initial-before-align:caps-height;
+    drop-initial-size:auto;
+    drop-initial-value:initial;
+    elevation:level;
+    empty-cells:show;
+    filter:progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    fit-position:0 0;
+    fit:fill;
+    float-offset:0 0;
+    float:none;
+    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size-adjust:none;
+    font-size:100%;
+    font-stretch:normal;
+    font-style:normal;
+    font-variant:normal;
+    font-weight:400;
+    font:normal normal 100% "Helvetica Neue", Helvetica, Arial, sans-serif;
+    grid-columns:none;
+    grid-rows:none;
+    hanging-punctuation:none;
+    height:auto;
+    hyphenate-after:auto;
+    hyphenate-before:auto;
+    hyphenate-character:auto;
+    hyphenate-lines:no-limit;
+    hyphenate-resource:none;
+    hyphens:manual;
+    icon:auto;
+    image-orientation:auto;
+    image-rendering:auto;
+    image-resolution:normal;
+    inline-box-align:last;
+    left:auto;
+    letter-spacing:normal;
+    line-height:inherit;
+    line-stacking:inline-line-height exclude-ruby consider-shifts;
+    list-style:disc outside none;
+    margin:0;
+    marks:none;
+    marquee-direction:forward;
+    marquee-loop:1;
+    marquee-play-count:1;
+    marquee-speed:normal;
+    marquee-style:scroll;
+    max-height:none;
+    max-width:none;
+    min-height:0;
+    min-width:0;
+    move-to:normal;
+    nav-down:auto;
+    nav-index:auto;
+    nav-left:auto;
+    nav-right:auto;
+    nav-up:auto;
+    opacity:1;
+    orphans:2;
+    outline-offset:0;
+    outline:invert none medium;
+    overflow-style:auto;
+    overflow:visible;
+    padding:0;
+    page-break-after:auto;
+    page-break-before:auto;
+    page-break-inside:auto;
+    page-policy:start;
+    page:auto;
+    perspective-origin:50% 50%;
+    perspective:none;
+    position:static;
+    presentation-level:0;
+    punctuation-trim:none;
+    quotes:none;
+    rendering-intent:auto;
+    resize:none;
+    right:auto;
+    rotation-point:50% 50%;
+    rotation:0;
+    ruby-align:auto;
+    ruby-overhang:none;
+    ruby-position:before;
+    ruby-span:none;
+    size:auto;
+    string-set:none;
+    table-layout:auto;
+    text-align-last:start;
+    text-align:start;
+    text-decoration:none;
+    text-emphasis:none;
+    text-height:auto;
+    text-indent:0;
+    text-justify:auto;
+    text-outline:none;
+    text-shadow:none;
+    text-transform:none;
+    text-wrap:normal;
+    top:auto;
+    transform-origin:50% 50% 0;
+    transform-style:flat;
+    transform:none;
+    transition:all 0 ease 0;
+    unicode-bidi:normal;
+    vertical-align:baseline;
+    white-space-collapse:collapse;
+    white-space:normal;
+    widows:2;
+    width:auto;
+    word-break:normal;
+    word-spacing:normal;
+    word-wrap:normal;
+    z-index:auto;
+  }
+
+  address,
+  article,
+  aside,
+  blockquote,
+  canvas,
+  center,
+  dd,
+  details,
+  dir,
+  div,
+  div.form,
+  dl,
+  dt,
+  fieldset,
+  figcaption,
+  figure,
+  footer,
+  form,
+  frame,
+  frameset,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  header,
+  hgroup,
+  hr,
+  menu,
+  menu,
+  nav,
+  noframes,
+  ol,
+  p,
+  pre,
+  section,
+  summary,
+  ul {
+    display: block;
+  }
+
+  li {
+    display: list-item;
+  }
+
+  table {
+    display: table;
+  }
+
+  tr {
+    display: table-row;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tbody {
+    display: table-row-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+
+  col {
+    display: table-column;
+  }
+
+  colgroup {
+    display: table-column-group;
+  }
+
+  td,
+  th {
+    display: table-cell;
+  }
+
+  caption {
+    display: table-caption;
+  }
+
+  input,
+  select {
+    display: inline-block;
+  }
+
+  b,
+  strong {
+    font-weight: bold;
+  }
+
+  textarea,
+  input {
+    cursor: text;
+  }
+
+  textarea::-webkit-input-placeholder,
+  input::-webkit-input-placeholder {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size-adjust: none;
+    font-size: 100%;
+    font-style: normal;
+    letter-spacing: normal;
+    font-stretch: normal;
+    font-variant: normal;
+    font-weight: normal;
+    font: normal normal 100% "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-align: left;
+    text-align-last: start;
+    text-decoration: none;
+    text-emphasis: none;
+    text-height: auto;
+    text-indent: 0;
+    text-justify: auto;
+    text-outline: none;
+    text-shadow: none;
+    text-transform: none;
+    text-wrap: normal;
+    background-color: inherit;
+    color: inherit;
+  }
+
+  textarea::-moz-placeholder,
+  input::-moz-placeholder {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size-adjust: none;
+    font-size: 100%;
+    font-style: normal;
+    letter-spacing: normal;
+    font-stretch: normal;
+    font-variant: normal;
+    font-weight: normal;
+    font: normal normal 100% "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-align: left;
+    text-align-last: start;
+    text-decoration: none;
+    text-emphasis: none;
+    text-height: auto;
+    text-indent: 0;
+    text-justify: auto;
+    text-outline: none;
+    text-shadow: none;
+    text-transform: none;
+    text-wrap: normal;
+    background-color: inherit;
+    color: inherit;
+  }
+
+  textarea:-ms-input-placeholder,
+  input:-ms-input-placeholder {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size-adjust: none;
+    font-size: 100%;
+    font-style: normal;
+    letter-spacing: normal;
+    font-stretch: normal;
+    font-variant: normal;
+    font-weight: normal;
+    font: normal normal 100% "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-align: left;
+    text-align-last: start;
+    text-decoration: none;
+    text-emphasis: none;
+    text-height: auto;
+    text-indent: 0;
+    text-justify: auto;
+    text-outline: none;
+    text-shadow: none;
+    text-transform: none;
+    text-wrap: normal;
+    background-color: inherit;
+    color: inherit;
+  }
+
+  input[type=checkbox],
+  input[type=radio] {
+    cursor: default;
+  }
+
+  a,
+  a *,
+  a span,
+  button,
+  button *,
+  button span,
+  input[type=submit],
+  input[type=reset] {
+    cursor: pointer;
+  }
+
+  a:active
+  a:hover,
+  a:link,
+  a:visited {
+    color: inherit;
+    background: transparent;
+    text-shadow: none;
+  }
+
+  button::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+  }
+}
+
+.hull-reset.hull-reset{
+  @include reset();
+}
