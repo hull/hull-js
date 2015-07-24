@@ -42,14 +42,6 @@ var RemoteUserStore = assign({}, EventEmitter.prototype, {
           RemoteUserStore.emitChange(action.actionType);
         }
         break;
-
-      case RemoteConstants.UPDATE_USER_IF_ME:
-        // Updates a User if it's a Me request.
-        if(action.data.body && action.data.body.id && isSameId(action.data.body.id) && !isUpToDate(action.data.body)){
-          state.user = action.data.body
-          RemoteUserStore.emitChange(action.actionType);
-        }
-        break;
     }
     return true;
   })
