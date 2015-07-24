@@ -1,10 +1,167 @@
-# 0.8.48
+# 0.9.0
 
-* FB share dialog use API endopoint for redirect_uri
+* COMPLETE REWRITE OF THE LIBRARY.
+* Gets rid of legacy methods
+* Not dependent on jQuery or Aura.js anymore. Now only 44kb, much faster.
+* Fully promise-ified. Every data call returns a promise
+* Implements Smart login and Share strategy depending on device (popup or redirects)
 
-# 0.8.47
+--------- 
+### Ships
+[Compatiblity Table](https://docs.google.com/spreadsheets/d/13lwZP8XmhIBA84bpmKd-96nC9nE9tQaM0c0WgyQNHXI/edit#gid=0.8)
 
-* Auto add utm_ tags to shared links
+### New
+
+Allow Initializing hull automatically with attributes in the `SCRIPT` tag,
+Supported tags : 
+```
+platform-id : platform ID
+org-url : organization URL
+debug : debug mode
+verbose : verbose mode (when debug=true, logs even more stuff)
+js-url : specify Hull Remote Url (automatically specified if using snippet)
+embed : true|false //perform Hull.embed on init. Default: true 
+access-token :an Access token to use to log the user in.
+proxy-mode [undocumented]
+```
+
+For this to work, the `hull.js` script tag needs to have `id='hull-js-sdk'`
+
+#### `Hull.share` and `Hull.findUrl(node)`
+These methods now try really hard to find a URL to share or to target, by traversing the DOM upwards for the closest matching `hull-link` or `href` attribute, looking for siblings at each level up to `body`. If not found, searches for `og:url` else, fallbacks to the window URL.
+
+**Note** : In Sandboxed Ships, this method will start looking OUTSIDE the ship. No point in performing a lookup on Document parts the Ship author built.
+
+--------- 
+
+### Removed
+#### `Hull.utils.entity.[encode|decode]()`
+_Use `Hull.entity.[encode|decode]`_
+#### `Hull.api[get|put|post|delete]()`
+_Use `Hull.api(path,method)`_
+#### `Hull.api.parseRoute()`
+_Should not have been exposed in the first place._
+#### `Hull.api.clearToken()`
+_Removed_
+#### `Hull.api.init()`
+_Removed [Was undocumented]_
+#### `hull.init` event
+_Please use `hull.ready` instead_
+
+--------- 
+
+### Deprecated
+
+#### `Hull.init(config, callback)`
+We're phasing out in favor of auto-initialized code, You can get the same results by using `Hull.ready(callback)` which has the benefit of allowing multiple calls.
+
+--------- 
+
+### Changed
+
+##### Events
+* `hull.ready` event now returns `hull, me, platform, org`
+* `hull.auth.update`, `hull.auth.login`, `hull.auth.logout`, `hull.auth.create` events are renamed `hull.user.update`, `hull.user.login`, `hull.user.logout`, `hull.user.create` and are emitted more reliably.
+* A `hull.*.share` event is emitted when sharing using a network. an example would be `hull.facebook.share`
+* A `hull.track` event is now emitted every time tracking happens, so you can subscribe to them and implement your own track handlers Hull.on(`hull.track`,{event:[String], data:[Object]});
+* The `jsUrl` entry in the `Hull.init()` configuration hash now takes a full url (I.E. https://d3f5pyioow99x0.cloudfront.net/version/hull.js).
+* Access the event's name from inside the event callback with `this.event`:
+```js
+  Hull.on('hull.ready',function(args...){
+    console.log(this.event) //  "hull.ready"
+  })
+```
+* `Hull.currentUser()` accepts a parameter, will return the field value. Only works with 1 level of nesting. No dots. Example: `Hull.currentUser('name')`
+* `Hull.share()` now has the following signature:
+```js
+//Default params.method: 'share'
+Hull.share({provider:'facebook', path:'ui', params:{/*FB.ui params*/}});
+//https://developers.facebook.com/docs/javascript/reference/FB.ui/
+
+Hull.share({provider:'linkedin', params:{url: "http://example.com", title: "So Cool", source:'My App'}});
+//https://developer.linkedin.com/docs/share-on-linkedin
+
+//Default path : 'tweet'
+Hull.share({provider:'twitter', path: 'tweet', params:{url: "http://example.com", message: "So Cool"}});
+//https://dev.twitter.com/web/intents
+//https://dev.twitter.com/web/tweet-button/web-intent
+//https://dev.twitter.com/web/follow-button/web-intent
+
+Hull.share({provider:'email', params:{subject:'This is really cool', body:"This works well", to:'romain@hull.io' }})
+
+Hull.share({provider:'google'}) //Shares og:url or window.location
+Hull.share({provider:'google', params:{url:'http://example.com'}}) //Shares example.com
+
+```
+
+##### Methods
+
+###### `Hull.login()`, `Hull.logout()`, `Hull.linkIdentity()`, `Hull.unlinkIdentity()` 
+All those now return promises. When using Promises, please don't forget to add `.catch()` on your promise chain, so errors are not swallowed without notice.
+
+These methods have the following signatures :
+
+```js
+Hull.login({provider:'xxxx',params:{...}}, callback, errback)
+Hull.login({provider:'facebook',access_token:'xxx'}, callback, errback)
+Hull.login({login:'xxx', password:'xxx',params:{...}},callback, errback)
+Hull.logout(callback, errback)
+Hull.linkIdentity({provider:'xxxx',params:{...}}, callback, errback)
+Hull.linkIdentity({login:'xxx', password:'xxx',params:{...}}, callback, errback)
+Hull.signup({facebook:{access_token:'xxxx'}}, callback, errback)
+Hull.unlinkIdentity({provider:'xxxx',params:{...}}, callback, errback)
+```
+
+###### `Hull.ready(callback)`
+returns a promise. Please end with `.done()` here too.
+
+###### `Hull.embed(deploymentsArray)` and `Hull.onEmbed(callback)` 
+New methods for Ship Deployment. Ships can be either HTML Imports or `.js` files. They need to call `Hull.onEmbed(document, callback)`.
+`callback` has the follwing signature : 
+
+```js
+function callback(element, deployment, hull){
+  //element == domElement
+  //deployment = {
+  //  org : {}
+  //  settings: {}
+  //  platform: {}
+  //  ship : {}
+  //}
+  //hull = {local Hull instance, scoped to the current Ship}
+}
+```
+
+
+###### `Hull.getDocument()`
+From inside a ship, gets the HTMLImport `document`. Useful to manipulate import content and add stylesheets to: They will be scoped automatically
+
+###### `Hull.getShipClassName()`
+Returns a string in the form `.ship-SHIP_ID` that you can use to find all instances of this ship, or to prefix CSS and scope styles inside it. We use this internally to automatically prefix all CSS injected in the HTML Import and inside the instanciated ship's tree.
+
+###### `Hull.setSize({width,height})`
+From inside a sandboxed ship to allow setting container size 
+
+###### `Hull.autoSize(int|undefined|false)`
+Recalculates iframe height to fit content without scrolling.
+* If value == `INTEGER` then recalculates automatically every `INTEGER` milliseconds
+* If value == `undefined`, recalculates once, and stops timers.
+* If value == `false` then stops timers and does not resize one last time
+* Automatically called when a Sandboxed ship is booted, every 300ms. Disable by calling `Hull.autoSize(false)` from the ship
+
+###### `Hull.setStyle({style_hash})`
+From inside a sandboxed ship to allow setting ship style (Useful to manage modals)
+
+###### `Hull.utils`
+Expose our internal utils, containing several libraries. We could change those at any time but we thought you might be happy to avoid embedding them too if it was a fit.
+
+###### `'on', 'onAny', 'offAny', 'once', 'many', 'off', 'emit'`
+Expose more event methods (we're using [EventEmitter2](https://github.com/asyncly/EventEmitter2), refer to their docs for signature)
+
+### Fixed
+
+* `Hull.currentUser()` from inside the promise or callback of a User-changing method such as `Hull.logout` now properly returns the right user status
+
 
 # 0.8.46
 

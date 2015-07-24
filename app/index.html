@@ -3,71 +3,19 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <link href="//hls3.s3.amazonaws.com/stylesheets/hullstrap.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="//neuestrap.s3.amazonaws.com/releases/neue/b18eaf457f93592526b33ca0f966668a91628036/stylesheets/neue.css" media="screen" rel="stylesheet" type="text/css" />
 
-    <title>Hull App...</title>
-    <script src="//code.jquery.com/jquery-1.8.3.js"></script>
-    <script src="/dist/current/hull.js"></script>
-    <script src="app.js"></script>
+    <title>Hull JS Library</title>
+    <script
+      src="hull.js"
+      id="hull-js-sdk"
+      platform-id="550aa67c96f452f4c4000bea"
+      org-url="https://hull-demos.hullapp.io"></script>
   </head>
   <body>
-    <div class="container-fluid mt-1">
-      <div class="row-fluid">
-        <div class="col-sm-12">
-          <h1>Share</h1>
-          <a href="" class="btn btn-sm btn-default tweet">Tweet</a>
-          <a href="" class="btn btn-sm btn-default share_facebook">Share to Facebook</a>
-          <a href="" class="btn btn-sm btn-default feed_facebook">Feed to Facebook</a>
-          <hr>
-          <h1>Social</h1>
-          <a href="" class="btn btn-sm btn-default login_facebook">Auto, Display=Page, Additional Perms</a>
-
-          <h3>Popup</h3>
-          <a href="" class="btn btn-sm btn-default login_facebook_popup">Popup, Additional Perms</a>
-          <a href="" class="btn btn-sm btn-default login_facebook_popup_redirect">Popup, Callback to hull.io</a>
-          <hr>
-
-          <h3>Redirect</h3>
-          <a href="" class="btn btn-sm btn-default login_facebook_redirect_auto">Redirect</a>
-          <a href="" class="btn btn-sm btn-default login_facebook_redirect">Redirect to hull.io</a>
-          <hr>
-
-          <h1>Email</h1>
-          <a href="" class="btn btn-sm btn-default login_email">Auto</a>
-          <a href="" class="btn btn-sm btn-default login_email_ajax">Ajax</a>
-          <a href="" class="btn btn-sm btn-default login_email_redirect">Redirect to hull.io</a>
-
-          <hr>
-          <a href="" class="btn btn-sm btn-default link_twitter">Link Identity Twitter</a>
-          <a href="" class="btn btn-sm btn-default logout">Logout</a>
-        </div>
-      </div>
-
-      <hr />
-
-      <div class="row">
-        <div class="col-sm-12" data-hull-component="login/profile"></div>
-      </div>
-
-      <hr />
-
-      <div class="row">
-        <div class="col-sm-12">
-          <form action="login">
-            <input type="text" name="redirect_url" placeholder="Redirect URL" />
-            <input type="text" name="login" placeholder="Login" />
-            <input type="password" name="password" placeholder="Password" />
-            <input type="submit" >
-          </form>
-        </div>
-      </div>
-
-      <hr />
-
-      <div class="row">
-        <div class="col-sm-12">
-          <div class="log well"></div>
-        </div>
+    <div className="container-fluid mt-1">
+      <div className="row">
+          <a href="#" id="share">Share</a>
       </div>
     </div>
   </body>

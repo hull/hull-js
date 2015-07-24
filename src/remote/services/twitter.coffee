@@ -1,3 +1,10 @@
-define ['lib/remote/services/proxy'], (proxy)->
-  initialize: (app)->
-    app.core.routeHandlers.twitter = proxy { name: 'twitter', path: 'twitter/1.1' }, app.core.handler
+GenericService    = require './generic-service'
+
+class TwitterService extends GenericService
+  name : 'twitter'
+  path: 'twitter/1.1'
+  constructor: (config, gateway)->
+    super(config,gateway)
+    @request = @wrappedRequest
+
+module.exports = TwitterService

@@ -1,23 +1,28 @@
-define ['jquery-jsonp'], (jsonp)->
-  initialize: (app)->
-    app.core.routeHandlers.angellist = (req, callback, errback) ->
-      path = req.path
-      path = path.substring(1) if (path[0] == "/")
-      req_data = req.params
+assign            = require '../../polyfills/assign'
+GenericService    = require './generic-service'
 
-      return failure('Can only handle GET requests') unless req.method.toLowerCase() == 'get'
+class AngelListService  extends GenericService
+  name : 'angellist'
+  path : 'angellist'
+  constructor: (config, gateway)->
 
-      #TODO Double check this
-      req_data.access_token = app.core.settings().auth.angellist?.token
+  request: (request, callback, errback)->
+    {method, path, params} = request
+    method = method.toLowerCase()
+    return errback('Unable to perform non-GET requests on AngelList') unless method=='get'
 
-      request = jsonp
-        url: "https://api.angel.co/1/#{path}"
-        data: req_data
-        callbackParameter: 'callback'
+    token = @getSettings()
+    path   = path.substring(1) if (path[0] == "/")
 
-      request.then (response)->
-        callback({ response: response, provider: 'angellist' })
-      , (err)-> errback(er.url)
+    params = 
+      url  : "https://api.linkedin.com/v1/#{path}"
+      data : assign({}, params, {access_token : @token.access_token})
+      error:   (err)-> errback(err.url)
+      success: (response)->
+        callback
+          body: response.data
+          provider: @name
+    @request_jsonp(params)
 
-      return
- 
+
+module.exports = AngelListService

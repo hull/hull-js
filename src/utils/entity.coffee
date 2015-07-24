@@ -1,8 +1,11 @@
-define ['underscore', 'lib/utils/base64'], (_, base64)->
-  decode: (str)->
-    if /^~[a-z0-9_\-\+\/\=]+$/i.test(str) && (str.length - 1) % 4 == 0
-      base64.decode(str.substr(1), true)
-    else
-      str
-  encode: (str)->
-    "~#{base64.encode(str, true)}"
+Base64 = require './base64.js'
+
+module.exports =
+  decode: (input)->
+    unless /^~[a-z0-9_\-\+\/\=]+$/i.test(input)
+      throw "'#{input}' cannot be decoded because it has not been correctly encoded"
+
+    Base64.decodeURL(input.substr(1))
+
+  encode: (input)->
+    "~#{Base64.encodeURL(input)}"

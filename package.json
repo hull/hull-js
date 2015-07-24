@@ -1,46 +1,81 @@
 {
   "name": "hull-js",
-  "version": "0.8.48",
+  "version": "0.9.0",
+  "main": "lib/hull.js",
+  "dependencies": {
+    "babel-runtime": "^5.4.5",
+    "browser-jsonp": "^1.0.8",
+    "cookies-js": "^1.2.1",
+    "domready": "0.3.0",
+    "es6-promise": "^2.1.1",
+    "eventemitter2": "^0.4.14",
+    "fingerprintjs": "^0.5.3",
+    "flux": "^2.0.1",
+    "gulp-invalidate-cloudfront": "hull/gulp-invalidate-cloudfront",
+    "insert-css": "^0.2.0",
+    "lodash": "^3.3.1",
+    "merge-stream": "^0.1.7",
+    "mutation-summary": "0.0.0",
+    "qs": "^2.3.3",
+    "react": "^0.12.2",
+    "superagent": "^0.21.0",
+    "td-js-sdk": "^1.3.0"
+  },
   "devDependencies": {
-    "grunt": "0.4.2",
-    "grunt-s3": "0.2.0-alpha",
-    "grunt-git-describe": "git://github.com/hull/grunt-git-describe.git",
-    "grunt-contrib-clean": "0.4.0",
-    "grunt-contrib-coffee": "0.4.0",
-    "grunt-contrib-concat": "0.1.2",
-    "grunt-contrib-connect": "0.1.2",
-    "grunt-contrib-handlebars": "0.5.9",
-    "grunt-contrib-requirejs": "0.4.0",
-    "grunt-contrib-uglify": "0.4.0",
-    "grunt-contrib-watch": "0.5.3",
-    "grunt-contrib-symlink": "0.2.0",
-    "grunt-hull-dox": "git://github.com/hull/grunt-hull-dox.git",
-    "grunt-hull-components": "0.2.0-beta",
-    "bower": "1.3.9",
-    "grunt-wrap": "0.2.0",
-    "git-rev": "0.2.1",
-    "grunt-contrib-copy": "0.4.1",
-    "karma": "0.10.9",
-    "karma-mocha": "0.1.1",
-    "grunt-karma": "~0.6.2",
-    "karma-coffee-preprocessor": "0.1.2",
-    "karma-chai": "0.0.2",
-    "karma-chai-sinon": "0.1.0",
-    "karma-spec-reporter": "0.0.6",
-    "semver": "2.2.1",
-    "grunt-bump": "0.0.13",
-    "grunt-invalidate-cloudfront": "0.1.4",
-    "grunt-contrib-cssmin": "0.9.0",
-    "mocha": "1.17.1"
+    "babel": "^5.1.3",
+    "babel-jest": "^5.0.1",
+    "babel-loader": "^5.0.0",
+    "coffee-loader": "^0.7.2",
+    "coffee-script": "^1.9.1",
+    "concurrent-transform": "^1.0.0",
+    "css": "^2.1.0",
+    "del": "^1.1.0",
+    "gulp": "^3.8.10",
+    "gulp-awspublish": "^2.0.2",
+    "gulp-gh-pages": "^0.4.0",
+    "gulp-notify": "^2.2.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-util": "^3.0.6",
+    "harmonize": "^1.4.1",
+    "html-webpack-plugin": "^1.1.0",
+    "jest-cli": "^0.4.0",
+    "moment": "^2.9.0",
+    "ngrok": "^0.1.99",
+    "node-notifier": "^4.1.1",
+    "node-uuid": "^1.4.1",
+    "object-assign": "^2.0.0",
+    "open": "0.0.5",
+    "run-sequence": "^1.0.2",
+    "stats-webpack-plugin": "0.0.1",
+    "webpack": "^1.8.10",
+    "webpack-dev-server": "^1.8.2",
+    "xdm.js": "necolas/xdm.js#1.0.1"
+  },
+  "jest": {
+    "testDirectoryName": "__tests__",
+    "scriptPreprocessor": "<rootDir>/test_utils/preprocessor.js",
+    "testFileExtensions": [
+      "coffee",
+      "js"
+    ],
+    "testPathIgnorePatterns": [
+      "node_modules"
+    ],
+    "unmockedModulePathPatterns": [
+      "<rootDir>/node_modules/object-assign",
+      "<rootDir>/node_modules/lodash",
+      "<rootDir>/src/utils/lodash"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "coffee"
+    ]
   },
   "scripts": {
-    "postinstall": "$(npm bin)/bower install",
-    "test": "grunt test"
+    "test": "jest"
   },
   "engines": {
     "node": "~0.10.0"
-  },
-  "dependencies": {
-    "bower": "1.3.9"
   }
 }

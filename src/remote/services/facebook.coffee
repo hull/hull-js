@@ -1,98 +1,118 @@
-define ['lib/utils/promises', 'underscore'], (promises, _) ->
+Promise           = require('es6-promise').Promise
+assign            = require '../../polyfills/assign'
+_                 = require '../../utils/lodash'
+cookies           = require '../../utils/cookies'
+EventBus          = require '../../utils/eventbus'
+clone             = require '../../utils/clone'
+GenericService    = require './generic-service'
 
-  slice = Array.prototype.slice
+FB_EVENTS = ["auth.authResponseChanged", "auth.statusChange", "auth.login", "auth.logout", "comment.create", "comment.remove", "edge.create", "edge.remove", "message.send", "xfbml.render"]
 
-  showIframe = ->
-  hideIframe = ->
-  uiHandlers = {}
-  trackHandler = ->
-  utils = {}
+class FacebookService extends GenericService
+  name : 'facebook'
+  path : 'facebook'
+  constructor: (config, gateway)->
+    super(config, gateway)
+    @loadFbSdk(@getSettings())
 
-  ensureLoggedIn = (base) ->
-    ->
-      args = slice.call(arguments)
-      FB.getLoginStatus ->
-        base.apply(undefined, args)
-      , true
+  request : (args...)->
+    @ensureLoggedIn().then ()=> @performRequest(args...)
 
-  resp = (req, callback, errback, hideIt) ->
-    (res) ->
-      hideIframe() if hideIt
-      if (res && !res.error)
-        callback({ response: res, provider: 'facebook' })
+  ensureLoggedIn : ()->
+    new Promise (resolve, reject)=>
+      args = Array.prototype.slice.call(arguments)
+      if @fbUser?.status=='connected'
+        resolve()
       else
-        if (res)
-          errorMsg = "[FB Error] " + res.error.type + " : " + res.error.message
-        else
-          errorMsg = "[FB Error] Unknown error"
-        errback(errorMsg, { result: res, request: req })
+        FB.getLoginStatus (res)->
+          @updateFBUserStatus(res)
+          if res.status=='connected' then resolve() else reject()
+        , true
+      # , true ~ Maybe we dont need a roundtrip each time.
 
-  api = ensureLoggedIn (req, callback, errback) ->
-    path = req.path
+  performRequest: (request, callback, errback) =>
+    path = request.path
+    isUICall = (path=='ui' and request.params?.method?)
+
+    fbErrback = (msg, res)->
+      res.time = new Date()
+      errback(res)
+
+    fbCallback = @fbRequestCallback(request, {isUICall, path}, callback, errback)
+
     if path == 'fql.query'
-      FB.api({ method: 'fql.query', query: req.params.query }, resp(req, callback, errback))
-    else if /^ui\./.test(path)
-      prms = _.clone(req.params)
-      prms.method = path.replace(/^ui\./, '')
-      showIframe()
-      cb = resp(req, callback, errback, true)
-      uiHandler = uiHandlers[path] || ->
+      FB.api({ method: 'fql.query', query: request.params.query },fbCallback)
+
+    else if isUICall
+      params = clone(request.params)
+
+      @showIframe()
       trackParams = { ui_request_id: utils?.uuid?() || (new Date()).getTime() }
-      trackHandler({ path: "facebook.#{req.path}.open", params: _.extend({}, req.params, trackParams) })
-      _.delay ->
-        FB.ui prms, (response)->
+      @track {event:"facebook.#{path}.open", params:assign({}, request.params, trackParams)}
 
-          path = "facebook.#{req.path}."
-          if !response || response.error_code
-            path += "error"
-          else
-            path += "success"
-
-          trackHandler({ path: path, params: _.extend({}, response, trackParams) })
-          uiHandler(req, response)
-          cb(response)
+      setTimeout ()=>
+        FB.ui params, (response)=>
+          event = "facebook.#{path}."
+          event += if !response || response.error_code then "error" else "success"
+          @track {event, params:assign({}, response, trackParams)}
+          fbCallback(response)
       , 100
+
     else
-      FB.api path, req.method, req.params, resp(req, callback, (msg, res)-> res.time = new Date(); callback(res))
+      FB.api path, request.method, request.params, @fbRequestCallback(request, {isUICall:false, path}, callback, fbErrback)
 
 
+  showIframe : ->
+    EventBus.emit('remote.iframe.show') if @fb
 
-  initialize: (app)->
-    fb = document.createElement 'script'
-    fb.type = 'text/javascript'
-    fb.async = true
-    fb.src =  "https://connect.facebook.net/en_US/all.js"
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(fb);
+  hideIframe : ->
+    EventBus.emit('remote.iframe.hide') if @fb
 
-    showIframe = ->
-      app.core.mediator.emit('remote.iframe.show')
+  track : (args...)->
+    EventBus.emit('remote.track', args...)
 
-    hideIframe = ->
-      app.core.mediator.emit('remote.iframe.hide')
+  fbRequestCallback : (request, opts={}, callback, errback) =>
+    (response) =>
+      @fbUiCallback(request,response,opts.path) if opts.isUICall
+      if !response or response?.error
+        errorMsg = if (response) then "[Facebook Error] #{response.error.type}  : #{response.error.message}" else "[Facebook Error] Unknown error"
+        return errback(errorMsg, { response, request })
+      callback({ body: response, provider: 'facebook' })
 
-    dfd = promises.deferred()
+  fbUiCallback : (req, res, path)=>
+    @hideIframe()
+    opts = { path: path, method: 'post', params: res }
+    @wrappedRequest(opts)
 
-    window.fbAsyncInit = ()->
-      FB.init app.config.settings.auth.facebook
-      dfd.resolve({})
+  updateFBUserStatus: (res)=>
+    @fbUser = res
 
-    app.core.routeHandlers.facebook = ()->
-      args = arguments
-      dfd.promise.then ()->
-        api.apply(undefined, args)
-      undefined
+  subscribeToFBEvents : ()->
+    return unless FB?.Event?
 
-    uiHandlers['ui.apprequests'] = (req, res)->
-      opts = { path: 'services/facebook/apprequests', method: 'post', params: res }
-      noop = ->
-      app.core.routeHandlers.hull(opts, noop, noop)
+    _.map FB_EVENTS, (event)=>
+      FB.Event.subscribe event, (args...)=>
+        @updateFBUserStatus(args...) if event.indexOf('auth.')>-1
+        EventBus.emit("fb.#{event}", args...)
 
-    uiHandlers['ui.share'] = (req, res)->
-      opts = { path: 'services/facebook/social_actions', method: 'post', params: res }
-      noop = ->
-      app.core.routeHandlers.hull(opts, noop, noop)
 
-    uiHandlers['ui.feed'] = uiHandlers['ui.share']
+  loadFbSdk: (config)->
+    new Promise (resolve, reject)=>
+      config = _.omit(assign({},config,{status:true}), 'credentials')
+      if config.appId
+        fb = document.createElement 'script'
+        fb.type = 'text/javascript'
+        fb.async = true
+        fb.src =  "https://connect.facebook.net/en_US/all.js"
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(fb);
+        window.fbAsyncInit = ()=>
+          @fb = true
+          FB.init config
+          FB.getLoginStatus @updateFBUserStatus
+          @subscribeToFBEvents()
+          resolve({})
+      else
+        reject({})
 
-    trackHandler = app.core.routeHandlers.track
-    utils = app.core.util
+
+module.exports = FacebookService

@@ -1,31 +1,30 @@
-define ->
-  (app)->
-    api = (req, callback, errback) ->
-      path = req.path
-      path = path.substring(1) if (path[0] == "/")
-      url  = "https://api.github.com/" + path
+GenericService    = require './generic-service'
+superagent        = require 'superagent'
+QSEncoder           = require '../../utils/query-string-encoder'
 
-      if req.method.toLowerCase() == 'delete'
-        req_data = JSON.stringify(req.params || {})
-      else
-        req_data = req.params
+class GithubService extends GenericService
+  name : 'github'
+  path : 'github'
 
-      headers = {}
+  constructor: (config, gateway)-> super(config,gateway)
 
-      token = app.core.settings().auth?.github?.credentials?.token
-      headers['Authorization'] = "token #{token}" if token
+  request : (request,callback,errback)=>
+    token = @getSettings().credentials?.token
 
-      request = app.core.data.ajax
-        url: url
-        type: req.method
-        data: req_data
-        headers: headers
+    {method, path, params} = request
+    method = method.toUpperCase()
+    path   = path.substring(1) if (path[0] == "/")
 
-      request.then (response)->
-        callback({ response: response, provider: 'github' })
-      , errback
+    url = "https://api.github.com/#{path}"
 
-      return
+    s = superagent(method, url)
+    if (method=='GET' and params?) then s.query(QSEncoder.encode(params)) else s.send(params)
+    s.set('Authorization', "token #{token}") if token
+    s.end (response)->
+      return errback(response.error.message) if response.error
+      callback
+        provider: @name
+        headers: response.headers
+        body: response.body
 
-    initialize: (app)->
-      app.core.routeHandlers.github = api
+module.exports = GithubService

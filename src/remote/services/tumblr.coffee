@@ -1,3 +1,10 @@
-define ['lib/remote/services/proxy'], (proxy)->
-  initialize: (app)->
-    app.core.routeHandlers.tumblr = proxy { name: 'tumblr', path:  'tumblr/v2' }, app.core.handler
+GenericService    = require './generic-service'
+
+class TumblrService extends GenericService
+  name : 'twitter'
+  path: 'tumblr/v2'
+  constructor: (config, gateway)->
+    super(config,gateway)
+    @request = @wrappedRequest
+
+module.exports = TumblrService
