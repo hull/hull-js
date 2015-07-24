@@ -204,7 +204,7 @@ var publish = function(versions){
   var invalidationBatch = {
     CallerReference: new Date().toString(),
     Paths:{
-      Quantity:1,
+      Quantity:cloudfrontInvalidations.length,
       Items:cloudfrontInvalidations
     }
   }
