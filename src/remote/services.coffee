@@ -29,8 +29,8 @@ maybeUpdateUser = (response)->
 class Services
   constructor : (remoteConfig, gateway)->
     RemoteActions.updateUser(remoteConfig.data.me) if (remoteConfig.data.me)
-    gateway.after(maybeUpdateUser)
     gateway.before(handleSpecialRoutes)
+    gateway.after(maybeUpdateUser)
 
     @services = _.reduce ServiceList, (memo,Service,key)->
       memo[key] = new Service(remoteConfig,gateway)
@@ -39,7 +39,7 @@ class Services
 
     RemoteHeaderStore.addChangeListener (change)=>
       switch change
-        when RemoteConstants.UPDATE_USER_IF_ME
+        when RemoteConstants.UPDATE_USER
           # Auto-Fetch the user everytime the Hull-User-Id header changes
           userHeaderId = RemoteHeaderStore.getHeader('Hull-User-Id')
           user = RemoteUserStore.getState().user
@@ -50,14 +50,14 @@ class Services
     {
       ready : @onReady
       message : @onMessage
-      clearUserToken : @onClearUserToken
+      clearAccessToken : @onclearAccessToken
       refreshUser : @onRefreshUser
     }
 
   onReady : (req, xdmCallback, xdmErrback) ->
 
-  onClearUserToken : (args...)=>
-    RemoteActions.clearUserToken(args...)
+  onclearAccessToken : (args...)=>
+    RemoteActions.clearAccessToken(args...)
 
   onRefreshUser : (xdmCallback, xdmErrback)=>
     xdmCallback ?=->

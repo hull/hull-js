@@ -22,7 +22,7 @@ class HullAdminService extends GenericService
     url  = "#{protocol}//#{organization}.#{top_domain}/api/v1/#{path}"
 
     headers = {}
-    token = @getSettings()?.credentials?.access_token
+    token = @getHullToken()
     headers['AccessToken'] = token if token
 
     s = superagent(method, url).set(headers)

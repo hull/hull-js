@@ -12,6 +12,7 @@ var rename           = require("gulp-rename");
 var parallelize      = require("concurrent-transform");
 var gutil            = require("gulp-util");
 var deploy           = require("gulp-gh-pages");
+var cloudfront       = require('gulp-invalidate-cloudfront');
 var notifier         = require("node-notifier");
 var merge            = require('merge-stream');
 
@@ -178,6 +179,7 @@ var publish = function(versions){
   var publisher = awspublish.create(aws.config);
   var files  = path.join(config.outputFolder, config.assetsFolder, "*")
   var streams = [];
+  var cloudfrontInvalidations = []
   for (var i = 0; i < versions.length; i++) {
     var version = versions[i];
     if(version){
@@ -193,16 +195,24 @@ var publish = function(versions){
         console.log('Publishing '+path.join(p.dirname,p.basename+p.extname))
       }))
       .pipe(awspublish.gzip(aws.gzip))
-
+      cloudfrontInvalidations.push('/'+version+'/*');
       streams.push(plain);
       streams.push(gzip);
     }
   };
+
+  var invalidationBatch = {
+    CallerReference: new Date().toString(),
+    Paths:{
+      Quantity:1,
+      Items:cloudfrontInvalidations
+    }
+  }
   return merge.apply(merge,streams)
   .pipe(parallelize(publisher.publish(aws.publish.headers,aws.publish.options)))
   .pipe(publisher.cache())
+  // .pipe(cloudfront(invalidationBatch, aws.cloudfront))
   .pipe(awspublish.reporter())
-;
 }
 
 // Deploys to S3

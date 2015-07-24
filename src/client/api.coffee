@@ -32,6 +32,8 @@ class Api
     p = new Promise (resolve, reject)=>
 
       onSuccess = (res={})=>
+        # intercept calls and update current user
+        @updateCurrentUser(res.body, res.headers);
         @updateCurrentUserCookies(res.headers, res.provider)
         callback(res.body)
         resolve(res.body)
@@ -43,7 +45,7 @@ class Api
       @channel.rpc.message(opts, onSuccess, onError)
 
   clearToken    : (args...)=>
-    @channel.rpc.clearUserToken(args...) # No need to be exposed, IMO
+    @channel.rpc.clearAccessToken(args...) # No need to be exposed, IMO
 
   refreshUser   : ()=>
     new Promise (resolve, reject)=>
@@ -55,6 +57,10 @@ class Api
         reject(err)
 
       @channel.rpc.refreshUser(onSuccess, onError)
+
+  updateCurrentUser: (user={}, headers={})=>
+    header = headers?['Hull-User-Id']
+    @currentUser.update(user) if header && user?.id == header
 
   updateCurrentUserCookies: (headers, provider)=>
     @currentUser.updateCookies(headers, @config.appId) if (headers? and provider == 'hull')

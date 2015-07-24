@@ -62,7 +62,7 @@ resolveResponse = (request, response, resolve, reject)->
 class Gateway
 
   constructor: (config={}) ->
-    {batching, appId, access_token} = config
+    {batching, appId} = config
     @options = _.defaults({},batching,{min:1,max:1,delay:2})
     @queue = batchable @options.delay, (requests) -> @flush(requests)
 

@@ -38,47 +38,29 @@ var RemoteHeaderStore = assign({}, EventEmitter.prototype, {
     switch(action.actionType) {
 
       case RemoteConstants.UPDATE_REMOTE_CONFIG:
-        // When Settings Change, we need to update our AccessToken Header accordingly
         if(action){
-          var accessToken = action.config.access_token || (action.config && action.config.settings && action.config.settings.auth && action.config.settings.auth.hull && action.config.settings.auth.hull.credentials && action.config.settings.auth.hull.credentials.access_token);
-          // We're not logged in anymore probably : destroy the token
-          if(!accessToken){
-            destroyHeader(ACCESS_TOKEN_HEADER);
-            RemoteHeaderStore.emitChange(action.actionType);
-          } else if(!!accessToken && accessToken !== getHeader(ACCESS_TOKEN_HEADER)){
-            // Token is actually different from the previous one (including empty) -> Emit change.
-            setHeader(ACCESS_TOKEN_HEADER,accessToken);
-            RemoteHeaderStore.emitChange(action.actionType);
-          }
-
           if(action.config && action.config.appId){
             setHeader(APP_ID_HEADER, action.config.appId);
           }
-
         }
         break;
 
       case RemoteConstants.UPDATE_USER:
-        if (action.user && action.user.access_token){
-          setHeader(ACCESS_TOKEN_HEADER,action.user.access_token);
+        if(action.user.id != getHeader(USER_ID_HEADER) || action.user.access_token != getHeader(ACCESS_TOKEN_HEADER)){
+          if (action.user && action.user.access_token){
+            setHeader(USER_ID_HEADER, action.user.id)
+            setHeader(ACCESS_TOKEN_HEADER,action.user.access_token);
+          } else {
+            destroyHeader(ACCESS_TOKEN_HEADER);
+            destroyHeader(USER_ID_HEADER);
+          }
           RemoteHeaderStore.emitChange(action.actionType);
         }
         break;
 
-      case RemoteConstants.CLEAR_USER_TOKEN:
+      case RemoteConstants.CLEAR_ACCESS_TOKEN:
         if(getHeader(ACCESS_TOKEN_HEADER)){
           destroyHeader(ACCESS_TOKEN_HEADER);
-          RemoteHeaderStore.emitChange(action.actionType);
-        }
-        break;
-
-      case RemoteConstants.UPDATE_USER_IF_ME:
-        var id = action.data.headers && action.data.headers[USER_ID_HEADER];
-        if (id){
-          setHeader(USER_ID_HEADER, id)
-          if (!RemoteUserStore.isSameId(id)) {
-            destroyHeader(ACCESS_TOKEN_HEADER);
-          }
           RemoteHeaderStore.emitChange(action.actionType);
         }
         break;
