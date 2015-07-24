@@ -16,12 +16,15 @@ fixCookies = (userSig)->
 class CurrentUser
 
   constructor: ->
-    @currentUser = null
+    @clear()
 
   get: (field) =>
     if @currentUser
       returned = if field? then @currentUser[field] else @currentUser
       JSON.parse(JSON.stringify(returned))
+
+  clear: ()=>
+    @currentUser = null
 
   getId: ->
     @currentUser && @currentUser.id
@@ -44,6 +47,7 @@ class CurrentUser
     @currentUser = me
 
   update : (me) =>
+
     prevUpdatedAt = @currentUser?.updated_at
     prevId = @currentUser?.id
 

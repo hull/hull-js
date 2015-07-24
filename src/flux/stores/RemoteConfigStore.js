@@ -17,6 +17,9 @@ var RemoteConfigStore = assign({}, EventEmitter.prototype, {
     }
     return undefined
   },
+  getToken:           function(){
+    return state.access_token
+  },
   getState            : function() {return state;},
 
   dispatcherIndex: RemoteDispatcher.register(function(payload) {
@@ -31,6 +34,11 @@ var RemoteConfigStore = assign({}, EventEmitter.prototype, {
 
       case RemoteConstants.UPDATE_REMOTE_CONFIG:
         state = action.config
+        RemoteConfigStore.emitChange(action.actionType);
+        break;
+
+      case RemoteConstants.UPDATE_USER:
+        state.access_token = action.user.access_token
         RemoteConfigStore.emitChange(action.actionType);
         break;
     }
