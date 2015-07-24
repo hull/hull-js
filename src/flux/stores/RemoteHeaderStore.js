@@ -38,23 +38,10 @@ var RemoteHeaderStore = assign({}, EventEmitter.prototype, {
     switch(action.actionType) {
 
       case RemoteConstants.UPDATE_REMOTE_CONFIG:
-        // When Settings Change, we need to update our AccessToken Header accordingly
         if(action){
-          var accessToken = action.config.access_token || (action.config && action.config.settings && action.config.settings.auth && action.config.settings.auth.hull && action.config.settings.auth.hull.credentials && action.config.settings.auth.hull.credentials.access_token);
-          // We're not logged in anymore probably : destroy the token
-          if(!accessToken){
-            destroyHeader(ACCESS_TOKEN_HEADER);
-            RemoteHeaderStore.emitChange(action.actionType);
-          } else if(!!accessToken && accessToken !== getHeader(ACCESS_TOKEN_HEADER)){
-            // Token is actually different from the previous one (including empty) -> Emit change.
-            setHeader(ACCESS_TOKEN_HEADER,accessToken);
-            RemoteHeaderStore.emitChange(action.actionType);
-          }
-
           if(action.config && action.config.appId){
             setHeader(APP_ID_HEADER, action.config.appId);
           }
-
         }
         break;
 
