@@ -106,12 +106,12 @@ postForm = (path, method='post', params={}) ->
   form.submit()
 
 class Auth
-  constructor: (api, currentConfig)->
+  constructor: (api, currentUser, currentConfig)->
     @api             = api
     @currentConfig   = currentConfig
     @_popupInterval  = null
     @_authenticating = null
-    @authServices    = _.keys(@currentConfig.get('services'))
+    @authServices    = _.keys(@currentConfig.get('services.auth'))
 
   isAuthenticating : -> @_authenticating?
 
@@ -245,6 +245,14 @@ class Auth
 
   logout : (callback, errback) =>
     promise = @api.message('logout')
+    @completeLoginPromiseChain(promise,callback,errback)
+
+  resetPassword : (email=@currentUser.get('email'), callback, errback) =>
+    promise = @api.message('/users/request_password_reset', 'post', {email})
+    @completeLoginPromiseChain(promise,callback,errback)
+
+  confirmEmail : (email=@currentUser.get('email'), callback, errback) =>
+    promise = @api.message('/users/request_confirmation_email', 'post', {email})
     @completeLoginPromiseChain(promise,callback,errback)
 
   signup : (user, callback, errback) =>

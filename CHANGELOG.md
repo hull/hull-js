@@ -35,12 +35,12 @@ These methods now try really hard to find a URL to share or to target, by traver
 #### New Methods
 ##### Reset Password
 ```
-Hull.resetPassword(email, callback, errback) // => Promise
+Hull.resetPassword(email=me.email, callback, errback) // => Promise
 ```
 
 ##### Send Email Confirmation
 ```
-Hull.confirmEmail(callback, errback) // => Promise
+Hull.confirmEmail(email=me.email, callback, errback) // => Promise
 ```
 
 --------- 
