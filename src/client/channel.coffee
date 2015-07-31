@@ -64,7 +64,6 @@ class Channel
       remote    :
         message        : {},
         ready          : {},
-        clearAccessToken : {},
         refreshUser    : {}
       local:
         message         : @onMessage
