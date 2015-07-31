@@ -108,6 +108,7 @@ postForm = (path, method='post', params={}) ->
 class Auth
   constructor: (api, currentUser, currentConfig)->
     @api             = api
+    @currentUser     = currentUser
     @currentConfig   = currentConfig
     @_popupInterval  = null
     @_authenticating = null
