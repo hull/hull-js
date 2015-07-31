@@ -51,19 +51,16 @@ class CurrentUser
 
     # User was updated. Emit Update
     if prevUpdatedAt != me?.updated_at
-      debugger
       EventBus.emit('hull.user.update',  me)
     if me?.id
       # We have a user
       # User changed. Do the full update.
       if prevId != me.id
-        debugger
         @setLoginStatus(me)
     else
       # We have no user anymore
       # Emit logout event
       if prevId
-        debugger
         EventBus.emit('hull.user.logout')
 
     me

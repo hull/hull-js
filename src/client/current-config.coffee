@@ -92,7 +92,6 @@ class CurrentConfig
     else
       previousConfig = @_remoteConfig
       @_remoteConfig = assign({}, @_remoteConfig, hash)
-    debugger
     @onUpdate() unless _.isEqual(previousConfig, hash)
     
 
