@@ -14,6 +14,7 @@ export default {
   isEmpty: require("lodash/lang/isEmpty"),
   throttle: require("lodash/function/throttle"),
   isArray: require("lodash/lang/isArray"),
+  isEqual: require("lodash/lang/isEqual"),
   isFunction: require("lodash/lang/isFunction"),
   isObject: require("lodash/lang/isObject"),
   isString: require("lodash/lang/isString"),

@@ -34,12 +34,23 @@ var RemoteConfigStore = assign({}, EventEmitter.prototype, {
 
       case RemoteConstants.UPDATE_REMOTE_CONFIG:
         state = action.config
-        RemoteConfigStore.emitChange(action.actionType);
+        if(!action.options.silent===true){
+          RemoteConfigStore.emitChange(action.actionType);
+        }
+        break;
+
+      case RemoteConstants.UPDATE_SETTINGS:
+        state.services = action.services;
+        if(!action.options.silent===true){
+          RemoteConfigStore.emitChange(action.actionType);
+        }
         break;
 
       case RemoteConstants.UPDATE_USER:
         state.access_token = action.user.access_token
-        RemoteConfigStore.emitChange(action.actionType);
+        if(!action.options.silent===true){
+          RemoteConfigStore.emitChange(action.actionType);
+        }
         break;
     }
     return true;

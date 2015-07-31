@@ -9,6 +9,7 @@ polyfill    = require './utils/load-polyfills'
 logger      = require './utils/logger'
 Client      = require './client'
 CurrentUser = require './client/current-user'
+CurrentConfig = require './client/current-config'
 Channel     = require './client/channel'
 Api         = require './client/api'
 
@@ -16,7 +17,6 @@ EventBus    = require './utils/eventbus'
 Pool        = require './utils/pool'
 HullRemote  = require './hull-remote'
 embeds      = require './client/embeds'
-configCheck = require './client/config-check'
 scriptTagConfig = require './client/script-tag-config'
 initializePlatform = require './client/initialize-platform'
 
@@ -89,7 +89,7 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
   logger.init(config.debug)
   config.appId   = config.appId || config.platformId || config.shipId
   delete config.platformId if config.platformId?
-  delete config.ship       if config.ship?
+  delete config.shipId       if config.shipId?
 
   missing = []
   missing.push "orgUrl" unless config.orgUrl?
@@ -101,9 +101,10 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
   client  = {}
   channel = {}
 
-  currentUser =  new CurrentUser()
+  currentUser =    new CurrentUser()
+  currentConfig =  new CurrentConfig()
 
-  err = (err)->
+  throwErr = (err)->
     # Something was wrong while initializing
     logger.error(err.stack)
     userFailureCallback = userFailureCallback || ->
@@ -111,28 +112,29 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
     ready.reject(err)
 
   # Ensure we have everything we need before starting Hull
-  configCheck(config).then ()->
+  currentConfig.init(config).then (config)->
     # Load polyfills
     polyfill.fill(config)
-  .then ()=>
+    config
+  .then (currentConfig)=>
     # Create the communication channel with Remote
-    channel = new Channel(config, currentUser)
+    channel = new Channel(currentUser, currentConfig)
     channel.promise
-  ,err
+  , throwErr
   .then (channel)=>
     # Create the Hull client that stores the API, Auth, Sharing and Tracking objects.
-    client = new Client(config, channel, currentUser)
+    client = new Client(channel, currentUser, currentConfig)
   , onInitFailure
-  ,err
+  , throwErr
   .then (hullClient)=>
     # Initialize
     client.hull = assign(hull,client.hull)
-    data = client.remoteConfig.data
-    currentUser.init(data.me)
-    initializePlatform(data, config, client.hull)
+    data = currentConfig.getRemote('data')
+    currentUser.init(data?.me)
+    initializePlatform(data, currentConfig, client.hull)
     onInitSuccess(userSuccessCallback, client.hull, data)
-  ,err
-  .catch err
+  , throwErr
+  .catch throwErr
 
 ready = {}
 ready.promise = new Promise (resolve, reject)=>

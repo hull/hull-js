@@ -39,7 +39,9 @@ var RemoteUserStore = assign({}, EventEmitter.prototype, {
       case RemoteConstants.UPDATE_USER:
         if(!isUpToDate(action.user)){
           state.user = action.user
-          RemoteUserStore.emitChange(action.actionType);
+          if(!action.options.silent===true){
+            RemoteUserStore.emitChange(action.actionType);
+          }
         }
         break;
     }

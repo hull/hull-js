@@ -41,25 +41,12 @@ rpcFrameInitStyle =
     left: '-20px'
     overflow: 'hidden'
 
-# Builds the URL used by xdm
-# Based upon the (app) configuration
-getRemoteUrl = (config)->
-  url = "#{config.orgUrl}/api/v1/#{config.appId}/remote.html?v=#{VERSION}"
-  url += "&r=#{encodeURIComponent(document.referrer)}"
-  url += "&js=#{config.jsUrl}"  if config.jsUrl
-  url += "&uid=#{config.uid}"   if config.uid
-  url += "&debug_remote=true"   if config.debugRemote
-  url += "&access_token=#{config.accessToken}" if config.accessToken?
-  url += "&user_hash=#{config.userHash}" if config.userHash != undefined
-  url
-
-
 class Channel
-  constructor : (config, currentUser)->
+  constructor : (currentUser, currentConfig)->
+    @currentConfig = currentConfig
     @currentUser = currentUser
     @timeout  = null
     @rpc     = null
-    @config  = config
     @_ready = {}
     @promise = new Promise (resolve, reject)=>
       @_ready.resolve = resolve
@@ -69,9 +56,9 @@ class Channel
   onDomReady : ()=>
     @timeout = setTimeout(@loadingFailed, 30000);
     @rpc = new xdm.Rpc
-      remote    : getRemoteUrl(@config)
+      remote    : @currentConfig.getRemoteUrl()
       container : document.body
-      channel   : @config.appId
+      channel   : @currentConfig.get('appId')
       props     : rpcFrameInitStyle
     ,
       remote    :
@@ -84,7 +71,7 @@ class Channel
         ready           : @ready
         loadError       : @error
         userUpdate      : @userUpdate
-        settingsUpdate  : @settingsUpdate
+        configUpdate    : @configUpdate
         show            : @showIframe
         hide            : @hideIframe
         track           : @emitTrackEvent
@@ -103,15 +90,15 @@ class Channel
 
   ready           : (remoteConfig)   =>
     window.clearTimeout(@timeout)
-    @remoteConfig = remoteConfig
+    @currentConfig.initRemote(remoteConfig)
     @_ready.resolve @
 
-  getClientConfig : ()  => @config
+  getClientConfig : ()  => @currentConfig.get()
   showIframe      : ()  => @applyFrameStyle(shownFrameStyle)
   hideIframe      : ()  => @applyFrameStyle(hiddenFrameStyle)
   emitTrackEvent  : (args...)  => EventBus.emit('hull.track',args...)
-  settingsUpdate  : (remoteSettings)=> EventBus.emit('hull.settings.update', remoteSettings)
-  userUpdate      : (me)=> @currentUser.update(me)
+  configUpdate    : (config)=> @currentConfig.setRemote(config)
+  userUpdate      : (me)=>     @currentUser.set(me)
   applyFrameStyle : (styles)=>
     _.map styles, (v,k)=> @rpc.iframe.style[k] = v
 

@@ -9,10 +9,18 @@ var RemoteSettingsActions = {
       config: config
     });
   },
-  updateRemoteConfig: function(config){
+  updateRemoteConfig: function(config, options={}){
     RemoteDispatcher.handleAction({
       actionType: RemoteConstants.UPDATE_REMOTE_CONFIG,
-      config: config
+      config: config,
+      options:options
+    });
+  },
+  updateServices: function(services, options={}){
+    RemoteDispatcher.handleAction({
+      actionType: RemoteConstants.UPDATE_SERVICES,
+      services: services,
+      options:options
     });
   },
   clearHeader: function(header){
@@ -39,10 +47,11 @@ var RemoteSettingsActions = {
       user:user
     });
   },
-  updateUser: function(user){
+  updateUser: function(user, options={}){
     RemoteDispatcher.handleAction({
       actionType: RemoteConstants.UPDATE_USER,
-      user:user
+      user:user,
+      options:options
     });
   },
   updateUserIfMe: function(data){

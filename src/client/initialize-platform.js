@@ -2,8 +2,8 @@
 
 import emptyFunction from '../utils/empty-function';
 
-function initializeShopifyPlatform(context, options, hull) {
-  const { customerId, accessToken } = options;
+function initializeShopifyPlatform(context, currentConfig, hull) {
+  const { customerId, accessToken } = currentConfig.get();
   if (/^[0-9]+$/.test(customerId) && !accessToken) {
     hull.api('services/shopify/customers/' + customerId, 'put').then(function() {
       document.location.reload();
@@ -23,10 +23,10 @@ function getPlatformInitializer(platform) {
   }
 }
 
-function initializePlatform(context, options, hull) {
+function initializePlatform(context, currentConfig, hull) {
   const initializer = getPlatformInitializer(context.app);
 
-  return initializer(context, options, hull);
+  return initializer(context, currentConfig, hull);
 }
 
 export default initializePlatform;

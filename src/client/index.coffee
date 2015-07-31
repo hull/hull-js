@@ -2,7 +2,6 @@ _            = require '../utils/lodash'
 clone        = require '../utils/clone'
 EventBus     = require '../utils/eventbus'
 Entity       = require '../utils/entity'
-cloneConfig  = require '../utils/clone-config'
 findUrl      = require '../utils/find-url'
 logger       = require '../utils/logger'
 
@@ -17,26 +16,25 @@ utils        = require '../utils/utils'
 
 
 class Client
-  constructor: (config={}, channel, currentUser)->
+  constructor: (channel, currentUser, currentConfig)->
 
-    @config = clone(config)
-    @remoteConfig = clone(channel.remoteConfig)
+    @currentConfig = currentConfig
 
-    api   = new Api(config, channel, currentUser)
-    auth  = new Auth(api)
-    tracker = new Tracker(api, @remoteConfig, @config)
+    api   = new Api(channel, currentUser, currentConfig)
+    auth  = new Auth(api, currentConfig)
+    tracker = new Tracker(api)
 
-    sharer = new Sharer(_.pick(@config, 'appId', 'orgUrl'))
+    sharer = new Sharer(currentConfig);
     flag  = new Flag(api)
     traits= new Traits(api)
 
-    if config?.debug?.verbose
+    if @currentConfig.get('debug.enabled')
       EventBus.on 'hull.**', (args...)->
         logger.log("--HULL EVENT--[#{@event}]--", args...);
 
     # Creating the complete hull object we'll send back to the API
     @hull =
-      config         : cloneConfig(config, @remoteConfig)
+      config         : @currentConfig.get
       utils          : utils
       api            : api.message
       currentUser    : currentUser.get
