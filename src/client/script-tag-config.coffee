@@ -18,7 +18,7 @@ valid =
     check = httpsRegex.test(val)
     return true if check
     logger.warn("[Hull.init] #{key} should be loaded via https. Current value is ", val)
-    false
+    true
 
 
 transform =
