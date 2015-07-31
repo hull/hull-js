@@ -2,7 +2,7 @@ superagent        = require 'superagent'
 GenericService    = require './generic-service'
 QSEncoder         = require '../../utils/query-string-encoder'
 logger            = require '../../utils/logger'
-RemoteHeaderStore = require '../../flux/stores/RemoteHeaderStore'
+RemoteConfigStore = require '../../flux/stores/RemoteConfigStore'
 
 class HullAdminService extends GenericService
   name : 'hull'
@@ -23,7 +23,7 @@ class HullAdminService extends GenericService
     url  = "#{protocol}//#{organization}.#{top_domain}/api/v1/#{path}"
 
     headers = {}
-    token = RemoteHeaderStore.getHeader('Hull-Access-Token')
+    token = RemoteConfigStore.getHullToken()
 
     headers['AccessToken'] = token if token
 

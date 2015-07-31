@@ -17,10 +17,8 @@ var RemoteConfigStore = assign({}, EventEmitter.prototype, {
     }
     return undefined
   },
-  getToken:           function(){
-    return state.access_token
-  },
-  getState            : function() {return state;},
+  getHullToken        : function(){ return state.access_token; },
+  getState            : function(){ return state; },
 
   dispatcherIndex: RemoteDispatcher.register(function(payload) {
     var action = payload.action;
