@@ -64,7 +64,7 @@ Hull = (remoteConfig)->
       EventBus.on 'remote.iframe.hide',  ()-> channel.rpc.hide()
 
       EventBus.on 'remote.track',        (payload)->
-        services.services.track.request(payload.event, payload.params)
+        services.services.track.request({params:payload.params, path:payload.event})
 
       EventBus.on 'remote.tracked',        (payload)->
         channel.rpc.track(payload)

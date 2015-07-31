@@ -36,12 +36,13 @@ var RemoteSettingsActions = {
       options:options
     });
   },
-  updateUserIfMe: function(data){
+  updateUserIfMe: function(data,options={}){
     // We don't know if it's a Me object. for now it's just a bundle of data from the API.
     if(data.body && RemoteUserStore.isSameId(data.body.id)){
       RemoteDispatcher.handleAction({
         actionType: RemoteConstants.UPDATE_USER,
-        user:data.body
+        user:data.body,
+        options:options
       });
     }
   }
