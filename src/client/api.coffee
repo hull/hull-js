@@ -43,9 +43,6 @@ class Api
 
       @channel.rpc.message(opts, onSuccess, onError)
 
-  clearToken    : (args...)=>
-    @channel.rpc.clearAccessToken(args...) # No need to be exposed, IMO
-
   refreshUser   : ()=>
     new Promise (resolve, reject)=>
       onSuccess  = (response={})=>
