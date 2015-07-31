@@ -9,44 +9,34 @@ var RemoteSettingsActions = {
       config: config
     });
   },
-  updateRemoteConfig: function(config){
+  updateRemoteConfig: function(config, options={}){
     RemoteDispatcher.handleAction({
       actionType: RemoteConstants.UPDATE_REMOTE_CONFIG,
-      config: config
+      config: config,
+      options:options
     });
   },
-  clearHeader: function(header){
+  updateServices: function(services, options={}){
     RemoteDispatcher.handleAction({
-      actionType: RemoteConstants.CLEAR_HEADER,
-      header:header
+      actionType: RemoteConstants.UPDATE_SERVICES,
+      services: services,
+      options:options
     });
   },
-  setHeader: function(header,value){
+  logoutUser: function(options={}){
     RemoteDispatcher.handleAction({
-      actionType: RemoteConstants.SET_HEADER,
-      header:header,
-      value:value
+      actionType: RemoteConstants.LOGOUT_USER,
+      options: options
     });
   },
-  clearUser: function(){
-    RemoteDispatcher.handleAction({
-      actionType: RemoteConstants.CLEAR_USER
-    });
-  },
-  clearAccessToken: function(){
-    RemoteDispatcher.handleAction({
-      actionType: RemoteConstants.CLEAR_ACCESS_TOKEN,
-      user:user
-    });
-  },
-  updateUser: function(user){
+  updateUser: function(user, options={}){
     RemoteDispatcher.handleAction({
       actionType: RemoteConstants.UPDATE_USER,
-      user:user
+      user:user,
+      options:options
     });
   },
   updateUserIfMe: function(data){
-
     // We don't know if it's a Me object. for now it's just a bundle of data from the API.
     if(data.body && RemoteUserStore.isSameId(data.body.id)){
       RemoteDispatcher.handleAction({

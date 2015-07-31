@@ -1,1 +1,3 @@
-module.exports = (obj)-> JSON.parse(JSON.stringify(obj))
+module.exports = (obj)->
+  return obj unless obj?
+  JSON.parse(JSON.stringify(obj))

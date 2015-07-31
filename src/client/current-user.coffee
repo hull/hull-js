@@ -2,6 +2,8 @@ _        = require '../utils/lodash'
 EventBus = require '../utils/eventbus'
 cookies  = require '../utils/cookies'
 Base64   = require '../utils/base64'
+clone    = require '../utils/clone'
+getKey   = require '../utils/get-key'
 
 # Fix for http://www.hull.io/docs/users/backend on browsers where 3rd party cookies disabled
 fixCookies = (userSig)->
@@ -18,64 +20,61 @@ class CurrentUser
   constructor: ->
     @clear()
 
-  get: (field) =>
-    if @currentUser
-      returned = if field? then @currentUser[field] else @currentUser
-      JSON.parse(JSON.stringify(returned))
+  get: (key) =>
+    getKey(@me, key)
 
   clear: ()=>
-    @currentUser = null
-
-  getId: ->
-    @currentUser && @currentUser.id
+    @me = null
 
   hasIdentity : (identity)=>
     return false unless identity?
-    identities = @currentUser?.identities
+    identities = @me?.identities
     identity = identity.toLowerCase()
     return false unless identities and identity
     _.some identities, (i) -> i.provider.toLowerCase()==identity
 
   # We force create and emit a user.
-  updateLoginStatus : (me, provider)=>
-    @currentUser = me
+  setLoginStatus : (me, provider)=>
+    @me = me
     EventBus.emit('hull.user.create', me) unless me?.stats?.sign_in_count?
     EventBus.emit('hull.user.login',  me, provider)
 
   init : (me)=>
     # Init is silent
-    @currentUser = me
+    @me = me
 
-  update : (me) =>
-
-    prevUpdatedAt = @currentUser?.updated_at
-    prevId = @currentUser?.id
+  set : (me) =>
+    prevUpdatedAt = @me?.updated_at
+    prevId = @me?.id
 
     # Silently update now
-    @currentUser = me
+    @me = me
 
     # User was updated. Emit Update
-    EventBus.emit('hull.user.update',  me) if prevUpdatedAt != me?.updated_at
+    if prevUpdatedAt != me?.updated_at
+      EventBus.emit('hull.user.update',  me)
     if me?.id
       # We have a user
       # User changed. Do the full update.
-      @updateLoginStatus(me) if prevId != me.id
+      if prevId != me.id
+        @setLoginStatus(me)
     else
       # We have no user anymore
       # Emit logout event
-      EventBus.emit('hull.user.logout') if prevId
+      if prevId
+        EventBus.emit('hull.user.logout')
 
     me
 
-  updateCookies : (headers={}, appId)->
+  setCookies : (headers={}, appId)->
     cookieName = "hull_#{appId}"
     if headers && headers['Hull-User-Id'] && headers['Hull-User-Sig']
       val = Base64.encode(JSON.stringify(headers))
-      @currentUserSignature = val
+      @signature = val
       fixCookies(val)
       cookies.set(cookieName, val, path: "/")
     else
-      @currentUserSignature = false
+      @signature = false
       cookies.remove(cookieName, path: "/")
 
 

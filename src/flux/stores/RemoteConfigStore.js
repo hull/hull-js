@@ -17,30 +17,51 @@ var RemoteConfigStore = assign({}, EventEmitter.prototype, {
     }
     return undefined
   },
-  getToken:           function(){
-    return state.access_token
-  },
-  getState            : function() {return state;},
+  getHullToken        : function(){ return state.access_token; },
+  getState            : function(){ return state; },
 
   dispatcherIndex: RemoteDispatcher.register(function(payload) {
     var action = payload.action;
     var text;
 
     switch(action.actionType) {
-      case RemoteConstants.CLEAR_SETTINGS:
-        state = {}
-        RemoteConfigStore.emitChange(action.actionType);
-        break;
-
       case RemoteConstants.UPDATE_REMOTE_CONFIG:
         state = action.config
-        RemoteConfigStore.emitChange(action.actionType);
+        if(!action.options.silent===true){
+          RemoteConfigStore.emitChange(action.actionType);
+        }
+        break;
+
+      case RemoteConstants.UPDATE_SETTINGS:
+        state.services = action.services;
+        if(!action.options.silent===true){
+          RemoteConfigStore.emitChange(action.actionType);
+        }
         break;
 
       case RemoteConstants.UPDATE_USER:
         state.access_token = action.user.access_token
-        RemoteConfigStore.emitChange(action.actionType);
+        if(!action.options.silent===true){
+          RemoteConfigStore.emitChange(action.actionType);
+        }
         break;
+
+      case RemoteConstants.LOGOUT_USER:
+        delete state.access_token
+        if(state.settings && state.settings.auth){
+          _.map(state.settings, function(services, type){
+            _.map(services, function(service, key){
+              delete service.credentials
+              // Since Hull Storage doesnt have the same format as the others :(
+              if(type==='storage'){ delete service.params }
+            });
+          });
+        }
+        if(!action.options.silent===true){
+          RemoteConfigStore.emitChange(action.actionType);
+        }
+        break;
+
     }
     return true;
   })
