@@ -3,6 +3,7 @@ EventBus = require '../utils/eventbus'
 cookies  = require '../utils/cookies'
 Base64   = require '../utils/base64'
 clone    = require '../utils/clone'
+getKey   = require '../utils/get-key'
 
 # Fix for http://www.hull.io/docs/users/backend on browsers where 3rd party cookies disabled
 fixCookies = (userSig)->
@@ -19,8 +20,8 @@ class CurrentUser
   constructor: ->
     @clear()
 
-  get: (field) =>
-    if field? and @me then clone(@me[field]) else clone(@me)
+  get: (key) =>
+    getKey(@me, key)
 
   clear: ()=>
     @me = null

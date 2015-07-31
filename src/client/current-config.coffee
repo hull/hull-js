@@ -4,6 +4,7 @@ clone    = require '../utils/clone'
 throwErr = require '../utils/throw'
 assign   = require '../polyfills/assign'
 Promise  = require('es6-promise').Promise
+getKey   = require '../utils/get-key'
 
 getRemoteUrl = (config)->
   url = "#{config.orgUrl}/api/v1/#{config.appId}/remote.html?v=#{VERSION}"
@@ -51,16 +52,6 @@ checkConfig = (config)->
   promise.then(null, throwErr)
   promise
 
-getKey = (hash, key)->
-  return hash unless key
-  _.each key.split('.'), (k)->
-    return hash if hash == undefined
-    if _.contains(_.keys(hash), k)
-      hash = hash[k]
-    else
-      hash = undefined
-
-  hash
 
 class CurrentConfig
 
@@ -101,8 +92,7 @@ class CurrentConfig
     getKey(hash, key)
 
   getRemote: (key)->
-    hash = clone(@_remoteConfig);
-    getKey(hash, key)
+    getKey(@_remoteConfig, key)
 
   getRemoteUrl: ()=>
     getRemoteUrl(@_clientConfig)

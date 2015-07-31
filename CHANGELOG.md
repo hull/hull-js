@@ -32,6 +32,17 @@ These methods now try really hard to find a URL to share or to target, by traver
 
 **Note** : In Sandboxed Ships, this method will start looking OUTSIDE the ship. No point in performing a lookup on Document parts the Ship author built.
 
+#### New Methods
+##### Reset Password
+```
+Hull.resetPassword(email, callback, errback) // => Promise
+```
+
+##### Send Email Confirmation
+```
+Hull.confirmEmail(callback, errback) // => Promise
+```
+
 --------- 
 
 ### Removed
@@ -71,7 +82,7 @@ We're phasing out in favor of auto-initialized code, You can get the same result
     console.log(this.event) //  "hull.ready"
   })
 ```
-* `Hull.currentUser()` accepts a parameter, will return the field value. Only works with 1 level of nesting. No dots. Example: `Hull.currentUser('name')`
+* `Hull.currentUser()` accepts a parameter, will return the field value. Works with all levels of nesting. Example: `Hull.currentUser('sign_in.created_at')`
 * `Hull.share()` now has the following signature:
 ```js
 //Default params.method: 'share'
