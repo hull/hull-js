@@ -15,7 +15,7 @@ handleSpecialRoutes = (request)->
   switch request.path
     when '/api/v1/logout'
       request.nocallback = true
-      RemoteActions.clearUser()
+      RemoteActions.logoutUser()
       break
 
   request
@@ -50,14 +50,10 @@ class Services
     {
       ready : @onReady
       message : @onMessage
-      clearAccessToken : @onclearAccessToken
       refreshUser : @onRefreshUser
     }
 
   onReady : (req, xdmCallback, xdmErrback) ->
-
-  onclearAccessToken : (args...)=>
-    RemoteActions.clearAccessToken(args...)
 
   onRefreshUser : (xdmCallback, xdmErrback)=>
     xdmCallback ?=->

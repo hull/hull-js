@@ -23,28 +23,10 @@ var RemoteSettingsActions = {
       options:options
     });
   },
-  clearHeader: function(header){
+  logoutUser: function(options={}){
     RemoteDispatcher.handleAction({
-      actionType: RemoteConstants.CLEAR_HEADER,
-      header:header
-    });
-  },
-  setHeader: function(header,value){
-    RemoteDispatcher.handleAction({
-      actionType: RemoteConstants.SET_HEADER,
-      header:header,
-      value:value
-    });
-  },
-  clearUser: function(){
-    RemoteDispatcher.handleAction({
-      actionType: RemoteConstants.CLEAR_USER
-    });
-  },
-  clearAccessToken: function(){
-    RemoteDispatcher.handleAction({
-      actionType: RemoteConstants.CLEAR_ACCESS_TOKEN,
-      user:user
+      actionType: RemoteConstants.LOGOUT_USER,
+      options: options
     });
   },
   updateUser: function(user, options={}){
@@ -55,7 +37,6 @@ var RemoteSettingsActions = {
     });
   },
   updateUserIfMe: function(data){
-
     // We don't know if it's a Me object. for now it's just a bundle of data from the API.
     if(data.body && RemoteUserStore.isSameId(data.body.id)){
       RemoteDispatcher.handleAction({

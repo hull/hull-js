@@ -31,9 +31,11 @@ var RemoteUserStore = assign({}, EventEmitter.prototype, {
     var text;
 
     switch(action.actionType) {
-      case RemoteConstants.CLEAR_USER:
-        state.user     = null
-        RemoteUserStore.emitChange(action.actionType);
+      case RemoteConstants.LOGOUT_USER:
+        state.user = null
+        if(!action.options.silent===true){
+          RemoteUserStore.emitChange(action.actionType);
+        }
         break;
 
       case RemoteConstants.UPDATE_USER:

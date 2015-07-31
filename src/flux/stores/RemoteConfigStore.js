@@ -25,11 +25,6 @@ var RemoteConfigStore = assign({}, EventEmitter.prototype, {
     var text;
 
     switch(action.actionType) {
-      case RemoteConstants.CLEAR_SETTINGS:
-        state = {}
-        RemoteConfigStore.emitChange(action.actionType);
-        break;
-
       case RemoteConstants.UPDATE_REMOTE_CONFIG:
         state = action.config
         if(!action.options.silent===true){
@@ -50,6 +45,23 @@ var RemoteConfigStore = assign({}, EventEmitter.prototype, {
           RemoteConfigStore.emitChange(action.actionType);
         }
         break;
+
+      case RemoteConstants.LOGOUT_USER:
+        delete state.access_token
+        if(state.settings && state.settings.auth){
+          _.map(state.settings, function(services, type){
+            _.map(services, function(service, key){
+              delete service.credentials
+              // Since Hull Storage doesnt have the same format as the others :(
+              if(type==='storage'){ delete service.params }
+            });
+          });
+        }
+        if(!action.options.silent===true){
+          RemoteConfigStore.emitChange(action.actionType);
+        }
+        break;
+
     }
     return true;
   })
