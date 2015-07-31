@@ -21,7 +21,7 @@ class Client
     @currentConfig = currentConfig
 
     api   = new Api(channel, currentUser, currentConfig)
-    auth  = new Auth(api, currentConfig)
+    auth  = new Auth(api, currentUser, currentConfig)
     tracker = new Tracker(api)
 
     sharer = new Sharer(currentConfig);
@@ -42,6 +42,8 @@ class Client
       signup         : auth.signup
       logout         : auth.logout
       login          : auth.login
+      resetPassword  : auth.resetPassword
+      confirmEmail   : auth.confirmEmail
       linkIdentity   : auth.linkIdentity
       unlinkIdentity : auth.unlinkIdentity
       track          : tracker.track
