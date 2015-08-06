@@ -94,7 +94,9 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
   missing = []
   missing.push "orgUrl" unless config.orgUrl?
   missing.push "platformId" unless config.appId?
-  throw new Error("Hull config error: You forgot to pass #{missing.join(',')} needed to initialize hull properly") if missing.length
+  httpsRegex = /^https:|^\/\//
+  throw new Error("[Hull.init] jsUrl NEEDS be loaded via https if orgUrl is https") if config.jsUrl and not httpsRegex.test(out.jsUrl) and httpsRegex.test(out.jsUrl)
+  throw new Error("[Hull.init] You forgot to pass #{missing.join(',')} needed to initialize hull properly") if missing.length
 
   hull._initialized = true
 

@@ -93,5 +93,6 @@ module.exports = ->
       config = false
     config
   , {}
-  logger.error("[Hull.init] jsUrl NEEDS be loaded via https if orgUrl is https ") if httpsRegex.test(out.orgUrl) and not httpsRegex.test(out.jsUrl)
+  if out
+    logger.error("[Hull.init] jsUrl NEEDS be loaded via https if orgUrl is https ") if httpsRegex.test(out.orgUrl) and not httpsRegex.test(out.jsUrl)
   out
