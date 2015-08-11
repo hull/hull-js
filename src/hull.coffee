@@ -173,10 +173,13 @@ eeMethods = ['on', 'onAny', 'offAny', 'once', 'many', 'off', 'emit']
 _.map eeMethods, (m)->
   hull[m] = (args...) -> EventBus[m](args...)
 
-autoStartConfig = scriptTagConfig()
-if autoStartConfig && autoStartConfig.autoStart
-  if !hull._initialized
-    autoStartConfig && autoStartConfig.autoStart && init(autoStartConfig)
+unless window.Hull?
+  autoStartConfig = scriptTagConfig()
+  if autoStartConfig && autoStartConfig.autoStart
+    if !hull._initialized
+      autoStartConfig && autoStartConfig.autoStart && init(autoStartConfig)
 
-window.Hull = hull
+  window.Hull = hull
+else
+  logger.error "Hull Snippet found more than once (or you already have a global variable named window.Hull). Either way, we can't launch Hull more than once. We only use the first one in the page"
 module.exports = hull
