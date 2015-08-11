@@ -4,6 +4,8 @@
 import _          from "../../utils/lodash";
 import throwErr   from "../../utils/throw";
 import logger     from "../../utils/logger";
+import getCurrentScript from "../../utils/get-current-script";
+
 import Deployment from "./deployment";
 
 let _initialized = false;
@@ -56,17 +58,29 @@ module.exports = {
 
     if (!_.isFunction(callback)) return false;
 
-    let shipId = null;
-    let cs = document._currentScript || document.currentScript;
+    let detectedScript = getCurrentScript();
+    let currentScript  = document.currentScript  || detectedScript;
+    let _currentScript = document._currentScript || {}
+    let ownerDocument  = _currentScript.ownerDocument || currentScript.ownerDocument || {}
 
-    if(cs && cs.ownerDocument && cs.ownerDocument !== document){
+    logger.verbose('detectedScript',detectedScript, 'currentScript', currentScript)
+
+    // detectedScript is null on Chrome. Use this to use either the polyfill or the native implementation.
+    // Fallback to script detection (how will this work ?)
+
+    // Detect JS embed mode first.
+    let shipId = currentScript.getAttribute("data-hull-ship-script");
+
+
+    if(!shipId){
       // we're inside an Import
-      shipId = cs.ownerDocument.shipId;
-      attachCallback(cs.ownerDocument, callback);
-    } else {
-      // We're executing a script.
-      shipId = cs.getAttribute("data-hull-ship-script");
+      shipId = ownerDocument.shipId;
+      attachCallback(ownerDocument, callback);
     }
+
+    logger.verbose('detected shipId', shipId)
+    logger.verbose('######################################')
+
 
     let deployments = Deployment.getDeployments(shipId);
     // In JS-mode, callbacks are passed down to the DeploymentStrategy,

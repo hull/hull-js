@@ -3,6 +3,7 @@
 
 export default {
   compact: require("lodash/array/compact"),
+  uniq: require("lodash/array/uniq"),
   contains: require("lodash/collection/contains"),
   reject: require("lodash/collection/reject"),
   toArray: require("lodash/lang/toArray"),
