@@ -12,8 +12,8 @@ var RemoteConfigStore = assign({}, EventEmitter.prototype, {
   addChangeListener   : function(callback) {this.on(CHANGE_EVENT, callback); },
   removeChangeListener: function(callback) {this.removeListener(CHANGE_EVENT, callback); },
   getAuth             : function(provider) {
-    if(state && state.settings && state.settings.auth && state.settings.auth[provider]){
-      return state.settings.auth[provider]
+    if(state && state.services && state.services.auth && state.services.auth[provider]){
+      return state.services.auth[provider]
     }
     return undefined
   },
@@ -32,7 +32,7 @@ var RemoteConfigStore = assign({}, EventEmitter.prototype, {
         }
         break;
 
-      case RemoteConstants.UPDATE_SETTINGS:
+      case RemoteConstants.UPDATE_SERVICES:
         state.services = action.services;
         if(!action.options.silent===true){
           RemoteConfigStore.emitChange(action.actionType);
@@ -48,8 +48,8 @@ var RemoteConfigStore = assign({}, EventEmitter.prototype, {
 
       case RemoteConstants.LOGOUT_USER:
         delete state.access_token
-        if(state.settings && state.settings.auth){
-          _.map(state.settings, function(services, type){
+        if(state.services && state.services.auth){
+          _.map(state.services, function(services, type){
             _.map(services, function(service, key){
               delete service.credentials
               // Since Hull Storage doesnt have the same format as the others :(
