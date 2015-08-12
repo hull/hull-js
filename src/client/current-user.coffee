@@ -21,6 +21,8 @@ class CurrentUser
     @clear()
 
   get: (key) =>
+    # Ensure logged out user gives Null, not False
+    return null if !key and !@me
     getKey(@me, key)
 
   clear: ()=>
