@@ -211,7 +211,7 @@ var publish = function(versions){
   return merge.apply(merge,streams)
   .pipe(parallelize(publisher.publish(aws.publish.headers,aws.publish.options)))
   .pipe(publisher.cache())
-  // .pipe(cloudfront(invalidationBatch, aws.cloudfront))
+  .pipe(cloudfront(invalidationBatch, aws.cloudfront))
   .pipe(awspublish.reporter())
 }
 
