@@ -57,7 +57,6 @@ onInitSuccess = (userSuccessCallback, hull, data)->
   # Do Hull.embed(platform.deployments) automatically
   embeds.embed(app.deployments,{},onEmbedComplete, onEmbedError) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
 
-  # {hull:{init:{platform:true}}}
   hash = decodeHash()
   snippet = hash?.hull?.snippet
   if snippet
