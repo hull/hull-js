@@ -19,6 +19,8 @@ HullRemote  = require './hull-remote'
 embeds      = require './client/embeds'
 scriptTagConfig = require './client/script-tag-config'
 initializePlatform = require './client/initialize-platform'
+decodeHash  = require './utils/decode-hash'
+displayBanner = require './client/ui/display-banner'
 
 ###*
  * Wraps the success callback
@@ -55,6 +57,29 @@ onInitSuccess = (userSuccessCallback, hull, data)->
   # Do Hull.embed(platform.deployments) automatically
   embeds.embed(app.deployments,{},onEmbedComplete, onEmbedError) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
 
+  hash = decodeHash()
+  snippet = hash?.hull?.snippet
+  if snippet
+    config = hull.config()
+    origin = snippet.origin
+    platformOk = snippet.platformId == config.appId
+
+    snippetOrgUrl = snippet.orgUrl.replace(/^http:/,'https:')
+    orgUrl = config.orgUrl.replace(/^http:/,'https:')
+    orgOk = snippetOrgUrl == orgUrl
+
+    check  = snippet.check 
+
+    window.location.hash=""
+    if(orgOk && platformOk)
+      opener.postMessage({ result: check }, origin);
+      EventBus.once 'hull.snippet.success', ()->
+        opener.postMessage({ result: check }, origin);
+        window.close()
+      displayBanner('platform')
+    else
+      response = { code:'invalid', orgUrl: orgUrl, platformId: config.appId }
+      opener.postMessage({ error: btoa(JSON.stringify(response)) }, origin);
   # Everything went well, call the init callback
   userSuccessCallback(hull, me, app, org)
 
@@ -69,6 +94,16 @@ onEmbedComplete = ()->
 onEmbedError = (err...)->
   logger.error("Failed embedding Ships", err...)
 
+parseHash = ()->
+  return if window.location.href.match('//.+\.hullapp\.io/.+/remote.html') # prevent this when in remote.html
+  hash = decodeHash()
+  if hash?.success && hash?.token
+    if window?.opener?.Hull? and window?.opener?.__hull_login_status__ and !!hash
+      window.opener.__hull_login_status__(hash)
+      window.close()
+
+parseHash()
+
 ###*
  * Main Hull Entry Point
  *
@@ -79,6 +114,7 @@ onEmbedError = (err...)->
  * @return {[type]}                     [description]
 ###
 init = (config={}, userSuccessCallback, userFailureCallback)->
+
   if !!hull._initialized
     throw new Error('Hull.init can be called only once')
     return
@@ -137,6 +173,8 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
     onInitSuccess(userSuccessCallback, client.hull, data)
   , throwErr
   .catch throwErr
+
+
 
 ready = {}
 ready.promise = new Promise (resolve, reject)=>
