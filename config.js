@@ -104,7 +104,6 @@ var loaders = [
   {test: /\.json$/,                loaders: ['json-loader'] },
   {test: /\.coffee$/,              loaders: ['coffee-loader']},
   {test: /\.js$/,                  loaders: ['babel-loader'], exclude: /node_modules|bower_components/},
-  {test: /\.(css|scss)$/,          loaders: ['style/useable', 'css-loader', 'autoprefixer-loader?browsers=last 2 version', 'sass-loader?outputStyle=expanded&'+sassIncludePaths]},
   {test: /\.jpe?g$|\.gif$|\.png$/, loaders: ['file']},
   {test: /\.svg$|\.woff$|\.ttf$|\.wav$|\.mp3$/, loader: "file" },
 ];
