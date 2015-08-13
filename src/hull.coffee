@@ -59,9 +59,28 @@ onInitSuccess = (userSuccessCallback, hull, data)->
 
   # {hull:{init:{platform:true}}}
   hash = decodeHash()
-  if hash?.hull?.init?.platform
+  snippet = hash?.hull?.snippet
+  if snippet
+    config = hull.config()
+    origin = snippet.origin
+    platformOk = snippet.platformId == config.appId
+
+    snippetOrgUrl = snippet.orgUrl.replace(/^http:/,'https:')
+    orgUrl = config.orgUrl.replace(/^http:/,'https:')
+    orgOk = snippetOrgUrl == orgUrl
+
+    check  = snippet.check 
+
     window.location.hash=""
-    displayBanner('platform')
+    if(orgOk && platformOk)
+      opener.postMessage({ result: check }, origin);
+      EventBus.once 'hull.snippet.success', ()->
+        opener.postMessage({ result: check }, origin);
+        window.close()
+      displayBanner('platform')
+    else
+      response = { code:'invalid', orgUrl: orgUrl, platformId: config.appId }
+      opener.postMessage({ error: btoa(JSON.stringify(response)) }, origin);
   # Everything went well, call the init callback
   userSuccessCallback(hull, me, app, org)
 

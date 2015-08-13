@@ -26,9 +26,12 @@
 }
 
 .hull-banner-button{
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
   border-radius: 3px;
   margin:0;
-  border-radius: 3px;
   background: white;
   color:#33ADEC;
   border:1px solid #33ADEC;
