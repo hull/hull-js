@@ -23,10 +23,15 @@ sortServicesByType= (settings, types)->
 module.exports = (_config={})->
   config = clone(_config)
   config.debug ?= false
-  config.settings       = sortServicesByType config.services.settings, config.services.types
-  config.settings.auth ?= {}
-  config.settings.auth = applyUserCredentials config.settings.auth, config.data.credentials
 
+  # This exists because we have 3 endpoints where Credentials and Settings are scattered:
+  # - remote.html config.settings
+  # - remote.html config.data.credentials
+  # - /app/settings
+  services       = sortServicesByType config.services.settings, config.services.types
+  services.auth ?= {}
+  services.auth = applyUserCredentials services.auth, config.data.credentials
+  config.services = services
   config.identify = {
     browser: analyticsId.getBrowserId(),
     session: analyticsId.getSessionId()

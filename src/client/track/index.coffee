@@ -4,11 +4,12 @@ assign   = require '../../polyfills/assign'
 
 
 class Tracker
-  constructor : (api, remoteConfig, config)->
+  constructor : (api, currentUser)->
     @api = api
+    @currentUser = currentUser
     @setupTracking()
 
-  getCurrentUserId: -> @api.currentUser.getId()
+  getCurrentUserId: -> @currentUser.get('id')
 
   setupTracking : () ->
     return if @setup

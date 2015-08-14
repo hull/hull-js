@@ -9,6 +9,7 @@ polyfill    = require './utils/load-polyfills'
 logger      = require './utils/logger'
 Client      = require './client'
 CurrentUser = require './client/current-user'
+CurrentConfig = require './client/current-config'
 Channel     = require './client/channel'
 Api         = require './client/api'
 
@@ -16,9 +17,16 @@ EventBus    = require './utils/eventbus'
 Pool        = require './utils/pool'
 HullRemote  = require './hull-remote'
 embeds      = require './client/embeds'
-configCheck = require './client/config-check'
 scriptTagConfig = require './client/script-tag-config'
 initializePlatform = require './client/initialize-platform'
+
+ready = {}
+ready.promise = new Promise (resolve, reject)=>
+  ready.reject = reject
+  ready.resolve = resolve
+
+ready.promise.catch (err)-> throw new Error('Hull.ready callback error', err)
+
 
 ###*
  * Wraps the success callback
@@ -59,17 +67,16 @@ onInitSuccess = (userSuccessCallback, hull, data)->
     # Load polyfills
     # Do Hull.embed(platform.deployments) automatically
     embeds.embed(app.deployments,{},onEmbedComplete, onEmbedError) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
+  
+  # Everything went well, call the init callback
+  userSuccessCallback(hull, me, app, org)
 
   hull
 
 # Wraps init failure
-onInitFailure = (err)-> throw err
-
-onEmbedComplete = ()->
-  logger.log("Hull Embeds Completed successfully")
-
-onEmbedError = (err...)->
-  logger.error("Failed embedding Ships", err...)
+onInitFailure   = (err)-> throw err
+onEmbedComplete = ()-> logger.log("Hull Embeds Completed successfully")
+onEmbedError    = (err...)-> logger.error("Failed embedding Ships", err...)
 
 polyfillPromise = undefined;
 
@@ -83,6 +90,7 @@ polyfillPromise = undefined;
  * @return {[type]}                     [description]
 ###
 init = (config={}, userSuccessCallback, userFailureCallback)->
+
   if !!hull._initialized
     throw new Error('Hull.init can be called only once')
     return
@@ -93,21 +101,24 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
   logger.init(config.debug)
   config.appId   = config.appId || config.platformId || config.shipId
   delete config.platformId if config.platformId?
-  delete config.ship       if config.ship?
+  delete config.shipId       if config.shipId?
 
   missing = []
   missing.push "orgUrl" unless config.orgUrl?
   missing.push "platformId" unless config.appId?
-  throw new Error("Hull config error: You forgot to pass #{missing.join(',')} needed to initialize hull properly") if missing.length
+  httpsRegex = /^https:|^\/\//
+  throw new Error("[Hull.init] jsUrl NEEDS be loaded via https if orgUrl is https") if config.jsUrl and not httpsRegex.test(config.jsUrl) and httpsRegex.test(config.jsUrl)
+  throw new Error("[Hull.init] You forgot to pass #{missing.join(',')} needed to initialize hull properly") if missing.length
 
   hull._initialized = true
 
   client  = {}
   channel = {}
 
-  currentUser =  new CurrentUser()
+  currentUser =    new CurrentUser()
+  currentConfig =  new CurrentConfig()
 
-  err = (err)->
+  throwErr = (err)->
     # Something was wrong while initializing
     logger.error(err.stack)
     userFailureCallback = userFailureCallback || ->
@@ -115,34 +126,34 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
     ready.reject(err)
 
   # Ensure we have everything we need before starting Hull
-  configCheck(config)
-  .then ()=>
+  currentConfig.init(config).then (config)->
+    # Load polyfills
     polyfillPromise = polyfill.fill(config)
+    config
+  .then (config)=>
     # Create the communication channel with Remote
-    channel = new Channel(config, currentUser)
+    channel = new Channel(currentUser, config)
     channel.promise
-  ,err
+  , throwErr
   .then (channel)=>
     # Create the Hull client that stores the API, Auth, Sharing and Tracking objects.
-    client = new Client(config, channel, currentUser)
+    client = new Client(channel, currentUser, currentConfig)
   , onInitFailure
-  ,err
+  , throwErr
   .then (hullClient)=>
     # Initialize
     client.hull = assign(hull,client.hull)
-    data = client.remoteConfig.data
-    currentUser.init(data.me)
-    initializePlatform(data, config, client.hull)
+    data = currentConfig.getRemote('data')
+    currentUser.init(data?.me)
+    initializePlatform(data, currentConfig, client.hull)
+    parseHash.detectSnippet(currentConfig)
     onInitSuccess(userSuccessCallback, client.hull, data)
-  ,err
-  .catch err
+  , throwErr
+  .catch throwErr
 
-ready = {}
-ready.promise = new Promise (resolve, reject)=>
-  ready.reject = reject
-  ready.resolve = resolve
+parseHash.detectToken()
 
-ready.promise.catch (err)-> throw new Error('Hull.ready callback error', err)
+
 
 hullReady = (callback, errback)->
   callback = callback || ->
@@ -172,10 +183,14 @@ eeMethods = ['on', 'onAny', 'offAny', 'once', 'many', 'off', 'emit']
 _.map eeMethods, (m)->
   hull[m] = (args...) -> EventBus[m](args...)
 
-autoStartConfig = scriptTagConfig()
-if autoStartConfig && autoStartConfig.autoStart
-  if !hull._initialized
-    autoStartConfig && autoStartConfig.autoStart && init(autoStartConfig)
+unless window.Hull?
+  autoStartConfig = scriptTagConfig()
+  if autoStartConfig && autoStartConfig.autoStart
+    if !hull._initialized
+      autoStartConfig && autoStartConfig.autoStart && init(autoStartConfig)
 
-window.Hull = hull
+  window.Hull = hull
+else
+  logger.error "Hull Snippet found more than once (or you already have a global variable named window.Hull). Either way, we can't launch Hull more than once. We only use the first one in the page"
+
 module.exports = hull

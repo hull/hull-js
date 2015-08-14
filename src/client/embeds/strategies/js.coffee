@@ -30,7 +30,7 @@ class JSDeploymentStrategy extends BaseDeploymentStrategy
       scriptLoader({src:@deployment.ship.index, attributes})
       .then ()=>
         @done(targets)
-      .catch throwErr
+      .catch @ready.reject
     else
       new Promise (resolve, reject)=>
         @done(targets)
@@ -42,6 +42,7 @@ class JSDeploymentStrategy extends BaseDeploymentStrategy
       @addInsertion(@insert(el, target))
 
     @ready.resolve()
+
   addInsertion : (el)=>
     @sandbox.addElement(el)
     @insertions.push {el, ready:false, callbacks:[]}

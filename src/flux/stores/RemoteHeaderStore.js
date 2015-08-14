@@ -45,6 +45,12 @@ var RemoteHeaderStore = assign({}, EventEmitter.prototype, {
         }
         break;
 
+      case RemoteConstants.UPDATE_SETTINGS:
+        if(action && action.services && action.services.auth && action.services.auth.hull && action.services.auth.hull.credentials){
+          setHeader(ACCESS_TOKEN_HEADER, action.services.auth.hull.credentials.access_token);
+        }
+        break;
+
       case RemoteConstants.UPDATE_USER:
         if(action.user.id != getHeader(USER_ID_HEADER) || action.user.access_token != getHeader(ACCESS_TOKEN_HEADER)){
           if (action.user && action.user.access_token){
@@ -58,22 +64,11 @@ var RemoteHeaderStore = assign({}, EventEmitter.prototype, {
         }
         break;
 
-      case RemoteConstants.CLEAR_ACCESS_TOKEN:
-        if(getHeader(ACCESS_TOKEN_HEADER)){
-          destroyHeader(ACCESS_TOKEN_HEADER);
+      case RemoteConstants.LOGOUT_USER:
+        destroyHeader(ACCESS_TOKEN_HEADER);
+        destroyHeader(USER_ID_HEADER);
+        if(!action.options.silent===true){
           RemoteHeaderStore.emitChange(action.actionType);
-        }
-        break;
-
-      case RemoteConstants.CLEAR_HEADER:
-        destroyHeader(action.header);
-        RemoteHeaderStore.emitChange(action.actionType);
-        break;
-
-      case RemoteConstants.SET_HEADER:
-        if(!RemoteUserStore.isUpToDate(action.user)){
-          setHeader(action.header,action.value);
-          RemoteHeaderStore.emitChange();
         }
         break;
 

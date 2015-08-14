@@ -3,6 +3,7 @@
 
 export default {
   compact: require("lodash/array/compact"),
+  uniq: require("lodash/array/uniq"),
   contains: require("lodash/collection/contains"),
   reject: require("lodash/collection/reject"),
   toArray: require("lodash/lang/toArray"),
@@ -14,6 +15,7 @@ export default {
   isEmpty: require("lodash/lang/isEmpty"),
   throttle: require("lodash/function/throttle"),
   isArray: require("lodash/lang/isArray"),
+  isEqual: require("lodash/lang/isEqual"),
   isFunction: require("lodash/lang/isFunction"),
   isObject: require("lodash/lang/isObject"),
   isString: require("lodash/lang/isString"),
