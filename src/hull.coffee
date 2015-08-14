@@ -17,8 +17,10 @@ EventBus    = require './utils/eventbus'
 Pool        = require './utils/pool'
 HullRemote  = require './hull-remote'
 embeds      = require './client/embeds'
+parseHash   = require './client/parse-hash'
 scriptTagConfig = require './client/script-tag-config'
 initializePlatform = require './client/initialize-platform'
+
 
 ready = {}
 ready.promise = new Promise (resolve, reject)=>
@@ -40,6 +42,7 @@ ready.promise.catch (err)-> throw new Error('Hull.ready callback error', err)
  * @return {object}                     the Hull object
 ###
 onInitSuccess = (userSuccessCallback, hull, data)->
+  userSuccessCallback = userSuccessCallback || ->
 
   {me, app, org} = data
 
@@ -68,9 +71,6 @@ onInitSuccess = (userSuccessCallback, hull, data)->
     # Do Hull.embed(platform.deployments) automatically
     embeds.embed(app.deployments,{},onEmbedComplete, onEmbedError) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
   
-  # Everything went well, call the init callback
-  userSuccessCallback(hull, me, app, org)
-
   hull
 
 # Wraps init failure
@@ -106,8 +106,6 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
   missing = []
   missing.push "orgUrl" unless config.orgUrl?
   missing.push "platformId" unless config.appId?
-  httpsRegex = /^https:|^\/\//
-  throw new Error("[Hull.init] jsUrl NEEDS be loaded via https if orgUrl is https") if config.jsUrl and not httpsRegex.test(config.jsUrl) and httpsRegex.test(config.jsUrl)
   throw new Error("[Hull.init] You forgot to pass #{missing.join(',')} needed to initialize hull properly") if missing.length
 
   hull._initialized = true
