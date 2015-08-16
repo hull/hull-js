@@ -4,8 +4,10 @@ logger = require '../utils/logger'
 dasherize = (str)->
   str.replace /[A-Z]/, (c) ->  "-" + c.toLowerCase()
 
-valid =
 
+httpsRegex = /^https:|^\/\//
+
+valid =
   regex: (reg)-> (val, key)->
     check = reg.test(val)
     if !check
@@ -13,15 +15,13 @@ valid =
     check
 
   https: (val, key)->
-    check = /^https:|^\/\//.test(val)
-    return check if document.location.protocol == 'https:' and check
+    check = httpsRegex.test(val)
+    return true if check
     logger.warn("[Hull.init] #{key} should be loaded via https. Current value is ", val)
-    check
     true
 
 
 transform =
-
   url: (url, key)->
     if url && url.length > 0
       a = document.createElement('a')
@@ -53,21 +53,24 @@ initParams = {
     transform: transform.url
     validation: valid.regex(new RegExp("^" + document.location.origin + "/"))
   },
-  debug:   { default: false, transform: transform.bool },
-  verbose: { default: false, transform: transform.bool },
-  embed: { default: true, transform: transform.bool },
-  autoStart: { default: true, transform: transform.bool },
-  accessToken: { default: null }
-  customerId: { default: null }
+  debug       : { default: false, transform: transform.bool },
+  verbose     : { default: false, transform: transform.bool },
+  embed       : { default: true,  transform: transform.bool },
+  autoStart   : { default: true,  transform: transform.bool },
+  accessToken : { default: null }
+  customerId  : { default: null }
 }
+
+getAttribute = (el, k)->
+  el.getAttribute(dasherize(k)) || el.getAttribute(k)
 
 getParamValue = (el, param, key)->
   keys = [key].concat(param.altKeys || [])
   transform = param.transform || (o)-> o
   value = _.reduce(keys, (ret, k)->
     if ret == null
-      value = transform((el.getAttribute(dasherize(k)) || el.getAttribute(k)), key)
-      valid = value? && (!param.validation  || param.validation(value, k))
+      value = transform(getAttribute(el, k), key)
+      valid = value? && (!param.validation  || param.validation(value, k, el))
       ret = value if valid
     ret
   , null)
@@ -81,7 +84,7 @@ module.exports = ->
   return unless hull_js_sdk
 
   # Map known config values to Hull init
-  _.reduce initParams, (config, param, key)->
+  out = _.reduce initParams, (config, param, key)->
     return unless config
     value = getParamValue(hull_js_sdk, param, key)
     if value?
@@ -90,3 +93,6 @@ module.exports = ->
       config = false
     config
   , {}
+  if out
+    logger.error("[Hull.init] jsUrl NEEDS be loaded via https if orgUrl is https ") if httpsRegex.test(out.orgUrl) and not httpsRegex.test(out.jsUrl)
+  out

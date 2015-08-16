@@ -5,5 +5,7 @@ module.exports = {
   _             : require("./lodash"),
   isMobile      : require("./is-mobile"),
   uuid          : require("./uuid"),
-  domready      : require("./domready")
+  domready      : require("./domready"),
+  Promise       : require("es6-promise").Promise,
+  superagent    : require("superagent")
 };

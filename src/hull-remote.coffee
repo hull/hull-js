@@ -38,8 +38,8 @@ Hull = (remoteConfig)->
     RemoteConfigStore.addChangeListener (change)=>
       # Notify client whenever settings change
       switch change
-        when RemoteConstants.UPDATE_REMOTE_CONFIG
-          channel.rpc.settingsUpdate(RemoteConfigStore.getState())
+        when RemoteConstants.UPDATE_REMOTE_CONFIG, RemoteConstants.UPDATE_SETTINGS
+          channel.rpc.configUpdate(RemoteConfigStore.getState())
           break
 
     RemoteUserStore.addChangeListener (change)=>
@@ -64,7 +64,7 @@ Hull = (remoteConfig)->
       EventBus.on 'remote.iframe.hide',  ()-> channel.rpc.hide()
 
       EventBus.on 'remote.track',        (payload)->
-        services.services.track.request(payload.event, payload.params)
+        services.services.track.request({params:payload.params, path:payload.event})
 
       EventBus.on 'remote.tracked',        (payload)->
         channel.rpc.track(payload)

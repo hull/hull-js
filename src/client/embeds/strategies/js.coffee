@@ -33,8 +33,9 @@ class JSDeploymentStrategy extends BaseDeploymentStrategy
         'data-hull-ship-script'      : @deployment.ship.id
 
       scriptLoader({src:@deployment.ship.index, attributes})
-      .then @ready.resolve
-      .catch throwErr
+      .then (args...)=>
+        @ready.resolve(args...)
+      .catch @ready.reject
     else
       new Promise (resolve, reject)=>
         @ready.resolve()

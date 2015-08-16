@@ -22,7 +22,7 @@ class Channel
           ready           : {}
           message         : {}
           userUpdate      : {}
-          settingsUpdate  : {}
+          configUpdate  : {}
           getClientConfig : {}
           track           : {}
           show            : {}

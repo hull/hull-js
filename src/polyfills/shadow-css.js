@@ -16,7 +16,6 @@ module.exports = function(scope){
           &&
           (style.ownerDocument !== document || this.rootImportForElement(style).getAttribute('rel')==='import')
         ){
-        console.log('shortcut generic', elt)
         this.markParsingComplete(style);
         this.parseNext();
       } else {
