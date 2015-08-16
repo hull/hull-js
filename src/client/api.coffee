@@ -6,16 +6,15 @@ parseOpts = require './parse-opts'
 channel   = require './channel'
 
 class Api
-  constructor : (config, channel, currentUser)->
-    @config = config
-    @remoteConfig = channel.remoteConfig
-    @services = @remoteConfig.settings
+  constructor : (channel, currentUser, currentConfig)->
     @channel = channel
+    @currentConfig = currentConfig
     @currentUser = currentUser
-    EventBus.on 'hull.settings.update', (settings)-> @services = settings
 
-    authScope = if channel.remoteConfig.data.headers?['Hull-Auth-Scope'] then channel.remoteConfig.data.headers['Hull-Auth-Scope'].split(":")[0] else ''
+    EventBus.on 'hull.settings.update', (settings)-> currentConfig.setRemote(settings,'settings')
 
+    data = @currentConfig.getRemote('data')
+    authScope = if data.headers?['Hull-Auth-Scope'] then data.headers['Hull-Auth-Scope'].split(":")[0] else ''
 
     @_message = (params, userSuccessCallback, userErrorCallback)=>
 
@@ -44,14 +43,12 @@ class Api
 
       @channel.rpc.message(opts, onSuccess, onError)
 
-  clearToken    : (args...)=>
-    @channel.rpc.clearAccessToken(args...) # No need to be exposed, IMO
-
   refreshUser   : ()=>
     new Promise (resolve, reject)=>
-      onSuccess  = (res={})=>
-        @currentUser.update(res)
-        resolve(res)
+      onSuccess  = (response={})=>
+        @currentUser.set(response.me)
+        @currentConfig.setRemote(response.services, 'services')
+        resolve(response.me)
 
       onError   = (err={})=>
         reject(err)
@@ -60,9 +57,9 @@ class Api
 
   updateCurrentUser: (user={}, headers={})=>
     header = headers?['Hull-User-Id']
-    @currentUser.update(user) if header && user?.id == header
+    @currentUser.set(user) if header && user?.id == header
 
   updateCurrentUserCookies: (headers, provider)=>
-    @currentUser.updateCookies(headers, @config.appId) if (headers? and provider == 'hull')
+    @currentUser.setCookies(headers, @currentConfig.get('appId')) if (headers? and provider == 'hull')
 
 module.exports = Api

@@ -51,9 +51,6 @@ trackResponse  = (response={})=>
       "Invalid Tracking header : ${JSON.stringify(errror,null,2)}"
   return response
 
-# identifyResponse= ()->
-#   debugger
-
 class HullService
   constructor: (config, gateway)->
     @config       = config

@@ -20,8 +20,8 @@ popup = (location, opts={}, params={})->
 
 class Sharer
 
-  constructor: (config)->
-    @config = config
+  constructor: (currentConfig)->
+    @currentConfig = currentConfig
 
   share: (opts, event={})=>
     if !_.isObject(opts)
@@ -48,10 +48,10 @@ class Sharer
       opts.params.title = opts.params.title || domWalker.getMetaValue('og:title') || document.title
 
     params = assign({
-      platform_id: @config.appId
+      platform_id: @currentConfig.get('appId')
     }, opts.params)
 
-    popupUrl = @config.orgUrl + "/api/v1/intent/share/" + opts.provider
+    popupUrl = @currentConfig.get('orgUrl') + "/api/v1/intent/share/" + opts.provider
     sharePromise = popup(popupUrl, { width: 550, height: 420 }, params)
 
     sharePromise.then (response)=>

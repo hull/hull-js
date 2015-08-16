@@ -15,7 +15,7 @@ handleSpecialRoutes = (request)->
   switch request.path
     when '/api/v1/logout'
       request.nocallback = true
-      RemoteActions.clearUser()
+      RemoteActions.logoutUser()
       break
 
   request
@@ -50,14 +50,10 @@ class Services
     {
       ready : @onReady
       message : @onMessage
-      clearAccessToken : @onclearAccessToken
       refreshUser : @onRefreshUser
     }
 
   onReady : (req, xdmCallback, xdmErrback) ->
-
-  onclearAccessToken : (args...)=>
-    RemoteActions.clearAccessToken(args...)
 
   onRefreshUser : (xdmCallback, xdmErrback)=>
     xdmCallback ?=->
@@ -68,14 +64,13 @@ class Services
 
     onSuccess =  (res)=>
       # Refreshing the User results in us setting everything up again
-      me = res[0].body;
-      settings = res[1].body
-      config = assign({},RemoteConfigStore.getState(),{settings:settings});
-      RemoteActions.updateUser(me)
-      RemoteActions.updateRemoteConfig(config)
+      me = res[0].body
+      services = res[1].body
+      RemoteActions.updateUser(me,{silent:true})
+      RemoteActions.updateServices(services,{silent:true})
       # Do not send the data back. We're just refreshing stuff.
       # Data will come back through even handlers on Flux Stores
-      xdmCallback(me)
+      xdmCallback({me,services})
       undefined
 
     onError = (res={})->

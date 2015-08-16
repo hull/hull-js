@@ -4,15 +4,6 @@ _        = require '../utils/lodash'
 logger   = require '../utils/logger'
 EventBus = require '../utils/eventbus'
 isMobile = require '../utils/is-mobile'
-Base64   = require '../utils/base64'
-
-try
-  h = document.location.hash.replace('#', '')
-  if !!h
-    hash = JSON.parse(Base64.decode(h))
-    if window?.opener?.Hull? and window?.opener?.__hull_login_status__ and  !!hash
-      window.opener.__hull_login_status__(hash)
-      window.close()
 
 getNoUserPromise = ()->
   promise = new Promise (resolve, reject)->
@@ -106,12 +97,13 @@ postForm = (path, method='post', params={}) ->
   form.submit()
 
 class Auth
-  constructor: (api)->
+  constructor: (api, currentUser, currentConfig)->
     @api             = api
-    @config          = api.config
+    @currentUser     = currentUser
+    @currentConfig   = currentConfig
     @_popupInterval  = null
     @_authenticating = null
-    @authServices    = _.keys(api.services.auth)
+    @authServices    = _.keys(@currentConfig.get('services.auth'))
 
   isAuthenticating : -> @_authenticating?
 
@@ -119,15 +111,15 @@ class Auth
   generateAuthUrl : (opts={})->
     @createAuthCallback()
     params              = opts.params || {}
-    params.app_id       = @config.appId
+    params.app_id       = @currentConfig.get('appId')
     # The following is here for backward compatibility. Must be removed at first sight next time
-    params.callback_url = opts.redirect_url || params.callback_url || @config.callback_url || @config.callbackUrl || document.location.toString()
+    params.callback_url = opts.redirect_url || params.callback_url || @currentConfig.get('callback_url') || @currentConfig.get('callbackUrl') || document.location.toString()
     params.auth_referer = document.location.toString()
-    params.version      = @config.version
+    params.version      = @currentConfig.get('version')
     querystring         = _.map params,(v,k) ->
       encodeURIComponent(k)+'='+encodeURIComponent(v)
     .join('&')
-    "#{@config.orgUrl}/auth/#{opts.provider}?#{querystring}"
+    "#{@currentConfig.get('orgUrl')}/auth/#{opts.provider}?#{querystring}"
 
   createAuthCallback: =>
     window.__hull_login_status__ = (hash) =>
@@ -237,7 +229,7 @@ class Auth
       # Hull.login({access_token:'xxxxx'})
 
       if options.strategy == 'redirect'
-        return postForm(@config.orgUrl+'/api/v1/users/login', 'post', options)
+        return postForm(@currentConfig.get('orgUrl')+'/api/v1/users/login', 'post', options)
 
       promise = @api.message('users/login', 'post', _.pick(options, 'login', 'password', 'access_token'))
 
@@ -245,8 +237,15 @@ class Auth
 
   logout : (callback, errback) =>
     promise = @api.message('logout')
-    .then callback, errback
-    # @completeLoginPromiseChain(promise,callback,errback)
+    @completeLoginPromiseChain(promise,callback,errback)
+
+  resetPassword : (email=@currentUser.get('email'), callback, errback) =>
+    promise = @api.message('/users/request_password_reset', 'post', {email})
+    @completeLoginPromiseChain(promise,callback,errback)
+
+  confirmEmail : (email=@currentUser.get('email'), callback, errback) =>
+    promise = @api.message('/users/request_confirmation_email', 'post', {email})
+    @completeLoginPromiseChain(promise,callback,errback)
 
   signup : (user, callback, errback) =>
     promise = @api.message('users', 'POST', user)
