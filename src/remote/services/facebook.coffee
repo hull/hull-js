@@ -15,17 +15,18 @@ class FacebookService extends GenericService
     super(config, gateway)
     @loadFbSdk(@getSettings())
 
-  request : (args...)->
+  request : (args...)=>
     @ensureLoggedIn().then ()=> @performRequest(args...)
 
-  ensureLoggedIn : ()->
+  ensureLoggedIn : ()=>
+    self = this
     new Promise (resolve, reject)=>
       args = Array.prototype.slice.call(arguments)
       if @fbUser?.status=='connected'
         resolve()
       else
         FB.getLoginStatus (res)=>
-          @updateFBUserStatus(res)
+          self.updateFBUserStatus(res)
           if res.status=='connected' then resolve() else reject()
         , true
       # , true ~ Maybe we dont need a roundtrip each time.
