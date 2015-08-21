@@ -24,7 +24,7 @@ class FacebookService extends GenericService
       if @fbUser?.status=='connected'
         resolve()
       else
-        FB.getLoginStatus (res)->
+        FB.getLoginStatus (res)=>
           @updateFBUserStatus(res)
           if res.status=='connected' then resolve() else reject()
         , true
@@ -87,12 +87,13 @@ class FacebookService extends GenericService
   updateFBUserStatus: (res)=>
     @fbUser = res
 
-  subscribeToFBEvents : ()->
+  subscribeToFBEvents : ()=>
     return unless FB?.Event?
-
+    self = this
     _.map FB_EVENTS, (event)=>
       FB.Event.subscribe event, (args...)=>
-        @updateFBUserStatus(args...) if event.indexOf('auth.')>-1
+        if event.indexOf('auth.')>-1
+          self.updateFBUserStatus(args...)
         EventBus.emit("fb.#{event}", args...)
 
 
