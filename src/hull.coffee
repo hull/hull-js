@@ -17,10 +17,18 @@ EventBus    = require './utils/eventbus'
 Pool        = require './utils/pool'
 HullRemote  = require './hull-remote'
 embeds      = require './client/embeds'
+parseHash   = require './client/parse-hash'
 scriptTagConfig = require './client/script-tag-config'
 initializePlatform = require './client/initialize-platform'
-decodeHash  = require './utils/decode-hash'
-displayBanner = require './client/ui/display-banner'
+
+
+ready = {}
+ready.promise = new Promise (resolve, reject)=>
+  ready.reject = reject
+  ready.resolve = resolve
+
+ready.promise.catch (err)-> throw new Error('Hull.ready callback error', err)
+
 
 ###*
  * Wraps the success callback
@@ -35,74 +43,42 @@ displayBanner = require './client/ui/display-banner'
 ###
 onInitSuccess = (userSuccessCallback, hull, data)->
   userSuccessCallback = userSuccessCallback || ->
+
   {me, app, org} = data
+
+  # We're on the client.
+  delete hull.initRemote
+
+  # Execute Hull.init callback
+  ready.resolve {hull, me, app, org}
+
+  # Everything went well, call the init callback
+  userSuccessCallback(hull, me, app, org) if userSuccessCallback
 
   embeds.initialize({ org });
   hull.embed = embeds.embed
   hull.onEmbed = embeds.onEmbed
 
-  # We're on the client.
-  delete hull.initRemote
-
   # Prune init queue
   Pool.run('track', hull)
-
-  # Execute Hull.init callback
-  ready.resolve {hull, me, app, org}
 
   EventBus.emit('hull.ready', hull, me, app, org)
   EventBus.emit('hull.init', hull, me, app, org)
   logger.log("Hull.js version \"#{hull.version}\" started")
 
-  # Do Hull.embed(platform.deployments) automatically
-  embeds.embed(app.deployments,{},onEmbedComplete, onEmbedError) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
-
-  hash = decodeHash()
-  snippet = hash?.hull?.snippet
-  if snippet
-    config = hull.config()
-    origin = snippet.origin
-    platformOk = snippet.platformId == config.appId
-
-    snippetOrgUrl = snippet.orgUrl.replace(/^http:/,'https:')
-    orgUrl = config.orgUrl.replace(/^http:/,'https:')
-    orgOk = snippetOrgUrl == orgUrl
-
-    check  = snippet.check 
-
-    window.location.hash=""
-    if(orgOk && platformOk)
-      opener.postMessage({ result: check }, origin);
-      EventBus.once 'hull.snippet.success', ()->
-        opener.postMessage({ result: check }, origin);
-        window.close()
-      displayBanner('platform')
-    else
-      response = { code:'invalid', orgUrl: orgUrl, platformId: config.appId }
-      opener.postMessage({ error: btoa(JSON.stringify(response)) }, origin);
-  # Everything went well, call the init callback
-  userSuccessCallback(hull, me, app, org)
-
+  polyfillPromise.then ()->
+    # Load polyfills
+    # Do Hull.embed(platform.deployments) automatically
+    embeds.embed(app.deployments,{},onEmbedComplete, onEmbedError) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
+  
   hull
 
 # Wraps init failure
-onInitFailure = (err)-> throw err
+onInitFailure   = (err)-> throw err
+onEmbedComplete = ()-> logger.log("Hull Embeds Completed successfully")
+onEmbedError    = (err...)-> logger.error("Failed embedding Ships", err...)
 
-onEmbedComplete = ()->
-  logger.log("Hull Embeds Completed successfully")
-
-onEmbedError = (err...)->
-  logger.error("Failed embedding Ships", err...)
-
-parseHash = ()->
-  return if window.location.href.match('//.+\.hullapp\.io/.+/remote.html') # prevent this when in remote.html
-  hash = decodeHash()
-  if hash?.success && hash?.token
-    if window?.opener?.Hull? and window?.opener?.__hull_login_status__ and !!hash
-      window.opener.__hull_login_status__(hash)
-      window.close()
-
-parseHash()
+polyfillPromise = undefined;
 
 ###*
  * Main Hull Entry Point
@@ -130,8 +106,6 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
   missing = []
   missing.push "orgUrl" unless config.orgUrl?
   missing.push "platformId" unless config.appId?
-  httpsRegex = /^https:|^\/\//
-  throw new Error("[Hull.init] jsUrl NEEDS be loaded via https if orgUrl is https") if config.jsUrl and not httpsRegex.test(config.jsUrl) and httpsRegex.test(config.jsUrl)
   throw new Error("[Hull.init] You forgot to pass #{missing.join(',')} needed to initialize hull properly") if missing.length
 
   hull._initialized = true
@@ -152,11 +126,11 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
   # Ensure we have everything we need before starting Hull
   currentConfig.init(config).then (config)->
     # Load polyfills
-    polyfill.fill(config)
+    polyfillPromise = polyfill.fill(config)
     config
-  .then (currentConfig)=>
+  .then (config)=>
     # Create the communication channel with Remote
-    channel = new Channel(currentUser, currentConfig)
+    channel = new Channel(currentUser, config)
     channel.promise
   , throwErr
   .then (channel)=>
@@ -170,18 +144,14 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
     data = currentConfig.getRemote('data')
     currentUser.init(data?.me)
     initializePlatform(data, currentConfig, client.hull)
+    parseHash.detectSnippet(currentConfig)
     onInitSuccess(userSuccessCallback, client.hull, data)
   , throwErr
   .catch throwErr
 
+parseHash.detectToken()
 
 
-ready = {}
-ready.promise = new Promise (resolve, reject)=>
-  ready.reject = reject
-  ready.resolve = resolve
-
-ready.promise.catch (err)-> throw new Error('Hull.ready callback error', err)
 
 hullReady = (callback, errback)->
   callback = callback || ->
@@ -220,4 +190,5 @@ unless window.Hull?
   window.Hull = hull
 else
   logger.error "Hull Snippet found more than once (or you already have a global variable named window.Hull). Either way, we can't launch Hull more than once. We only use the first one in the page"
+
 module.exports = hull
