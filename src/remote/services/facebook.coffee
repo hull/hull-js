@@ -1,7 +1,6 @@
 Promise           = require('es6-promise').Promise
 assign            = require '../../polyfills/assign'
 _                 = require '../../utils/lodash'
-cookies           = require '../../utils/cookies'
 EventBus          = require '../../utils/eventbus'
 clone             = require '../../utils/clone'
 GenericService    = require './generic-service'

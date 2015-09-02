@@ -1,6 +1,4 @@
 _                 = require '../../utils/lodash'
-cookies           = require '../../utils/cookies'
-analyticsId       = require '../../utils/analytics-id'
 EventBus          = require '../../utils/eventbus'
 Base64            = require '../../utils/base64'
 getWrappedRequest = require '../wrapped-request'
