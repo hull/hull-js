@@ -1,9 +1,10 @@
 Cookies = require 'cookies-js'
-COOKIES_ENABLED = 'COOKIES_ENABLED'
+COOKIES_ENABLED = '_ce'
 module.exports =
   set: Cookies.set
   get: Cookies.get
   remove: Cookies.expire
   enabled: ->
-    (Cookies.set(COOKIES_ENABLED, 't') && Cookies.get(COOKIES_ENABLED) == 't')
+    val = new Date().getTime()
+    ((Cookies.set(COOKIES_ENABLED, val) && Cookies.get(COOKIES_ENABLED) == val))
 

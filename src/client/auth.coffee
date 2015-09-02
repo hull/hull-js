@@ -50,27 +50,14 @@ parseParams = (argsArray)->
     # Hull.login({login:'abcd@ef.com', password:'passwd', strategy:'redirect|popup', redirect:'...'})
     throw new Error('Seems like something is wrong in your Hull.login() call, We need a login and password fields to login. Read up here: http://www.hull.io/docs/references/hull_js/#user-signup-and-login') unless opts.login? and opts.password?
 
-  isSafari = navigator.userAgent.indexOf('Safari') > -1 && navigator.userAgent.indexOf('Chrome') == -1
-  if isSafari
-    opts.strategy ||= 'redirect'
-
-  if isMobile()
-    # We're on mobile, setup defaults for Touch/Redirect login
-    opts.strategy       ||= 'redirect'
-    opts.params.display ||= 'touch'
-
+  opts.params.display ||= 'touch' if isMobile()
+    
   # Setup defaults for Popup login for Facebook on Desktop
 
   # # Redirect login by default. if on Mobile.
   # # Setup 'display' to be 'touch' for Facebook Login if on Mobile
   if opts.provider == 'facebook'
     opts.params.display ||= if opts.strategy == 'redirect' then 'page' else 'popup'
-
-  # Redirect to current page by default for Redirect login
-  # TODO: Facebook calls it redirect_uri => Shouldnt we do the same?
-  if opts.strategy == 'redirect'
-    redirect = window.location.href
-    opts.redirect_url ||= redirect
 
   # TODO : OK to ignore `params` in this email login scenario ?
   delete opts.params if opts.password?
@@ -210,6 +197,8 @@ class Auth
     # Preprocess Options
     # Opts format is now : {login:"", password:"", params:{}} or {provider:"", params:{}}
     {options, callback, errback} = parseParams(Array.prototype.slice.call(arguments))
+
+
     if options.provider?
       # Social Login
       if options.access_token?
@@ -224,20 +213,31 @@ class Auth
         promise = @loginWithProvider(options)
 
     else
+
       # Email Login
       # Hull.login({login:'user@host.com', password:'xxxx'})
       # Hull.login({access_token:'xxxxx'})
 
-      if options.strategy == 'redirect'
-        return postForm(@currentConfig.get('orgUrl')+'/api/v1/users/login', 'post', options)
-
       promise = @api.message('users/login', 'post', _.pick(options, 'login', 'password', 'access_token'))
 
+      if options.strategy == 'redirect' ||  !@currentConfig.getRemote('cookiesEnabled')
+        postUrl = @currentConfig.get('orgUrl')+'/api/v1/users/login'
+        options.redirect_url ||= window.location.href
+        promise = promise.then -> postForm(postUrl, 'post', options)
+
+    @completeLoginPromiseChain(promise, callback, errback)
+
+  logout: (options={}, callback, errback) =>
+    promise = @api.message('logout')
+    if options.strategy == 'redirect' || !@currentConfig.getRemote('cookiesEnabled')
+      redirect_url = options.redirect_url || document.location.href
+      # Add this param to make sure safari actually redirects to the logoutUrl
+      b = new Date().getTime()
+      logoutUrl = @currentConfig.get('orgUrl') + '/api/v1/logout?b=' + b + '&redirect_url=' + encodeURIComponent(redirect_url)
+      promise.then -> document.location = logoutUrl
+        
     @completeLoginPromiseChain(promise,callback,errback)
 
-  logout : (callback, errback) =>
-    promise = @api.message('logout')
-    @completeLoginPromiseChain(promise,callback,errback)
 
   resetPassword : (email=@currentUser.get('email'), callback, errback) =>
     promise = @api.message('/users/request_password_reset', 'post', {email})
@@ -247,8 +247,16 @@ class Auth
     promise = @api.message('/users/request_confirmation_email', 'post', {email})
     @completeLoginPromiseChain(promise,callback,errback)
 
-  signup : (user, callback, errback) =>
-    promise = @api.message('users', 'POST', user)
+  signup : (attrs, callback, errback) =>
+    promise = @api.message('users', 'POST', attrs)
+    if !@currentConfig.getRemote('cookiesEnabled')
+      postUrl = @currentConfig.get('orgUrl')+'/api/v1/users/login'
+      promise = promise.then (user)->
+        params = {
+          redirect_url: window.location.href,
+          access_token: user.access_token
+        }
+        postForm(postUrl, 'post', params)
     @completeLoginPromiseChain(promise, callback, errback)
 
   ###*
@@ -279,12 +287,13 @@ class Auth
     @completeLoginPromiseChain(promise,callback,errback)
 
   completeLoginPromiseChain: (promise, callback,errback)=>
-    callback = callback || ->
-    errback  = errback  || ->
+    if promise && promise.then
+      callback = callback || ->
+      errback  = errback  || ->
 
-    p = promise.then @api.refreshUser, @emitLoginFailure
-    p.then callback, errback
-    p
+      p = promise.then @api.refreshUser, @emitLoginFailure
+      p.then callback, errback
+      p
 
 
   emitLoginFailure : (err)->
