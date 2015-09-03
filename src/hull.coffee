@@ -101,6 +101,7 @@ parseHash = ()->
     if window?.opener?.Hull? and window?.opener?.__hull_login_status__ and !!hash
       window.opener.__hull_login_status__(hash)
       window.close()
+  window.location.hash = '' if hash && hash.hasOwnProperty('success')
 
 parseHash()
 

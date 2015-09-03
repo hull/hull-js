@@ -1,20 +1,21 @@
 _     = require '../utils/lodash'
 clone = require '../utils/clone'
 analyticsId = require '../utils/analytics-id'
+cookies = require '../utils/cookies'
 
 flattenSettings = (settings, name)->
   nameArray = name.split('_')
   nameArray.pop() if nameArray.length > 1
   [nameArray.join('_'), settings[name] || {}]
 
-applyUserCredentials= (config, creds={})->
+applyUserCredentials = (config, creds={})->
   _.each creds, (c, k)->
     return unless _.keys(c).length
     config?[k] ?= {} #Never happens except for `hull`
     config?[k].credentials = c
   config
 
-sortServicesByType= (settings, types)->
+sortServicesByType = (settings, types)->
   ret = _.map types, (names, type)->
     typeSettings = _.zipObject _.map(names, flattenSettings.bind(undefined, settings))
     [type, typeSettings]
@@ -36,5 +37,7 @@ module.exports = (_config={})->
     browser: analyticsId.getBrowserId(),
     session: analyticsId.getSessionId()
   }
+
+  config.cookiesEnabled = cookies.enabled()
 
   config

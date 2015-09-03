@@ -31,7 +31,7 @@
     "coffee-script": "^1.9.1",
     "concurrent-transform": "^1.0.0",
     "del": "^1.1.0",
-    "gulp": "^3.8.10",
+    "gulp": "^3.9.0",
     "gulp-awspublish": "^2.0.2",
     "gulp-gh-pages": "^0.4.0",
     "gulp-notify": "^2.2.0",
