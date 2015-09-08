@@ -1,6 +1,5 @@
 _     = require '../utils/lodash'
 clone = require '../utils/clone'
-analyticsId = require '../utils/analytics-id'
 cookies = require '../utils/cookies'
 
 flattenSettings = (settings, name)->
@@ -33,10 +32,6 @@ module.exports = (_config={})->
   services.auth ?= {}
   services.auth = applyUserCredentials services.auth, config.data.credentials
   config.services = services
-  config.identify = {
-    browser: analyticsId.getBrowserId(),
-    session: analyticsId.getSessionId()
-  }
 
   config.cookiesEnabled = cookies.enabled()
 
