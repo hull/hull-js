@@ -1,12 +1,14 @@
 _        = require '../utils/lodash'
 EventBus = require '../utils/eventbus'
 clone    = require '../utils/clone'
+cookies  = require '../utils/cookies'
 throwErr = require '../utils/throw'
+Base64   = require '../utils/base64'
 assign   = require '../polyfills/assign'
 Promise  = require('es6-promise').Promise
 getKey   = require '../utils/get-key'
 
-getRemoteUrl = (config)->
+getRemoteUrl = (config, identifiers)->
   url = "#{config.orgUrl}/api/v1/#{config.appId}/remote.html?v=#{VERSION}"
   url += "&r=#{encodeURIComponent(document.referrer)}"
   url += "&js=#{config.jsUrl}"  if config.jsUrl
@@ -14,6 +16,8 @@ getRemoteUrl = (config)->
   url += "&debug_remote=true"   if config.debugRemote
   url += "&access_token=#{config.accessToken}" if config.accessToken?
   url += "&user_hash=#{config.userHash}" if config.userHash != undefined
+  url += "&_bid=#{identifiers.bid}" if identifiers?.bid
+  url += "&_sid=#{identifiers.sid}" if identifiers?.sid
   url
 
 # Parse the tracked events configuration and standardize it.
@@ -52,6 +56,17 @@ checkConfig = (config)->
   promise.then(null, throwErr)
   promise
 
+extractDomainFromUrl = (url)->
+  return unless url && url.length
+  u = url.match(/^(https?:\/\/)?([\da-z\.-]+)([\/\w \.-]*)*\/?/)
+  u[2] if u
+
+extractUtmTags = ->
+  _.reduce document.location.search.slice(1).split('&'), (tags, t)->
+    [k,v] = t.split('=', 2)
+    tags[k.replace(/^utm_/, '')] = v if /^utm_/.test(k)
+    tags
+  , {}
 
 class CurrentConfig
 
@@ -68,12 +83,14 @@ class CurrentConfig
       @
     , throwErr
 
-  initRemote: (hash)->
-    @_remoteConfig = hash
-
+  initRemote: (cfg={})->
+    @identifyBrowser(cfg.identify.browser)
+    @identifySession(cfg.identify.session)
+    @_remoteConfig = cfg
 
   set: (config, key)->
     if key? then @_clientConfig[key] = config else @_clientConfig = config
+  
   setSettings: ()->
 
   setRemote: (hash, key)->
@@ -95,7 +112,45 @@ class CurrentConfig
     getKey(@_remoteConfig, key)
 
   getRemoteUrl: ()=>
-    getRemoteUrl(@_clientConfig)
+    { bid } = @identifyBrowser()
+    { sid } = @identifySession()
+    getRemoteUrl(@_clientConfig, { bid, sid })
+
+
+  identifyBrowser: (val)=>
+    @identify('bid', val, { expires: 3600 * 24 * 365 * 10 })
+
+  identifySession: (val)=>
+    @identify('sid', val, { expires: 3600 / 2 })
+
+  identify: (key, value, options)=>
+    reg = /^(https?:\/\/)?([\da-z\.-]+)([\/\w \.-]*)*\/?/
+    org = extractDomainFromUrl(@_clientConfig.orgUrl)
+    cookieName = ['hull', org.replace(/\./g, '_'), key].join('_')
+    rawValue = cookies.get(cookieName)
+    if rawValue
+      try
+        ident = JSON.parse(Base64.decode(rawValue))
+      catch err
+        ident = {}
+    else
+      ident = {}
+
+    ident = _.defaults(ident || {}, {
+      initial_referrer: document.referrer || '$direct',
+      initial_referring_domain: extractDomainFromUrl(document.referrer) || '$direct',
+      utm_tags: extractUtmTags()
+    })
+
+    ident[key] = value if value?
+
+    domain = extractDomainFromUrl(document.location.href).replace(/^www\./, '')
+
+    cookies.set(cookieName, Base64.encode(JSON.stringify(ident)), assign({ 
+      domain: domain
+    }, options))
+
+    ident
 
 
   onUpdate : () =>
