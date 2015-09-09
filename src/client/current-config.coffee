@@ -92,7 +92,6 @@ class CurrentConfig
     checkConfig(config).then (config)=>
       org = extractDomainFromUrl(config.orgUrl) 
       ns = ['hull'].concat(org.split('.')).join('_')
-      console.warn('storage namespace: ', ns)
       @storage = localstorage.create({ namespace: ns })
       @_clientConfig = config
       @
@@ -149,7 +148,6 @@ class CurrentConfig
     else
       ident ?= getReferralContext()
     ident.id = id if id?
-    console.warn('Storage set: ', key, ident)
     @storage.set(key, ident)
     ident
 
