@@ -15,6 +15,7 @@
     "lodash": "^3.3.1",
     "merge-stream": "^0.1.7",
     "mutation-summary": "0.0.0",
+    "putainde-localstorage": "^4.0.0",
     "qs": "^2.3.3",
     "raw-loader": "^0.5.1",
     "react": "^0.12.2",

@@ -1,12 +1,22 @@
-_        = require '../utils/lodash'
-EventBus = require '../utils/eventbus'
-clone    = require '../utils/clone'
-cookies  = require '../utils/cookies'
-throwErr = require '../utils/throw'
-Base64   = require '../utils/base64'
-assign   = require '../polyfills/assign'
-Promise  = require('es6-promise').Promise
-getKey   = require '../utils/get-key'
+localstorage = require('putainde-localstorage')
+_            = require '../utils/lodash'
+EventBus     = require '../utils/eventbus'
+clone        = require '../utils/clone'
+cookies      = require '../utils/cookies'
+throwErr     = require '../utils/throw'
+Base64       = require '../utils/base64'
+assign       = require '../polyfills/assign'
+Promise      = require('es6-promise').Promise
+getKey       = require '../utils/get-key'
+
+getReferralContext = ->
+  {
+    initial_url: document.location.href,
+    initial_referrer: document.referrer || '$direct',
+    initial_referring_domain: extractDomainFromUrl(document.referrer) || '$direct',
+    initial_utm_tags: extractUtmTags(),
+    first_seen_at: new Date().getTime()
+  }
 
 getRemoteUrl = (config, identifiers)->
   url = "#{config.orgUrl}/api/v1/#{config.appId}/remote.html?v=#{VERSION}"
@@ -78,7 +88,12 @@ class CurrentConfig
     @_remoteConfig = {}
     @_clientConfig = {}
 
+
     checkConfig(config).then (config)=>
+      org = extractDomainFromUrl(config.orgUrl) 
+      ns = ['hull'].concat(org.split('.')).join('_')
+      console.warn('storage namespace: ', ns)
+      @storage = localstorage.create({ namespace: ns })
       @_clientConfig = config
       @
     , throwErr
@@ -112,46 +127,31 @@ class CurrentConfig
     getKey(@_remoteConfig, key)
 
   getRemoteUrl: ()=>
-    { bid } = @identifyBrowser()
-    { sid } = @identifySession()
-    getRemoteUrl(@_clientConfig, { bid, sid })
+    browser = @identifyBrowser()
+    session = @identifySession()
+    getRemoteUrl(@_clientConfig, { bid: browser.id, sid: session.id })
+
+  identifySession: (id)=>
+    @identify('session', id, expires: 60 * 1000 * 30)
 
 
-  identifyBrowser: (val)=>
-    @identify('bid', val, { expires: 3600 * 24 * 365 * 10 })
+  identifyBrowser: (id)=>
+    @identify('browser', id)
 
-  identifySession: (val)=>
-    @identify('sid', val, { expires: 3600 / 2 })
-
-  identify: (key, value, options)=>
-    reg = /^(https?:\/\/)?([\da-z\.-]+)([\/\w \.-]*)*\/?/
-    org = extractDomainFromUrl(@_clientConfig.orgUrl)
-    cookieName = ['hull', org.replace(/\./g, '_'), key].join('_')
-    rawValue = cookies.get(cookieName)
-    if rawValue
-      try
-        ident = JSON.parse(Base64.decode(rawValue))
-      catch err
-        ident = {}
+  identify: (key, id, options={})=>
+    ident = @storage.get(key)
+    now = new Date().getTime()
+    if options.expires
+      # Auto expire after 30 minutes
+      if !ident || ident.expires_at < now
+        ident = getReferralContext()
+      ident.expires_at = now + options.expires
     else
-      ident = {}
-
-    ident = _.defaults(ident || {}, {
-      initial_referrer: document.referrer || '$direct',
-      initial_referring_domain: extractDomainFromUrl(document.referrer) || '$direct',
-      utm_tags: extractUtmTags()
-    })
-
-    ident[key] = value if value?
-
-    domain = extractDomainFromUrl(document.location.href).replace(/^www\./, '')
-
-    cookies.set(cookieName, Base64.encode(JSON.stringify(ident)), assign({ 
-      domain: domain
-    }, options))
-
+      ident ?= getReferralContext()
+    ident.id = id if id?
+    console.warn('Storage set: ', key, ident)
+    @storage.set(key, ident)
     ident
-
 
   onUpdate : () =>
     EventBus.emit('hull.config.update', @get())
