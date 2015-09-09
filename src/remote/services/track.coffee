@@ -30,8 +30,6 @@ class HullTrackService extends GenericService
 
     event = path
 
-    @trackEvent(event, params)
-
     EventBus.emit('remote.tracked',{event,params});
 
     @_request({
