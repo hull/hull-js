@@ -7,6 +7,7 @@ var wrappedRequest = function(service, gateway, middlewares=[]){
   return function query(request, callback, errback){
     if(!callback){callback = function(){};}
     if(!errback){errback = function(){};}
+
     var path = request.path;
 
     if (path[0] === "/"){
@@ -20,18 +21,21 @@ var wrappedRequest = function(service, gateway, middlewares=[]){
 
     var req = assign({}, request, {path});
     var handle = gateway.handle(req);
-
-    if (middlewares.length > 0){
-      _.each(middlewares, function(m){
-        handle.then(m, m);
-      });
-    }
-    handle.then((response={})=>{
-      response.provider = service.name;
-      callback(response);
-    }, (error={})=>{
-      errback(error.response || error)
+    _.each(middlewares, function(m){
+      handle = handle.then(m, m);
     });
+
+    handle = handle.then((response)=>{
+      response = assign({}, response, { provider: service.name });
+
+      if (response.status >= 200 && response.status < 300) {
+        return response;
+      } else {
+        throw response.body || response;
+      }
+    })
+
+    handle.then(callback, errback);
 
     return handle;
   };

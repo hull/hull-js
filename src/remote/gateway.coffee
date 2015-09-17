@@ -52,12 +52,15 @@ formatBatchParams = (requests) ->
 
 resolveResponse = (request, response, resolve, reject)->
   headers = reduceHeaders(response.headers)
-  h = { body: response.body, headers: headers, request: request }
-  if (response.status >= 200 && response.status < 300)
-    return resolve(h)
-  else
-    err = {response:response.body, headers: response.headers}
-    return reject(err)
+
+  h = {
+    body: response.body,
+    status: response.status,
+    headers: headers,
+    request: request,
+  }
+  
+  return resolve(h)
 
 class Gateway
 

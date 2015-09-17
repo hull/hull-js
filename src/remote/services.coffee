@@ -31,6 +31,7 @@ class Services
     RemoteActions.updateUser(remoteConfig.data.me) if (remoteConfig.data.me)
     gateway.before(handleSpecialRoutes)
     gateway.after(maybeUpdateUser)
+    # gateway.after(ensureIsHuman)
 
     @services = _.reduce ServiceList, (memo,Service,key)->
       memo[key] = new Service(remoteConfig,gateway)
