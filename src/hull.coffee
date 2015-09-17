@@ -68,7 +68,7 @@ onInitSuccess = (userSuccessCallback, hull, data)->
     orgUrl = config.orgUrl.replace(/^http:/,'https:')
     orgOk = snippetOrgUrl == orgUrl
 
-    check  = snippet.check 
+    check  = snippet.check
 
     window.location.hash=""
     if(orgOk && platformOk)
@@ -96,12 +96,14 @@ onEmbedError = (err...)->
 
 parseHash = ()->
   return if window.location.href.match('//.+\.hullapp\.io/.+/remote.html') # prevent this when in remote.html
+
   hash = decodeHash()
-  if hash?.success && hash?.token
-    if window?.opener?.Hull? and window?.opener?.__hull_login_status__ and !!hash
+  if hash? && hash.hasOwnProperty('success')
+    window.location.hash = ''
+
+    if window?.opener?.Hull? and window?.opener?.__hull_login_status__
       window.opener.__hull_login_status__(hash)
       window.close()
-  window.location.hash = '' if hash && hash.hasOwnProperty('success')
 
 parseHash()
 
