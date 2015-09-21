@@ -84,10 +84,11 @@ class HullService
     @trackMatcher = new TrackEventMatcher(config.track)
 
   ensureIsHuman: (response) =>
+    return response if (typeof response.body != 'object')
+
     { sitekey, stoken } = response.body;
 
-    if (response.status != 429 || !sitekey? || !stoken?)
-      return response;
+    return response if (response.status != 429 || !sitekey? || !stoken?)
 
     banner = @_getCaptchaBanner()
     performRequest = @request
