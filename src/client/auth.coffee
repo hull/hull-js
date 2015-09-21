@@ -45,11 +45,6 @@ parseParams = (argsArray)->
   callback = callback || ->
   errback  = errback  || ->
 
-  if !(opts?.provider? || opts.login? || opts.access_token?)
-    # UserName+Password
-    # Hull.login({login:'abcd@ef.com', password:'passwd', strategy:'redirect|popup', redirect:'...'})
-    throw new Error('Seems like something is wrong in your Hull.login() call, We need a login and password fields to login. Read up here: http://www.hull.io/docs/references/hull_js/#user-signup-and-login') unless opts.login? and opts.password?
-
   opts.params.display ||= 'touch' if isMobile()
     
   # Setup defaults for Popup login for Facebook on Desktop
@@ -189,14 +184,22 @@ class Auth
       # Return promise even if login is in progress.
       msg = "Login in progress. Use `Hull.on('hull.user.login', callback)` to call `callback` when done."
       logger.info msg
-      return new Promise (resolve, reject)->
-        reject({error: {reason:'in_progress', message: msg}})
+      return Promise.reject {error: {reason:'in_progress', message: msg}}
 
     # Handle Legacy Format,
     # Ensure New Format: Hash signature
     # Preprocess Options
     # Opts format is now : {login:"", password:"", params:{}} or {provider:"", params:{}}
     {options, callback, errback} = parseParams(Array.prototype.slice.call(arguments))
+
+    if !(options?.provider? || options.login? || options.access_token?)
+      # UserName+Password
+      # Hull.login({login:'abcd@ef.com', password:'passwd', strategy:'redirect|popup', redirect:'...'})
+      unless options.login? and options.password?
+        msg = 'Seems like something is wrong in your Hull.login() call, We need a login and password fields to login. Read up here: http://www.hull.io/docs/references/hull_js/#user-signup-and-login'
+        logger.warn msg
+        return Promise.reject({error:{reason:'invalid_params', message:msg }})
+
 
 
     if options.provider?
