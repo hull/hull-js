@@ -6,12 +6,10 @@ EventBus = require '../utils/eventbus'
 isMobile = require '../utils/is-mobile'
 
 getNoUserPromise = ()->
-  promise = new Promise (resolve, reject)->
-    reject
-      reason: 'no_current_user',
-      message: 'User must be logged in to perform this action'
-  promise.catch(->)
-  promise
+  Promise.reject({
+    reason: 'no_current_user',
+    message: 'User must be logged in to perform this action'
+  })
 
 getUser = ()->
   user = Hull.currentUser()
@@ -44,11 +42,6 @@ parseParams = (argsArray)->
   opts.params = opts.params || {}
   callback = callback || ->
   errback  = errback  || ->
-
-  if !(opts?.provider? || opts.login? || opts.access_token?)
-    # UserName+Password
-    # Hull.login({login:'abcd@ef.com', password:'passwd', strategy:'redirect|popup', redirect:'...'})
-    throw new Error('Seems like something is wrong in your Hull.login() call, We need a login and password fields to login. Read up here: http://www.hull.io/docs/references/hull_js/#user-signup-and-login') unless opts.login? and opts.password?
 
   opts.params.display ||= 'touch' if isMobile()
     
@@ -189,14 +182,22 @@ class Auth
       # Return promise even if login is in progress.
       msg = "Login in progress. Use `Hull.on('hull.user.login', callback)` to call `callback` when done."
       logger.info msg
-      return new Promise (resolve, reject)->
-        reject({error: {reason:'in_progress', message: msg}})
+      return Promise.reject {error: {reason:'in_progress', message: 'Login already in progress'}}
 
     # Handle Legacy Format,
     # Ensure New Format: Hash signature
     # Preprocess Options
     # Opts format is now : {login:"", password:"", params:{}} or {provider:"", params:{}}
     {options, callback, errback} = parseParams(Array.prototype.slice.call(arguments))
+
+    if !(options?.provider? || options.login? || options.access_token?)
+      # UserName+Password
+      # Hull.login({login:'abcd@ef.com', password:'passwd', strategy:'redirect|popup', redirect:'...'})
+      unless options.login? and options.password?
+        msg = 'Seems like something is wrong in your Hull.login() call, We need a login and password fields to login. Read up here: http://www.hull.io/docs/references/hull_js/#user-signup-and-login'
+        logger.warn msg
+        return Promise.reject({error:{ reason:'missing_parameters', message:'Empty login or password' }})
+
 
 
     if options.provider?

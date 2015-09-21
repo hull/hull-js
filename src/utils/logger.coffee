@@ -26,6 +26,6 @@ module.exports = {
   verbose: (args...)->
     log(args...) if enabled and verbose
   warn: (args...)->
-    log(args...)
+    console.warn(args...)
   error: error
 }
