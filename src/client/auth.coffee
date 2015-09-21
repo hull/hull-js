@@ -6,12 +6,10 @@ EventBus = require '../utils/eventbus'
 isMobile = require '../utils/is-mobile'
 
 getNoUserPromise = ()->
-  promise = new Promise (resolve, reject)->
-    reject
-      reason: 'no_current_user',
-      message: 'User must be logged in to perform this action'
-  promise.catch(->)
-  promise
+  Promise.reject({
+    reason: 'no_current_user',
+    message: 'User must be logged in to perform this action'
+  })
 
 getUser = ()->
   user = Hull.currentUser()
@@ -184,7 +182,7 @@ class Auth
       # Return promise even if login is in progress.
       msg = "Login in progress. Use `Hull.on('hull.user.login', callback)` to call `callback` when done."
       logger.info msg
-      return Promise.reject {error: {reason:'in_progress', message: msg}}
+      return Promise.reject {error: {reason:'in_progress', message: 'Login already in progress'}}
 
     # Handle Legacy Format,
     # Ensure New Format: Hash signature
@@ -198,7 +196,7 @@ class Auth
       unless options.login? and options.password?
         msg = 'Seems like something is wrong in your Hull.login() call, We need a login and password fields to login. Read up here: http://www.hull.io/docs/references/hull_js/#user-signup-and-login'
         logger.warn msg
-        return Promise.reject({error:{reason:'invalid_params', message:msg }})
+        return Promise.reject({error:{ reason:'missing_parameters', message:'Empty login or password' }})
 
 
 
