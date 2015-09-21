@@ -20,7 +20,7 @@ embeds      = require './client/embeds'
 scriptTagConfig = require './client/script-tag-config'
 initializePlatform = require './client/initialize-platform'
 decodeHash  = require './utils/decode-hash'
-displayBanner = require './client/ui/display-banner'
+displayBanner = require './utils/ui/display-banner'
 
 ###*
  * Wraps the success callback
