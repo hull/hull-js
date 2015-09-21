@@ -1,6 +1,8 @@
 Promise             = require('es6-promise').Promise
 assign              = require '../polyfills/assign'
 _                   = require '../utils/lodash'
+cookies             = require '../utils/cookies'
+Base64              = require '../utils/base64'
 logger              = require '../utils/logger'
 EventBus            = require '../utils/eventbus'
 clone               = require '../utils/clone'
@@ -23,7 +25,7 @@ batchable = (threshold, callback) ->
   timeout = null
   args = []
 
-  ()->
+  ->
     args.push Array::slice.call(arguments)
     clearTimeout timeout
     delayed = =>
@@ -52,27 +54,36 @@ formatBatchParams = (requests) ->
 
 resolveResponse = (request, response, resolve, reject)->
   headers = reduceHeaders(response.headers)
-  h = { body: response.body, headers: headers, request: request }
-  if (response.status >= 200 && response.status < 300)
-    return resolve(h)
-  else
-    err = {response:response.body, headers: response.headers}
-    return reject(err)
+
+  h = {
+    body: response.body,
+    status: response.status,
+    headers: headers,
+    request: request,
+  }
+  
+  return resolve(h)
 
 class Gateway
 
   constructor: (config={}) ->
-    {batching, appId} = config
-    @options = _.defaults({},batching,{min:1,max:1,delay:2})
+    { batching, appId, identify } = config
+    @identify = identify
+    @options = _.defaults({}, batching, { min:1, max:1, delay:2 })
     @queue = batchable @options.delay, (requests) -> @flush(requests)
 
+  identifyBrowserAndSession: ->
+    ident = {}
+    ident['Hull-Bid'] = @identify.browser unless cookies.get('_bid')
+    ident['Hull-Sid'] = @identify.session unless cookies.get('_sid')
+    ident
 
   fetch : (options={}) =>
     {method, headers, path, params} = options
 
     method = (method||'get').toUpperCase()
 
-    headers = assign({}, RemoteHeaderStore.getState(), headers)
+    headers = assign(@identifyBrowserAndSession(), RemoteHeaderStore.getState(), headers)
 
     #TODO Check SuperAgent under IE8 and below
     s = superagent(method, path).set(headers)

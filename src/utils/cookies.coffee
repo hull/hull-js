@@ -4,7 +4,5 @@ module.exports =
   set: Cookies.set
   get: Cookies.get
   remove: Cookies.expire
-  enabled: ->
-    val = new Date().getTime().toString()
-    ((Cookies.set(COOKIES_ENABLED, val) && Cookies.get(COOKIES_ENABLED) == val))
+  enabled: -> Cookies._areEnabled()
 

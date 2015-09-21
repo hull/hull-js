@@ -1,12 +1,24 @@
-_        = require '../utils/lodash'
-EventBus = require '../utils/eventbus'
-clone    = require '../utils/clone'
-throwErr = require '../utils/throw'
-assign   = require '../polyfills/assign'
-Promise  = require('es6-promise').Promise
-getKey   = require '../utils/get-key'
+localstorage = require('putainde-localstorage')
+_            = require '../utils/lodash'
+EventBus     = require '../utils/eventbus'
+clone        = require '../utils/clone'
+cookies      = require '../utils/cookies'
+throwErr     = require '../utils/throw'
+Base64       = require '../utils/base64'
+assign       = require '../polyfills/assign'
+Promise      = require('es6-promise').Promise
+getKey       = require '../utils/get-key'
 
-getRemoteUrl = (config)->
+getReferralContext = ->
+  {
+    initial_url: document.location.href,
+    initial_referrer: document.referrer || '$direct',
+    initial_referring_domain: extractDomainFromUrl(document.referrer) || '$direct',
+    initial_utm_tags: extractUtmTags(),
+    first_seen_at: new Date().getTime()
+  }
+
+getRemoteUrl = (config, identifiers)->
   url = "#{config.orgUrl}/api/v1/#{config.appId}/remote.html?v=#{VERSION}"
   url += "&r=#{encodeURIComponent(document.referrer)}"
   url += "&js=#{config.jsUrl}"  if config.jsUrl
@@ -14,6 +26,8 @@ getRemoteUrl = (config)->
   url += "&debug_remote=true"   if config.debugRemote
   url += "&access_token=#{config.accessToken}" if config.accessToken?
   url += "&user_hash=#{config.userHash}" if config.userHash != undefined
+  url += "&_bid=#{identifiers.bid}" if identifiers?.bid
+  url += "&_sid=#{identifiers.sid}" if identifiers?.sid
   url
 
 # Parse the tracked events configuration and standardize it.
@@ -52,6 +66,17 @@ checkConfig = (config)->
   promise.then(null, throwErr)
   promise
 
+extractDomainFromUrl = (url)->
+  return unless url && url.length
+  u = url.match(/^(https?:\/\/)?([\da-z\.-]+)([\/\w \.-]*)*\/?/)
+  u[2] if u
+
+extractUtmTags = ->
+  _.reduce document.location.search.slice(1).split('&'), (tags, t)->
+    [k,v] = t.split('=', 2)
+    tags[k.replace(/^utm_/, '')] = v if /^utm_/.test(k)
+    tags
+  , {}
 
 class CurrentConfig
 
@@ -63,17 +88,23 @@ class CurrentConfig
     @_remoteConfig = {}
     @_clientConfig = {}
 
+
     checkConfig(config).then (config)=>
+      org = extractDomainFromUrl(config.orgUrl) 
+      ns = ['hull'].concat(org.split('.')).join('_')
+      @storage = localstorage.create({ namespace: ns })
       @_clientConfig = config
       @
     , throwErr
 
-  initRemote: (hash)->
-    @_remoteConfig = hash
-
+  initRemote: (cfg={})->
+    @identifyBrowser(cfg.identify.browser)
+    @identifySession(cfg.identify.session)
+    @_remoteConfig = cfg
 
   set: (config, key)->
     if key? then @_clientConfig[key] = config else @_clientConfig = config
+  
   setSettings: ()->
 
   setRemote: (hash, key)->
@@ -95,8 +126,30 @@ class CurrentConfig
     getKey(@_remoteConfig, key)
 
   getRemoteUrl: ()=>
-    getRemoteUrl(@_clientConfig)
+    browser = @identifyBrowser()
+    session = @identifySession()
+    getRemoteUrl(@_clientConfig, { bid: browser.id, sid: session.id })
 
+  identifySession: (id)=>
+    @identify('session', id, expires: 60 * 1000 * 30)
+
+
+  identifyBrowser: (id)=>
+    @identify('browser', id)
+
+  identify: (key, id, options={})=>
+    ident = @storage.get(key)
+    now = new Date().getTime()
+    if options.expires
+      # Auto expire after 30 minutes
+      if !ident || ident.expires_at < now
+        ident = getReferralContext()
+      ident.expires_at = now + options.expires
+    else
+      ident ?= getReferralContext()
+    ident.id = id if id?
+    @storage.set(key, ident)
+    ident
 
   onUpdate : () =>
     EventBus.emit('hull.config.update', @get())
