@@ -15,7 +15,7 @@ This is the default snippet. Let's say we want to change the 'Sign In with Faceb
 {% endraw %}
 ```
 
-_Note the that the component must be wrapped in a liquid `{% raw %}...{% endraw %}` tag._
+*Note the that the component must be wrapped in a liquid `{% raw %}...{% endraw %}` tag.*
 
 ## Core
 
@@ -53,8 +53,6 @@ _Note the that the component must be wrapped in a liquid `{% raw %}...{% endraw 
 'popup' // on Desktop
 'redirect' // on Mobile
 ```
-
-
 
 ## Style
 
@@ -146,4 +144,3 @@ _Note the that the component must be wrapped in a liquid `{% raw %}...{% endraw 
 ```
 'Bummer, something went wrong during authentication.'
 ```
-
