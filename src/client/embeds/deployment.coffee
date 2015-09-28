@@ -39,6 +39,10 @@ class Deployment
     shipRegistry[dpl.ship.id] ||= {}
     shipRegistry[dpl.ship.id][dpl.id] = @
 
+
+    # onUpdate is used to attach handlers for ship.update events emitted from Hull's dashboard
+    @onUpdate = dpl.onUpdate
+
     @settings   = dpl.settings
     # "_selector" : ".ship", //CSS3 Selector on which to embed the ship(s)
     # "_multi": true, //Wether to embed on the first matching element or all
@@ -50,7 +54,7 @@ class Deployment
   ###*
    * Fetches all targets specified in a deployment
    * @param  {object} opts options object. opts.refresh = true|false // Force Refresh
-   * @return {Nodes Array} A memoized array of Nodes matching the Query Selector (this.targets) 
+   * @return {Nodes Array} A memoized array of Nodes matching the Query Selector (this.targets)
   ###
   getTargets : (opts={})->
     return @targets if @targets and !opts.refresh
@@ -65,14 +69,14 @@ class Deployment
     logger.info("No deployment targets for selector #{@settings._selector}", @) unless targets.length
     targets
 
-
-
   getPublicData: ()=>
-    clone({
+    assign(clone({
       ship         : @ship
       organization : @organization
       platform     : @platform
       settings     : @settings
+    }), {
+      onUpdate: (@onUpdate || ->)
     })
 
   getDeploymentStrategy : ()=>
@@ -114,5 +118,5 @@ class Deployment
     if @targets.length
       @getDeploymentStrategy().destroy()
       @deploymentStrategy = null
-  
+
 module.exports = Deployment
