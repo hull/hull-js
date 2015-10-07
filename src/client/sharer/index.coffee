@@ -3,6 +3,7 @@ findUrl   = require '../../utils/find-url'
 assign    = require '../../polyfills/assign'
 domWalker = require '../../utils/dom-walker'
 qs        = require '../../utils/query-string-encoder'
+EventBus  = require '../../utils/eventbus'
 
 popup = (location, opts={}, params={})->
   return unless location?
@@ -10,7 +11,7 @@ popup = (location, opts={}, params={})->
   new Promise (resolve, reject)->
     interval = setInterval ->
       try
-        if share == null || share.closed
+        if !share? || share.closed
           window.clearInterval(interval)
           resolve({})
        catch e
@@ -51,12 +52,15 @@ class Sharer
       platform_id: @currentConfig.get('appId')
     }, opts.params)
 
+    provider = opts.provider
+
     popupUrl = @currentConfig.get('orgUrl') + "/api/v1/intent/share/" + opts.provider
     sharePromise = popup(popupUrl, { width: 550, height: 420 }, params)
 
     sharePromise.then (response)=>
-      EventBus.emit("hull.#{opts.provider}.share", {params,response})
-      response
+      data = assign({ url: opts.params.url }, params, { provider })
+      EventBus.emit("hull.#{opts.provider}.share", data)
+      assign({}, data, { response })
     , (err)-> throw err
 
 
