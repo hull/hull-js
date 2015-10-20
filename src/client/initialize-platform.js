@@ -7,7 +7,7 @@ function initializeShopifyPlatform(context, currentConfig, hull) {
   const { customerId, accessToken, callbackUrl } = currentConfig.get();
 
   if (!customerId && hull.currentUser()) {
-      hull.api('services/shopify/login').then(function(r) {
+      hull.api('services/shopify/login', { return_to: document.location.href }).then(function(r) {
         // If the platform has multipass enabled and we are NOT inside the customizer
         // we can log the customer in without knowing his password.
         if (r.auth === 'multipass' && !(callbackUrl || "").match('__hull_proxy__')) {
@@ -43,4 +43,3 @@ function initializePlatform(context, currentConfig, hull) {
 }
 
 export default initializePlatform;
-
