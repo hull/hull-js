@@ -10,9 +10,11 @@ function initializeShopifyPlatform(context, currentConfig, hull) {
       hull.api('services/shopify/login', { return_to: document.location.href }).then(function(r) {
         // If the platform has multipass enabled and we are NOT inside the customizer
         // we can log the customer in without knowing his password.
-        if (r.auth === 'multipass' && !(callbackUrl || "").match('__hull_proxy__')) {
-          let l = 'https://' + document.location.host + '/account/login/multipass/' + r.token;
-          window.location = l;
+        if (r.auth === 'multipass') {
+          if (!(callbackUrl || "").match('__hull_proxy__')) {
+            let l = 'https://' + document.location.host + '/account/login/multipass/' + r.token;
+            window.location = l;
+          }
         } else {
           hull.logout();
         }
