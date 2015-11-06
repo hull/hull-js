@@ -44,7 +44,7 @@ parseParams = (argsArray)->
   errback  = errback  || ->
 
   opts.params.display ||= 'touch' if isMobile()
-    
+
   # Setup defaults for Popup login for Facebook on Desktop
 
   # # Redirect login by default. if on Mobile.
@@ -127,7 +127,7 @@ class Auth
 
     setTimeout ()=>
       @onAuthComplete({ success: false, error: { reason: 'timeout', message: 'Timeout for login (after 30 seconds), User never finished the auth' } })
-    , 30000
+    , 90000
 
     # Reject Promise if window has been closed
     @_popupInterval = w? && setInterval =>
@@ -236,7 +236,7 @@ class Auth
       b = new Date().getTime()
       logoutUrl = @currentConfig.get('orgUrl') + '/api/v1/logout?b=' + b + '&redirect_url=' + encodeURIComponent(redirect_url)
       promise.then -> document.location = logoutUrl
-        
+
     @completeLoginPromiseChain(promise,callback,errback)
 
 
@@ -279,7 +279,7 @@ class Auth
    * @param  {callback} Success callback
    * @param  {errback} error callback
    * @return {Promise} A promise
-   * 
+   *
   ###
   unlinkIdentity : ()=>
     return getNoUserPromise() unless getUser()
