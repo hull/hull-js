@@ -16,14 +16,14 @@ class LinkedInService extends GenericService
     return errback('Unable to perform non-GET requests on Likedin') unless method=='get'
     path   = path.substring(1) if (path[0] == "/")
 
-    params = 
+    params =
       url  : "https://api.linkedin.com/v1/#{path}"
       data : assign({}, params, {oauth2_access_token : token})
       error:   (err)-> errback(err.url)
       success: (response)=>
         callback
           provider: @name
-          body: response.data
+          body: response
     @request_jsonp(params)
 
 module.exports = LinkedInService
