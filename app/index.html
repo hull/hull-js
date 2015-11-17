@@ -11,13 +11,27 @@
     debug="true"
     platform-id="5552a12e3104f366e500098d"
     org-url="https://hull-demos.hullapp.io"
-    js-url="https://hulljs.ngrok.com/hull.js"
-    src="https://hulljs.ngrok.com/hull.js"></script>
+    js-url="https://hulljs.ngrok.io/hull.js"
+    src="https://hulljs.ngrok.io/hull.js"></script>
+    <script>
+      hullAsyncInit = function(hull) {
+        console.log('Hull Async Init', hull),
+        hull.ready(function(hull, me, app, org) {
+          console.log('Hull Ready!');
+        });
+        hull.on('hull.ready',function(hull, me, app, org) {
+          console.log('Hull ready from event')         
+        });
+        hull.on('hull.ships.ready', function() {
+          console.log('Ships Ready');
+        })
+      }
+    </script>
   </head>
   <body>
     <div className="container-fluid mt-1">
       <div className="row">
-          <a href="#" id="share">Share</a>
+        <a href="#" id="share">Share</a>
       </div>
     </div>
   </body>
