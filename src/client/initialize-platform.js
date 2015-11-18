@@ -3,8 +3,25 @@
 import emptyFunction from '../utils/empty-function';
 
 function initializeShopifyPlatform(context, currentConfig, hull) {
-
   const { customerId, accessToken, callbackUrl } = currentConfig.get();
+
+  try {
+    const { pathname, search, hash } = document.location;
+    const { domain, domain_redirect, ssl_enabled } = (context.app && context.app.settings) || {};
+
+    if (domain_redirect && domain && pathname.match(/^\/account\/login/) && domain !== document.location.host) {
+
+      const protocol = ssl_enabled ? 'https:' : 'http:';
+      document.location.href = [
+        protocol,
+        '//',
+        domain,
+        pathname,
+        search,
+        hash
+      ].join('');
+    }
+  } catch (err) {}
 
   if (!customerId && hull.currentUser()) {
       hull.api('services/shopify/login', { return_to: document.location.href }).then(function(r) {
@@ -40,7 +57,6 @@ function getPlatformInitializer(platform) {
 
 function initializePlatform(context, currentConfig, hull) {
   const initializer = getPlatformInitializer(context.app);
-
   return initializer(context, currentConfig, hull);
 }
 

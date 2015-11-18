@@ -55,7 +55,11 @@ onInitSuccess = (userSuccessCallback, hull, data)->
   logger.log("Hull.js version \"#{hull.version}\" started")
 
   # Do Hull.embed(platform.deployments) automatically
-  embeds.embed(app.deployments,{},onEmbedComplete, onEmbedError) if hull.config().embed!=false and _.isArray(app?.deployments) and app.deployments.length>0
+  if hull.config().embed != false
+    if _.isArray(app?.deployments) and app.deployments.length>0
+      embeds.embed(app.deployments,{},onEmbedComplete, onEmbedError)
+    else
+      onEmbedComplete()
 
   hash = decodeHash()
   snippet = hash?.hull?.snippet
@@ -89,6 +93,7 @@ onInitSuccess = (userSuccessCallback, hull, data)->
 onInitFailure = (err)-> throw err
 
 onEmbedComplete = ()->
+  EventBus.emit('hull.ships.ready');
   logger.log("Hull Embeds Completed successfully")
 
 onEmbedError = (err...)->
@@ -221,6 +226,12 @@ unless window.Hull?
       autoStartConfig && autoStartConfig.autoStart && init(autoStartConfig)
 
   window.Hull = hull
+  setTimeout ->
+    window.hullAsyncInit(hull) if window?.hullAsyncInit and _.isFunction(window.hullAsyncInit)
+  , 0
 else
   logger.error "Hull Snippet found more than once (or you already have a global variable named window.Hull). Either way, we can't launch Hull more than once. We only use the first one in the page"
+
 module.exports = hull
+
+
