@@ -27,7 +27,10 @@ function initializeShopifyPlatform(context, currentConfig, hull) {
       hull.api('services/shopify/login', { return_to: document.location.href }).then(function(r) {
         // If the platform has multipass enabled and we are NOT inside the customizer
         // we can log the customer in without knowing his password.
-        if (r.auth === 'multipass') {
+
+        const { inits_count } = currentConfig.identifySession() || {};
+
+        if (r.auth === 'multipass' && inits_count < 2) {
           if (!(callbackUrl || "").match('__hull_proxy__')) {
             let l = 'https://' + document.location.host + '/account/login/multipass/' + r.token;
             window.location = l;
@@ -42,9 +45,12 @@ function initializeShopifyPlatform(context, currentConfig, hull) {
     });
   }
 
-  Hull.on('hull.user.logout', function() {
-    document.location = '/account/logout';
-  });
+  if (customerId) {
+    Hull.on('hull.user.logout', function() {
+      document.location = '/account/logout';
+    });
+  }
+
 }
 
 function getPlatformInitializer(platform) {
