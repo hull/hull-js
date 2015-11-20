@@ -4,6 +4,9 @@ logger = require '../utils/logger'
 dasherize = (str)->
   str.replace /[A-Z]/, (c) ->  "-" + c.toLowerCase()
 
+origin = window.location.origin || window.location.protocol + "//" + window.location.hostname
+if window.location.port
+  origin += ':' + window.location.port
 
 httpsRegex = /^https:|^\/\//
 
@@ -51,7 +54,7 @@ initParams = {
   },
   callbackUrl: {
     transform: transform.url
-    validation: valid.regex(new RegExp("^" + document.location.origin + "/"))
+    validation: valid.regex(new RegExp("^" + origin + "/"))
   },
   debug       : { default: false, transform: transform.bool },
   verbose     : { default: false, transform: transform.bool },
