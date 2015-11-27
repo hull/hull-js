@@ -31,7 +31,6 @@ class BaseDeploymentStrategy
     el.setAttribute('data-hull-ship', @deployment.ship.id)
   setupSandbox: (doc) =>
     @sandbox.setDocument(doc)
-    @sandbox.track('hull.app.init')
 
 
   ###*
@@ -72,7 +71,7 @@ class BaseDeploymentStrategy
    * @return {[type]}           [description]
   ###
   parseChildren : (opts={}) ->
-    # You need to take the following into account when manipulating imports : 
+    # You need to take the following into account when manipulating imports :
     # "Real" (Chrome) HTML imports will be isolated from the main document.
     # Polyfilled ones will return their content when querying the main document (I.E document.styleSheets)
     # Tread wisely
