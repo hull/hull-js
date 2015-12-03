@@ -296,7 +296,6 @@ class Auth
       p.then callback, errback
       p
 
-
   emitLoginFailure : (err)->
     EventBus.emit("hull.user.fail", err)
     err
