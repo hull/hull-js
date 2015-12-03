@@ -27,14 +27,14 @@ class Api
   message: ()=>
     return logger.error("Hull Api is not initialized yet. You should run your app from the callback of Hull.ready()") unless @channel.rpc
     {opts, callback, errback} = parseOpts(Array.prototype.slice.call(arguments))
-    p = new Promise (resolve, reject)=>
 
+    new Promise (resolve, reject)=>
       onSuccess = (res={})=>
         # intercept calls and update current user
-        @updateCurrentUser(res.body, res.headers);
-        @updateCurrentUserCookies(res.headers, res.provider)
-        callback(res.body)
-        resolve(res.body)
+        @updateCurrentUser(res).then () =>
+          @updateCurrentUserCookies(res.headers, res.provider)
+          callback(res.body)
+          resolve(res.body)
 
       onError = (response, error)=>
         errback(response.message, error)
@@ -42,19 +42,36 @@ class Api
 
       @channel.rpc.message(opts, onSuccess, onError)
 
-  refreshUser   : ()=>
+  refreshUser: ()=>
     new Promise (resolve, reject)=>
       onSuccess  = (response={})=>
         @currentUser.set(response.me)
         @currentConfig.setRemote(response.services, 'services')
         resolve(response.me)
 
-      onError   = (err={})=>
+      onError = (err={})=>
         reject(err)
 
       @channel.rpc.refreshUser(onSuccess, onError)
 
-  updateCurrentUser: (user={}, headers={})=>
+  updateCurrentUser: (response) =>
+    header = response.headers?['Hull-User-Id']
+
+    p = Promise.resolve()
+    return p unless header?
+
+    if response.body?.id == header
+      # Set currentUser to the response body if it contains the current user.
+      @currentUser.set(response.body)
+    else
+      # Fetch the currentUser from the server if the header does not match with
+      # the currentUser id.
+      u = @currentUser.get()
+      p = @refreshUser() if !u || u.id != header
+
+    return p
+
+  _updateCurrentUser: (user={}, headers={})=>
     header = headers?['Hull-User-Id']
     @currentUser.set(user) if header && user?.id == header
 
