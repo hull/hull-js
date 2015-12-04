@@ -38,7 +38,7 @@ formatTrackConfig = (config={})->
         config = { only: (m.toString() for m in config.only) }
       else if config.ignore?
         config = { ignore: (m.toString() for m in config.ignore) }
-      else 
+      else
         config
     when "RegExp"
       config = { only: config.toString() }
@@ -52,7 +52,7 @@ checkConfig = (config)->
   config = clone(config)
   config.track  = formatTrackConfig(config.track)
   promise = new Promise (resolve, reject)=>
-    msg = "You need to pass some keys to Hull to start it: " 
+    msg = "You need to pass some keys to Hull to start it: "
     readMore = "Read more about this here : http://www.hull.io/docs/references/hull_js/#hull-init-params-cb-errb"
     # Fail right now if we don't have the required setup
     if config.orgUrl and config.appId
@@ -90,7 +90,7 @@ class CurrentConfig
 
 
     checkConfig(config).then (config)=>
-      org = extractDomainFromUrl(config.orgUrl) 
+      org = extractDomainFromUrl(config.orgUrl)
       ns = ['hull'].concat(org.split('.')).join('_')
       @storage = localstorage.create({ namespace: ns })
       @_clientConfig = config
@@ -104,7 +104,7 @@ class CurrentConfig
 
   set: (config, key)->
     if key? then @_clientConfig[key] = config else @_clientConfig = config
-  
+
   setSettings: ()->
 
   setRemote: (hash, key)->
@@ -115,7 +115,7 @@ class CurrentConfig
       previousConfig = @_remoteConfig
       @_remoteConfig = assign({}, @_remoteConfig, hash)
     @onUpdate() unless _.isEqual(previousConfig, hash)
-    
+
 
   get: (key)=>
     hash = clone(@_clientConfig);
@@ -148,7 +148,9 @@ class CurrentConfig
     else
       ident ?= getReferralContext()
     ident.id = id if id?
-    @storage.set(key, ident)
+
+    try @storage.set(key, ident)
+
     ident
 
   onUpdate : () =>
