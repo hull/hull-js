@@ -30,12 +30,16 @@ class HullTrackService extends GenericService
 
     event = path
 
-    EventBus.emit('remote.tracked',{event,params});
+    EventBus.emit('remote.tracked', { event, params: params.payload });
 
     @_request({
       path: 't',
       method: 'post',
-      params: { t: Base64.encode(JSON.stringify(assign({ event }, params))) },
+      params: {
+        t: Base64.encode(JSON.stringify(assign({ event }, params.payload))),
+        url: params.url,
+        referer: params.referer || ""
+      },
       nocallback: true
     }).then (response)=>
       response.provider = 'track'
