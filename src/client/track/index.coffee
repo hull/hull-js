@@ -11,7 +11,7 @@ class Tracker
 
   getCurrentUserId: -> @currentUser.get('id')
 
-  setupTracking : () ->
+  setupTracking: ->
     return if @setup
 
     @setup = true
@@ -36,11 +36,10 @@ class Tracker
     EventBus.on 'hull.user.logout', ()->
       self.track('hull.user.logout')
 
-  track : (event, params, success, failure)=>
-    data = assign {}, params
+  track: (event, payload, success, failure)=>
     @api.message
-      provider:'track'
+      provider: 'track'
       path: event
-    , 'post', data
+    , 'post', { payload: payload, url: document.location.href, referer: document.referrer }
 
 module.exports = Tracker
