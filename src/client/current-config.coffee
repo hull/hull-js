@@ -152,7 +152,8 @@ class CurrentConfig
     if options.count
       ident.inits_count = (ident.inits_count || 0) + 1
 
-    @storage.set(key, ident)
+    try @storage.set(key, ident)
+
     ident
 
   onUpdate : () =>
