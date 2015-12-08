@@ -61,8 +61,8 @@ class TrackEventMatcher
 trackResponse  = (response={})=>
   if track = response.headers?['Hull-Track']
     try
-      [eventName, trackParams] = JSON.parse(Base64.decode(track))
-      EventBus.emit('remote.track',{event:eventName,params:trackParams})
+      [eventName, payload] = JSON.parse(Base64.decode(track))
+      EventBus.emit('remote.track', { event:eventName, params: { payload, url: document.referrer } })
     catch error
       # Don't throw an error here but report what happened.
       "Invalid Tracking header : ${JSON.stringify(errror,null,2)}"
