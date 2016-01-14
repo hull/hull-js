@@ -23,7 +23,9 @@ function initializeShopifyPlatform(context, currentConfig, hull) {
     }
   } catch (err) {}
 
-  if (!customerId && hull.currentUser()) {
+  const currentUser = hull.currentUser();
+
+  if (!customerId && currentUser) {
       hull.api('services/shopify/login', { return_to: document.location.href }).then(function(r) {
         // If the platform has multipass enabled and we are NOT inside the customizer
         // we can log the customer in without knowing his password.
@@ -39,10 +41,8 @@ function initializeShopifyPlatform(context, currentConfig, hull) {
           hull.logout();
         }
       });
-  } else if (/^[0-9]+$/.test(customerId) && !accessToken) {
-    hull.api('services/shopify/customers/' + customerId, 'put').then(function() {
-      document.location.reload();
-    });
+  } else if (/^[0-9]+$/.test(customerId) && (!accessToken || !currentUser)) {
+    hull.api('services/shopify/customers/' + customerId, 'put');
   }
 
   if (customerId) {

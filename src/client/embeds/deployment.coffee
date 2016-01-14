@@ -46,7 +46,7 @@ class Deployment
     @settings   = dpl.settings
     # "_selector" : ".ship", //CSS3 Selector on which to embed the ship(s)
     # "_multi": true, //Wether to embed on the first matching element or all
-    # "_placement" : "before"|"after"|"append"|"prepend"|"replace", //Position relative to selector
+    # "_placement" : "before"|"after"|"append"|"top"|"replace", //Position relative to selector
     # "_sandbox" : true //Wether to sandbox the platform : true
     # "_width" : "100%", //Dimensions to give the containing element. Passed as-is as style tag
     # "_height" : "50px", //Dimensions to give the containing element. Passed as-is as style tag
