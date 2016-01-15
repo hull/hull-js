@@ -49,6 +49,7 @@ class Api
       onSuccess  = (response={})=>
         @currentUser.set(response.me)
         @currentConfig.setRemote(response.services, 'services')
+        @updateCurrentUserCookies(response.headers, 'hull')
         resolve(response.me)
 
       onError = (err={})=>
