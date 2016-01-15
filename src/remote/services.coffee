@@ -70,7 +70,7 @@ class Services
       RemoteActions.updateServices(services,{silent:true})
       # Do not send the data back. We're just refreshing stuff.
       # Data will come back through even handlers on Flux Stores
-      xdmCallback({me,services})
+      xdmCallback({me,services, headers: res[0].headers})
       undefined
 
     onError = (res={})->

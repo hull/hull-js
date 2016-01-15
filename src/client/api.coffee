@@ -15,6 +15,8 @@ class Api
     data = @currentConfig.getRemote('data')
     authScope = if data.headers?['Hull-Auth-Scope'] then data.headers['Hull-Auth-Scope'].split(":")[0] else ''
 
+    @currentUser.setCookies(data.headers, currentConfig.get('appId')) if (data.headers?)
+
     @_message = (params, userSuccessCallback, userErrorCallback)=>
 
   ###
@@ -47,6 +49,7 @@ class Api
       onSuccess  = (response={})=>
         @currentUser.set(response.me)
         @currentConfig.setRemote(response.services, 'services')
+        @updateCurrentUserCookies(response.headers, 'hull')
         resolve(response.me)
 
       onError = (err={})=>

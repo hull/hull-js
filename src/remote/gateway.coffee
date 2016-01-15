@@ -35,8 +35,12 @@ batchable = (threshold, callback) ->
     timeout = setTimeout delayed, threshold
 
 reduceHeaders = (headers)->
+  _headers = _.reduce headers, (memo, value, key) ->
+    memo[key.toLowerCase()] = value
+    memo
+  , {}
   _.reduce RESPONSE_HEADERS, (memo, name) ->
-    value = headers[name.toLowerCase()]
+    value = _headers[name.toLowerCase()]
     memo[name] = value if value?
     memo
   , {}
@@ -61,7 +65,7 @@ resolveResponse = (request, response, resolve, reject)->
     headers: headers,
     request: request,
   }
-  
+
   return resolve(h)
 
 class Gateway
