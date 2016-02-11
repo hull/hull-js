@@ -96,6 +96,8 @@ class Auth
     params.callback_url = opts.redirect_url || params.callback_url || @currentConfig.get('callback_url') || @currentConfig.get('callbackUrl') || document.location.toString()
     params.auth_referer = document.location.toString()
     params.version      = @currentConfig.get('version')
+    params._bid         = @currentConfig.identifyBrowser().id
+    params._sid         = @currentConfig.identifySession().id
     querystring         = _.map params,(v,k) ->
       encodeURIComponent(k)+'='+encodeURIComponent(v)
     .join('&')
