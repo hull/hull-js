@@ -126,16 +126,20 @@ class CurrentConfig
     getKey(@_remoteConfig, key)
 
   getRemoteUrl: ()=>
-    browser = @identifyBrowser()
-    session = @identifySession()
+    browser = @identifyBrowser(@_clientConfig.anonymousId || @_clientConfig.browserId)
+    session = @identifySession(@_clientConfig.sessionId)
     getRemoteUrl(@_clientConfig, { bid: browser.id, sid: session.id })
 
   identifySession: (id, options={})=>
-    @identify('session', id, assign({}, options, expires: 60 * 1000 * 30))
-
+    session = @identify('session', id, assign({}, options, expires: 60 * 1000 * 30))
+    @_clientConfig.sessionId = session.id
+    session
 
   identifyBrowser: (id, options={})=>
-    @identify('browser', id, options)
+    browser = @identify('browser', id, options)
+    @_clientConfig.browserId = browser.id
+    @_clientConfig.anonymousId = browser.id
+    browser
 
   identify: (key, id, options={})=>
     ident = @storage.get(key)

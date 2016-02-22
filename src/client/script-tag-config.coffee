@@ -60,8 +60,10 @@ initParams = {
   verbose     : { default: false, transform: transform.bool },
   embed       : { default: true,  transform: transform.bool },
   autoStart   : { default: true,  transform: transform.bool },
-  accessToken : { default: null }
-  customerId  : { default: null }
+  accessToken : { default: null },
+  customerId  : { default: null },
+  anonymousId : { default: null },
+  sessionId   : { default: null }
 }
 
 getAttribute = (el, k)->
