@@ -5,6 +5,9 @@ Base64   = require '../utils/base64'
 clone    = require '../utils/clone'
 getKey   = require '../utils/get-key'
 
+Raven    = require 'raven-js'
+
+
 # Fix for http://www.hull.io/docs/users/backend on browsers where 3rd party cookies disabled
 fixCookies = (userSig)->
   try
@@ -13,6 +16,17 @@ fixCookies = (userSig)->
           if userSig && !opts.crossDomain
             xhr.setRequestHeader('Hull-User-Sig', userSig)
   catch e
+
+
+setUserContext = (user)->
+  try
+    if user && user.id
+      Raven.setUserContext({
+        id: user.id,
+        email: user.email
+      })
+  catch e
+
 
 
 class CurrentUser
@@ -44,6 +58,8 @@ class CurrentUser
   init : (me)=>
     # Init is silent
     @me = me
+    setUserContext(me)
+    me
 
   set : (me) =>
     prevUpdatedAt = @me?.updated_at
@@ -51,6 +67,7 @@ class CurrentUser
 
     # Silently update now
     @me = me
+    setUserContext(me)
 
     # User was updated. Emit Update
     if prevUpdatedAt != me?.updated_at
