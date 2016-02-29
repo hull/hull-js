@@ -1,10 +1,11 @@
 module.exports = function(scope){
   scope = scope || window
-  if (scope.HTMLImports && !scope.HTMLImports.useNative) {
+  if (scope.HTMLImports && scope.HTMLImports.importer && !scope.HTMLImports.useNative) {
 
     var LINK_STYLE_SELECTOR = 'link[rel=stylesheet]';
+    var importsPreloadSelectors = scope.HTMLImports.importer.importsPreloadSelectors || '';
 
-    scope.HTMLImports.importer.importsPreloadSelectors += ',' + LINK_STYLE_SELECTOR;
+    scope.HTMLImports.importer.importsPreloadSelectors = importsPreloadSelectors + ',' + LINK_STYLE_SELECTOR;
 
     var originalParseGeneric = scope.HTMLImports.parser.parseGeneric;
     scope.HTMLImports.parser.parseGeneric = function(elt) {
