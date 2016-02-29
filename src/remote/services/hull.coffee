@@ -1,9 +1,9 @@
+Promise           = require '../../utils/promises'
 _                 = require '../../utils/lodash'
 EventBus          = require '../../utils/eventbus'
 Base64            = require '../../utils/base64'
 getWrappedRequest = require '../wrapped-request'
 scriptLoader      = require '../../utils/script-loader';
-{ Promise }       = require 'es6-promise';
 assign            = require '../../polyfills/assign';
 displayBanner     = require '../../utils/ui/display-banner'
 { addEvent, removeEvent } = require '../../utils/dom-events'

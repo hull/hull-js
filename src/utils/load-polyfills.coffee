@@ -1,6 +1,6 @@
-Promise  = require('es6-promise').Promise
+Promise         = require '../utils/promises'
 shimHTMLImports = require "../polyfills/shadow-css"
-logger         = require './logger'
+logger          = require './logger'
 
 require "../polyfills/xhr-xdr" #TODO : Test if we can remove this now it's in Polyfill service
 require "../utils/console-shim"
@@ -20,7 +20,7 @@ polyfills =
   "Object.keys"                 : -> Object.keys?
   "MutationObserver"            : -> window.MutationObserver?
   "Object.defineProperty"       : -> Object.defineProperty?
-  "URL"                         : -> 
+  "URL"                         : ->
     try
       if window.URL
         nativeURL = new window.URL('http://example.com')
@@ -32,25 +32,25 @@ polyfills =
     link = document.createElement("link")
     link['import']!=undefined
   "Element.prototype.classList" : -> document.documentElement.classList?
-  "Element.prototype.cloneNode" : -> 
+  "Element.prototype.cloneNode" : ->
     test = ()->
       test = document.createElement('input')
       test.checked = true
       result = test.cloneNode()
       !!result.checked
     this.document? && document.documentElement.cloneNode? && test()
-  "Xdomain"                     : -> 
+  "Xdomain"                     : ->
     xhr = new window.XMLHttpRequest()
     return true if xhr.withCredentials?
     return true if window.XMLHttpRequest.supportsXDR == true
     false
-  "Event"                       : -> 
+  "Event"                       : ->
     return false unless global.Event?
     return true if typeof global.Event == "function"
     try
       new Event("click")
       return true
-    catch e 
+    catch e
       return false
 
 toFill = _.keys _.pick polyfills, (tst)-> !tst()
@@ -68,6 +68,6 @@ fill = (config)->
     .then(resolve, reject)
 
 
-module.exports = 
+module.exports =
   fill: fill
   domain: domain

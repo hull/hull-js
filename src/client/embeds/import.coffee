@@ -1,4 +1,4 @@
-Promise  = require('es6-promise').Promise
+Promise  = require '../../utils/promises'
 _        = require '../../utils/lodash'
 logger   = require '../../utils/logger'
 

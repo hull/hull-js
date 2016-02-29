@@ -1,9 +1,9 @@
-Promise  = require('es6-promise').Promise
 xdm      = require 'xdm.js'
 domready = require '../utils/domready'
 _        = require '../utils/lodash'
 EventBus = require '../utils/eventbus'
 logger   = require '../utils/logger'
+Promise  = require '../utils/promises'
 
 hiddenFrameStyle =
   top: '-20px'
@@ -87,10 +87,13 @@ class Channel
   onMessage       : (e)->
     if e.error then @_ready.reject(e.error) else logger.log("RPC Message", arguments)
 
-  ready           : (remoteConfig)   =>
-    window.clearTimeout(@timeout)
-    @currentConfig.initRemote(remoteConfig)
-    @_ready.resolve @
+  ready : (remoteConfig)   =>
+    try
+      window.clearTimeout(@timeout)
+      @currentConfig.initRemote(remoteConfig)
+      @_ready.resolve @
+    catch err
+      @_ready.reject(err)
 
   getClientConfig : ()  => @currentConfig.get()
   showIframe      : ()  => @applyFrameStyle(shownFrameStyle)
@@ -101,5 +104,5 @@ class Channel
   applyFrameStyle : (styles)=>
     _.map styles, (v,k)=> @rpc.iframe.style[k] = v
 
-    
+
 module.exports = Channel

@@ -1,4 +1,4 @@
-Promise        = require('es6-promise').Promise
+Promise        = require '../../utils/promises'
 _              = require '../../utils/lodash'
 polyfill       = require '../../utils/load-polyfills'
 throwErr       = require '../../utils/throw'
@@ -28,7 +28,7 @@ replaceUrls= (text, urlObj, linkUrl, regexp)->
   return "" unless text
   text.replace regexp, (m, pre, url, post)->
     urlPath = url.replace(/["']/g, "")
-    urlPath = new URL(urlPath, linkUrl).href if (linkUrl) 
+    urlPath = new URL(urlPath, linkUrl).href if (linkUrl)
     urlObj.href = urlPath
     urlPath = urlObj.href
     "#{pre}'#{urlPath}'#{post}"
@@ -81,7 +81,7 @@ fetch = (href)->
         reject(err)
       else
         resolve(res?.text)
-    
+
 
 
 prefixRule = (prefix, rule)->
@@ -167,7 +167,7 @@ finalize = _.throttle finalizeNow, 20
 
 ###*
  * Adds a whole document's styles to the Styles tag
- * 
+ *
  * Under Firefox, you can't change css Rules or the containing
  * style tag or those will be reset when touching anything else.
  * Resort to building an entirely new stylesheet without copying cssRules

@@ -6,6 +6,6 @@ module.exports = {
   isMobile      : require("./is-mobile"),
   uuid          : require("./uuid"),
   domready      : require("./domready"),
-  Promise       : require("es6-promise").Promise,
+  Promise       : require("./promises"),
   superagent    : require("superagent")
 };

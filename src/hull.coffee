@@ -2,11 +2,12 @@
 # # and providing pooled methods to the user while
 # # Hull is actually loading.
 
-Promise     = require('es6-promise').Promise
 assign      = require './polyfills/assign'
+Promise     = require './utils/promises'
 _           = require './utils/lodash'
 polyfill    = require './utils/load-polyfills'
 logger      = require './utils/logger'
+Raven       = require  './utils/raven'
 Client      = require './client'
 CurrentUser = require './client/current-user'
 CurrentConfig = require './client/current-config'
@@ -17,10 +18,10 @@ EventBus    = require './utils/eventbus'
 Pool        = require './utils/pool'
 HullRemote  = require './hull-remote'
 embeds      = require './client/embeds'
-scriptTagConfig = require './client/script-tag-config'
-initializePlatform = require './client/initialize-platform'
-decodeHash  = require './utils/decode-hash'
-displayBanner = require './utils/ui/display-banner'
+scriptTagConfig     = require './client/script-tag-config'
+initializePlatform  = require './client/initialize-platform'
+decodeHash          = require './utils/decode-hash'
+displayBanner       = require './utils/ui/display-banner'
 
 ###*
  * Wraps the success callback
@@ -112,6 +113,9 @@ parseHash = ()->
 
 parseHash()
 
+captureException = (err, ctx)->
+  Raven.captureException(err, ctx)
+
 ###*
  * Main Hull Entry Point
  *
@@ -150,12 +154,19 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
   currentUser =    new CurrentUser()
   currentConfig =  new CurrentConfig()
 
+  Raven.init(config.ravenDsn, {
+    runtime: 'hull-js',
+    orgUrl: config.orgUrl,
+    appId: config.appId || config.platformId
+  })
+
   throwErr = (err)->
     # Something was wrong while initializing
     logger.error(err.stack)
     userFailureCallback = userFailureCallback || ->
     userFailureCallback(err)
     ready.reject(err)
+    Raven.captureException(err)
 
   # Ensure we have everything we need before starting Hull
   currentConfig.init(config).then (config)->
@@ -210,6 +221,7 @@ hull =
   ready        : hullReady
   version      : VERSION
   track        : Pool.create('track')
+  captureException: captureException
   autoSize     : -> shimmedMethod("autoSize")
   setShipStyle : -> shimmedMethod("setShipStyle")
   setShipSize  : -> shimmedMethod("setShipSize")

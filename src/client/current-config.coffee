@@ -6,7 +6,7 @@ cookies      = require '../utils/cookies'
 throwErr     = require '../utils/throw'
 Base64       = require '../utils/base64'
 assign       = require '../polyfills/assign'
-Promise      = require('es6-promise').Promise
+Promise      = require '../utils/promises'
 getKey       = require '../utils/get-key'
 
 getReferralContext = ->
@@ -28,6 +28,7 @@ getRemoteUrl = (config, identifiers)->
   url += "&user_hash=#{config.userHash}" if config.userHash != undefined
   url += "&_bid=#{identifiers.bid}" if identifiers?.bid
   url += "&_sid=#{identifiers.sid}" if identifiers?.sid
+  url += "&ravenDsn=#{config.ravenDsn}" if config.ravenDsn
   url
 
 # Parse the tracked events configuration and standardize it.

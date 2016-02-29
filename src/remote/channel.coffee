@@ -1,4 +1,4 @@
-Promise  = require('es6-promise').Promise
+Promise     = require '../utils/promises'
 xdm      = require 'xdm.js'
 
 catchAll = (res)-> res

@@ -1,4 +1,4 @@
-Promise   = require('es6-promise').Promise
+Promise   = require '../utils/promises'
 EventBus  = require '../utils/eventbus'
 logger    = require '../utils/logger'
 parseOpts = require './parse-opts'

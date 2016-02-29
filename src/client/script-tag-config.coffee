@@ -63,7 +63,8 @@ initParams = {
   accessToken : { default: null },
   customerId  : { default: null },
   anonymousId : { default: null },
-  sessionId   : { default: null }
+  sessionId   : { default: null },
+  ravenDsn    : { default: null }
 }
 
 getAttribute = (el, k)->

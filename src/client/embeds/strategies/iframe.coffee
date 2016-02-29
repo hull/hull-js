@@ -1,4 +1,4 @@
-Promise                = require('es6-promise').Promise
+Promise                = require '../../../utils/promises'
 _                      = require '../../../utils/lodash'
 throwErr               = require '../../../utils/throw'
 getIframe              = require '../../../utils/get-iframe'
@@ -39,7 +39,7 @@ class IframeDeploymentStrategy extends BaseDeploymentStrategy
       .catch throwErr
 
     Promise.all(readyPromises)
-  
+
   onEmbed: ()=>
     # Ensure every insertion has been called with every callback just once.
     @ready.promise.then ()=>
@@ -50,7 +50,7 @@ class IframeDeploymentStrategy extends BaseDeploymentStrategy
 
   ###*
    * Embeds an iframe in a DOM container or directly in the Body
-   * 
+   *
    * @param  {Node|NodeArray} targets A single node or an array of Nodes
    * @return {object}         an object containing a promise for when the import is loaded, the elements created and the target node(s)
   ###

@@ -1,5 +1,5 @@
-Promise  = require('es6-promise').Promise
 assign   = require '../polyfills/assign'
+Promise  = require '../utils/promises'
 _        = require '../utils/lodash'
 logger   = require '../utils/logger'
 EventBus = require '../utils/eventbus'
