@@ -1,4 +1,4 @@
-Promise  = require('es6-promise').Promise
+Promise  = require 'bluebird'
 xdm      = require 'xdm.js'
 domready = require '../utils/domready'
 _        = require '../utils/lodash'
@@ -101,5 +101,5 @@ class Channel
   applyFrameStyle : (styles)=>
     _.map styles, (v,k)=> @rpc.iframe.style[k] = v
 
-    
+
 module.exports = Channel

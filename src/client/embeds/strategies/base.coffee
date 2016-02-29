@@ -1,4 +1,4 @@
-Promise  = require('es6-promise').Promise
+Promise  = require 'bluebird'
 _        = require '../../../utils/lodash'
 setStyle = require '../../../utils/set-style'
 logger   = require '../../../utils/logger'

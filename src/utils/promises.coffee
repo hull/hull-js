@@ -1,4 +1,4 @@
-Promise  = require('es6-promise').Promise
+Promise  = require 'bluebird'
 
 buildPromise = ()->
   dfd = {}

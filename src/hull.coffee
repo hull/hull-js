@@ -2,7 +2,7 @@
 # # and providing pooled methods to the user while
 # # Hull is actually loading.
 
-Promise     = require('es6-promise').Promise
+Promise     = require 'bluebird'
 assign      = require './polyfills/assign'
 _           = require './utils/lodash'
 polyfill    = require './utils/load-polyfills'

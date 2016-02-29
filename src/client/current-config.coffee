@@ -6,7 +6,7 @@ cookies      = require '../utils/cookies'
 throwErr     = require '../utils/throw'
 Base64       = require '../utils/base64'
 assign       = require '../polyfills/assign'
-Promise      = require('es6-promise').Promise
+Promise      = require 'bluebird'
 getKey       = require '../utils/get-key'
 
 getReferralContext = ->

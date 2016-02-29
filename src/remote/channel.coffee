@@ -1,4 +1,4 @@
-Promise  = require('es6-promise').Promise
+Promise  = require 'bluebird'
 xdm      = require 'xdm.js'
 
 catchAll = (res)-> res

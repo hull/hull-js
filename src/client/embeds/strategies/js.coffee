@@ -1,6 +1,6 @@
-Promise                = require('es6-promise').Promise
-_                      = require '../../../utils/lodash'
-throwErr               = require '../../../utils/throw'
+Promise  = require 'bluebird'
+_ = require '../../../utils/lodash'
+throwErr = require '../../../utils/throw'
 scriptLoader = require '../../../utils/script-loader'
 BaseDeploymentStrategy = require './base'
 
@@ -28,7 +28,7 @@ class JSDeploymentStrategy extends BaseDeploymentStrategy
     sc = document.querySelector("[data-hull-ship-script=\"#{@deployment.ship.id}\"]");
     if !getScript(@deployment)
       setScript(@deployment, true)
-      attributes = 
+      attributes =
         'data-hull-deployment'       : @deployment.id
         'data-hull-ship-script'      : @deployment.ship.id
 

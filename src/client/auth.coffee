@@ -1,4 +1,4 @@
-Promise  = require('es6-promise').Promise
+Promise  = require 'bluebird'
 assign   = require '../polyfills/assign'
 _        = require '../utils/lodash'
 logger   = require '../utils/logger'

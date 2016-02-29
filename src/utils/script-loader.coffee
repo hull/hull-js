@@ -1,4 +1,4 @@
-Promise  = require('es6-promise').Promise
+Promise  = require 'bluebird'
 _        = require './lodash'
 logger   = require './logger'
 
@@ -6,7 +6,7 @@ module.exports = (opts={})->
   doc = opts.document || window.document
   sc = document.createElement "script"
   new Promise (resolve, reject)->
-    # Reject loading polyfills after 10 seconds, 
+    # Reject loading polyfills after 10 seconds,
 
     errorTimeout = setTimeout ()->
       error = new Error("Couldn't load some parts of the libray \n(#{opts.src}).\nConnectivity issue?")
