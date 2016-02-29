@@ -2,6 +2,7 @@ _         = require '../../utils/lodash'
 findUrl   = require '../../utils/find-url'
 assign    = require '../../polyfills/assign'
 domWalker = require '../../utils/dom-walker'
+Promise   = require '../../utils/promises'
 qs        = require '../../utils/query-string-encoder'
 EventBus  = require '../../utils/eventbus'
 
