@@ -25,7 +25,7 @@ var uglifyPlugin =  new webpack.optimize.UglifyJsPlugin({
   minimize:true,
   ascii_only:true,
   quote_keys:true,
-  sourceMap: false,
+  sourceMap: true,
   beautify: false,
   compress: {
     warnings: false,
