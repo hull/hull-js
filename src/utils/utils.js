@@ -6,6 +6,6 @@ module.exports = {
   isMobile      : require("./is-mobile"),
   uuid          : require("./uuid"),
   domready      : require("./domready"),
-  Promise       : require("bluebird"),
+  Promise       : require("./promises"),
   superagent    : require("superagent")
 };
