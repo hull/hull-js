@@ -155,9 +155,7 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
   currentUser =    new CurrentUser()
   currentConfig =  new CurrentConfig()
 
-
   if config.ravenDsn
-    console.warn('using raven !')
     Raven.config(config.ravenDsn).install()
     Raven.setExtraContext({
       runtime: 'hull-js',
