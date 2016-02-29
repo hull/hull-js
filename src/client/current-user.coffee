@@ -4,8 +4,7 @@ cookies  = require '../utils/cookies'
 Base64   = require '../utils/base64'
 clone    = require '../utils/clone'
 getKey   = require '../utils/get-key'
-
-Raven    = require 'raven-js'
+Raven    = require '../utils/raven'
 
 
 # Fix for http://www.hull.io/docs/users/backend on browsers where 3rd party cookies disabled
