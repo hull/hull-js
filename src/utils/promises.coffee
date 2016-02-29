@@ -1,13 +1,10 @@
-Promise  = require 'bluebird'
+Promise  = require 'bluebird/js/browser/bluebird.core'
 
-buildPromise = ()->
+Promise.deferred = Promise.deferred || ->
   dfd = {}
   dfd.promise = new Promise (resolve, reject)=>
     dfd.resolve = resolve
     dfd.reject = reject
   dfd
 
-module.exports =   {
-  deferred: buildPromise
-  all: Promise.all
-}
+module.exports = Promise

@@ -1,5 +1,6 @@
 logger  = require './logger'
-Raven = require 'raven-js'
+Raven = require './raven'
+
 module.exports = (err)->
-  Raven.captureException(err) if Raven.isSetup()
+  Raven.captureException(err)
   logger.error err.message, err.stack

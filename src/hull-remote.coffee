@@ -1,3 +1,4 @@
+Raven             = require './utils/raven'
 polyfill          = require './utils/load-polyfills'
 EventBus          = require './utils/eventbus'
 logger            = require './utils/logger'
@@ -16,7 +17,6 @@ RemoteConfigStore = require './flux/stores/RemoteConfigStore'
 RemoteActions     = require './flux/actions/RemoteActions'
 RemoteConstants   = require './flux/constants/RemoteConstants'
 
-Raven = require 'raven-js'
 
 
 captureException = (err, ctx)->
@@ -29,16 +29,11 @@ Hull = (remoteConfig)->
   return hull if hull
   config = ConfigNormalizer(remoteConfig)
 
-  if config.queryParams && config.queryParams.ravenDsn
-    ctx = {
-      runtime: 'hull-remote',
-      orgUrl: locationOrigin(),
-      appId: config.appId
-    }
-    console.warn('remote setup Raven', config.queryParams.ravenDsn, ctx)
-    Raven.config(config.queryParams.ravenDsn).install()
-    Raven.setExtraContext(ctx)
-
+  Raven.init(config.queryParams.ravenDsn, {
+    runtime: 'hull-remote',
+    orgUrl: locationOrigin(),
+    appId: config.appId
+  })
 
   polyfilled = polyfill.fill(config)
 

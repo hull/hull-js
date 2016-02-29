@@ -1,4 +1,4 @@
-Promise                = require 'bluebird'
+Promise                = require '../../../utils/promises'
 _                      = require '../../../utils/lodash'
 throwErr               = require '../../../utils/throw'
 getIframe              = require '../../../utils/get-iframe'

@@ -1,4 +1,4 @@
-Promise  = require 'bluebird'
+Promise = require '../utils/promises'
 
 # Wraps config failure
 onConfigFailure = (err)->

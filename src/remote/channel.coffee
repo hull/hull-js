@@ -1,4 +1,4 @@
-Promise  = require 'bluebird'
+Promise     = require '../utils/promises'
 xdm      = require 'xdm.js'
 
 catchAll = (res)-> res

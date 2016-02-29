@@ -1,4 +1,4 @@
-Promise  = require 'bluebird'
+Promise  = require '../../../utils/promises'
 _        = require '../../../utils/lodash'
 setStyle = require '../../../utils/set-style'
 logger   = require '../../../utils/logger'

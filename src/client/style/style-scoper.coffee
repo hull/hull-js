@@ -1,4 +1,4 @@
-Promise  = require 'bluebird'
+Promise        = require '../../utils/promises'
 _              = require '../../utils/lodash'
 polyfill       = require '../../utils/load-polyfills'
 throwErr       = require '../../utils/throw'

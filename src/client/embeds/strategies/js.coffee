@@ -1,7 +1,7 @@
-Promise  = require 'bluebird'
-_ = require '../../../utils/lodash'
-throwErr = require '../../../utils/throw'
-scriptLoader = require '../../../utils/script-loader'
+Promise       = require '../../../utils/promises'
+_             = require '../../../utils/lodash'
+throwErr      = require '../../../utils/throw'
+scriptLoader  = require '../../../utils/script-loader'
 BaseDeploymentStrategy = require './base'
 
 scripts = {}
@@ -35,7 +35,9 @@ class JSDeploymentStrategy extends BaseDeploymentStrategy
       scriptLoader({src:@deployment.ship.index, attributes})
       .then (args...)=>
         @ready.resolve(args...)
-      .catch @ready.reject
+      .catch (err)=>
+        @ready.reject(err)
+        throwErr(err)
     else
       new Promise (resolve, reject)=>
         @ready.resolve()

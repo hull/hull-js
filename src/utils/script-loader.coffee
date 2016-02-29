@@ -1,4 +1,4 @@
-Promise  = require 'bluebird'
+Promise  = require './promises'
 _        = require './lodash'
 logger   = require './logger'
 
@@ -9,7 +9,7 @@ module.exports = (opts={})->
     # Reject loading polyfills after 10 seconds,
 
     errorTimeout = setTimeout ()->
-      error = new Error("Couldn't load some parts of the libray \n(#{opts.src}).\nConnectivity issue?")
+      error = new Error("Error loading #{opts.src}.\nConnectivity issue?")
       logger.error(error, error.message, error.stack)
       reject(error);
     , 10000
