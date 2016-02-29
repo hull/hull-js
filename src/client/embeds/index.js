@@ -4,6 +4,7 @@
 import _          from "../../utils/lodash";
 import throwErr   from "../../utils/throw";
 import logger     from "../../utils/logger";
+import Promise    from "../../utils/promises";
 import getCurrentScript from "../../utils/get-current-script";
 
 import Deployment from "./deployment";
