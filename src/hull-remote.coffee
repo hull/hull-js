@@ -20,7 +20,7 @@ RemoteConstants   = require './flux/constants/RemoteConstants'
 
 
 captureException = (err, ctx)->
-  Raven.captureException(err, ctx) if Raven.isSetup()
+  Raven.captureException(err, ctx)
 
 hull = undefined
 
