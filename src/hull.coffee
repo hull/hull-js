@@ -22,6 +22,8 @@ initializePlatform = require './client/initialize-platform'
 decodeHash  = require './utils/decode-hash'
 displayBanner = require './utils/ui/display-banner'
 
+Raven = require 'raven-js'
+
 ###*
  * Wraps the success callback
  *
@@ -112,6 +114,9 @@ parseHash = ()->
 
 parseHash()
 
+captureException = (err, ctx)->
+  Raven.captureException(err, ctx) if Raven.isSetup()
+
 ###*
  * Main Hull Entry Point
  *
@@ -150,12 +155,23 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
   currentUser =    new CurrentUser()
   currentConfig =  new CurrentConfig()
 
+
+  if config.ravenDsn
+    console.warn('using raven !')
+    Raven.config(config.ravenDsn).install()
+    Raven.setExtraContext({
+      runtime: 'hull-js',
+      orgUrl: config.orgUrl,
+      appId: config.appId || config.platformId
+    })
+
   throwErr = (err)->
     # Something was wrong while initializing
     logger.error(err.stack)
     userFailureCallback = userFailureCallback || ->
     userFailureCallback(err)
     ready.reject(err)
+    Raven.captureException(err)
 
   # Ensure we have everything we need before starting Hull
   currentConfig.init(config).then (config)->
@@ -210,6 +226,7 @@ hull =
   ready        : hullReady
   version      : VERSION
   track        : Pool.create('track')
+  captureException: captureException
   autoSize     : -> shimmedMethod("autoSize")
   setShipStyle : -> shimmedMethod("setShipStyle")
   setShipSize  : -> shimmedMethod("setShipSize")

@@ -2,6 +2,8 @@ polyfill          = require './utils/load-polyfills'
 EventBus          = require './utils/eventbus'
 logger            = require './utils/logger'
 ConfigNormalizer  = require './utils/config-normalizer'
+locationOrigin    = require './utils/location-origin'
+qs                = require './utils/query-string-encoder'
 Services          = require './remote/services'
 Gateway           = require './remote/gateway'
 Channel           = require './remote/channel'
@@ -14,7 +16,11 @@ RemoteConfigStore = require './flux/stores/RemoteConfigStore'
 RemoteActions     = require './flux/actions/RemoteActions'
 RemoteConstants   = require './flux/constants/RemoteConstants'
 
+Raven = require 'raven-js'
 
+
+captureException = (err, ctx)->
+  Raven.captureException(err, ctx) if Raven.isSetup()
 
 hull = undefined
 
@@ -22,7 +28,21 @@ hull = undefined
 Hull = (remoteConfig)->
   return hull if hull
   config = ConfigNormalizer(remoteConfig)
-  polyfill.fill(config).then ()->
+
+  if config.queryParams && config.queryParams.ravenDsn
+    ctx = {
+      runtime: 'hull-remote',
+      orgUrl: locationOrigin(),
+      appId: config.appId
+    }
+    console.warn('remote setup Raven', config.queryParams.ravenDsn, ctx)
+    Raven.config(config.queryParams.ravenDsn).install()
+    Raven.setExtraContext(ctx)
+
+
+  polyfilled = polyfill.fill(config)
+
+  polyfilled.then ->
     # The access token stuff is a Safari hack:
     # Safari doesn't send response tokens for remote exchange
     RemoteActions.updateRemoteConfig(config)
@@ -76,7 +96,13 @@ Hull = (remoteConfig)->
     .then(subscribeToEvents)
     .then (clientConfig)->
       RemoteActions.updateClientConfig(clientConfig)
-    .catch (err)-> console.error("Could not initialize Hull: #{err.message}")
+    .catch (err)->
+      captureException(err)
+      console.error("Could not initialize Hull: #{err.message}")
+
+  .catch (err) ->
+    captureException(err)
+    console.error("Could not initialize Hull: #{err.message}")
 
 Hull.version = VERSION
 module.exports = Hull

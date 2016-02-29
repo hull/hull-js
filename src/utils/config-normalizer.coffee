@@ -1,6 +1,7 @@
 _     = require '../utils/lodash'
 clone = require '../utils/clone'
 cookies = require '../utils/cookies'
+qs = require '../utils/query-string-encoder'
 
 flattenSettings = (settings, name)->
   nameArray = name.split('_')
@@ -34,5 +35,7 @@ module.exports = (_config={})->
   config.services = services
 
   config.cookiesEnabled = cookies.enabled()
+
+  config.queryParams = qs.decode() || {}
 
   config
