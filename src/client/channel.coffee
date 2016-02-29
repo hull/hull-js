@@ -54,7 +54,7 @@ class Channel
     domready(@onDomReady)
 
   onDomReady : ()=>
-    @timeout = setTimeout(@loadingFailed, 30000);
+    @timeout = setTimeout(@loadingFailed, 60000);
     @rpc = new xdm.Rpc
       remote    : @currentConfig.getRemoteUrl()
       container : document.body
