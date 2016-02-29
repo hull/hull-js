@@ -13,3 +13,6 @@ deployment:
 test:
   override:
     - echo "OK"
+general:
+  artifacts:
+    - lib
