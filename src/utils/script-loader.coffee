@@ -12,7 +12,7 @@ module.exports = (opts={})->
       error = new Error("Error loading #{opts.src}.\nConnectivity issue?")
       logger.error(error, error.message, error.stack)
       reject(error);
-    , 10000
+    , 60000
 
     if opts.attributes
       _.map opts.attributes, (value, key)-> sc.setAttribute(key, value)
