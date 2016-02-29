@@ -220,6 +220,7 @@ hull =
   init         : init
   ready        : hullReady
   version      : VERSION
+  revision     : REVISION
   track        : Pool.create('track')
   captureException: captureException
   autoSize     : -> shimmedMethod("autoSize")
