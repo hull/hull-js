@@ -6,6 +6,7 @@ var webpack = require('webpack');
 var path = require('path');
 var pkg = require('./package.json');
 var moment = require('moment');
+var git = require('git-rev-sync');
 
 // DO NOT CHANGE FOLDERS
 // WIHTOUT UPDATING PACKAGE.JSON TOO.
@@ -108,14 +109,17 @@ var loaders = [
   {test: /\.svg$|\.woff$|\.ttf$|\.wav$|\.mp3$/, loader: "file" },
 ];
 
+var REVISION = process.env.CIRCLE_SHA1 || git.short();
+
 // We remove the 'dist' from the filenames for demo and index.html in package.json
 // Package.json expects our files to be addressable from the same repo
 // We put them in `dist` to have a clean structure but then we need to build them in the right place
 var plugins = [
   new webpack.DefinePlugin({
-    'VERSION'    : JSON.stringify(pkg.version),
+    'VERSION'  : JSON.stringify(pkg.version),
+    'REVISION' : JSON.stringify(REVISION),
     'BUILD_DATE' : JSON.stringify(moment().format('MMMM, DD, YYYY, HH:mm:ss')),
-    'PUBLIC_PATH': JSON.stringify(output.publicPath),
+    'PUBLIC_PATH': JSON.stringify(output.publicPath)
   }),
   new webpack.ResolverPlugin(
     new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("bower.json", ["main"])

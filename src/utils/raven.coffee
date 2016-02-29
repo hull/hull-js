@@ -7,7 +7,9 @@ module.exports =
   init: (dsn, context)->
     if dsn && !window.Raven
       script(src: 'https://cdn.ravenjs.com/2.1.1/raven.min.js').then ->
-        window.Raven.config(dsn).install()
+        window.Raven.config(dsn, {
+          release: REVISION
+        }).install()
         window.Raven.setExtraContext(context)
         window.Raven.setUserContext(userContext)
         _.map pending.splice(0), (e)->

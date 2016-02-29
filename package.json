@@ -10,6 +10,7 @@
     "domready": "0.3.0",
     "eventemitter2": "^0.4.14",
     "flux": "^2.0.1",
+    "git-rev-sync": "^1.4.0",
     "html-loader": "^0.3.0",
     "inline-style-loader": "0.0.3",
     "localtunnel": "^1.8.0",
