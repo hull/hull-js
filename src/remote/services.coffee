@@ -1,5 +1,6 @@
 _                     = require '../utils/lodash'
 logger                = require '../utils/logger'
+Promise               = require '../utils/promises'
 assign                = require '../polyfills/assign'
 
 ServiceList           = require './services/list'
