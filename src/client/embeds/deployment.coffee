@@ -3,6 +3,7 @@ _                        = require '../../utils/lodash'
 clone                    = require '../../utils/clone'
 throwErr                 = require '../../utils/throw'
 logger                   = require '../../utils/logger'
+Promise                  = require '../../utils/promises'
 
 RawDeploymentStrategy    = require './strategies/raw'
 ScopeDeploymentStrategy  = require './strategies/scope'
