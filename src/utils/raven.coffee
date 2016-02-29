@@ -1,12 +1,26 @@
-Raven = require 'raven-js'
+script = require "./script-loader"
+_ = require './lodash'
+pending = []
+userContext = {}
 
 module.exports =
   init: (dsn, context)->
-    console.warn('initRaven', dsn, context)
     if dsn
-      Raven.config(dsn).install()
-      Raven.setExtraContext(context)
+      script(src: 'https://cdn.ravenjs.com/2.1.1/raven.min.js').then ->
+        window.Raven.config(dsn).install()
+        window.Raven.setExtraContext(context)
+        window.Raven.setUserContext(userContext)
+        _.map pending.splice(0), (e)->
+          window.Raven.captureException(e.err, e.ctx)
+
+  setUserContext: (ctx)->
+    if window.Raven && window.Raven.setUserContext
+      window.Raven.setUserContext(ctx)
+    else
+      userContext = ctx
 
   captureException: (err, ctx)->
-    console.warn('Raven capture exception !', err, ctx)
-    Raven.captureException(err, ctx) if Raven.isSetup()
+    if window.Raven && window.Raven.captureException
+      window.Raven.captureException(err, ctx)
+    else
+      pending.push({ err: err, ctx: ctx })
