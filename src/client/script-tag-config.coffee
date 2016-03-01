@@ -83,9 +83,8 @@ getParamValue = (el, param, key)->
 
   if value? then value else param.default
 
-
 module.exports = ->
-  hull_js_sdk = document.getElementById('hull-js-sdk')
+  hull_js_sdk = document.getElementById('hull-js-sdk') || document.querySelector('[org-url][platform-id]')
 
   return unless hull_js_sdk
 
