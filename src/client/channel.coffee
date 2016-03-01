@@ -61,7 +61,7 @@ class Channel
     @rpc = new xdm.Rpc
       remote    : @currentConfig.getRemoteUrl()
       container : document.body
-      channel   : @currentConfig.get('appId')
+      channel   : [@currentConfig.get('appId'), @retryCount].join("-")
       props     : rpcFrameInitStyle
     ,
       remote    :
