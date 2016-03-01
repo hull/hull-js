@@ -3,12 +3,15 @@ _ = require './lodash'
 pending = []
 userContext = {}
 
+
+
 module.exports =
   init: (dsn, context)->
     if dsn && !window.Raven
       script(src: 'https://cdn.ravenjs.com/2.1.1/raven.min.js').then ->
         window.Raven.config(dsn, {
-          release: REVISION
+          release: REVISION,
+          whitelistUrls: [/hull/]
         }).install()
         window.Raven.setExtraContext(context)
         window.Raven.setUserContext(userContext)
