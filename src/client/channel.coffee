@@ -85,7 +85,7 @@ class Channel
     @_ready.reject err
 
   loadingFailed: (err) =>
-    @rpc.destroy()
+    @rpc && @rpc.destroy()
     if @retryCount < 10
       @startRpc()
     else
