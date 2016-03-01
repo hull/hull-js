@@ -142,8 +142,14 @@ class CurrentConfig
     @_clientConfig.anonymousId = browser.id
     browser
 
+  storageGet: (key)=>
+    try
+      @storage.get(key)
+    catch e
+      null
+
   identify: (key, id, options={})=>
-    ident = @storage.get(key)
+    ident = @storageGet(key)
     now = new Date().getTime()
     if options.expires
       # Auto expire after 30 minutes
