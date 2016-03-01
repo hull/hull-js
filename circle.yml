@@ -6,6 +6,7 @@ deployment:
     branch: /release\/.*/
     commands:
       - ./node_modules/.bin/gulp deploy:release
+      - ./scripts/sentry_release.sh
   feature:
     branch: /feature\/.*/
     commands:
@@ -16,8 +17,3 @@ test:
 general:
   artifacts:
     - lib
-deployment:
-  sentry:
-    branch: release/0.9.0
-    commands:
-      - ./scripts/sentry_release.sh
