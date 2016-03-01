@@ -20,4 +20,4 @@ deployment:
   sentry:
     branch: release/0.9.0
     commands:
-      - curl -v $SENTRY_URL -X POST -H 'Content-Type: application/json' -d '{"version":"'"$CIRCLE_SHA1"'", "ref":"'"$CIRCLE_SHA1"'"}'
+      - ./scripts/sentry_release.sh
