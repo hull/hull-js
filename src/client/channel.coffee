@@ -42,7 +42,9 @@ rpcFrameInitStyle =
     overflow: 'hidden'
 
 class Channel
+
   constructor : (currentUser, currentConfig)->
+    @retryCount = 0
     @currentConfig = currentConfig
     @currentUser = currentUser
     @timeout  = null
@@ -51,10 +53,11 @@ class Channel
     @promise = new Promise (resolve, reject)=>
       @_ready.resolve = resolve
       @_ready.reject = reject
-    domready(@onDomReady)
+    domready(@startRpc)
 
-  onDomReady : ()=>
-    @timeout = setTimeout(@loadingFailed, 60000);
+  startRpc: =>
+    @retryCount += 1
+    @timeout = setTimeout(@loadingFailed, @retryCount * 5000)
     @rpc = new xdm.Rpc
       remote    : @currentConfig.getRemoteUrl()
       container : document.body
@@ -77,12 +80,16 @@ class Channel
         getClientConfig : @getClientConfig
     @rpc
 
-  loadError       : (err)=>
+  loadError: (err)=>
     window.clearTimeout @timeout
     @_ready.reject err
 
-  loadingFailed   : (err) =>
-    @_ready.reject('Remote loading has failed. Please check "orgUrl" and "appId" in your configuration. This may also be about connectivity.')
+  loadingFailed: (err) =>
+    @rpc.destroy()
+    if @retryCount < 10
+      @startRpc()
+    else
+      @_ready.reject(new Error('Remote loading has failed. Please check "orgUrl" and "appId" in your configuration. This may also be about connectivity.'))
 
   onMessage       : (e)->
     if e.error then @_ready.reject(e.error) else logger.log("RPC Message", arguments)
