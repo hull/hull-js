@@ -1,4 +1,4 @@
-xdm      = require 'xdm.js'
+xdm      = require '../utils/xdm'
 domready = require '../utils/domready'
 _        = require '../utils/lodash'
 EventBus = require '../utils/eventbus'

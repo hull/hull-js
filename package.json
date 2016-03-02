@@ -57,8 +57,7 @@
     "run-sequence": "^1.0.2",
     "stats-webpack-plugin": "0.0.1",
     "webpack": "^1.8.10",
-    "webpack-dev-server": "^1.8.2",
-    "xdm.js": "necolas/xdm.js#1.0.1"
+    "webpack-dev-server": "^1.8.2"
   },
   "jest": {
     "testDirectoryName": "__tests__",

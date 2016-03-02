@@ -1,5 +1,5 @@
-Promise     = require '../utils/promises'
-xdm      = require 'xdm.js'
+Promise  = require '../utils/promises'
+xdm      = require '../utils/xdm'
 
 catchAll = (res)-> res
 
