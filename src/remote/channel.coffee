@@ -35,12 +35,12 @@ class Channel
 
     catch e
       try
-        domains = (config.appDomains || []).toString().replace(',', '\n')
+        domains = (config.appDomains || []).toString()
         whitelisted = domains.replace(/\(\:\[0-9\]\+\)\?\$/g,'').replace(/\^\(https\?\:\/\/\)\?/g,'').replace(/\\/g,'')
         e = new Error("#{e.message}, You should whitelist this domain. The following domains are authorized : \n#{whitelisted}");
         @_ready.reject(e)
-        @rpc = new xdm.Rpc({}, remote: { loadError: {} })
-        @rpc.loadError e
+        @rpc = new xdm.Rpc({}, local: {}, remote: { loadError: {} })
+        @rpc.loadError e.message
       catch e
         throw new Error("Unable to establish communication between Hull Remote and your page. #{e.message}")
 
