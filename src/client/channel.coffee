@@ -44,6 +44,7 @@ rpcFrameInitStyle =
 class Channel
 
   constructor : (currentUser, currentConfig)->
+    @allowRetry = true
     @retryCount = 0
     @currentConfig = currentConfig
     @currentUser = currentUser
@@ -57,7 +58,7 @@ class Channel
 
   startRpc: =>
     @retryCount += 1
-    @timeout = setTimeout(@loadingFailed, @retryCount * 5000)
+    @timeout = setTimeout(@loadingFailed, @retryCount * 10000)
     @rpc = new xdm.Rpc
       remote    : @currentConfig.getRemoteUrl()
       container : document.body
@@ -71,7 +72,7 @@ class Channel
       local:
         message         : @onMessage
         ready           : @ready
-        loadError       : @error
+        loadError       : @loadError
         userUpdate      : @userUpdate
         configUpdate    : @configUpdate
         show            : @showIframe
@@ -81,12 +82,13 @@ class Channel
     @rpc
 
   loadError: (err)=>
-    window.clearTimeout @timeout
-    @_ready.reject err
+    window.clearTimeout(@timeout)
+    @allowRetry = false
+    @_ready.reject new Error(err)
 
   loadingFailed: (err) =>
     @rpc && @rpc.destroy()
-    if @retryCount < 10
+    if @allowRetry && @retryCount < 4
       @startRpc()
     else
       @_ready.reject(new Error('Remote loading has failed. Please check "orgUrl" and "appId" in your configuration. This may also be about connectivity.'))

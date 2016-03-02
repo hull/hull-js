@@ -64,7 +64,7 @@ var getAWSConfig = function(){
         simulate: false,
       },
       headers: {
-        "Cache-Control": "max-age=315360000, no-transform, public"
+        "Cache-Control": "max-age=3600, no-transform, public"
       }
     }
   };
