@@ -35,7 +35,8 @@ class Channel
 
     catch e
       try
-        whitelisted = config.appDomains.join('\n').replace(/\(\:\[0-9\]\+\)\?\$/g,'').replace(/\^\(https\?\:\/\/\)\?/g,'').replace(/\\/g,'')
+        domains = (config.appDomains || []).toString().replace(',', '\n')
+        whitelisted = domains.replace(/\(\:\[0-9\]\+\)\?\$/g,'').replace(/\^\(https\?\:\/\/\)\?/g,'').replace(/\\/g,'')
         e = new Error("#{e.message}, You should whitelist this domain. The following domains are authorized : \n#{whitelisted}");
         @_ready.reject(e)
         @rpc = new xdm.Rpc({}, remote: { loadError: {} })
