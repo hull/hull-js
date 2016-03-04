@@ -1,6 +1,5 @@
-'use strict';
-
 import emptyFunction from '../utils/empty-function';
+import request from 'superagent';
 
 function initializeShopifyPlatform(context, currentConfig, hull) {
   const { customerId, accessToken, callbackUrl } = currentConfig.get();
@@ -50,6 +49,26 @@ function initializeShopifyPlatform(context, currentConfig, hull) {
       document.location = '/account/logout';
     });
   }
+
+  function aliasCart(cart = {}) {
+    console.warn('Yeah, calling aliasCart with ', cart)
+    if (cart.token) {
+      const CART_ALIAS_KEY = 'cartAliasToken';
+      const aliasToken = [cart.token, customerId].join('-');
+      if (aliasToken !== currentConfig.storageGet(CART_ALIAS_KEY)) {
+        hull.api('services/shopify/cart', { cart }, 'post').then(function() {
+          currentConfig.storageSet(CART_ALIAS_KEY, aliasToken);
+        });
+      }
+    }
+  }
+
+  if (window.HullShopify && window.HullShopify.carts) {
+    aliasCart(window.HullShopify.cart);
+  } else {
+    request.get('/cart.js', res => aliasCart(JSON.parse(res.text)))
+  }
+
 
 }
 

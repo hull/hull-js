@@ -142,6 +142,12 @@ class CurrentConfig
     @_clientConfig.anonymousId = browser.id
     browser
 
+  storageSet: (key, value)=>
+    try
+      @storage.set(key, value)
+    catch e
+      null
+
   storageGet: (key)=>
     try
       @storage.get(key)
@@ -163,7 +169,7 @@ class CurrentConfig
     if options.count
       ident.inits_count = (ident.inits_count || 0) + 1
 
-    try @storage.set(key, ident)
+    @storageSet(key, ident)
 
     ident
 
