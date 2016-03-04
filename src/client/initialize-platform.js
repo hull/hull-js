@@ -51,7 +51,6 @@ function initializeShopifyPlatform(context, currentConfig, hull) {
   }
 
   function aliasCart(cart = {}) {
-    console.warn('Yeah, calling aliasCart with ', cart)
     if (cart.token) {
       const CART_ALIAS_KEY = 'cartAliasToken';
       const aliasToken = [cart.token, customerId].join('-');
