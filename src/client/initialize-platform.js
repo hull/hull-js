@@ -62,7 +62,7 @@ function initializeShopifyPlatform(context, currentConfig, hull) {
     }
   }
 
-  if (window.HullShopify && window.HullShopify.carts) {
+  if (window.HullShopify && window.HullShopify.cart) {
     aliasCart(window.HullShopify.cart);
   } else {
     request.get('/cart.js', res => aliasCart(JSON.parse(res.text)))
