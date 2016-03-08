@@ -51,6 +51,35 @@ function initializeShopifyPlatform(context, currentConfig, hull) {
     });
   }
 
+  function aliasCart(cart = {}) {
+    if (cart.token) {
+      const CART_ALIAS_KEY = 'cartAliasToken';
+      const aliasToken = [cart.token, customerId].join('-');
+      if (aliasToken !== currentConfig.storageGet(CART_ALIAS_KEY)) {
+        hull.api('services/shopify/cart', { cart }, 'post').then(function() {
+          currentConfig.storageSet(CART_ALIAS_KEY, aliasToken);
+        });
+      }
+    }
+  }
+
+  if (window.HullShopify && window.HullShopify.cart && window.HullShopify.cart.token) {
+    aliasCart(window.HullShopify.cart);
+  } else {
+    let browser = {};
+    try {
+      browser = currentConfig.identifyBrowser();
+    } catch (err) {
+      browser = {}
+    }
+    request.post('/cart.js')
+           .send({ attributes: { hullAnonymousId: browser.id } })
+           .set('Accept', 'application/json')
+           .end(res => {
+              aliasCart(JSON.parse(res.text))
+            })
+  }
+
 }
 
 function getPlatformInitializer(platform) {
