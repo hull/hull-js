@@ -82,6 +82,9 @@ class Gateway
     ident['Hull-Sid'] = @identify.session unless cookies.get('_sid')
     ident
 
+  resetIdentify: ->
+    @identify = {}
+
   fetch : (options={}) =>
     {method, headers, path, params} = options
 
