@@ -68,7 +68,8 @@ class Channel
       remote    :
         message        : {},
         ready          : {},
-        refreshUser    : {}
+        refreshUser    : {},
+        resetIdentify  : {}
       local:
         message         : @onMessage
         ready           : @ready

@@ -231,7 +231,10 @@ class Auth
     @completeLoginPromiseChain(promise, callback, errback)
 
   logout: (options={}, callback, errback) =>
+    @currentConfig.resetIdentify()
+    @api.channel.rpc.resetIdentify()
     promise = @api.message('logout')
+
     if options.strategy == 'redirect' || !@currentConfig.getRemote('cookiesEnabled')
       redirect_url = options.redirect_url || document.location.href
       # Add this param to make sure safari actually redirects to the logoutUrl

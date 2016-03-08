@@ -2,7 +2,6 @@ localstorage = require('putainde-localstorage')
 _            = require '../utils/lodash'
 EventBus     = require '../utils/eventbus'
 clone        = require '../utils/clone'
-cookies      = require '../utils/cookies'
 throwErr     = require '../utils/throw'
 Base64       = require '../utils/base64'
 assign       = require '../polyfills/assign'
@@ -153,6 +152,9 @@ class CurrentConfig
       @storage.get(key)
     catch e
       null
+
+  resetIdentify: ->
+    try @storage.clear()
 
   identify: (key, id, options={})=>
     ident = @storageGet(key)

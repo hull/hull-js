@@ -5,6 +5,8 @@ assign                = require '../polyfills/assign'
 
 ServiceList           = require './services/list'
 
+cookies               = require '../utils/cookies'
+
 RemoteHeaderStore     = require '../flux/stores/RemoteHeaderStore'
 RemoteUserStore       = require '../flux/stores/RemoteUserStore'
 RemoteConfigStore   = require '../flux/stores/RemoteConfigStore'
@@ -30,13 +32,14 @@ maybeUpdateUser = (response)->
 class Services
   constructor : (remoteConfig, gateway)->
     RemoteActions.updateUser(remoteConfig.data.me) if (remoteConfig.data.me)
+    @gateway = gateway
     gateway.before(handleSpecialRoutes)
     gateway.after(maybeUpdateUser)
 
     @services = _.reduce ServiceList, (memo,Service,key)->
       memo[key] = new Service(remoteConfig,gateway)
       return memo
-    ,{}
+    , {}
 
     RemoteHeaderStore.addChangeListener (change)=>
       switch change
@@ -51,8 +54,14 @@ class Services
     {
       ready : @onReady
       message : @onMessage
-      refreshUser : @onRefreshUser
+      refreshUser : @onRefreshUser,
+      resetIdentify: @onResetIdentify
     }
+
+  onResetIdentify: (xdmCallback, xdmErrback)=>
+    cookies.remove('_bid', path: '/', domain: document.location.host)
+    cookies.remove('_sid', path: '/', domain: document.location.host)
+    @gateway.resetIdentify()
 
   onReady : (req, xdmCallback, xdmErrback) ->
 

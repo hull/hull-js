@@ -9,6 +9,7 @@ StructuredEventProps = ['category', 'action', 'label', 'property', 'value']
 MarketingProps = ['campaign', 'source', 'medium', 'term', 'content']
 TopLevelProps = ['hull_ship_id'].concat(StructuredEventProps)
 
+Identity = (o)-> o
 
 class HullTrackService extends GenericService
   name : 'hull'
@@ -44,7 +45,7 @@ class HullTrackService extends GenericService
     }).then (response)=>
       response.provider = 'track'
       response
-    .then callback, errback
+    .then (callback || Identity), (errback || Identity)
 
 
 module.exports = HullTrackService
