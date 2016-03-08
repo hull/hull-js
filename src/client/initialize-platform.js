@@ -1,6 +1,5 @@
-'use strict';
-
 import emptyFunction from '../utils/empty-function';
+import request from 'superagent';
 
 function initializeShopifyPlatform(context, currentConfig, hull) {
   const { customerId, accessToken, callbackUrl } = currentConfig.get();
