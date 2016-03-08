@@ -12,7 +12,8 @@ class FacebookService extends GenericService
   path : 'facebook'
   constructor: (config, gateway)->
     super(config, gateway)
-    @loadFbSdk(@getSettings())
+    settings = @getSettings()
+    @loadFbSdk(settings) if settings?.appId
 
   request : (args...)=>
     @ensureLoggedIn().then ()=> @performRequest(args...)
@@ -100,20 +101,17 @@ class FacebookService extends GenericService
   loadFbSdk: (config)->
     new Promise (resolve, reject)=>
       config = _.omit(assign({},config,{status:true}), 'credentials')
-      if config.appId
-        fb = document.createElement 'script'
-        fb.type = 'text/javascript'
-        fb.async = true
-        fb.src =  "https://connect.facebook.net/en_US/all.js"
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(fb);
-        window.fbAsyncInit = ()=>
-          @fb = true
-          FB.init config
-          FB.getLoginStatus @updateFBUserStatus
-          @subscribeToFBEvents()
-          resolve({})
-      else
-        reject({})
+      fb = document.createElement 'script'
+      fb.type = 'text/javascript'
+      fb.async = true
+      fb.src =  "https://connect.facebook.net/en_US/all.js"
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(fb);
+      window.fbAsyncInit = ()=>
+        @fb = true
+        FB.init config
+        FB.getLoginStatus @updateFBUserStatus
+        @subscribeToFBEvents()
+        resolve({})
 
 
 module.exports = FacebookService
