@@ -17,7 +17,7 @@ applyUserCredentials = (config, creds={})->
 
 sortServicesByType = (settings, types)->
   ret = _.map types, (names, type)->
-    typeSettings = _.zipObject _.map(names, flattenSettings.bind(undefined, settings))
+    typeSettings = _.zipObject _.map(names, (name)->flattenSettings(settings,name))
     [type, typeSettings]
   _.zipObject ret
 

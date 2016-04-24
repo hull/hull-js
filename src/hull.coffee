@@ -2,10 +2,10 @@
 # # and providing pooled methods to the user while
 # # Hull is actually loading.
 
+require './utils/load-polyfills'
 assign      = require './polyfills/assign'
 Promise     = require './utils/promises'
 _           = require './utils/lodash'
-polyfill    = require './utils/load-polyfills'
 logger      = require './utils/logger'
 Raven       = require  './utils/raven'
 Client      = require './client'
@@ -169,11 +169,7 @@ init = (config={}, userSuccessCallback, userFailureCallback)->
     Raven.captureException(err)
 
   # Ensure we have everything we need before starting Hull
-  currentConfig.init(config).then (config)->
-    # Load polyfills
-    polyfill.fill(config)
-    config
-  .then (currentConfig)=>
+  currentConfig.init(config).then (currentConfig)=>
     # Create the communication channel with Remote
     channel = new Channel(currentUser, currentConfig)
     channel.promise

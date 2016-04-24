@@ -160,9 +160,6 @@ Recalculates iframe height to fit content without scrolling.
 * If value == `false` then stops timers and does not resize one last time
 * Automatically called when a Sandboxed ship is booted, every 300ms. Disable by calling `Hull.autoSize(false)` from the ship
 
-###### `Hull.setStyle({style_hash})`
-From inside a sandboxed ship to allow setting ship style (Useful to manage modals)
-
 ###### `Hull.utils`
 Expose our internal utils, containing several libraries. We could change those at any time but we thought you might be happy to avoid embedding them too if it was a fit.
 
