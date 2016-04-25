@@ -74,8 +74,8 @@ function initializeShopifyPlatform(context, currentConfig, hull) {
     request.post('/cart.js')
            .send({ attributes: { hullAnonymousId: browser.id } })
            .set('Accept', 'application/json')
-           .end(res => {
-              aliasCart(JSON.parse(res.text))
+           .end((res={}) => {
+              aliasCart(JSON.parse(res.text));
             })
   }
 
@@ -94,4 +94,4 @@ function initializePlatform(context, currentConfig, hull) {
   return initializer(context, currentConfig, hull);
 }
 
-export default initializePlatform;
+module.exports = initializePlatform;

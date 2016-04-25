@@ -54,7 +54,7 @@ class JSDeploymentStrategy
 
   destroy: ()=>
     _.map @insertions, (insertion)-> insertion.el?.parentNode?.removeChild(insertion.el)
-    @insertions = {}
+    @insertions = []
 
   ###*
    * Embeds a Script in the page
@@ -87,14 +87,13 @@ class JSDeploymentStrategy
         resolve()
 
   addInsertion : (el)=>
-    @sandbox.addElement(el)
-    @insertions.push {el, ready:false, callbacks:[]}
+    @insertions.push el
 
   onEmbed: (callback)=>
     if callback
       @ready.promise.then ()=>
         _.map @insertions, (insertion)=>
-          callback(insertion.el, @deployment.getPublicData(), @sandbox.hull)
+          callback(insertion, @deployment.getPublicData(), @sandbox.hull)
       .catch throwErr
 
 module.exports = JSDeploymentStrategy

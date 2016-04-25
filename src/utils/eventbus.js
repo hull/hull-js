@@ -1,8 +1,8 @@
-import EventEmitter from "eventemitter2";
+import EventEmitter from 'eventemitter2';
 var emitter = new EventEmitter({
   wildcard: true,
   maxListeners: 200,
   newListener: false,
-  delimiter: "."
+  delimiter: '.'
 });
-export default emitter;
+module.exports = emitter;

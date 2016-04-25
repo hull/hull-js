@@ -135,10 +135,4 @@ function decodeURL(input) {
   return decode(decodeURIComponent(input).replace(/-/g, '+').replace(/_/g, '/'));
 }
 
-export default {
-  encode: encode,
-  decode: decode,
-  encodeURL: encodeURL,
-  decodeURL: decodeURL
-};
-
+module.exports = { encode, decode, encodeURL, decodeURL };

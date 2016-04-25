@@ -17,9 +17,9 @@ applyUserCredentials = (config, creds={})->
 
 sortServicesByType = (settings, types)->
   ret = _.map types, (names, type)->
-    typeSettings = _.zipObject _.map(names, (name)->flattenSettings(settings,name))
+    typeSettings = _.fromPairs _.map(names, (name)->flattenSettings(settings,name))
     [type, typeSettings]
-  _.zipObject ret
+  _.fromPairs ret
 
 module.exports = (_config={})->
   config = clone(_config)

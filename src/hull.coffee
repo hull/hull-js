@@ -219,9 +219,6 @@ hull =
   revision     : REVISION
   track        : Pool.create('track')
   captureException: captureException
-  autoSize     : -> shimmedMethod("autoSize")
-  setShipStyle : -> shimmedMethod("setShipStyle")
-  setShipSize  : -> shimmedMethod("setShipSize")
 
 # Assign EventBus methods to Hull
 eeMethods = ['on', 'onAny', 'offAny', 'once', 'many', 'off', 'emit']

@@ -3,7 +3,7 @@ require './utils/load-polyfills'
 Raven             = require './utils/raven'
 EventBus          = require './utils/eventbus'
 logger            = require './utils/logger'
-ConfigNormalizer  = require './utils/config-normalizer'
+configNormalize   = require './utils/config-normalizer'
 locationOrigin    = require './utils/location-origin'
 qs                = require './utils/query-string-encoder'
 Services          = require './remote/services'
@@ -28,7 +28,7 @@ hull = undefined
 
 Hull = (remoteConfig)->
   return hull if hull
-  config = ConfigNormalizer(remoteConfig)
+  config = configNormalize(remoteConfig)
 
   Raven.init(config.queryParams.ravenDsn, {
     runtime: 'hull-remote',

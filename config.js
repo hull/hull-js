@@ -89,10 +89,10 @@ var output = {
 }
 
 var extensions         = ['', '.js', '.css', '.scss', '.coffee'];
-var modulesDirectories = ["node_modules", "bower_components", "src/vendor"];
+var modulesDirectories = ['node_modules', 'bower_components', 'src/vendor'];
 
 var sassIncludePaths   = modulesDirectories.map(function(include){
-  return ("includePaths[]="+path.resolve(__dirname, include))
+  return ('includePaths[]='+path.resolve(__dirname, include))
 }).join('&');
 
 
@@ -102,11 +102,11 @@ var sassIncludePaths   = modulesDirectories.map(function(include){
 // Basically, this fixes all of our problems with badly constructed AMD modules.
 // Among which: vex, datepicker
 var loaders = [
-  {test: /\.json$/,                loaders: ['json-loader'] },
-  {test: /\.coffee$/,              loaders: ['coffee-loader']},
-  {test: /\.js$/,                  loaders: ['babel-loader'], exclude: /node_modules|bower_components/},
-  {test: /\.jpe?g$|\.gif$|\.png$/, loaders: ['file']},
-  {test: /\.svg$|\.woff$|\.ttf$|\.wav$|\.mp3$/, loader: "file" },
+  {test: /\.json$/,                loader: 'json'  },
+  {test: /\.coffee$/,              loader: 'coffee'},
+  {test: /\.js$/,                  loader: 'babel', exclude: /node_modules|bower_components/},
+  {test: /\.jpe?g$|\.gif$|\.png$/, loader: 'file'  },
+  {test: /\.svg$|\.woff$|\.ttf$|\.wav$|\.mp3$/, loader: 'file' },
 ];
 
 var REVISION = process.env.CIRCLE_SHA1 || git.short();

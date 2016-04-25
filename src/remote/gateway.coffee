@@ -56,7 +56,7 @@ formatBatchParams = (requests) ->
 
   params
 
-resolveResponse = (request, response, resolve, reject)->
+resolveResponse = (request, response={}, resolve, reject)->
   headers = reduceHeaders(response.headers)
 
   h = {
@@ -100,7 +100,7 @@ class Gateway
     new Promise (resolve, reject)->
       logger.verbose(">", method, path, params, headers)
 
-      s.end (response)=>
+      s.end (err, response={})=>
         logger.verbose("<", method, path, response)
         h = {body:response.body, headers: response.headers, status: response.status}
         # if (response.ok) then resolve(h) else reject(h)

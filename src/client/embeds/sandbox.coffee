@@ -1,9 +1,7 @@
 assign         = require '../../polyfills/assign'
 _              = require '../../utils/lodash'
-getIframe      = require '../../utils/get-iframe'
 findUrl        = require '../../utils/find-url'
 clone          = require '../../utils/clone'
-StyleObserver  = require '../style/observer'
 throwErr       = require '../../utils/throw'
 
 class Sandbox
