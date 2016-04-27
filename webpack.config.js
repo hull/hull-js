@@ -71,7 +71,7 @@ module.exports = {
         new webpack.DefinePlugin({'process.env': {'NODE_ENV': JSON.stringify('production') } }),
         uglifyPlugin,
         new webpack.optimize.DedupePlugin(),
-        new StatsPlugin(path.join(__dirname, config.outputFolder, 'stats.json'), { chunkModules: true, profile: true })
+        new StatsPlugin(path.join(config.outputFolder, 'stats.json'), { chunkModules: true, profile: true })
       ])
     }
   },
