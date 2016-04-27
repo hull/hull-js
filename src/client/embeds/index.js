@@ -6,6 +6,7 @@ import throwErr   from '../../utils/throw';
 import logger     from '../../utils/logger';
 import Promise    from '../../utils/promises';
 import getCurrentScript from '../../utils/get-current-script';
+import currentScript from 'currentscript'
 import Deployment from './deployment';
 
 let _initialized = false;
@@ -48,7 +49,9 @@ module.exports = {
 
     if (!_.isFunction(callback)) return false;
 
-    let currentScript  = document.currentScript  || getCurrentScript();
+    let currentScript  = document.currentScript  || getCurrentScript() || document._currentScript;
+
+
     logger.verbose('currentScript', currentScript);
 
     // detectedScript is null on Chrome. Use this to use either the polyfill or the native implementation.
