@@ -1,3 +1,11 @@
+# 0.10.0
+
+* Remove support for various embed strategies on ships
+* Remove dependency to polyfill service
+* Upgrade dependencies
+* Silence warnings on bluebird promises
+
+
 # 0.9.0
 
 * COMPLETE REWRITE OF THE LIBRARY.
@@ -6,21 +14,21 @@
 * Fully promise-ified. Every data call returns a promise
 * Implements Smart login and Share strategy depending on device (popup or redirects)
 
---------- 
+---------
 ### Ships
 [Compatiblity Table](https://docs.google.com/spreadsheets/d/13lwZP8XmhIBA84bpmKd-96nC9nE9tQaM0c0WgyQNHXI/edit#gid=0.8)
 
 ### New
 
 Allow Initializing hull automatically with attributes in the `SCRIPT` tag,
-Supported tags : 
+Supported tags :
 ```
 platform-id : platform ID
 org-url : organization URL
 debug : debug mode
 verbose : verbose mode (when debug=true, logs even more stuff)
 js-url : specify Hull Remote Url (automatically specified if using snippet)
-embed : true|false //perform Hull.embed on init. Default: true 
+embed : true|false //perform Hull.embed on init. Default: true
 access-token :an Access token to use to log the user in.
 proxy-mode [undocumented]
 ```
@@ -43,7 +51,7 @@ Hull.resetPassword(email=me.email, callback, errback) // => Promise
 Hull.confirmEmail(email=me.email, callback, errback) // => Promise
 ```
 
---------- 
+---------
 
 ### Removed
 #### `Hull.utils.entity.[encode|decode]()`
@@ -59,14 +67,14 @@ _Removed [Was undocumented]_
 #### `hull.init` event
 _Please use `hull.ready` instead_
 
---------- 
+---------
 
 ### Deprecated
 
 #### `Hull.init(config, callback)`
 We're phasing out in favor of auto-initialized code, You can get the same results by using `Hull.ready(callback)` which has the benefit of allowing multiple calls.
 
---------- 
+---------
 
 ### Changed
 
@@ -107,7 +115,7 @@ Hull.share({provider:'google', params:{url:'http://example.com'}}) //Shares exam
 
 ##### Methods
 
-###### `Hull.login()`, `Hull.logout()`, `Hull.linkIdentity()`, `Hull.unlinkIdentity()` 
+###### `Hull.login()`, `Hull.logout()`, `Hull.linkIdentity()`, `Hull.unlinkIdentity()`
 All those now return promises. When using Promises, please don't forget to add `.catch()` on your promise chain, so errors are not swallowed without notice.
 
 These methods have the following signatures :
@@ -126,9 +134,9 @@ Hull.unlinkIdentity({provider:'xxxx',params:{...}}, callback, errback)
 ###### `Hull.ready(callback)`
 returns a promise. Please end with `.done()` here too.
 
-###### `Hull.embed(deploymentsArray)` and `Hull.onEmbed(callback)` 
+###### `Hull.embed(deploymentsArray)` and `Hull.onEmbed(callback)`
 New methods for Ship Deployment. Ships can be either HTML Imports or `.js` files. They need to call `Hull.onEmbed(document, callback)`.
-`callback` has the follwing signature : 
+`callback` has the follwing signature :
 
 ```js
 function callback(element, deployment, hull){
@@ -151,7 +159,7 @@ From inside a ship, gets the HTMLImport `document`. Useful to manipulate import 
 Returns a string in the form `.ship-SHIP_ID` that you can use to find all instances of this ship, or to prefix CSS and scope styles inside it. We use this internally to automatically prefix all CSS injected in the HTML Import and inside the instanciated ship's tree.
 
 ###### `Hull.setSize({width,height})`
-From inside a sandboxed ship to allow setting container size 
+From inside a sandboxed ship to allow setting container size
 
 ###### `Hull.autoSize(int|undefined|false)`
 Recalculates iframe height to fit content without scrolling.
