@@ -20,7 +20,7 @@ class GithubService extends GenericService
     s = superagent(method, url)
     if (method=='GET' and params?) then s.query(QSEncoder.encode(params)) else s.send(params)
     s.set('Authorization', "token #{token}") if token
-    s.end (response)->
+    s.end (err, response)->
       return errback(response.error.message) if response.error
       callback
         provider: @name
