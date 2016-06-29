@@ -1,29 +1,29 @@
-"use strict";
+'use strict';
 /*global require*/
-var _                = require("lodash");
-var del              = require("del");
-var path             = require("path");
-var runSequence      = require("run-sequence");
+var _                = require('lodash');
+var del              = require('del');
+var path             = require('path');
+var runSequence      = require('run-sequence');
 
-var gulp             = require("gulp");
-var harmonize        = require("harmonize");
-var awspublish       = require("gulp-awspublish");
-var rename           = require("gulp-rename");
-var parallelize      = require("concurrent-transform");
-var gutil            = require("gulp-util");
-var deploy           = require("gulp-gh-pages");
+var gulp             = require('gulp');
+var harmonize        = require('harmonize');
+var awspublish       = require('gulp-awspublish');
+var rename           = require('gulp-rename');
+var parallelize      = require('concurrent-transform');
+var gutil            = require('gulp-util');
+var deploy           = require('gulp-gh-pages');
 var cloudfront       = require('gulp-invalidate-cloudfront');
-var notifier         = require("node-notifier");
+var notifier         = require('node-notifier');
 var merge            = require('merge-stream');
 
 var ngrok            = require('ngrok');
-var webpack          = require("webpack");
-var WebpackDevServer = require("webpack-dev-server");
+var webpack          = require('webpack');
+var WebpackDevServer = require('webpack-dev-server');
 
 
 // Get our Config.
-var config           = require("./config");
-var webpackConfig    = require("./webpack.config");
+var config           = require('./config');
+var webpackConfig    = require('./webpack.config');
 
 harmonize();
 
@@ -56,14 +56,13 @@ var ngrokServe = function(subdomain){
 }
 
 
-gulp.task("default", ["server"]);
-gulp.task("serve",   ["server"]);
-gulp.task("clean",   function(callback) {del(["./"+config.outputFolder+"/**/*"], callback); });
-
-gulp.task("server",  function(callback) {runSequence("clean", "copy-files:watch", "webpack:server", callback); });
-gulp.task("build",   function(callback) {runSequence("clean", "copy-files", "webpack:build", callback); });
-gulp.task("deploy",  function(callback) {runSequence("build", "publish:sha", callback); });
-gulp.task("deploy:release",  function(callback) {runSequence("build", "publish:release", callback); });
+gulp.task('default', ['server']);
+gulp.task('serve',   ['server']);
+gulp.task('clean',   function(callback) {         del(['./'+config.outputFolder+'/**/*']).then(function(){callback()}); });
+gulp.task('server',  function(callback) {         runSequence('clean', 'copy-files:watch', 'webpack:server', callback); });
+gulp.task('build',   function(callback) {         runSequence('clean', 'copy-files', 'webpack:build', callback); });
+gulp.task('deploy',  function(callback) {         runSequence('build', 'publish:sha', callback); });
+gulp.task('deploy:release',  function(callback) { runSequence('build', 'publish:release', callback); });
 
 
 var notify = function(message){

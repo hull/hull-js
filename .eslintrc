@@ -5,7 +5,7 @@
     "node": true
   },
   "rules": {
-    "quotes": [2, "double"],
+    "quotes": [2, "single"],
     "key-spacing" : [0],
     "no-multi-spaces": [0],
     "no-mixed-requires": [0],

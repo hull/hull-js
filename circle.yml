@@ -1,6 +1,6 @@
 machine:
   node:
-    version: 0.10.24
+    version: 6.2.0
 deployment:
   releases:
     branch: /release\/.*/

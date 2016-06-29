@@ -2,5 +2,5 @@
 
 function emptyFunction() {}
 
-export default emptyFunction;
+module.exports = emptyFunction;
 

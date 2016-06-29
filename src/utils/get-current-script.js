@@ -1,7 +1,6 @@
-import _          from "./lodash";
+import _          from './lodash';
 
 const URL_REGEX = /(data:text\/javascript(?:;[^,]+)?,.+?|(?:|blob:)(?:http[s]?|file):\/\/[\/]?.+?\/[^:\)]*?)(?::\d+)(?::\d+)?/
-
 
 function getErrorStack(){
   let e = new Error();
@@ -15,7 +14,7 @@ function getErrorStack(){
   }
   return stack
 }
-function getUrlFromStack(stack=""){
+function getUrlFromStack(stack=''){
   let lines = stack.split('\n');
   let urls = _.reduce(lines, function(u, line){
     let t = line.match(URL_REGEX)
@@ -27,10 +26,11 @@ function getUrlFromStack(stack=""){
   // Eliminate Hull.js from the stack, get next closest URL
   return _.uniq(urls)[1]
 }
+
 function getCurrentScriptFromUrl(url, scripts){
   var i, script = null;
 
-  if (typeof url === "string" && url) {
+  if (typeof url === 'string' && url) {
     for (i = scripts.length; i--; ) {
       if (scripts[i].src === url) {
         script = scripts[i];
@@ -40,8 +40,9 @@ function getCurrentScriptFromUrl(url, scripts){
   }
   return script;
 }
+
 function getCurrentScript(){
-  let scripts = document.getElementsByTagName("script");
+  let scripts = document.getElementsByTagName('script');
   let stack = getErrorStack();
   let url = getUrlFromStack(stack);
   return getCurrentScriptFromUrl(url, scripts);

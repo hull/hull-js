@@ -5,9 +5,9 @@ throwErr                 = require '../../utils/throw'
 logger                   = require '../../utils/logger'
 Promise                  = require '../../utils/promises'
 
-RawDeploymentStrategy    = require './strategies/raw'
-ScopeDeploymentStrategy  = require './strategies/scope'
-IframeDeploymentStrategy = require './strategies/iframe'
+# RawDeploymentStrategy    = require './strategies/raw'
+# ScopeDeploymentStrategy  = require './strategies/scope'
+# IframeDeploymentStrategy = require './strategies/iframe'
 JSDeploymentStrategy     = require './strategies/js'
 
 deploymentRegistry = {}
@@ -83,16 +83,17 @@ class Deployment
   getDeploymentStrategy : ()=>
     return @deploymentStrategy if @deploymentStrategy?
 
-    DS = if @ship.index.match(/\.js$/)
-      JSDeploymentStrategy
-    else if @settings._sandbox == 'raw'
-      RawDeploymentStrategy
-    else if !!@settings._sandbox
-      IframeDeploymentStrategy
-    else
-      ScopeDeploymentStrategy
+    # DS = if @ship.index.match(/\.js$/)
+    #   JSDeploymentStrategy
+    # else if @settings._sandbox == 'raw'
+    #   RawDeploymentStrategy
+    # else if !!@settings._sandbox
+    #   IframeDeploymentStrategy
+    # else
+    #   ScopeDeploymentStrategy
 
-    @deploymentStrategy = new DS(@)
+    # @deploymentStrategy = new DS(@)
+    @deploymentStrategy = new JSDeploymentStrategy(@)
     @deploymentStrategy
 
   embed : (opts={})=>
@@ -108,12 +109,10 @@ class Deployment
       Promise.resolve()
 
   boot: ()=>
-    if @targets.length
-      @getDeploymentStrategy().boot()
+    @getDeploymentStrategy().boot() if @targets?.length
 
   onEmbed : (callback)=>
-    if @targets.length
-      @getDeploymentStrategy().onEmbed(callback)
+    @getDeploymentStrategy().onEmbed(callback) if @targets?.length
 
   destroy: ()=>
     if @targets.length

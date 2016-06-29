@@ -41,4 +41,4 @@ var wrappedRequest = function(service, gateway, middlewares=[]){
   };
 };
 
-export default wrappedRequest;
+module.exports = wrappedRequest;
