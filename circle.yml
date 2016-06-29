@@ -1,6 +1,3 @@
-machine:
-  node:
-    version: 0.10.24
 deployment:
   releases:
     branch: /release\/.*/
