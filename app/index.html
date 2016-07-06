@@ -14,6 +14,9 @@
     jsUrl='http://localhost:3001/hull.js'
     src="http://localhost:3001/hull.js"></script>
     <script>
+      Hull.track('Test Event', {test: 'data'});
+      Hull.traits({coconuts: 12});
+      Hull.traits({swallows: 'african'});
       hullAsyncInit = function(hull) {
         console.log('Hull Async Init', hull),
         hull.ready(function(hull, me, app, org) {
