@@ -19,8 +19,8 @@ module.exports = {
   },
 
   embed: function(deployments, opts, callback, errback) {
-    if (!deployments || !deployments.length){return;}
-    if (opts.reset !== false) { Deployment.resetDeployments()}
+    if (!deployments || !deployments.length) { return; }
+    if (opts && opts.reset !== false) { Deployment.resetDeployments()}
 
     let embeds = [];
     let promises = [];
