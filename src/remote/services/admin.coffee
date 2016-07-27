@@ -30,8 +30,8 @@ class HullAdminService extends GenericService
     s = superagent(method, url).set(headers)
 
     if (method=='GET' and params?) then s.query(QSEncoder.encode(params)) else s.send(params)
-    s.end (err, response)->
-      return errback(response.body, response.error) if response.error
+    s.end (err, response = {})->
+      return errback(response.body, response.error) if err || response.error
       callback
         provider: 'admin'
         body: response.body
