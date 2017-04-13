@@ -64,7 +64,7 @@ function initializeShopifyPlatform(context, currentConfig, hull) {
 
   if (window.HullShopify && window.HullShopify.cart && window.HullShopify.cart.token) {
     aliasCart(window.HullShopify.cart);
-  } else {
+  } else if (window.HullShopify && window.HullShopify.template) {
     let browser = {};
     try {
       browser = currentConfig.identifyBrowser();
@@ -78,7 +78,6 @@ function initializeShopifyPlatform(context, currentConfig, hull) {
               aliasCart(res.body);
             })
   }
-
 }
 
 function getPlatformInitializer(platform) {
