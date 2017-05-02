@@ -68,7 +68,7 @@ initParams = {
 }
 
 getAttribute = (el, k)->
-  el.getAttribute(dasherize(k)) || el.getAttribute(k)
+  el.getAttribute("data-" + dasherize(k)) || el.getAttribute("data-" + k) || el.getAttribute(dasherize(k)) || el.getAttribute(k)
 
 getParamValue = (el, param, key)->
   keys = [key].concat(param.altKeys || [])
