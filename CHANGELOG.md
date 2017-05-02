@@ -4,7 +4,9 @@
 * Remove dependency to polyfill service
 * Upgrade dependencies
 * Silence warnings on bluebird promises
-
+* Support `data-*` configuration attributes on `src` tag
+* Update Documentation
+* Add `npm run build` task
 
 # 0.9.0
 

@@ -76,6 +76,7 @@
   },
   "scripts": {
     "test": "jest",
+    "build": "gulp build",
     "start": "gulp"
   },
   "engines": {
