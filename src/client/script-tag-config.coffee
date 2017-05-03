@@ -68,7 +68,7 @@ initParams = {
 }
 
 getAttribute = (el, k)->
-  el.getAttribute(dasherize(k)) || el.getAttribute(k)
+  el.getAttribute("data-" + dasherize(k)) || el.getAttribute("data-" + k) || el.getAttribute(dasherize(k)) || el.getAttribute(k)
 
 getParamValue = (el, param, key)->
   keys = [key].concat(param.altKeys || [])
@@ -84,7 +84,7 @@ getParamValue = (el, param, key)->
   if value? then value else param.default
 
 module.exports = ->
-  hull_js_sdk = document.getElementById('hull-js-sdk') || document.querySelector('[org-url][platform-id]')
+  hull_js_sdk = document.getElementById('hull-js-sdk') || document.querySelector('[org-url][platform-id][data-org-url][data-platform-id]')
 
   return unless hull_js_sdk
 
