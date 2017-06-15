@@ -123,158 +123,10 @@ If you're embedding the snippet with the `async defer` parameter, Hull will load
 You can define then a function called `hullAsyncInit` attached to `window`. It will get called when the Hull object is available.
 
 
+## Identify users securely
+To increase security, when identifying users as they use your product, we require you to generate an encoded string validating that the user is who he pretends to be. Generating that string is a pretty simple from your own backend.
 
-# User signup and login
-
-## Email Signup
-
-```js
-var user = {
-  name: 'Steve Jackson',
-  email: 'steve@acme.com',
-  password: 's3cr3t',
-  picture: 'http://placehold.it/100x100',
-  username: 'steve'
-};
-
-Hull.signup(user).then(function(user) {
-  console.log('Hello ' + user.name);
-}, function(error) {
-  console.log(error.message);
-});
-```
-
-### `Hull.signup(user)`
-Creates a User with an email and a password. If you want your Users to sign up with their social account check out `Hull.login(...)`.
-
-Parameter | Type | Description
-----------|------|------------
-user | Hash | A hash that contains at least an `email` and a `password` field. You may add any additional fields like `name`, `username`, `picture`.
-
-
-## Email/Username login
-
-```js
-var user = { login: 'steve@acme.com', password: 's3cr3t' };
-
-Hull.login(user).then(function(user) {
-  console.log('Hello ' + user.name ||  'there');
-}, function(error) {
-  console.log(error.message);
-});
-```
-
-### `Hull.login(user)`
-Logs a User in with an email or a username and a password. Returns a promise if strategy is `popup`
-
-### Options:
-The `user` hash accepts the following values:
-
-Parameter | Type | Description
-----------|------|------------
-login         | String         | The email or the username of the User to log in.
-password      | String         | The password of the User to log in
-strategy      | String         | Optional. default: Smart. Values: `redirect` or `popup`, On mobile, set to `redirect` by default, On desktop, set to `popup`. If set to `redirect`. `redirect` makes Safari behave better both on both Desktop and mobile.
- redirect_url | String         | Optional. default: Current URL. Where to send the user after login. Only used when `strategy='redirect'` 
-
-
-## Resetting Password
-
-```js
-Hull.resetPassword('user@host.com').then(callback,errback); //=> Promise`
-```
-
-### `Hull.resetPassword(email)`
-Sends a password reset email.
-If email is empty or null, will fallback to the currently user's email
-
-
-## Resending email confirmation
-
-```js
-Hull.confirmEmail('user@host.com').then(callback,errback); //=> Promise`
-```
-
-### `Hull.confirmEmail(email)`
-Sends an confirmation email.
-If email is empty or null, will fallback to the currently user's email
-
-
-## Social Login
-
-```js
-Hull.login({
-  provider:'facebook',
-  strategy:'redirect',
-  params: {
-    display:'page',
-    scope:'email,gender,age_range'
-  }
-});
-```
-
-> Example handling the full authentication flow
-
-```js
-// On auth success
-var onAuthComplete = function(user) {
-  console.log('Hello ' + user.name);
-};
-
-// On auth failure
-var onAuthError = function(error) {
-  var message, reason  = error && error.reason;
-  switch(reason) {
-    case 'email_taken':
-      message = error.email + ' is already taken by User with id: ' + error.user_id;
-      break;
-    case 'auth_failed':
-      message = 'User did not fully authorize or provider app is not well configured';
-      break;
-    case 'window_closed':
-      message = 'User closed the window';
-      break;
-    default:
-      message = 'Oops... Something went wrong on our side...';
-  }
-  console.log("Error: ", message)
-};
-
-$('button.facebook-login').on('click', function() {
-  Hull.login({provider:'facebook'}).then(onAuthComplete, onAuthError);
-});
-```
-
-### `Hull.login(options)`
-Logs a User in with a third party provider. Returns a promise if strategy is `popup`
-
-### Options:
-The `options` hash accepts the following values:
-
-Parameter | Type | Description
-----------|------|------------
-provider      | String         | The name of the provider your User will attempt to login with. The provider __MUST__ be configured on your App.
-display       | String         | `Optional` default: Smart. Values: `popup` or `page`. Used for Facebook only, We figure this out automatically but let you override it here.
-access_token  | String | `Optional` `Advanced` Pass-in a Social Network access token to log the user in directly with it, bypassing the authentication steps.
-strategy      | String         | `Optional` default: Smart. Values: `redirect` or `popup`, On mobile, set to `redirect` by default, On desktop, set to `popup` by default. `redirect` makes Safari behave better both on both Desktop and Mobile.
-redirect_url  | String         | `Optional` default: Current URL. Where to send the user on successful login. 
-params        | Object         | `Optional` A Hash containting options to pass the social login provider.
-
-### Params:
-The `params` hash accepts additional arguments that will be forwarded to the Social Login provider's authentication page. For instance when using Facebook you can use this to ask for additional/custom permissions, and force the Login type to `page`:
-
-[Check out the full list of facebook-supported permissions here](https://developers.facebook.com/docs/facebook-login/permissions/v2.1)
-
-###  Social Login with Token
-```js
-Hull.login({provider:'facebook', access_token:'xxxxxx'}).then(function(me){
-  //User Logged in with Facebook Access Token
-})
-```
-If you have the Access Token for a User's Social account, you can pass it directly to Hull and we'll try and login / signup the User for you.
-
-
-## Server-provided Access Token (Bring your own users)
+You can then pass it to Hull to identify the user.[ Here's an article explaining how to generate this token](https://www.hull.io/docs/users/byou)
 
 > Log the user in with a token
 
@@ -303,40 +155,11 @@ Hull.init({
   id="hull-js-sdk"
   data-platform-id="YOUR_PLATFORM_ID"
   data-org-url="https://ORG_NAMESPACE.hullapp.io"
-  access-token="SIGNED_JSON_WEB_TOKEN_FROM_BACKEND"
+  data-access-token="SIGNED_JSON_WEB_TOKEN_FROM_BACKEND"
   src="https://js.hull.io/0.10.0/hull.js.gz"></script>
 ```
 
 If you create a Hull access token (jwt) on the server, you can pass it and we'll log the user in for you. This is used in the [Bring your own users scenario](/docs/users/byou) where either have created in advance or are creating JWT access tokens on the fly for your users.
-
-From there, you can use the [`linkIdentity`](#linking-an-additional-social-identity) method to link social accounts to this user, and get cross-domain Single sign-on for free.
-
-## Login/Signup via Redirect
-
-> Social Login:
-
-```js
-Hull.login({
-  provider:'facebook',
-  strategy:'redirect',
-  redirect_url:'http://example.com' //optional
-});
-```
-
-> Email+password
-
-```js
-Hull.login({
-  login:'user@example.com',
-  password:'12345',
-  strategy:'redirect',
-  redirect_url:'http://example.com' //optional
-});
-```
-
-For a more robust but more intrusive login flow (The entire page will be reloaded), you can choose to log in customers with a redirect instead of a Popup or an AJAX call. This makes the login flow behave better with Safari on both iOS and Desktop, especially when 3rd party cookies are disabled, and works aroud several iOS 8 bugs related to closing windows.
-
-This is done with the following signature:
 
 ## Logging out
 ### `Hull.logout()`
@@ -349,149 +172,7 @@ Hull.logout().then(function() {
 ```
 Logs the current User out.
 
-## Linking an additional social identity
-### `Hull.linkIdentity(options, callback, errback)`
-```js
-Hull.linkIdentity({provider: 'twitter'}).then(function() {
-  console.log('Twitter identity has been linked');
-}, function(error) {
-  if (error.reason == 'identity_taken') {
-    console.log('Twitter identity is already linked to another user');
-  } else if (error.reason === 'auth_failed') {
-      console.log('User did not fully authorize or provider app is not well configured');
-  } else if (error.reason === 'window_closed') {
-      console.log('User closed window');
-  } else {
-    console.log('Something went wrong on Hull side...');
-  }
-});
-```
-Adds an identity from third party providers to the current user.
-Once added the User will be able to use the identity to log in.
-
-### Options object
-Parameter | Type | Description
-----------|------|------------
-provider | String | The name of the provider your User will attempt to login with. The provider __MUST__ be configured on your app's dashboard.
-
-
-## Unlinking a social identity
-### `Hull.unlinkIdentity(options, callback, errback)`
-Removes the given identity from the current user.
-
-### Options
-Parameter | Type | Description
-----------|------|------------
-provider      | String         | The name of the provider your User will attempt to login with.
-The provider __MUST__ be attached to your app.
-
-```js
-/**
- * Unlink an Identity from a Hull User
- * @param  {options} An options Hash
- * @param  {callback} Success callback
- * @param  {errback} error callback
- * @return {Promise} A promise
- */
-Hull.unlinkIdentity({provider: 'twitter'}).then(function() {
-  alert('Twitter identity has been unlinked');
-}, function(error) {
-  console.log(error.message);
-});
-```
-
-# Accessing Data
-
-The main way to access all the Hull APIs is the **Hull.api()** method. It lets you make calls to both the API and to external networks. The method returns a native or polyfilled promise, so you can use `then` and `catch`.
-
-## Hull API
-
-```js
-var superbadUid = Hull.entity.encode("http://www.imdb.com/title/tt0829482/");
-//"~aHR0cDovL3d3dy5pbWRiLmNvbS90aXRsZS90dDA4Mjk0ODI="
-
-//Fetch comments on the superbad entity:
-Hull.api(superbadUid + '/comments').then(function (comments) {
-  console.log(comments);
-}).catch(function(error){
-  console.log('Something went wrong', error)
-});
-
-// It Also works with Hull Objects:
-var commentId = '52e568a57d9bcc595a001b42'
-Hull.api(commentId).then(function(comment){
-  console.log(comment)
-});
-
-//Retrieve data for the current user.
-Hull.api("me").then(function(account){
-    console.log('This is my Hull account data', account);
-}).catch(function(error){
-  console.log('Something went wrong', error)
-});
-
-//Create a comment
-Hull.api(superbadUid + '/comments', 'post', {
-  description: 'Super awesome comment'
-}, function () {
-  console.log('Comment posted!');
-});
-
-//Like something
-var commentId = '52e568a57d9bcc595a001b42'
-Hull.api(commentId+'/likes','post');
-```
-
-### `Hull.api(route, method, params, callback, errback)`
-
-Returns a promise with the response from the api at `route`. Reads or write data and returns a promise with the result. You can use either promises or callbacks to get the result back.
-
-#### Method Parameters
-Parameter  | Description
------------|-----------------------
-route    | A `String`, composed of a Hull Object ID or a Base64-encoded String (we call this an Entity) and the endpoint of the request. ( _eg._ `HULL_ID/comments`). 
-method   | The HTTP method to use for the request. Defaults to `GET`
-callback | Success callback. The method accepts one parameter, the value returned by the request.
-errback  | Failure callback. The method accepts one parameter, the error explaining the failure.
-
-### `Hull.api(routeObject...)`
-
-```js
-var superbadUid = Hull.entity.encode("http://www.imdb.com/title/tt0829482/");
-Hull.api({
-  path: superbadUid + '/comments',
-  provider: 'hull', //Could have been omitted, as it is the default value
-  params: {} //Could have been omitted, as it is empty
-}, function (comments) {
-  console.log(comments);
-});
-```
-
-The `route` parameter can also be an `Object` with the following keys:
-
-### Route Object Parameters
-Parameter  | Type  | Description
------------|-------|----------------
-path     | String | The endpoint of the request, built the same way as previously
-provider | String | Name of the provider to fetch the data from. Acceptable values depend on the authentication [services linked with your app](/docs/references/services). The default, always available provider, is `hull`. If you configured your Facebook service, `facebook` is available for instance.
-params   | Object | Data to send, or Query params
-
-
-
-## Accessing external networks
-```js
-//Request current user's facebook profile
-Hull.api({provider: "facebook", path: "me"}, function(response){
-  console.log(response);
-});
-Hull.api({provider: "twitter", path: "statuses/user_timeline"}, function(response){
-  console.log(response);
-});
-```
-When a User logs in with a third party network (think Facebook, Twitter, Github...), Hull lets you make calls through this network's API with the same method. We handle proxying the calls, so you can access the data client-side from all networks seamlessly. Some networks impose rate limits, so you might want to design your app to take them into account.
-
-
-## Getting current User
+## Getting the current User
 > Example Response
 
 ```json
@@ -573,7 +254,7 @@ When a User logs in with a third party network (think Facebook, Twitter, Github.
 
 When a User is currently logged in, `Hull.currentUser()` returns the current User as an object literal. Otherwise, it returns `false`.
 
-## Getting current configuration
+## Getting the current configuration
 
 > Example Response
 
@@ -672,12 +353,7 @@ Event Name | Description | Arguments
 -----------|-------------|----------
 `hull.ready`        | `hull.js` has finished loading. | `Hull`, `me`, `app`, `org`
 `hull.ships.ready`  | Connectors are loaded.               | nothing
-`hull.user.create`  | User signed up.                 | `me`
-`hull.user.login`   | User logged in.             | `me`
-`hull.user.logout`  | User logged out.            | `me`
-`hull.user.fail`    | User failed to log in.      | `error`
 `hull.user.update`  | User updated any property   | `me`
-`hull.PROVIDER.share` | `Hull.share()` called     | nothing
 `hull.track`       | `Hull.track()` called. | `properties`
 `hull.traits`      | `Hull.traits()` called.  | `event`
 
@@ -734,126 +410,12 @@ See [https://github.com/asyncly/EventEmitter2](https://github.com/asyncly/EventE
 - `Hull.once()`
 - `Hull.many()`
 
-# Sharing
-
-Sharing as anonymous or authenticated user, from a Mobile or Desktop creates a lot of headaches for a developer.
-We expose a simple sharing method that makes it easier to share the right thing the right way without restricting you in any manner,
-and handles tracking and attribution correctly.
-
-### `Hull.share(options)`
-
-> To share content on Facebook, use the following code:
-
-```js
-$('.btn').on('click',function(){
-  Hull.share({
-    provider:'facebook', //share on Facebook
-    method: 'share', //Facebook allows more than one sharing dialog, choose the one you want.
-    anonymous: true, //Allow anonymous sharing, I.E. without requring a login beforehand? Default: false.
-    params:{
-      redirect_uri: 'http://destination_page', //Where to redirect the user in the popup after he shared. Mandatory
-      display: 'popup', //popup || iframe. Optional. Default: Smart depending on connection status and device. Iframe for desktop, Popup for mobile
-      href: 'http://google.com' //Params passed to the sharing dialog.
-      //Read more about params here https://developers.facebook.com/docs/javascript/reference/FB.ui
-    }
-  }).then(function(response){
-    //response here.
-    //Depending on the sharing strategy, it will either be the response from facebook (when using an inline sharing), or {display:'popup'} if using the Popup strategy, for mobile and anonymous users for instance.    
-  });
-});
-```
-
-> For Email : 
-
-```js
-$('.btn').on('click',function(){
-  Hull.share({
-    provider:'email', //share on Twitter
-    params:{
-      subject: 'http://hull.io is cool',
-      body: 'Look at this !'
-    }
-  }).then(function(response){
-    //response here.
-  });
-});
-```
-
-> For Twitter : 
-
-```js
-$('.btn').on('click',function(){
-  Hull.share({
-    provider:'twitter', //share on Twitter
-    params:{
-      url: 'http://hull.io', // https://dev.twitter.com/web/intents#tweet-intent for all parameters.
-    }
-  }).then(function(response){
-    //response here.
-    //This won't be alle    
-  });
-});
-```
-
-> For Google Plus : 
-
-```js
-$('.btn').on('click',function(){
-  Hull.share({
-    provider:'google', //share on Twitter
-    params:{
-      url: 'http://hull.io'
-    }
-  }).then(function(response){
-    //response here.
-  });
-});
-```
-
-> For Linkedin : 
-
-```js
-$('.btn').on('click',function(){
-  Hull.share({
-    provider:'linkedin', //share on Twitter
-    params:{
-      url: 'hull.io', // https://dev.twitter.com/web/intents#tweet-intent for all parameters.
-    }
-  }).then(function(response){
-    //response here.
-  });
-});
-```
-
-> For Whatsapp (mobile only) : 
-
-```js
-$('.btn').on('click',function(){
-  Hull.share({
-    provider:'whatsapp', //share on Twitter
-    params:{
-      url: 'http://hull.io'
-      text: 'This is amazing'
-    }
-  }).then(function(response){
-    //response here.
-  });
-});
-```
-
-
-Options is an object with the follwing params:
-
-#### Options parameter
-
-Parameter  | Description
------------|-----------------------
-provider   | The network provider where to share. Supported values : `facebook` `twitter` `google` `email` `whatsapp` `linkedin`
-method     | Optional, a method to use when sharing, Twitter and Facebook support more than one.
-anonymous  | Wether to allow sharing as an anonymous user or to request Login before. Default: `true`
-params     | Object passed to the destination network, as a querystring.
-
 # Tracking
+Tracking is how you send to Hull the things that your users Do. Page views are sent automatically, but you will probably want to track additional, business-specific events, such as "Subscription activated", "Completed configuration" et al.
+
+For each of those events, you can add arbitrary attributes, which will be fully recognized and usable form inside of Hull.
+
+Hull differs from most other tracking solution in the aspect that it doesn't have hard limits as to how many different events you can send, nor how many attributes inside those events.
 
 ```js
 Hull.track('event_name', {
@@ -870,17 +432,17 @@ Track arbitrary additional data.
 - If a user is logged in, events will be associated to him.
 - When using Connectors, the scoped `hull` object you receive in the `Hull.onEmbed` callback adds information about the current connector. This is the object you should use, instead of the global `Hull` object.
 
-
-
-#### Auto-Tracked events
-
-* Page views, Login, Logout and Signup methods do tracking calls for you. No need to add them. Page views will show up as `hull.app.init` in your tools, and as `Viewed PAGE_NAME` in your Hull dashboard
-
-<aside>
-  This method is available immediately at launch
-</aside>
-
 # Traits
+
+Traits are how you define who a user Is. You can use this to store business specific values, such as "birthdate", "number of integrations" et. al.
+
+The first time we detect a new trait name (which are called Attributes in the Hull dashboard), we will try to recognize it's type.
+
+- If the first trait we see is a boolean, it will be casted as a boolean.
+- If it's a number, then it will be casted as a number
+- If it's a String, and the trait name ends with `_date` or `_at` then we'll try to parse this as a date.
+- If it's an Array we'll respect this.
+- If it's a String we'll respect this.
 
 ```js
 Hull.traits({'my new trait': 'has this value'});
@@ -904,11 +466,15 @@ Hull.traits({
 });
 ```
 
-> Whenever possible, we will coerce the type of the parameters to the type of the trait:
-
-```js
-Hull.traits({ 'number_of_coconuts': {operation: 'inc', value: "123"} }) //Increases number of coconuts by 123
 ```
+Hull.traits({
+  string: "foo",
+  fakeNumber: "123", //WILL BE RECOGNIZED AS A STRING
+  realNumber: 123 //Will be recognized as a number
+})
+```
+> Be mindful of the difference betwen strings and numbers:
+
 
 ### `Hull.traits({ trait_name: value })`
 Sets the `value` to the trait of name `trait_name`.
