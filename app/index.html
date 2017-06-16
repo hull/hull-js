@@ -21,8 +21,12 @@
       hullAsyncInit = function(hull) {
         console.log('Hull Async Init', hull),
         hull.ready(function(hull, me, app, org) {
-          console.log('Hull Ready!');
+          console.log('Hull Ready!', hull, me, app, org);
         });
+        hull.ready().then(function({ hull, me, app, org }){
+          debugger
+          console.log('HullPromise Ready', hull, me, app, org)
+        })
         hull.on('hull.ready',function(hull, me, app, org) {
           console.log('Hull ready from event')
         });

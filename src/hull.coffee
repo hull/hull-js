@@ -204,6 +204,7 @@ hullReady = (callback, errback)->
   errback = errback   || ->
   ready.promise.then (res)->
     callback(res.hull, res.me, res.app, res.org)
+    res
   , errback
   .catch (err)-> logger.error err.message, err.stack
 
