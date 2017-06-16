@@ -80,6 +80,16 @@ Use `Hull.ready()` to call a function as soon as `hull.js` is
 initialized. If you call the function after the initialization is
 done, the function is called immediately. Inside [Connectors](/docs/apps/ships), You will probably use `Hull.onEmbed()` instead.
 
+`Hull.ready()` can also be used as a promise like this:
+
+```js
+Hull.ready().then(({ hull, me, app, org }) => {
+  console.log('All good', me.name)
+});
+```
+
+> Note than since Promises only resolve the first argument, we return a single object instead of 4 arguments.
+
 ### `Hull.on()`
 
 Register an event listener. See [events](#subscribe-to-an-event)
