@@ -48,6 +48,7 @@ onInitSuccess = (userSuccessCallback, hull, data)->
   # Prune init queue
   Pool.run('traits', hull)
   Pool.run('track', hull)
+  Pool.run('trackForm', hull)
 
   # Execute Hull.init callback
   ready.resolve {hull, me, app, org}
@@ -219,6 +220,7 @@ hull =
   ready        : hullReady
   version      : VERSION
   revision     : REVISION
+  trackForm    : Pool.create('trackForm')
   track        : Pool.create('track')
   traits       : Pool.create('traits')
   captureException: captureException

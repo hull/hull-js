@@ -33,18 +33,18 @@ It is the library you install when you paste a Platform snippet in your page's `
 - If you use the platform Snippet as is, the library is initialized automatically with the right organization and platform.</li>
 - If you do not need to use Connectors or you need more control, you can disable auto-initialization and boot Hull manually. We recommend sticking with the automatic initialization if you don't have a specific scenario requiring manual init. </li>
 
-### Initialization parameters
+## Initialization parameters
 
 The following parameters can be passed indifferently as hyphen-delimited params in the `SCRIPT` tag, or as CamelCased params in the `Hull.init()` call
 
-#### Mandatory parameters.
+### Mandatory parameters.
 
 Parameter | Type | Description
 ----------|------|------------
 platformId | String | The ID of your platform.
 orgUrl | String | The URL of your organization _e.g._ `YOUR_ORG.hullapp.io`
 
-#### Optional parameters
+### Optional parameters
 
 Parameter | Type | Description
 ----------|------|------------
@@ -133,6 +133,8 @@ If you're embedding the snippet with the `async defer` parameter, Hull will load
 You can define then a function called `hullAsyncInit` attached to `window`. It will get called when the Hull object is available.
 
 
+# Identity Management
+
 ## Identify users securely
 To increase security, when identifying users as they use your product, we require you to generate an encoded string validating that the user is who he pretends to be. Generating that string is a pretty simple from your own backend.
 
@@ -142,7 +144,7 @@ You can then pass it to Hull to identify the user.[ Here's an article explaining
 
 ```js
 var token='SIGNED_JSON_WEB_TOKEN_FROM_BACKEND';
-Hull.login({access_token:SIGNED_JSON_WEB_TOKEN_FROM_BACKEND}).then(function(me){
+Hull.login({access_token: SIGNED_JSON_WEB_TOKEN_FROM_BACKEND}).then(function(me){
   //User Logged in with Hull Access Token
 })
 
@@ -327,7 +329,7 @@ hull.utils.assign()
 hull.utils.uuid()
 ```
 
-# Messages
+# Event Emitter
 
 The Hull library embeds a message bus to which you can subscribe to be notified of lifecycle events, and emit your own events as needed.
 
@@ -420,45 +422,32 @@ See [https://github.com/asyncly/EventEmitter2](https://github.com/asyncly/EventE
 - `Hull.once()`
 - `Hull.many()`
 
-# Tracking
-Tracking is how you send to Hull the things that your users Do. Page views are sent automatically, but you will probably want to track additional, business-specific events, such as "Subscription activated", "Completed configuration" et al.
-
-For each of those events, you can add arbitrary attributes, which will be fully recognized and usable form inside of Hull.
-
-Hull differs from most other tracking solution in the aspect that it doesn't have hard limits as to how many different events you can send, nor how many attributes inside those events.
-
-```js
-Hull.track('event_name', {
-  foo:'bar',
-  arbitrary:'data'
-}).then(function(res){
-  //res should be equal to `true`
-});
-```
-
-### `Hull.track(eventName, data)`
-Track arbitrary additional data.
-
-- If a user is logged in, events will be associated to him.
-- When using Connectors, the scoped `hull` object you receive in the `Hull.onEmbed` callback adds information about the current connector. This is the object you should use, instead of the global `Hull` object.
-
 # Traits
+Traits are how you record Attributes for a given user.
 
-Traits are how you define who a user Is. You can use this to store business specific values, such as "birthdate", "number of integrations" et. al.
+You can use this to store factual properties, such as "birthdate", "number of connectors" et. al.
+Traits let you segment your customers in the [Dashboard](http://dashboard.hullapp.io)
 
 The first time we detect a new trait name (which are called Attributes in the Hull dashboard), we will try to recognize it's type.
 
+- We support the following types: `String`, `Number`, `Date`, `Array`
+- We infer the types of a trait so you don't have to specify it. Number and String types are inferred on the type of the value.
+- To store a Date, define a trait that ends with `_at` or `_date` such as `played_at` or `activation_date`
+- Once the type of a trait is set, it can not be changed, but you can use as many traits as you like.
+
+### Traits type casting
 - If the first trait we see is a boolean, it will be casted as a boolean.
 - If it's a number, then it will be casted as a number
 - If it's a String, and the trait name ends with `_date` or `_at` then we'll try to parse this as a date.
 - If it's an Array we'll respect this.
 - If it's a String we'll respect this.
 
+
 ```js
 Hull.traits({'my new trait': 'has this value'});
 ```
 
-> You can also update a value with some helpers:
+> You can also atomically update a value with some helpers:
 
 ```js
 Hull.traits({'carrier': {value: 'swallow'}}) //Sets carrier to 'swallow'
@@ -476,7 +465,7 @@ Hull.traits({
 });
 ```
 
-```
+```js
 Hull.traits({
   string: "foo",
   fakeNumber: "123", //WILL BE RECOGNIZED AS A STRING
@@ -489,19 +478,106 @@ Hull.traits({
 ### `Hull.traits({ trait_name: value })`
 Sets the `value` to the trait of name `trait_name`.
 
-A trait is a property you can define on a User, for analytics and CRM purposes.
-What is stored there is visible only for administrators.
-
-- We support the following types: `String`, `Number`, `Date`, `Array`
-- We infer the types of a trait so you don't have to specify it. Number and String types are inferred on the type of the value.
-- To store a Date, define a trait that ends with `_at` or `_date` such as `played_at` or `activation_date`
-- Once the type of a trait is set, it can not be changed, but you can use as many traits as you like.
-
-Traits let you segment your customers in the [Dashboard](http://dashboard.hullapp.io) with custom criteria.
+Once sent, attributes aren't exposed to users anymore.
 
 <aside>
   This method is available immediately at launch
 </aside>
+
+
+
+# Tracking
+Tracking is how you record user Actions.
+
+Page views are sent automatically, but you will probably want to track additional, business-specific events, such as "Subscription activated", "Completed configuration" et al.
+
+For each of those events, you can add arbitrary attributes, which will be fully recognized and usable form inside of Hull.
+
+Hull differs from most other tracking solutions as it doesn't have any hard limits as to how many different events you can send, nor how many attributes inside those events.
+
+```js
+Hull.track('event_name', {
+  foo:'bar',
+  arbitrary:'data'
+}).then(function(res){
+  //res should be equal to `true`
+});
+```
+
+### `Hull.track(eventName, data)`
+Track a user event.
+
+- If a user is logged in, events will be associated to him.
+- When using Connectors, the scoped `hull` object you receive in the `Hull.onEmbed` callback adds information about the current connector. This is the object you should use, instead of the global `Hull` object.
+
+
+```js
+//form is an HTML Form Element or an array of form elements
+// i.e. document.getElementsByTagName('form');
+
+Hull.trackForm(forms, event, [properties]);
+
+Hull.trackForm(forms, "Event Name", { property: 'foo' });
+
+Hull.trackForm(forms, function event(form){
+  // Your custom logic to extract form Name
+  return <string>
+}, function properties(form){
+  // Your custom logic to extract form properties
+  return <object>
+});
+```
+
+# Form Tracking
+
+### `Hull.trackForm(eventName, data)`
+Listen to form submissions and  performs a tracking call
+
+- `forms`: An HTML DOM element or array of such. jQuery supported
+- `event`: A String defining the name of the event to track or a function that returns it after being passed the form
+- `properties`: [Optional] An object of properties, or a function that returns an object, after being passed the form
+
+
+# Querystring Tracking
+
+Hull.js can trigger tracking and traits calls based on what you pass in the URL querystring. This helps tracking email clickthroughs and social media clicks, and ads for instance.
+
+
+### Here are the parameters you can use:
+
+Parameter | Description | Action
+-----------|-------------|----------
+`hjs_uid` | The userId to pass to an identify call. | Triggers a traits call.
+`hjs_event`	| The event name to pass to a track call.	| This will trigger a track call.
+`hjs_aid`| The anonymousId to set for the user.	| This will tell Hull to alias this value for as an `anonymousId`.
+`hjs_trait_<trait>` |	An attribute to pass to the traits call | Triggers a `Traits` call with this attribute
+`hjs_prop_<property>`	| A property to pass to the tracking call	| Doesn't trigger the call in itself, just sets properties that will be embedded in the event you passed with `hjs_event`
+So for example, with this URL:
+
+http://segment.com/?ajs_uid=123456789abcd&ajs_event=Clicked%20Email&ajs_aid=abc123&ajs_prop_emailCampaign=First+Touch&ajs_trait_name=Karl+Jr.
+it would trigger the following events on the page:
+
+analytics.identify('123456789abcd', { name: 'Karl Jr.' });
+analytics.track('Clicked Email', { 'emailCampaign': 'First Touch' });
+analytics.user().anonymousId('abc123');
+You can pass up to one of each trigger parameter as shown in the example above.
+
+# Alias
+
+### `Hull.alias(anonymousId)`
+Aliases a new anonymous ID for the current user.
+Adds a new id to the current user's alias table, or links the current user to that ID if it already exists in Hull. You need to wait until Hull is initalized to call this method. The easiest way is to wrap it in `Hull.ready`
+
+```js
+Hull.ready(function(){
+  Hull.alias("aid_123456");
+});
+```
+
+
+# Cross-Domain Identity Resolution
+
+Hull.js is one of the rare libraries that allows businesses to recognize user activity across their different websites. Once a user has been recognized on one of your websites, the same identifiers will carry on across all your other properties where Hull.js is installed
 
 # Connectors
 

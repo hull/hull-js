@@ -2,6 +2,11 @@ _        = require '../../utils/lodash'
 EventBus = require '../../utils/eventbus'
 assign   = require '../../polyfills/assign'
 
+bind = window.addEventListener ? 'addEventListener' : 'attachEvent';
+unbind = window.removeEventListener ? 'removeEventListener' : 'detachEvent';
+prefix = bind != 'addEventListener' ? 'on' : '';
+
+listen = (el, type, fn, capture) => el[bind](prefix + type, fn, capture || false);
 
 class Tracker
   constructor : (api, currentUser)->
@@ -35,6 +40,23 @@ class Tracker
 
     EventBus.on 'hull.user.logout', ()->
       self.track('hull.user.logout')
+
+  trackForm: (forms, ev, properties) =>
+    return false unless !!forms
+    forms = [forms] if _.isElement(forms)
+    _.map forms, (form) => 
+      return console.log("Not an HTML element", form) unless _.isElement(form)
+      trackSubmit = (e) =>
+        e.preventDefault();
+        evt = if _.isFunction(ev) then ev(form) else ev
+        props = if _.isFunction(properties) then properties(form) else properties
+        setTimeout () =>
+          form.submit()
+        , 500
+        @track(evt, props)
+      $ = (window.jQuery || window.Zepto)
+      if $ then $(form).submit(trackSubmit) else listen(form, 'submit', trackForm)
+    true
 
   track: (event, payload, success, failure)=>
     @api.message

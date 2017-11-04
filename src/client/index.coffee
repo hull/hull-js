@@ -11,6 +11,7 @@ Flag         = require './flag/index'
 Tracker      = require './track/index'
 Traits       = require './traits/index'
 Sharer       = require './sharer/index'
+QueryString  = require './querystring/index'
 
 utils        = require '../utils/utils'
 
@@ -20,13 +21,16 @@ class Client
 
     @currentConfig = currentConfig
 
-    api   = new Api(channel, currentUser, currentConfig)
-    auth  = new Auth(api, currentUser, currentConfig)
+    api     = new Api(channel, currentUser, currentConfig)
+    alias  = (id) -> api({ path: "/me/alias" }, "post", { anonymous_id: id })
+    auth    = new Auth(api, currentUser, currentConfig)
     tracker = new Tracker(api)
 
     sharer = new Sharer(currentConfig);
-    flag  = new Flag(api)
-    traits= new Traits(api)
+    qs     = new QueryString(traits, tracker, alias)
+    flag   = new Flag(api)
+    traits = new Traits(api)
+
 
     if @currentConfig.get('debug.enabled')
       EventBus.on 'hull.**', (args...)->
@@ -46,12 +50,15 @@ class Client
       confirmEmail   : auth.confirmEmail
       linkIdentity   : auth.linkIdentity
       unlinkIdentity : auth.unlinkIdentity
+      alias          : alias
       track          : tracker.track
+      trackForm      : tracker.trackForm
       flag           : flag
       traits         : traits
       trait          : traits
       share          : sharer.share
       findUrl        : findUrl
+      parseQueryString : qs.parse
 
     # Return an object that will be digested by Hull main file and
     # has everything
