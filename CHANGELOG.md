@@ -1,3 +1,10 @@
+# 0.10.1
+
+* Updates documentation
+* Adds `Hull.trackForm` to add form listeners
+* Adds `Hull.alias` to allow aliasing new identities to current user
+* Adds `Hull.parseQueryString` and automatic querystring parsing to track events and attributes
+
 # 0.10.0
 
 * Remove support for various embed strategies on ships
