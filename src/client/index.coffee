@@ -27,9 +27,9 @@ class Client
     tracker = new Tracker(api)
 
     sharer = new Sharer(currentConfig);
-    qs     = new QueryString(traits, tracker.track, alias)
     flag   = new Flag(api)
     traits = new Traits(api)
+    qs     = new QueryString(traits, tracker.track, alias)
 
 
     if @currentConfig.get('debug.enabled')

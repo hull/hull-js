@@ -4,10 +4,12 @@
 module.exports = {
   compact: require('lodash/compact'),
   uniq: require('lodash/uniq'),
+  size: require('lodash/size'),
   includes: require('lodash/includes'),
   reject: require('lodash/reject'),
   toArray: require('lodash/toArray'),
   defaults: require('lodash/defaults'),
+  isElement: require('lodash/isElement'),
   each: require('lodash/each'),
   partition: require('lodash/partition'),
   every: require('lodash/every'),

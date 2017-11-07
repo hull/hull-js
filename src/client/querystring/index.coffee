@@ -2,11 +2,12 @@ _    = require '../../utils/lodash'
 qs   = require '../../utils/query-string-encoder'
 
 pick = (prefix, obj) -> _.reduce obj, (m, v, k) ->
-  m[k.replace(prefix,'')] = k if k.indexOf(prefix) == 0
+  m[k.replace(prefix,'')] = v if k.indexOf(prefix) == 0
   m
+, {}
 
 class QueryString
-  constructor : (traits, tracker, alias, currentUser)->
+  constructor : (traits, track, alias, currentUser)->
     @alias = alias
     @currentUser = currentUser
     @traits = traits
@@ -24,6 +25,7 @@ class QueryString
     @alias(hjs_aid) if hjs_aid
 
     traits = pick('hjs_trait_', q)
+    debugger
     @traits(hjs_uid, traits) if _.size(traits)
 
     props = pick('hjs_prop_', q)

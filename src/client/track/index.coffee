@@ -2,11 +2,11 @@ _        = require '../../utils/lodash'
 EventBus = require '../../utils/eventbus'
 assign   = require '../../polyfills/assign'
 
-bind = window.addEventListener ? 'addEventListener' : 'attachEvent';
-unbind = window.removeEventListener ? 'removeEventListener' : 'detachEvent';
-prefix = bind != 'addEventListener' ? 'on' : '';
+bnd = if window.addEventListener then 'addEventListener' else 'attachEvent';
+unbnd = if window.removeEventListener then 'removeEventListener' else 'detachEvent';
+prefix = if (bnd != 'addEventListener') then 'on' else '';
 
-listen = (el, type, fn, capture) => el[bind](prefix + type, fn, capture || false);
+listen = (el, type, fn, capture) => el[bnd](prefix + type, fn, capture || false);
 
 class Tracker
   constructor : (api, currentUser)->
@@ -52,10 +52,10 @@ class Tracker
         props = if _.isFunction(properties) then properties(form) else properties
         setTimeout () =>
           form.submit()
-        , 500
+        , 50000
         @track(evt, props)
       $ = (window.jQuery || window.Zepto)
-      if $ then $(form).submit(trackSubmit) else listen(form, 'submit', trackForm)
+      if $ then $(form).submit(trackSubmit) else listen(form, 'submit', trackSubmit)
     true
 
   track: (event, payload, success, failure)=>
