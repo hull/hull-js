@@ -511,6 +511,9 @@ Track a user event.
 - When using Connectors, the scoped `hull` object you receive in the `Hull.onEmbed` callback adds information about the current connector. This is the object you should use, instead of the global `Hull` object.
 
 
+
+# Form Tracking
+
 ```js
 //form is an HTML Form Element or an array of form elements
 // i.e. document.getElementsByTagName('form');
@@ -527,8 +530,6 @@ Hull.trackForm(forms, function event(form){
   return <object>
 });
 ```
-
-# Form Tracking
 
 ### `Hull.trackForm(eventName, data)`
 Listen to form submissions and  performs a tracking call
