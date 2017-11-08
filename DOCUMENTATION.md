@@ -547,19 +547,20 @@ Hull.js can trigger tracking and traits calls based on what you pass in the URL 
 
 Parameter | Description | Action
 -----------|-------------|----------
-`hjs_uid` | The userId to pass to an identify call. | Triggers a traits call.
 `hjs_event`	| The event name to pass to a track call.	| This will trigger a track call.
 `hjs_aid`| The anonymousId to set for the user.	| This will tell Hull to alias this value for as an `anonymousId`.
 `hjs_trait_<trait>` |	An attribute to pass to the traits call | Triggers a `Traits` call with this attribute
 `hjs_prop_<property>`	| A property to pass to the tracking call	| Doesn't trigger the call in itself, just sets properties that will be embedded in the event you passed with `hjs_event`
 So for example, with this URL:
 
-http://segment.com/?ajs_uid=123456789abcd&ajs_event=Clicked%20Email&ajs_aid=abc123&ajs_prop_emailCampaign=First+Touch&ajs_trait_name=Karl+Jr.
+http://hull.io/?hjs_event=Clicked%20Email&hjs_aid=fooBar1234&hjs_prop_emailCampaign=ABM+Campaign&hjs_trait_name=Elon+Musk.
 it would trigger the following events on the page:
 
-analytics.identify('123456789abcd', { name: 'Karl Jr.' });
-analytics.track('Clicked Email', { 'emailCampaign': 'First Touch' });
-analytics.user().anonymousId('abc123');
+```js
+Hull.traits({ name: 'Elon Musk' });
+Hull.track('Clicked Email', { 'emailCampaign': 'ABM Campaign' });
+Hull.alias('abc123');
+```
 You can pass up to one of each trigger parameter as shown in the example above.
 
 # Alias
