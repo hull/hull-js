@@ -553,13 +553,13 @@ Parameter | Description | Action
 `hjs_prop_<property>`	| A property to pass to the tracking call	| Doesn't trigger the call in itself, just sets properties that will be embedded in the event you passed with `hjs_event`
 So for example, with this URL:
 
-http://hull.io/?hjs_event=Clicked%20Email&hjs_aid=fooBar1234&hjs_prop_emailCampaign=ABM+Campaign&hjs_trait_name=Elon+Musk.
+http://test.com/?hjs_event=Clicked%20Email&hjs_aid=fooBar1234&hjs_prop_emailCampaign=ABM+Campaign&hjs_trait_name=Elon+Musk.
 it would trigger the following events on the page:
 
 ```js
 Hull.traits({ name: 'Elon Musk' });
 Hull.track('Clicked Email', { 'emailCampaign': 'ABM Campaign' });
-Hull.alias('abc123');
+Hull.alias('fooBar123');
 ```
 You can pass up to one of each trigger parameter as shown in the example above.
 
