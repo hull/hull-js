@@ -6,7 +6,7 @@ function initializeShopifyPlatform(context, currentConfig, hull) {
 
   try {
     const { pathname, search, hash } = document.location;
-    const { domain, domain_redirect, ssl_enabled } = (context.app && context.app.settings) || {};
+    const { domain, domain_redirect, ssl_enabled, alias_cart_enabled } = (context.app && context.app.settings) || {};
 
     if (domain_redirect && domain && pathname.match(/^\/account\/login/) && domain !== document.location.host) {
 
@@ -62,26 +62,24 @@ function initializeShopifyPlatform(context, currentConfig, hull) {
     }
   }
 
-  if (window.HullShopify && window.HullShopify.cart && window.HullShopify.cart.token) {
-    aliasCart(window.HullShopify.cart);
-  } else if (window.HullShopify && window.HullShopify.template) {
-    let browser = {};
-    try {
-      browser = currentConfig.identifyBrowser();
-    } catch (err) {
-      browser = {}
-    }
-    // ensureCart(aliasCart);
+  if (alias_cart_enabled) {
+    if (window.HullShopify && window.HullShopify.cart && window.HullShopify.cart.token) {
+      aliasCart(window.HullShopify.cart);
+    } else if (window.HullShopify && window.HullShopify.template) {
+      let browser = {};
+      try {
+        browser = currentConfig.identifyBrowser();
+      } catch (err) {
+        browser = {}
+      }
+      request.post('/cart.js')
+             .send({})
+             .set('Accept', 'application/json')
+             .end((err, res={}) => {
+                aliasCart(res.body);
+              })
+    }    
   }
-}
-
-function ensureCart(callback) {
-  request.post('/cart.js')
-         .send({})
-         .set('Accept', 'application/json')
-         .end((err, res={}) => {
-            callback(res.body);
-          })
 }
 
 function getPlatformInitializer(platform) {
