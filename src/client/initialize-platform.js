@@ -71,13 +71,17 @@ function initializeShopifyPlatform(context, currentConfig, hull) {
     } catch (err) {
       browser = {}
     }
-    request.post('/cart.js')
-           .send({})
-           .set('Accept', 'application/json')
-           .end((err, res={}) => {
-              aliasCart(res.body);
-            })
+    // ensureCart(aliasCart);
   }
+}
+
+function ensureCart(callback) {
+  request.post('/cart.js')
+         .send({})
+         .set('Accept', 'application/json')
+         .end((err, res={}) => {
+            callback(res.body);
+          })
 }
 
 function getPlatformInitializer(platform) {
