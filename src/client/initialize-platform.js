@@ -62,22 +62,22 @@ function initializeShopifyPlatform(context, currentConfig, hull) {
     }
   }
 
-  if (window.HullShopify && window.HullShopify.cart && window.HullShopify.cart.token) {
-    aliasCart(window.HullShopify.cart);
-  } else if (window.HullShopify && window.HullShopify.template) {
-    let browser = {};
-    try {
-      browser = currentConfig.identifyBrowser();
-    } catch (err) {
-      browser = {}
-    }
-    request.post('/cart.js')
-           .send({})
-           .set('Accept', 'application/json')
-           .end((err, res={}) => {
-              aliasCart(res.body);
-            })
-  }    
+  // if (window.HullShopify && window.HullShopify.cart && window.HullShopify.cart.token) {
+  //   aliasCart(window.HullShopify.cart);
+  // } else if (window.HullShopify && window.HullShopify.template) {
+  //   let browser = {};
+  //   try {
+  //     browser = currentConfig.identifyBrowser();
+  //   } catch (err) {
+  //     browser = {}
+  //   }
+  //   request.post('/cart.js')
+  //          .send({})
+  //          .set('Accept', 'application/json')
+  //          .end((err, res={}) => {
+  //             aliasCart(res.body);
+  //           })
+  // }    
 }
 
 function getPlatformInitializer(platform) {
