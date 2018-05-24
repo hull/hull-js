@@ -25,7 +25,7 @@ class QueryString
     @alias(hjs_aid) if hjs_aid
 
     traits = pick('hjs_trait_', q)
-    @traits(hjs_uid, traits) if _.size(traits)
+    @traits(traits) if _.size(traits)
 
     props = pick('hjs_prop_', q)
     @tracker.track(hjs_event, props) if hjs_event
