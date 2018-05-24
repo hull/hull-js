@@ -159,6 +159,7 @@ gulp.task("webpack:build:dev", function(callback) {
 gulp.task("webpack:server", function() {
   var taskName = "webpack:server";
   new WebpackDevServer(devCompiler, {
+    disableHostCheck: true,
     contentBase: config.outputFolder,
     publicPath: config.assetsFolder+"/",
     hot: config.hotReload,
