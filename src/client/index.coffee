@@ -22,7 +22,7 @@ class Client
     @currentConfig = currentConfig
 
     api     = new Api(channel, currentUser, currentConfig)
-    alias  = (id) -> api({ path: "/me/alias" }, "post", { anonymous_id: id })
+    alias  = (id) -> api.message({ path: "/me/alias" }, "post", { anonymous_id: id })
     auth    = new Auth(api, currentUser, currentConfig)
     tracker = new Tracker(api)
 

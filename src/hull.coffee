@@ -244,5 +244,3 @@ else
   logger.error "Hull Snippet found more than once (or you already have a global variable named window.Hull). Either way, we can't launch Hull more than once. We only use the first one in the page"
 
 module.exports = hull
-
-
