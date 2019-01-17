@@ -52,6 +52,7 @@ class Client
       unlinkIdentity : auth.unlinkIdentity
       alias          : alias
       track          : tracker.track
+      identify       : tracker.identify
       trackForm      : tracker.trackForm
       flag           : flag
       traits         : traits

@@ -46,6 +46,8 @@ onInitSuccess = (userSuccessCallback, hull, data)->
   delete hull.initRemote
 
   # Prune init queue
+  Pool.run('identify', hull)
+  Pool.run('alias', hull)
   Pool.run('traits', hull)
   Pool.run('track', hull)
   Pool.run('trackForm', hull)
@@ -223,6 +225,8 @@ hull =
   trackForm    : Pool.create('trackForm')
   track        : Pool.create('track')
   traits       : Pool.create('traits')
+  identify     : Pool.create('identify')
+  alias        : Pool.create('alias')
   captureException: captureException
 
 # Assign EventBus methods to Hull

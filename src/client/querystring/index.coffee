@@ -27,6 +27,9 @@ class QueryString
     traits = pick('hjs_trait_', q)
     @traits(traits) if _.size(traits)
 
+    attrs = pick('hjs_attr_', q)
+    @traits(attrs) if _.size(attrs)
+
     props = pick('hjs_prop_', q)
     @tracker.track(hjs_event, props) if hjs_event
 

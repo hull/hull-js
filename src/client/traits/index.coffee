@@ -38,6 +38,7 @@ module.exports = (api)->
         # });
       _.map name, (value, key)-> new Trait(api, key, value)
       Hull.emit('hull.traits',name)
+      Hull.emit('hull.identify',name)
     else
       # Hull.traits('a_number', {value: 20, operation: 'dec'});
       # Hull.traits('a_number', 20);

@@ -1,14 +1,17 @@
 # Introduction
 
-hull.js lets you authenticate users and perform API calls from your browser
+`hull.js` lets you track Customer data and recognize users.
+
+It also lets you easily embed certain connectors in the page to inject functionality such as the [Intercom connector](https://hull-intercom.herokuapp.com) or the [Browser Personalization connector](https://hull-browser.herokuapp.com). For this go to the Platform section in your dashboard, and add the relevant connector. It will be added to the page without having to write code.
+
 It is the library you install when you paste a Platform snippet in your page's `HEAD` tag.
 
-# Starting Hull
+# Booting Hull
 
 > Automatic initialization
 
 ```html
-<script 
+<script
   id="hull-js-sdk"
   data-platform-id="YOUR_PLATFORM_ID"
   data-org-url="https://ORG_NAMESPACE.hullapp.io"
@@ -37,14 +40,14 @@ It is the library you install when you paste a Platform snippet in your page's `
 
 The following parameters can be passed indifferently as hyphen-delimited params in the `SCRIPT` tag, or as CamelCased params in the `Hull.init()` call
 
-### Mandatory parameters.
+#### Mandatory parameters.
 
 Parameter | Type | Description
 ----------|------|------------
 platformId | String | The ID of your platform.
 orgUrl | String | The URL of your organization _e.g._ `YOUR_ORG.hullapp.io`
 
-### Optional parameters
+#### Optional parameters
 
 Parameter | Type | Description
 ----------|------|------------
@@ -53,7 +56,7 @@ embed | Boolean | Default:`true`. Skip embedding Connectors in the page.
 debug | Boolean | Default:`false`. Log messages. VERY useful during development to catch errors in promise chains.
 verbose | Boolean | Default:`false`. Log even more things such as network traffic. Needs `debug: true`
 accessToken | String | A signed JWT, telling Hull to automatically log-in a user fetched from your backend. See ["Bring your own users"](#bring-your-own-users)
-anonymousId | String | Override the auto generated anonymousId. Use the one provided.  
+anonymousId | String | Override the auto generated anonymousId. Use the one provided.
 sessionId | String | Override the auto generated sessionId. Use the one provided.
 
 
@@ -90,13 +93,23 @@ Hull.ready().then(({ hull, me, app, org }) => {
 
 > Note than since Promises only resolve the first argument, we return a single object instead of 4 arguments.
 
-### `Hull.on()`
+#### `Hull.on()`
 
 Register an event listener. See [events](#subscribe-to-an-event)
 
-### `Hull.track()`
+#### `Hull.track()`
 
 Track something. See [Tracking](#tracking)
+
+#### `Hull.identify()`
+
+Set attributes. See [Attributes](#attributes)
+
+#### `Hull.alias()`
+
+Set an Alias for the current visitor. See [Alias](#alias)
+
+
 
 <aside>
   These methods are available right away, even before <code>Hull.init()</code> is called. They queue and replay when initialization is complete.
@@ -105,7 +118,7 @@ Track something. See [Tracking](#tracking)
 ## Asynchronous snippet
 
 ```html
-<script 
+<script
   async defer
   id="hull-js-sdk"
   data-platform-id="YOUR_PLATFORM_ID"
@@ -117,7 +130,7 @@ Track something. See [Tracking](#tracking)
     console.log('Hull Async Init', hull),
 
     hull.on('hull.ready', function(hull, me, app, org) {
-      console.log('Hull Ready from event')         
+      console.log('Hull Ready from event')
     });
     hull.on('hull.ships.ready', function() {
       console.log('Hull Ships Ready');
@@ -132,204 +145,167 @@ Track something. See [Tracking](#tracking)
 If you're embedding the snippet with the `async defer` parameter, Hull will load asynchronously and the `Hull` object won't be available immediately.
 You can define then a function called `hullAsyncInit` attached to `window`. It will get called when the Hull object is available.
 
-
-# Identity Management
-
-## Identify users securely
-To increase security, when identifying users as they use your product, we require you to generate an encoded string validating that the user is who he pretends to be. Generating that string is a pretty simple from your own backend.
-
-You can then pass it to Hull to identify the user.[ Here's an article explaining how to generate this token](https://www.hull.io/docs/users/byou)
-
-> Log the user in with a token
-
-```js
-var token='SIGNED_JSON_WEB_TOKEN_FROM_BACKEND';
-Hull.login({access_token: SIGNED_JSON_WEB_TOKEN_FROM_BACKEND}).then(function(me){
-  //User Logged in with Hull Access Token
-})
-
-```
-
-> Or during initialization:
-
-```js
-Hull.init({
-  platformId:'YOUR_PLATFORM_ID',
-  orgUrl:'YOUR_ORG',
-  accessToken:token
-});
-```
-
-> Or directly in the Script tag: 
-
-```html
-<script
-  id="hull-js-sdk"
-  data-platform-id="YOUR_PLATFORM_ID"
-  data-org-url="https://ORG_NAMESPACE.hullapp.io"
-  data-access-token="SIGNED_JSON_WEB_TOKEN_FROM_BACKEND"
-  src="https://js.hull.io/0.10.0/hull.js.gz"></script>
-```
-
-If you create a Hull access token (jwt) on the server, you can pass it and we'll log the user in for you. This is used in the [Bring your own users scenario](/docs/users/byou) where either have created in advance or are creating JWT access tokens on the fly for your users.
-
-## Logging out
-### `Hull.logout()`
-```js
-Hull.logout().then(function() {
-  console.log('Goodbye');
-}).catch(function(err){
-  console.log('Something happened', err);
-});
-```
-Logs the current User out.
-
-## Getting the current User
-> Example Response
-
-```json
-{
-  "id": "50f5768ce78fa367da000001",
-  "updated_at": "2015-11-19T11:04:28Z",
-  "created_at": "2013-01-15T15:32:28Z",
-  "name": "Firstname lastname",
-  "username": null,
-  "first_name": "Firstname",
-  "last_name": "lastname",
-  "description": null,
-  "email": "user@host.com",
-  "tags": [],
-  "extra": {},
-  "stats": {
-    "actions": {
-      "comments": 1,
-      "email_notifications": 4,
-      "links": 11
-    },
-    "liked": 2,
-    "sign_in_count": 525
-  },
-  "picture": "https://gravatar.com/avatar/df02661a0c004b29a0c1971871a8d74b.png?s=200&d=blank",
-  "type": "user",
-  "confirmed": true,
-  "is_admin": false,
-  "approved": true,
-  "profile": {},
-  "contact_email": "user@host.com",
-  "phone": "33620545662",
-  "address": {},
-  "main_identity": "github",
-  "settings": {
-    "notifications": {}
-  },
-  "identities": [
-    {
-      "id": "53185d8b440b64e6d802de05",
-      "created_at": "2013-01-15T15:32:28Z",
-      "name": "Firstname lastname",
-      "description": null,
-      "stats": {},
-      "tags": [],
-      "picture": "https://avatars.githubusercontent.com/u/9158?v=3",
-      "type": "github_account",
-      "provider": "github",
-      "uid": "9158",
-      "login": "user",
-      "email": "user@host.com"
-    },
-    {
-      "id": "53188c3c523c299eb600012d",
-      "created_at": "2014-03-06T14:56:12Z",
-      "name": "Firstname lastname",
-      "description": null,
-      "stats": {},
-      "tags": [],
-      "picture": "https://graph.facebook.com/550254742/picture?type=large",
-      "type": "facebook_account",
-      "provider": "facebook",
-      "uid": "550254742",
-      "email": "user@host.com",
-      "first_name": "Firstname",
-      "last_name": "lastname"
-    }
-  ],
-  "last_seen_at": "2015-11-19T10:59:34Z",
-  "sign_in": {
-    "created_at": "2014-03-06T13:02:38Z",
-    "app_id": "53175bb2235c73c8790032cd",
-    "url": "https://accounts.hullapp.io/"
-  }
-}
-```
-
-### `Hull.currentUser()`
-
-When a User is currently logged in, `Hull.currentUser()` returns the current User as an object literal. Otherwise, it returns `false`.
-
-## Getting the current configuration
-
-> Example Response
-
-```json
-{
-  "platformId": "5113eca4fc62d87574000096",
-  "orgUrl": "https://hull-demos.hullapp.io",
-  "jsUrl": "https://d3f5pyioow99x0.cloudfront.net",
-  "namespace": "hull",
-  "assetsUrl": "d3bok9j91z3fca.cloudfront.net",
-  "services": {
-    "settings": {
-      "facebook_app": {"appId": "Facebook App ID"},
-      "twitter_app": {"appId": "Twitter App ID"},
-      "github_app": {"appId": "Github App ID"},
-      "instagram_app": {"client_id": "Instagram Client ID"},
-      "tumblr_app": {"appId": "Tumblr App ID"},
-      "linkedin_app": {"appId": "LinkedIn App ID", "scope": "r_basicprofile r_emailaddress r_network"},
-      "google_app": {"appId": "Google App ID"},
-      "hull_store": {
-        "host": "hull.s3.amazonaws.com",
-        "url": "http://hull-store.s3.amazonaws.com/",
-        "file_param": "file",
-        "params": {
-          "success_action_status": "201",
-          "AWSAccessKeyId": "AWS Access Key",
-          "key": "hull-store/hull-demos/51044245f6e311c301000003/5113eca4fc62d87575000096/510fa2394875372512000009/${filename}",
-          "acl": "public-read",
-          "policy": "User-specific Policy",
-          "signature": "User-specific Signature"
-        }
-      }
-    },
-    "types": {
-      "auth": ["facebook_app", "twitter_app", "github_app", "instagram_app", "tumblr_app", "linkedin_app", "google_app"],
-      "storage": ["hull_store"],
-      "analytics": ["mixpanel"]
-    }
-  }
-}
-```
-
 ### `Hull.config()`
 
 Returns an object containing all information about the current app and user, including keys to services:
 
-# Utils
+# Attributes
+You can use attributes to store factual properties, such as "birthdate", "number of connectors" et. al.
+Attribute let you segment your customers in the [Dashboard](http://dashboard.hullapp.io)
+
+The first time we detect a new attribute name (which are called Attributes in the Hull dashboard), we will try to recognize it's type.
+
+- We support the following types: `String`, `Number`, `Date`, `Array`
+- We infer the types of an attribute so you don't have to specify it. Number and String types are inferred on the type of the value.
+- To store a Date, define an attribute that ends with `_at` or `_date` such as `played_at` or `activation_date`
+- Once the type of an attribute is set, it can not be changed, but you can use as many attributes as you like.
+
+### Attribute type casting
+- If the first attribute we see is a boolean, it will be casted as a boolean.
+- If it's a number, then it will be casted as a number
+- If it's a String, and the attribute name ends with `_date` or `_at` then we'll try to parse this as a date.
+- If it's an Array we'll respect this.
+- If it's a String we'll respect this.
+
 
 ```js
-//True if the current browser is a mobile browser;
-hull.utils.isMobile()
-
-//Cookie Utility. https://github.com/ScottHamper/Cookies
-hull.utils.cookies()
-
-//Object.assign polyfill
-hull.utils.assign()
-
-//Generates a unique Identifier
-hull.utils.uuid()
+Hull.identify({'my new attribute': 'has this value'});
 ```
 
-# Event Emitter
+> You can also atomically update a value with some helpers:
+
+```js
+Hull.identify({'carrier': {value: 'swallow'}}) //Sets carrier to 'swallow'
+Hull.identify({'carrier': {value: 'swallow', operation: 'set'}}) //Equivalent to the above
+
+//Select the operation to apply
+Hull.identify({'a_number': {value: 12}}) //Sets the attribute to the integer `12`
+Hull.identify({'a_number': {value: 12, operation: 'inc'}}) //The attribute now has the value `24`
+Hull.identify({'a_number': {value: 20, operation: 'dec'}}) //The attribute now has the value `4`
+
+//Work with multiple attributes at once
+Hull.identify({
+  'numberA': {value: 12, operation: 'inc'},
+  'numberB': {value: "this is cool"},
+});
+```
+
+```js
+Hull.identify({
+  string: "foo",
+  fakeNumber: "123", //WILL BE RECOGNIZED AS A STRING
+  realNumber: 123 //Will be recognized as a number
+})
+```
+> Be mindful of the difference betwen strings and numbers:
+
+
+### `Hull.identify({ attribute_name: value })`
+Sets the `value` to the attribute of name `attribute_name`.
+
+Once sent, attributes aren't exposed to users anymore.
+
+<aside>
+  This method is available immediately at launch
+</aside>
+
+
+
+# Tracking
+Tracking is how you record user Actions.
+
+Page views are sent automatically, but you will probably want to track additional, business-specific events, such as "Subscription activated", "Completed configuration" et al.
+
+For each of those events, you can add arbitrary attributes, which will be fully recognized and usable form inside of Hull.
+
+Hull differs from most other tracking solutions as it doesn't have any hard limits as to how many different events you can send, nor how many attributes inside those events.
+
+```js
+Hull.track('event_name', {
+  foo:'bar',
+  arbitrary:'data'
+}).then(function(res){
+  //res should be equal to `true`
+});
+```
+
+### `Hull.track(eventName, data)`
+Track a user event.
+
+- If a user is logged in, events will be associated to him.
+- When using Connectors, the scoped `hull` object you receive in the `Hull.onEmbed` callback adds information about the current connector. This is the object you should use, instead of the global `Hull` object.
+
+
+# Alias
+
+### `Hull.alias(anonymousId)`
+Aliases a new anonymous ID for the current user.
+Adds a new id to the current user's alias table, or links the current user to that ID if it already exists in Hull. You need to wait until Hull is initalized to call this method. The easiest way is to wrap it in `Hull.ready`
+
+```js
+Hull.ready(function(){
+  Hull.alias("aid_123456");
+});
+```
+
+
+# Form Tracking
+
+```js
+//form is an HTML Form Element or an array of form elements
+// i.e. document.getElementsByTagName('form');
+
+Hull.trackForm(forms, event, [properties]);
+
+Hull.trackForm(forms, "Event Name", { property: 'foo' });
+
+Hull.trackForm(forms, function event(form){
+  // Your custom logic to extract form Name
+  return <string>
+}, function properties(form){
+  // Your custom logic to extract form properties
+  return <object>
+});
+```
+
+### `Hull.trackForm(eventName, data)`
+Listen to form submissions and  performs a tracking call
+
+- `forms`: An HTML DOM element or array of such. jQuery supported
+- `event`: A String defining the name of the event to track or a function that returns it after being passed the form
+- `properties`: [Optional] An object of properties, or a function that returns an object, after being passed the form
+
+
+# Querystring Tracking
+
+Hull.js can trigger tracking and identifys calls based on what you pass in the URL querystring. This helps tracking email clickthroughs and social media clicks, and ads for instance.
+
+
+### Here are the parameters you can use:
+
+Parameter | Description | Action
+-----------|-------------|----------
+`hjs_aid`| The anonymousId to set for the user.	| This will tell Hull to alias this value for as an `anonymousId`.
+`hjs_attr_<attribute_name>` |	An attribute to pass to the identifys call | Triggers a `identify` call with this attribute
+`hjs_event`	| The event name to pass to a track call.	| This will trigger a track call.
+`hjs_prop_<property>`	| A property to pass to the tracking call	| Doesn't trigger the call in itself, just sets properties that will be embedded in the event you passed with `hjs_event`
+So for example, with this URL:
+
+http://test.com/?hjs_event=Clicked%20Email&hjs_aid=fooBar1234&hjs_prop_emailCampaign=ABM+Campaign&hjs_attr_name=Elon+Musk.
+it would trigger the following events on the page:
+
+```js
+Hull.identify({ name: 'Elon Musk' });
+Hull.track('Clicked Email', { 'emailCampaign': 'ABM Campaign' });
+Hull.alias('fooBar123');
+```
+You can pass up to one of each trigger parameter as shown in the example above.
+
+# Cross-Domain Identity Resolution
+
+Hull.js is one of the rare libraries that allows businesses to recognize user activity across their different websites. Once a user has been recognized on one of your websites, the same identifiers will carry on across all your other properties where Hull.js is installed
+
+# Event Bus
 
 The Hull library embeds a message bus to which you can subscribe to be notified of lifecycle events, and emit your own events as needed.
 
@@ -339,16 +315,6 @@ The Hull library embeds a message bus to which you can subscribe to be notified 
 
 ```js
 Hull.on('hull.init', function(hull, me, app, org) {});
-Hull.on('hull.user.login', function(me) {});
-Hull.on('hull.user.logout', function() {});
-Hull.on('hull.user.fail', function(error) {});
-Hull.on('hull.*.share', function(share) {});
-Hull.on('hull.track', function(properties) {
-  MyTracker.track(
-    this.event, //Event Name
-    properties
-  );
-});
 ```
 
 > __Hint__: You can use wildcards in your event names to register to a class of events.
@@ -366,8 +332,8 @@ Event Name | Description | Arguments
 `hull.ready`        | `hull.js` has finished loading. | `Hull`, `me`, `app`, `org`
 `hull.ships.ready`  | Connectors are loaded.               | nothing
 `hull.user.update`  | User updated any property   | `me`
-`hull.track`       | `Hull.track()` called. | `properties`
-`hull.traits`      | `Hull.traits()` called.  | `event`
+`hull.track`        | `Hull.track()` called. | `properties`
+`hull.identify`     | `Hull.identify()` called.  | `event`
 
 ### Parameters
 Parameter | Type | Description
@@ -376,7 +342,7 @@ evtName | String  | The name of the event to attach to.
 cb      | Function | The function to be executed when the event is triggered.
 
 ## Unsubscribe from a message channel
-> This method is available once the app has started. 
+> This method is available once the app has started.
 
 ### `Hull.off(evtName, cb)`
 ```js
@@ -422,164 +388,22 @@ See [https://github.com/asyncly/EventEmitter2](https://github.com/asyncly/EventE
 - `Hull.once()`
 - `Hull.many()`
 
-# Traits
-Traits are how you record Attributes for a given user.
 
-You can use this to store factual properties, such as "birthdate", "number of connectors" et. al.
-Traits let you segment your customers in the [Dashboard](http://dashboard.hullapp.io)
-
-The first time we detect a new trait name (which are called Attributes in the Hull dashboard), we will try to recognize it's type.
-
-- We support the following types: `String`, `Number`, `Date`, `Array`
-- We infer the types of a trait so you don't have to specify it. Number and String types are inferred on the type of the value.
-- To store a Date, define a trait that ends with `_at` or `_date` such as `played_at` or `activation_date`
-- Once the type of a trait is set, it can not be changed, but you can use as many traits as you like.
-
-### Traits type casting
-- If the first trait we see is a boolean, it will be casted as a boolean.
-- If it's a number, then it will be casted as a number
-- If it's a String, and the trait name ends with `_date` or `_at` then we'll try to parse this as a date.
-- If it's an Array we'll respect this.
-- If it's a String we'll respect this.
-
+# Utils
 
 ```js
-Hull.traits({'my new trait': 'has this value'});
+//True if the current browser is a mobile browser;
+hull.utils.isMobile()
+
+//Cookie Utility. https://github.com/ScottHamper/Cookies
+hull.utils.cookies()
+
+//Object.assign polyfill
+hull.utils.assign()
+
+//Generates a unique Identifier
+hull.utils.uuid()
 ```
-
-> You can also atomically update a value with some helpers:
-
-```js
-Hull.traits({'carrier': {value: 'swallow'}}) //Sets carrier to 'swallow'
-Hull.traits({'carrier': {value: 'swallow', operation: 'set'}}) //Equivalent to the above
-
-//Select the operation to apply
-Hull.traits({'a_number': {value: 12}}) //Sets the trait to the integer `12`
-Hull.traits({'a_number': {value: 12, operation: 'inc'}}) //The trait now has the value `24`
-Hull.traits({'a_number': {value: 20, operation: 'dec'}}) //The trait now has the value `4`
-
-//Work with multiple traits at once
-Hull.traits({
-  'numberA': {value: 12, operation: 'inc'},
-  'numberB': {value: "this is cool"},
-});
-```
-
-```js
-Hull.traits({
-  string: "foo",
-  fakeNumber: "123", //WILL BE RECOGNIZED AS A STRING
-  realNumber: 123 //Will be recognized as a number
-})
-```
-> Be mindful of the difference betwen strings and numbers:
-
-
-### `Hull.traits({ trait_name: value })`
-Sets the `value` to the trait of name `trait_name`.
-
-Once sent, attributes aren't exposed to users anymore.
-
-<aside>
-  This method is available immediately at launch
-</aside>
-
-
-
-# Tracking
-Tracking is how you record user Actions.
-
-Page views are sent automatically, but you will probably want to track additional, business-specific events, such as "Subscription activated", "Completed configuration" et al.
-
-For each of those events, you can add arbitrary attributes, which will be fully recognized and usable form inside of Hull.
-
-Hull differs from most other tracking solutions as it doesn't have any hard limits as to how many different events you can send, nor how many attributes inside those events.
-
-```js
-Hull.track('event_name', {
-  foo:'bar',
-  arbitrary:'data'
-}).then(function(res){
-  //res should be equal to `true`
-});
-```
-
-### `Hull.track(eventName, data)`
-Track a user event.
-
-- If a user is logged in, events will be associated to him.
-- When using Connectors, the scoped `hull` object you receive in the `Hull.onEmbed` callback adds information about the current connector. This is the object you should use, instead of the global `Hull` object.
-
-
-
-# Form Tracking
-
-```js
-//form is an HTML Form Element or an array of form elements
-// i.e. document.getElementsByTagName('form');
-
-Hull.trackForm(forms, event, [properties]);
-
-Hull.trackForm(forms, "Event Name", { property: 'foo' });
-
-Hull.trackForm(forms, function event(form){
-  // Your custom logic to extract form Name
-  return <string>
-}, function properties(form){
-  // Your custom logic to extract form properties
-  return <object>
-});
-```
-
-### `Hull.trackForm(eventName, data)`
-Listen to form submissions and  performs a tracking call
-
-- `forms`: An HTML DOM element or array of such. jQuery supported
-- `event`: A String defining the name of the event to track or a function that returns it after being passed the form
-- `properties`: [Optional] An object of properties, or a function that returns an object, after being passed the form
-
-
-# Querystring Tracking
-
-Hull.js can trigger tracking and traits calls based on what you pass in the URL querystring. This helps tracking email clickthroughs and social media clicks, and ads for instance.
-
-
-### Here are the parameters you can use:
-
-Parameter | Description | Action
------------|-------------|----------
-`hjs_event`	| The event name to pass to a track call.	| This will trigger a track call.
-`hjs_aid`| The anonymousId to set for the user.	| This will tell Hull to alias this value for as an `anonymousId`.
-`hjs_trait_<trait>` |	An attribute to pass to the traits call | Triggers a `Traits` call with this attribute
-`hjs_prop_<property>`	| A property to pass to the tracking call	| Doesn't trigger the call in itself, just sets properties that will be embedded in the event you passed with `hjs_event`
-So for example, with this URL:
-
-http://test.com/?hjs_event=Clicked%20Email&hjs_aid=fooBar1234&hjs_prop_emailCampaign=ABM+Campaign&hjs_trait_name=Elon+Musk.
-it would trigger the following events on the page:
-
-```js
-Hull.traits({ name: 'Elon Musk' });
-Hull.track('Clicked Email', { 'emailCampaign': 'ABM Campaign' });
-Hull.alias('fooBar123');
-```
-You can pass up to one of each trigger parameter as shown in the example above.
-
-# Alias
-
-### `Hull.alias(anonymousId)`
-Aliases a new anonymous ID for the current user.
-Adds a new id to the current user's alias table, or links the current user to that ID if it already exists in Hull. You need to wait until Hull is initalized to call this method. The easiest way is to wrap it in `Hull.ready`
-
-```js
-Hull.ready(function(){
-  Hull.alias("aid_123456");
-});
-```
-
-
-# Cross-Domain Identity Resolution
-
-Hull.js is one of the rare libraries that allows businesses to recognize user activity across their different websites. Once a user has been recognized on one of your websites, the same identifiers will carry on across all your other properties where Hull.js is installed
 
 # Connectors
 
@@ -606,7 +430,7 @@ Hull.onEmbed(function(rootNode, deployment, hull) {
 const deployment = {
   ship: {} //the connector's settings,
   platform: {} //the platform's settings,
-  
+
 }
 ```
 
@@ -616,7 +440,7 @@ const deployment = {
 
 
 ### `Hull.onEmbed(callback)`
-Checkout [Booting your application](/docs/apps/ships#booting-your-application) in the Connectors documentation for more details 
+Checkout [Booting your application](/docs/apps/ships#booting-your-application) in the Connectors documentation for more details
 
 ## Disabling Connectors Automatic embedding
 
@@ -629,7 +453,7 @@ Checkout [Booting your application](/docs/apps/ships#booting-your-application) i
   src="https://js.hull.io/0.10.0/hull.js.gz"></script>
 ```
 
-> or 
+> or
 
 ```html
 <script src="https://js.hull.io/0.10.0/hull.js.gz"></script>
@@ -649,9 +473,8 @@ It will be then up to you to start the connectors, [Here is where the boot usual
 
 ```js
 Hull.ready(function(hull, me, platform, org){
-  Hull.embed(platform.deployments, { reset:false }, callback, errback);  
+  Hull.embed(platform.deployments, { reset:false }, callback, errback);
 });
 ```
 
 <aside class="warning">This is an advanced method, if you want to start connectors manually. you're on your own ;p</aside>
-
