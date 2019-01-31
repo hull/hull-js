@@ -37,7 +37,8 @@ class HullTrackService extends GenericService
       path: 't',
       method: 'post',
       params: {
-        t: Base64.encode(JSON.stringify(assign({ event }, params.payload))),
+        event: event,
+        properties: params.payload,
         url: params.url,
         referer: params.referer || ""
       },
