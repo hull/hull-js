@@ -22,5 +22,5 @@ jobs:
       - run: ./scripts/sentry_release.sh
     branches: 
       only: 
-        - /release\/.*/
+        - release/0.10.0
 
