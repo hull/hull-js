@@ -1,19 +1,26 @@
-machine:
-  node:
-    version: 6.2.0
-deployment:
-  releases:
-    branch: /release\/.*/
-    commands:
-      - ./node_modules/.bin/gulp deploy:release
-      - ./scripts/sentry_release.sh
-  feature:
-    branch: /feature\/.*/
-    commands:
-      - ./node_modules/.bin/gulp deploy
-test:
-  override:
-    - echo "OK"
-general:
-  artifacts:
-    - lib
+version: 2
+jobs: 
+  build: 
+    docker: 
+      - image: circleci/node:8.12
+    working_directory: ~/repo
+    steps: 
+      - checkout
+      - run: yarn install
+      - run: ./node_modules/.bin/gulp deploy
+    branches: 
+      only: 
+        - /feature\/.*/
+  release: 
+    docker: 
+      - image: circleci/node:8.12
+    working_directory: ~/repo
+    steps: 
+      - checkout
+      - run: yarn install
+      - run: ./node_modules/.bin/gulp deploy:release
+      - run: ./scripts/sentry_release.sh
+    branches: 
+      only: 
+        - /feature\/.*/
+
