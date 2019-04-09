@@ -38,6 +38,10 @@ onInitSuccess = (userSuccessCallback, hull, data)->
   userSuccessCallback = userSuccessCallback || ->
   {me, app, org} = data
 
+
+  if app.track_page_inits
+    hull.track('hull.app.init')
+
   embeds.initialize({ org });
   hull.embed = embeds.embed
   hull.onEmbed = embeds.onEmbed
