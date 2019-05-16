@@ -7,7 +7,7 @@ class Trait
     @name = name
     if value?
       # If value is an object, then it has to be compatible
-      if _.isObject value
+      if _.isObject(value) && _.includes(Object.keys(value), 'value') && _.includes(['inc', 'dec', 'set'], value.operation)
         # new Trait('a_number', {value: 20, operation: 'dec'});
         @raw assign({},value,{name:@name})
       else
