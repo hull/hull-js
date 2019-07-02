@@ -30,8 +30,8 @@ It is the library you install when you paste a Platform snippet in your page's `
 </script>
 ```
 
-- If you use the platform Snippet as is, the library is initialized automatically with the right organization and platform.</li>
-- If you do not need to use Connectors or you need more control, you can disable auto-initialization and boot Hull manually. We recommend sticking with the automatic initialization if you don't have a specific scenario requiring manual init. </li>
+- If you use the platform Snippet as is, the library is initialized automatically with the right organization and platform.
+- If you do not need to use Connectors, or if you need more over the boot sequence, you can disable auto-initialization and boot Hull manually. We recommend sticking with auto-init if you don't have a specific need for manual init.
 
 ## Initialization parameters
 
@@ -49,7 +49,7 @@ orgUrl | String | The URL of your organization _e.g._ `YOUR_ORG.hullapp.io`
 Parameter | Type | Description
 ----------|------|------------
 autoStart | String | Default: `true`, Auto Start Hull on load (call `Hull.init()`).
-embed | Boolean | Default:`true`. Skip embedding Connectors in the page.
+embed | Boolean | Default:`true`. Skip embedding connectors in the page.
 debug | Boolean | Default:`false`. Log messages. VERY useful during development to catch errors in promise chains.
 verbose | Boolean | Default:`false`. Log even more things such as network traffic. Needs `debug: true`
 accessToken | String | A signed JWT, telling Hull to automatically log-in a user fetched from your backend. See ["Bring your own users"](#bring-your-own-users)
@@ -96,10 +96,14 @@ Register an event listener. See [events](#subscribe-to-an-event)
 
 ### `Hull.track()`
 
-Track something. See [Tracking](#tracking)
+Track events that happen in the page. See [Events Tracking](#events-tracking)
+
+### `Hull.traits()`
+
+Capture attributes. See [Capturing User Attributes](#capturing-user-attributes)
 
 <aside>
-  These methods are available right away, even before <code>Hull.init()</code> is called. They queue and replay when initialization is complete.
+These methods are available right away, even before <code>Hull.init()</code> is called. They queue and replayed when initialization is complete.
 </aside>
 
 ## Asynchronous snippet
@@ -116,47 +120,59 @@ Track something. See [Tracking](#tracking)
   window.hullAsyncInit = function(hull){
     console.log('Hull Async Init', hull),
 
-    hull.on('hull.ready', function(hull, me, app, org) {
+    hull.on('hull.ready', function(hull, user, app, org) {
       console.log('Hull Ready from event')         
     });
     hull.on('hull.ships.ready', function() {
       console.log('Hull Ships Ready');
     });
 
-    hull.ready(function(hull, me, app, org) {
+    hull.ready(function(hull, user, app, org) {
       console.log('Hull Ready!');
     });
   }
 </script>
 ```
-If you're embedding the snippet with the `async defer` parameter, Hull will load asynchronously and the `Hull` object won't be available immediately.
-You can define then a function called `hullAsyncInit` attached to `window`. It will get called when the Hull object is available.
+
+If you're embedding the snippet with the `async defer` parameter, Hull will load asynchronously and the `Hull` object won't be available immediately. 
+
+You can define then a function called `hullAsyncInit` attached to `window`. It will be called when Hull is initialized.
 
 
-# Identity Management
+# Identifying users
 
-## Identify users securely
-To increase security, when identifying users as they use your product, we require you to generate an encoded string validating that the user is who he pretends to be. Generating that string is a pretty simple from your own backend.
+## Auto-generated anonymous IDs
 
-You can then pass it to Hull to identify the user.[ Here's an article explaining how to generate this token](https://www.hull.io/docs/users/byou)
+Whenever a user visits a page where Hull.js is initalized, we will create an identity for this user and display an `unknown` user in your dashboard. These users can be merged and aliased later if and when they provide more identifying information, such as an email or a User ID and this data and we find other matches in the database for these identifiers.
+
+## Identifying by Email
+
+You identify a User by Email by calling the `traits` method and passing it an email:
+
+```js
+Hull.traits({ email: "foo@bar.com" })
+```
+
+## Identifying by External ID
+
+To increase security, when identifying users as they use your product, we need you to generate an encoded string validating that the user is who he pretends to be. Generating that string is a pretty simple thing from your own backend and increases security by preventing impersonation.
+
+You can then pass it to Hull to identify the user.[ Here's an article explaining how to generate this token](https://www.hull.io/docs/reference/identity_resolution/)
 
 > Log the user in with a token
 
 ```js
-var token='SIGNED_JSON_WEB_TOKEN_FROM_BACKEND';
-Hull.login({access_token: SIGNED_JSON_WEB_TOKEN_FROM_BACKEND}).then(function(me){
-  //User Logged in with Hull Access Token
-})
-
+const user = await Hull.login({ access_token: SIGNED_JSON_WEB_TOKEN_FROM_BACKEND });
+//User Logged in with Hull Access Token
 ```
 
 > Or during initialization:
 
 ```js
 Hull.init({
-  platformId:'YOUR_PLATFORM_ID',
-  orgUrl:'YOUR_ORG',
-  accessToken:token
+  platformId: YOUR_PLATFORM_ID,
+  orgUrl: YOUR_ORG,
+  accessToken: SIGNED_JSON_WEB_TOKEN_FROM_BACKEND
 });
 ```
 
@@ -173,18 +189,26 @@ Hull.init({
 
 If you create a Hull access token (jwt) on the server, you can pass it and we'll log the user in for you. This is used in the [Bring your own users scenario](/docs/users/byou) where either have created in advance or are creating JWT access tokens on the fly for your users.
 
-## Logging out
+## Clearing Identifiers
+
 ### `Hull.logout()`
+Logs the current User out.
+
 ```js
 Hull.logout().then(function() {
   console.log('Goodbye');
 }).catch(function(err){
   console.log('Something happened', err);
 });
-```
-Logs the current User out.
 
-## Getting the current User
+```
+
+## Getting the current User's profile
+
+### `Hull.currentUser()`
+
+When a User is currently logged in, `Hull.currentUser()` returns the current User as an object literal. Otherwise, it returns `false`.
+
 > Example Response
 
 ```json
@@ -198,75 +222,15 @@ Logs the current User out.
   "last_name": "lastname",
   "description": null,
   "email": "user@host.com",
-  "tags": [],
-  "extra": {},
-  "stats": {
-    "actions": {
-      "comments": 1,
-      "email_notifications": 4,
-      "links": 11
-    },
-    "liked": 2,
-    "sign_in_count": 525
-  },
-  "picture": "https://gravatar.com/avatar/df02661a0c004b29a0c1971871a8d74b.png?s=200&d=blank",
-  "type": "user",
-  "confirmed": true,
-  "is_admin": false,
-  "approved": true,
-  "profile": {},
-  "contact_email": "user@host.com",
-  "phone": "33620545662",
-  "address": {},
-  "main_identity": "github",
-  "settings": {
-    "notifications": {}
-  },
-  "identities": [
-    {
-      "id": "53185d8b440b64e6d802de05",
-      "created_at": "2013-01-15T15:32:28Z",
-      "name": "Firstname lastname",
-      "description": null,
-      "stats": {},
-      "tags": [],
-      "picture": "https://avatars.githubusercontent.com/u/9158?v=3",
-      "type": "github_account",
-      "provider": "github",
-      "uid": "9158",
-      "login": "user",
-      "email": "user@host.com"
-    },
-    {
-      "id": "53188c3c523c299eb600012d",
-      "created_at": "2014-03-06T14:56:12Z",
-      "name": "Firstname lastname",
-      "description": null,
-      "stats": {},
-      "tags": [],
-      "picture": "https://graph.facebook.com/550254742/picture?type=large",
-      "type": "facebook_account",
-      "provider": "facebook",
-      "uid": "550254742",
-      "email": "user@host.com",
-      "first_name": "Firstname",
-      "last_name": "lastname"
-    }
-  ],
-  "last_seen_at": "2015-11-19T10:59:34Z",
-  "sign_in": {
-    "created_at": "2014-03-06T13:02:38Z",
-    "app_id": "53175bb2235c73c8790032cd",
-    "url": "https://accounts.hullapp.io/"
-  }
+  [...]
 }
 ```
 
-### `Hull.currentUser()`
-
-When a User is currently logged in, `Hull.currentUser()` returns the current User as an object literal. Otherwise, it returns `false`.
-
 ## Getting the current configuration
+
+### `Hull.config()`
+
+Returns an object containing all information about the current app and user, including keys to services:
 
 > Example Response
 
@@ -275,155 +239,31 @@ When a User is currently logged in, `Hull.currentUser()` returns the current Use
   "platformId": "5113eca4fc62d87574000096",
   "orgUrl": "https://hull-demos.hullapp.io",
   "jsUrl": "https://d3f5pyioow99x0.cloudfront.net",
-  "namespace": "hull",
-  "assetsUrl": "d3bok9j91z3fca.cloudfront.net",
-  "services": {
-    "settings": {
-      "facebook_app": {"appId": "Facebook App ID"},
-      "twitter_app": {"appId": "Twitter App ID"},
-      "github_app": {"appId": "Github App ID"},
-      "instagram_app": {"client_id": "Instagram Client ID"},
-      "tumblr_app": {"appId": "Tumblr App ID"},
-      "linkedin_app": {"appId": "LinkedIn App ID", "scope": "r_basicprofile r_emailaddress r_network"},
-      "google_app": {"appId": "Google App ID"},
-      "hull_store": {
-        "host": "hull.s3.amazonaws.com",
-        "url": "http://hull-store.s3.amazonaws.com/",
-        "file_param": "file",
-        "params": {
-          "success_action_status": "201",
-          "AWSAccessKeyId": "AWS Access Key",
-          "key": "hull-store/hull-demos/51044245f6e311c301000003/5113eca4fc62d87575000096/510fa2394875372512000009/${filename}",
-          "acl": "public-read",
-          "policy": "User-specific Policy",
-          "signature": "User-specific Signature"
-        }
-      }
-    },
-    "types": {
-      "auth": ["facebook_app", "twitter_app", "github_app", "instagram_app", "tumblr_app", "linkedin_app", "google_app"],
-      "storage": ["hull_store"],
-      "analytics": ["mixpanel"]
-    }
-  }
+  [...]
 }
 ```
 
-### `Hull.config()`
+## Aliasing
 
-Returns an object containing all information about the current app and user, including keys to services:
+### `Hull.alias(aliased_id)`
 
-# Utils
-
-```js
-//True if the current browser is a mobile browser;
-hull.utils.isMobile()
-
-//Cookie Utility. https://github.com/ScottHamper/Cookies
-hull.utils.cookies()
-
-//Object.assign polyfill
-hull.utils.assign()
-
-//Generates a unique Identifier
-hull.utils.uuid()
-```
-
-# Event Emitter
-
-The Hull library embeds a message bus to which you can subscribe to be notified of lifecycle events, and emit your own events as needed.
-
-## Subscribe to a message channel
-
-> This method is available immediately at launch
+You can explicitely tell the platform to alias users. This will merge their profiles (unless they both have External IDs set).
+The example below will add the following anonymous_id to the users's profile: `intercom:1234`.
+As a result, when we fetch visitor 1234 from Intercom, both the Intercom data and web visitor data will be resolved to the same user.
 
 ```js
-Hull.on('hull.init', function(hull, me, app, org) {});
-Hull.on('hull.user.login', function(me) {});
-Hull.on('hull.user.logout', function() {});
-Hull.on('hull.user.fail', function(error) {});
-Hull.on('hull.*.share', function(share) {});
-Hull.on('hull.track', function(properties) {
-  MyTracker.track(
-    this.event, //Event Name
-    properties
-  );
-});
+const visitorId = Intercom('getVisitorId'); //1234
+//Aliases the intercom Visitor ID to the current user.
+Hull.alias("intercom:"+visitorID)
 ```
 
-> __Hint__: You can use wildcards in your event names to register to a class of events.
+# Capturing User Attributes
 
-### `Hull.on(evtName, cb)`
-Hull emits predefined events, and conforms to [EventEmitter2](https://github.com/asyncly/EventEmitter2)'s signature.
-You subscribe to them with the `Hull.on()` method:
+Capturing User Attributes
 
-- The current Event name is available in `this.event`
-- It is useful to adapt react on Hull's state
+## `Hull.traits(attributes)`
 
-### Message list
-Event Name | Description | Arguments
------------|-------------|----------
-`hull.ready`        | `hull.js` has finished loading. | `Hull`, `me`, `app`, `org`
-`hull.ships.ready`  | Connectors are loaded.               | nothing
-`hull.user.update`  | User updated any property   | `me`
-`hull.track`       | `Hull.track()` called. | `properties`
-`hull.traits`      | `Hull.traits()` called.  | `event`
-
-### Parameters
-Parameter | Type | Description
-----------|------|-------------
-evtName | String  | The name of the event to attach to.
-cb      | Function | The function to be executed when the event is triggered.
-
-## Unsubscribe from a message channel
-> This method is available once the app has started. 
-
-### `Hull.off(evtName, cb)`
-```js
-Hull.off('hull.ready',myFunction);
-```
-
-### Parameters
-Parameter | Type | Description
-----------|------|-------------
-evtName       | String         | The name of the event the function must be detached from.
-cb            | Function       | The function to be detached from the event.
-
-Unregisters the function from the event. As usual in such cases, it the reference of the function that is important, not its body.
-If you want to unregister a listener, take great care to ensure that when you do, you pass the __same memory reference__ than when you registered it.
-There is no tool to help you do this, just proper engineering.
-
-## Emit a message
-
-> This method is available once the app has started.
-
-```js
-Hull.emit('my.own.event',properties);
-Hull.on('my.own.event', function(properties){});
-```
-
-Use Hull as an event bus at will.
-### `Hull.emit(evtName, data)`
-
-
-Emits an event that will trigger all the registered listeners, passing them the `data` parameter.
-
-### Parameters
-Parameter | Type | Description
-----------|------|-------------
-eventName     | String         | The name of the event to be dispatched
-data          | mixed          | Data that will be passed to the subscribers
-
-### Other convenience methods
-See [https://github.com/asyncly/EventEmitter2](https://github.com/asyncly/EventEmitter2).
-
-- `Hull.onAny()`
-- `Hull.offAny()`
-- `Hull.once()`
-- `Hull.many()`
-
-# Traits
-Traits are how you record Attributes for a given user.
+The `Traits` method lets you record Attributes for a given user.
 
 You can use this to store factual properties, such as "birthdate", "number of connectors" et. al.
 Traits let you segment your customers in the [Dashboard](http://dashboard.hullapp.io)
@@ -486,7 +326,12 @@ Once sent, attributes aren't exposed to users anymore.
 
 
 
-# Tracking
+# Event Tracking
+
+Capturing User Actions in the page
+
+## `Hull.track(eventName, properties)`
+
 Tracking is how you record user Actions.
 
 Page views are sent automatically, but you will probably want to track additional, business-specific events, such as "Subscription activated", "Completed configuration" et al.
@@ -581,9 +426,109 @@ Hull.ready(function(){
 
 Hull.js is one of the rare libraries that allows businesses to recognize user activity across their different websites. Once a user has been recognized on one of your websites, the same identifiers will carry on across all your other properties where Hull.js is installed
 
-# Connectors
 
-Connectors can embed Client-side code, by having Hull.js inject their own Javascript in the page. When used inside [Connectors](/docs/apps/ships), Hull.js exposes methods to help you manage connectors.
+
+
+# Forwarding data to other services
+
+The Hull library offers a simple way to forward data that you capture to other services. To do so, simply subscribe to it's Event Bus and call your other trackers from there:
+
+## Subscribe to a message channel
+
+### `Hull.on(evtName, cb)`
+Hull emits predefined events, and conforms to [EventEmitter2](https://github.com/asyncly/EventEmitter2)'s signature.
+You subscribe to them with the `Hull.on()` method:
+
+- The current Event name is available in `this.event`
+- It is useful to adapt react on Hull's state
+
+> This method is available immediately at launch
+
+```js
+Hull.on('hull.ready', function(hull, me, app, org) {});
+
+//Forward events to Intercom
+Hull.on('hull.track', function(properties) {
+  Intercom('trackEvent', this.event, properties);
+  ga('send', this.event);
+});
+
+Hull.on('hull.traits', function(attributes) {
+  Intercom('update', attributes);
+});
+```
+
+> __Hint__: You can use wildcards in your event names to register to a class of events, like `hull.*`
+
+
+### Message list
+Event Name | Description | Arguments
+-----------|-------------|----------
+`hull.ready`        | `hull.js` has finished loading. | `Hull`, `me`, `app`, `org`
+`hull.ships.ready`  | Connectors are loaded.               | nothing
+`hull.user.update`  | User updated any property   | `me`
+`hull.track`       | `Hull.track()` called. | `properties`
+`hull.traits`      | `Hull.traits()` called.  | `event`
+
+### Parameters
+Parameter | Type | Description
+----------|------|-------------
+`evtName` | String  | The name of the event to attach to.
+`cb`      | Function | The function to be executed when the event is triggered.
+
+## Unsubscribe from a message channel
+> This method is available once the app has started. 
+
+### `Hull.off(evtName, cb)`
+```js
+Hull.off('hull.ready',myFunction);
+```
+
+### Parameters
+Parameter | Type | Description
+----------|------|-------------
+`evtName`       | String         | The name of the event the function must be detached from.
+`cb`            | Function       | The function to be detached from the event.
+
+Unregisters the function from the event. As usual in such cases, it the reference of the function that is important, not its body.
+If you want to unregister a listener, take great care to ensure that when you do, you pass the __same memory reference__ than when you registered it.
+There is no tool to help you do this, just proper engineering.
+
+### Emit a message through the local event bus
+
+If you're looking for a way to track user data, you should check [`hull.track()`](#events-tracking - `hull.emit` is a way to pass data inside the page for cross-library communication
+
+> This method is available once the app has started.
+
+```js
+Hull.emit('my.own.event',properties);
+Hull.on('my.own.event', function(properties){});
+```
+
+Use Hull as an event bus at will.
+### `Hull.emit(evtName, data)`
+
+
+Emits an event that will trigger all the registered listeners, passing them the `data` parameter.
+
+### Parameters
+Parameter | Type | Description
+----------|------|-------------
+eventName     | String         | The name of the event to be dispatched
+data          | mixed          | Data that will be passed to the subscribers
+
+### Other convenience methods
+See [https://github.com/asyncly/EventEmitter2](https://github.com/asyncly/EventEmitter2).
+
+- `Hull.onAny()`
+- `Hull.offAny()`
+- `Hull.once()`
+- `Hull.many()`
+
+
+# Embedding Connectors in the page
+
+Some connectors can inject code in the page, by having Hull.js inject their own Javascript in the page. When used from a  [Connectors](/docs/apps/ships), Hull.js exposes additional methods to help you manage connectors.
 
 ## Booting a connector
 
@@ -595,9 +540,8 @@ Hull.onEmbed(function(rootNode, deployment, hull) {
   console.log('Here is my root element : ', rootNode);
   console.log('and here is my environment: ', deployment);
 
-  hull.track("event",{parameters}); //GOOD
-  hull.share(...) //GOOD. Notice we're using hull instead of Hull
-  Hull.track("event",{parameters}) //BAD
+  hull.track("event",{ parameters }); //GOOD -> we're using the local hull instance
+  Hull.track("event",{ parameters }) //BAD -> we're referring to the global instance of hull, which is less safe.
 
 });
 ```
@@ -654,4 +598,3 @@ Hull.ready(function(hull, me, platform, org){
 ```
 
 <aside class="warning">This is an advanced method, if you want to start connectors manually. you're on your own ;p</aside>
-
