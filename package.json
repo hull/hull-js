@@ -13,7 +13,7 @@
     "git-rev-sync": "^1.5.1",
     "html-loader": "^0.4.3",
     "inline-style-loader": "0.0.5",
-    "lodash": "^4.11.1",
+    "lodash": "^4.17.13",
     "merge-stream": "^1.0.0",
     "putainde-localstorage": "^4.0.0",
     "qs": "^6.1.0",
