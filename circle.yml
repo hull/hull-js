@@ -1,26 +1,14 @@
 version: 2
-jobs: 
-  build: 
-    docker: 
+jobs:
+  build:
+    docker:
       - image: circleci/node:8.12
     working_directory: ~/repo
-    steps: 
-      - checkout
-      - run: yarn install
-      - run: ./node_modules/.bin/gulp deploy
-    branches: 
-      only: 
-        - /feature\/.*/
-  release: 
-    docker: 
-      - image: circleci/node:8.12
-    working_directory: ~/repo
-    steps: 
+    steps:
       - checkout
       - run: yarn install
       - run: ./node_modules/.bin/gulp deploy:release
       - run: ./scripts/sentry_release.sh
-    branches: 
-      only: 
-        - /feature\/.*/
-
+    branches:
+      only:
+        - release/0.10.0
