@@ -101,10 +101,6 @@ Register an event listener. See [events](#subscribe-to-an-event)
 
 Track events that happen in the page. See [Events Tracking](#events-tracking)
 
-### `Hull.traits()`
-
-Capture attributes. See [Capturing User Attributes](#capturing-user-attributes)
-
 #### `Hull.identify()`
 
 Set attributes. See [Attributes](#attributes)
@@ -160,10 +156,10 @@ Whenever a user visits a page where Hull.js is initalized, we will create an ide
 
 ## Identifying by Email
 
-You identify a User by Email by calling the `traits` method and passing it an email:
+You identify a User by Email by calling the `identify` method and passing it an email:
 
 ```js
-Hull.traits({ email: "foo@bar.com" })
+Hull.identify({ email: "foo@bar.com" })
 ```
 
 ## Identifying by External ID
@@ -274,14 +270,14 @@ Hull.alias("intercom:"+visitorID)
 
 Capturing User Attributes
 
-## `Hull.traits(attributes)`
+## `Hull.identify(attributes)`
 
-The `Traits` method lets you record Attributes for a given user.
+The `identify` method lets you record Attributes for a given user.
 
 You can use this to store factual properties, such as "birthdate", "number of connectors" et. al.
-Traits let you segment your customers in the [Dashboard](http://dashboard.hullapp.io)
+Attributes let you segment your customers in the [Dashboard](http://dashboard.hullapp.io)
 
-The first time we detect a new trait name (which are called Attributes in the Hull dashboard), we will try to recognize it's type.
+The first time we detect a new attribute name (which are called Attributes in the Hull dashboard), we will try to recognize it's type.
 
 - We support the following types: `String`, `Number`, `Date`, `Array`
 - We infer the types of an attribute so you don't have to specify it. Number and String types are inferred on the type of the value.
@@ -324,8 +320,8 @@ Once sent, attributes aren't exposed to users anymore.
 Sometimes, you only want to perform an update if the destination attribute was not present already, or increment/decrement a counter without knowing it's current. For this, we expose a few helpers to achieve this in a simple way.
 
 ```js
-//Work with multiple traits at once
-Hull.traits({
+//Work with multiple attributes at once
+Hull.identify({
   'numberA': {value: 12, operation: 'increment'}, //Increment the number
   'numberB': {value: 12, operation: 'decrement'}, //Decrement the number
   'name': {value: "foobar", operation: "setIfNull" }, //sets the value if nothing was there before
@@ -421,7 +417,7 @@ http://test.com/?hjs_event=Clicked%20Email&hjs_aid=fooBar1234&hjs_prop_emailCamp
 it would trigger the following events on the page:
 
 ```js
-Hull.identify({ name: 'Elon Musk' });
+Hull.identify({ name: 'Elon Musk' }); //Hull.traits() still supported for legacy purposes
 Hull.track('Clicked Email', { 'emailCampaign': 'ABM Campaign' });
 Hull.alias('fooBar123');
 ```
@@ -558,7 +554,7 @@ Hull.on('hull.track', function(properties) {
   ga('send', this.event);
 });
 
-Hull.on('hull.traits', function(attributes) {
+Hull.on('hull.identify', function(attributes) {
   Intercom('update', attributes);
 });
 ```
@@ -569,11 +565,11 @@ Hull.on('hull.traits', function(attributes) {
 ### Message list
 Event Name | Description | Arguments
 -----------|-------------|----------
-`hull.ready`        | `hull.js` has finished loading. | `Hull`, `me`, `app`, `org`
-`hull.ships.ready`  | Connectors are loaded.               | nothing
-`hull.user.update`  | User updated any property   | `me`
-`hull.track`       | `Hull.track()` called. | `properties`
-`hull.traits`      | `Hull.traits()` called.  | `event`
+`hull.ready`         | `hull.js` has finished loading. | `Hull`, `me`, `app`, `org`
+`hull.ships.ready`   | Connectors are loaded.               | nothing
+`hull.user.update`   | User updated any property   | `me`
+`hull.track`         | `Hull.track()` called. | `properties`
+`hull.identify`      | `Hull.identify()` called.  | `event`
 
 ### Parameters
 Parameter | Type | Description
