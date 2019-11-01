@@ -7,7 +7,7 @@ class Trait
     @name = name
     if value?
       # If value is an object, then it has to be compatible
-      if _.isObject(value) && _.includes(Object.keys(value), 'value') && _.includes(['inc', 'dec', 'set'], value.operation)
+      if _.isObject(value) && _.includes(Object.keys(value), 'value') && _.includes(['inc', 'dec', 'set', 'increment', 'decrement', 'setIfNull'], value.operation)
         # new Trait('a_number', {value: 20, operation: 'dec'});
         @raw assign({},value,{name:@name})
       else
@@ -17,11 +17,20 @@ class Trait
   inc: (step = 1)->
     @raw({ name: @name, operation: 'inc', value: step })
 
+  increment: (step = 1)->
+    @raw({ name: @name, operation: 'inc', value: step })
+
   dec: (step = 1)->
+    @raw({ name: @name, operation: 'dec', value: step })
+
+  decrement: (step = 1)->
     @raw({ name: @name, operation: 'dec', value: step })
 
   set: (value)->
     @raw({ name: @name, operation: 'set', value: value })
+
+  setIfNull: (value)->
+    @raw({ name: @name, operation: 'setIfNull', value: value })
 
   raw: (payload)->
     @_api.message('me/traits', 'put', payload)
