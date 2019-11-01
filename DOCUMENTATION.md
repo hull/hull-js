@@ -359,6 +359,13 @@ Track a user event.
 
 # Form Tracking
 
+### `Hull.trackForm(forms, eventName, data)`
+Listen to form submissions and  performs a tracking call
+
+- `forms`: An HTML DOM element or array of such. jQuery supported
+- `event`: A String defining the name of the event to track or a function that returns it after being passed the form
+- `properties`: [Optional] An object of properties, or a function that returns an object, after being passed the form
+
 ```js
 //form is an HTML Form Element or an array of form elements
 // i.e. document.getElementsByTagName('form');
@@ -375,14 +382,6 @@ Hull.trackForm(forms, function event(form){
   return <object>
 });
 ```
-
-### `Hull.trackForm(eventName, data)`
-Listen to form submissions and  performs a tracking call
-
-- `forms`: An HTML DOM element or array of such. jQuery supported
-- `event`: A String defining the name of the event to track or a function that returns it after being passed the form
-- `properties`: [Optional] An object of properties, or a function that returns an object, after being passed the form
-
 
 # Querystring Tracking
 
