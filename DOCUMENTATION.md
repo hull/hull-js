@@ -287,24 +287,6 @@ The first time we detect a new trait name (which are called Attributes in the Hu
 Hull.traits({'my new trait': 'has this value'});
 ```
 
-> You can also atomically update a value with some helpers:
-
-```js
-Hull.traits({'carrier': {value: 'swallow'}}) //Sets carrier to 'swallow'
-Hull.traits({'carrier': {value: 'swallow', operation: 'set'}}) //Equivalent to the above
-
-//Select the operation to apply
-Hull.traits({'a_number': {value: 12}}) //Sets the trait to the integer `12`
-Hull.traits({'a_number': {value: 12, operation: 'inc'}}) //The trait now has the value `24`
-Hull.traits({'a_number': {value: 20, operation: 'dec'}}) //The trait now has the value `4`
-
-//Work with multiple traits at once
-Hull.traits({
-  'numberA': {value: 12, operation: 'inc'},
-  'numberB': {value: "this is cool"},
-});
-```
-
 ```js
 Hull.traits({
   string: "foo",
@@ -324,6 +306,18 @@ Once sent, attributes aren't exposed to users anymore.
   This method is available immediately at launch
 </aside>
 
+
+### Atomic Operations
+Sometimes, you only want to perform an update if the destination attribute was not present already, or increment/decrement a counter without knowing it's current. For this, we expose a few helpers to achieve this in a simple way. 
+
+```js
+//Work with multiple traits at once
+Hull.traits({
+  'numberA': {value: 12, operation: 'increment'}, //Increment the number
+  'numberB': {value: 12, operation: 'decrement'}, //Decrement the number
+  'name': {value: "foobar", operation: "setIfNull" }, //sets the value if nothing was there before
+});
+```
 
 
 # Event Tracking
