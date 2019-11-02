@@ -50,11 +50,11 @@ class Client
       confirmEmail   : auth.confirmEmail
       linkIdentity   : auth.linkIdentity
       unlinkIdentity : auth.unlinkIdentity
-      alias          : alias
       track          : tracker.track
-      identify       : tracker.identify
       trackForm      : tracker.trackForm
+      alias          : alias
       flag           : flag
+      identify       : traits
       traits         : traits
       trait          : traits
       share          : sharer.share
