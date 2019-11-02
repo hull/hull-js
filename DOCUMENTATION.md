@@ -101,7 +101,7 @@ Register an event listener. See [events](#subscribe-to-an-event)
 
 Track events that happen in the page. See [Events Tracking](#events-tracking)
 
-#### `Hull.identify()`
+#### `Hull.traits()`
 
 Set attributes. See [Attributes](#attributes)
 
@@ -156,10 +156,10 @@ Whenever a user visits a page where Hull.js is initalized, we will create an ide
 
 ## Identifying by Email
 
-You identify a User by Email by calling the `identify` method and passing it an email:
+You identify a User by Email by calling the `traits` method and passing it an email:
 
 ```js
-Hull.identify({ email: "foo@bar.com" })
+Hull.traits({ email: "foo@bar.com" })
 ```
 
 ## Identifying by External ID
@@ -270,9 +270,9 @@ Hull.alias("intercom:"+visitorID)
 
 Capturing User Attributes
 
-## `Hull.identify(attributes)`
+## `Hull.traits(attributes)`
 
-The `identify` method lets you record Attributes for a given user.
+The `traits` method lets you record Attributes for a given user.
 
 You can use this to store factual properties, such as "birthdate", "number of connectors" et. al.
 Attributes let you segment your customers in the [Dashboard](http://dashboard.hullapp.io)
@@ -293,11 +293,11 @@ The first time we detect a new attribute name (which are called Attributes in th
 
 
 ```js
-Hull.identify({'my_new_attribute': 'has this value'});
+Hull.traits({'my_new_attribute': 'has this value'});
 ```
 
 ```js
-Hull.identify({
+Hull.traits({
   string: "foo",
   fakeNumber: "123", //WILL BE RECOGNIZED AS A STRING
   realNumber: 123 //Will be recognized as a number
@@ -306,7 +306,7 @@ Hull.identify({
 > Be mindful of the difference betwen strings and numbers:
 
 
-### `Hull.identify({ attribute_name: value })`
+### `Hull.traits({ attribute_name: value })`
 Sets the `value` to the attribute of name `attribute_name`.
 
 Once sent, attributes aren't exposed to users anymore.
@@ -321,7 +321,7 @@ Sometimes, you only want to perform an update if the destination attribute was n
 
 ```js
 //Work with multiple attributes at once
-Hull.identify({
+Hull.traits({
   'numberA': {value: 12, operation: 'increment'}, //Increment the number
   'numberB': {value: 12, operation: 'decrement'}, //Decrement the number
   'name': {value: "foobar", operation: "setIfNull" }, //sets the value if nothing was there before
@@ -400,7 +400,7 @@ Hull.trackForm(forms, function event(form){
 
 # Querystring Tracking
 
-Hull.js can trigger tracking and identifys calls based on what you pass in the URL querystring. This helps tracking email clickthroughs and social media clicks, and ads for instance.
+Hull.js can trigger tracking and traits calls based on what you pass in the URL querystring. This helps tracking email clickthroughs and social media clicks, and ads for instance.
 
 
 ### Here are the parameters you can use:
@@ -408,7 +408,7 @@ Hull.js can trigger tracking and identifys calls based on what you pass in the U
 Parameter | Description | Action
 -----------|-------------|----------
 `hjs_aid`| The anonymousId to set for the user.	| This will tell Hull to alias this value for as an `anonymousId`.
-`hjs_attr_<attribute_name>` |	An attribute to pass to the identifys call | Triggers a `identify` call with this attribute
+`hjs_attr_<attribute_name>` |	An attribute to pass to the traits call | Triggers a `traits` call with this attribute
 `hjs_event`	| The event name to pass to a track call.	| This will trigger a track call.
 `hjs_prop_<property>`	| A property to pass to the tracking call	| Doesn't trigger the call in itself, just sets properties that will be embedded in the event you passed with `hjs_event`
 So for example, with this URL:
@@ -417,7 +417,7 @@ http://test.com/?hjs_event=Clicked%20Email&hjs_aid=fooBar1234&hjs_prop_emailCamp
 it would trigger the following events on the page:
 
 ```js
-Hull.identify({ name: 'Elon Musk' }); //Hull.traits() still supported for legacy purposes
+Hull.traits({ name: 'Elon Musk' }); //Hull.traits() still supported for legacy purposes
 Hull.track('Clicked Email', { 'emailCampaign': 'ABM Campaign' });
 Hull.alias('fooBar123');
 ```
@@ -455,7 +455,7 @@ Event Name | Description | Arguments
 `hull.ships.ready`  | Connectors are loaded.               | nothing
 `hull.user.update`  | User updated any property   | `me`
 `hull.track`        | `Hull.track()` called. | `properties`
-`hull.identify`     | `Hull.identify()` called.  | `event`
+`hull.traits`     | `Hull.traits()` called.  | `event`
 
 ### Parameters
 Parameter | Type | Description
@@ -554,7 +554,7 @@ Hull.on('hull.track', function(properties) {
   ga('send', this.event);
 });
 
-Hull.on('hull.identify', function(attributes) {
+Hull.on('hull.traits', function(attributes) {
   Intercom('update', attributes);
 });
 ```
@@ -569,7 +569,7 @@ Event Name | Description | Arguments
 `hull.ships.ready`   | Connectors are loaded.               | nothing
 `hull.user.update`   | User updated any property   | `me`
 `hull.track`         | `Hull.track()` called. | `properties`
-`hull.identify`      | `Hull.identify()` called.  | `event`
+`hull.traits`      | `Hull.traits()` called.  | `event`
 
 ### Parameters
 Parameter | Type | Description
