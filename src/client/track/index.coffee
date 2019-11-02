@@ -52,19 +52,15 @@ class Tracker
         props = if _.isFunction(properties) then properties(form) else properties
 
         _isSubmitted = false
-        submit = ->
+        submit = =>
           return if _isSubmitted
           _isSubmitted = true
           form.submit()
 
-        setTimeout () =>
-          submit()
+        setTimeout submit
         , 1000
 
-        @track(evt, props).then =>
-          submit()
-        , =>
-          submit()
+        @track(evt, props).then submit, submit
       $ = (window.jQuery || window.Zepto)
       if $ then $(form).submit(trackSubmit) else listen(form, 'submit', trackSubmit)
     true
