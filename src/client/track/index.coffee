@@ -44,16 +44,27 @@ class Tracker
   trackForm: (forms, ev, properties) =>
     return false unless !!forms
     forms = [forms] if _.isElement(forms)
-    _.map forms, (form) => 
+    _.map forms, (form) =>
       return console.log("Not an HTML element", form) unless _.isElement(form)
       trackSubmit = (e) =>
         e.preventDefault();
         evt = if _.isFunction(ev) then ev(form) else ev
         props = if _.isFunction(properties) then properties(form) else properties
-        setTimeout () =>
+
+        _isSubmitted = false
+        submit = ->
+          return if _isSubmitted
+          _isSubmitted = true
           form.submit()
-        , 500
-        @track(evt, props)
+
+        setTimeout () =>
+          submit()
+        , 1000
+
+        @track(evt, props).then =>
+          submit()
+        , =>
+          submit()
       $ = (window.jQuery || window.Zepto)
       if $ then $(form).submit(trackSubmit) else listen(form, 'submit', trackSubmit)
     true
