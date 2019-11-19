@@ -27,7 +27,7 @@ class QueryString
     traits = pick('hjs_trait_', q)
     @traits(traits) if _.size(traits)
 
-    @traits({ email: hjs_email }) if hjs_email
+    @traits({ email: { operation: "setIfNull", value: hjs_email} }) if hjs_email
 
     attrs = pick('hjs_attr_', q)
     @traits(attrs) if _.size(attrs)

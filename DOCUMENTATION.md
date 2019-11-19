@@ -407,6 +407,7 @@ Hull.js can trigger tracking and traits calls based on what you pass in the URL 
 
 Parameter | Description | Action
 -----------|-------------|----------
+`hjs_email`| The email to set for the user.	| This will tell Hull update the user's email to this value, **only if no email was set before**
 `hjs_aid`| The anonymousId to set for the user.	| This will tell Hull to alias this value for as an `anonymousId`.
 `hjs_attr_<attribute_name>` |	An attribute to pass to the traits call | Triggers a `traits` call with this attribute
 `hjs_event`	| The event name to pass to a track call.	| This will trigger a track call.
