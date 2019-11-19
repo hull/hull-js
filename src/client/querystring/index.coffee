@@ -20,12 +20,14 @@ class QueryString
     q = qs.decode()
     return unless _.size(q)
 
-    { hjs_uid, hjs_event, hjs_aid } = q
+    { hjs_email, hjs_uid, hjs_event, hjs_aid } = q
 
     @alias(hjs_aid) if hjs_aid
 
     traits = pick('hjs_trait_', q)
     @traits(traits) if _.size(traits)
+
+    @traits({ email: hjs_email }) if hjs_email
 
     attrs = pick('hjs_attr_', q)
     @traits(attrs) if _.size(attrs)
