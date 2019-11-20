@@ -3,6 +3,8 @@
 hull.js lets you authenticate users and perform API calls from your browser
 It is the library you install when you paste a Platform snippet in your page's `HEAD` tag.
 
+To generate the Hull.js snippet for your website, first head to the Guides section ["Getting Started with Hull.js"](https://www.hull.io/docs/guides/getting-started/getting-started-hull-js)
+
 # Starting Hull
 
 > Automatic initialization
