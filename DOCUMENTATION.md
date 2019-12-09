@@ -6,7 +6,9 @@ It also lets you easily embed certain connectors in the page to inject functiona
 
 It is the library you install when you paste a Platform snippet in your page's `HEAD` tag.
 
-# Booting Hull
+To generate the Hull.js snippet for your website, first head to the Guides section ["Getting Started with Hull.js"](https://www.hull.io/docs/guides/getting-started/getting-started-hull-js)
+
+# Starting Hull
 
 > Automatic initialization
 
