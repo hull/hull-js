@@ -51,9 +51,8 @@ class Tracker
       if nodes.indexOf(event.target)==-1
         return
       event.preventDefault();
-      serialized = serialize(event.target, { hash: true })
-      evt = if _.isFunction(eventName) then eventName(event.target, serialized) else eventName
-      props = if _.isFunction(properties) then properties(event.target, serialized) else properties
+      evt = if _.isFunction(eventName) then eventName(event.target, serialize(event.target, { hash: true })) else eventName
+      props = (if _.isFunction(properties) then properties(event.target, serialize(event.target, { hash: true })) else properties)||serialize(event.target, { hash: true })
       _isSubmitted = false
       submit = =>
         return if _isSubmitted
@@ -61,7 +60,7 @@ class Tracker
         event.target.submit()
       timeout = setTimeout submit
       , 1000
-      @track(evt, props||serialized).then submit, submit
+      @track(evt, props).then submit, submit
 
     if isDynamic
       listen(document.body, "submit", trackSubmit, true)
