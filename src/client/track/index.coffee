@@ -1,6 +1,7 @@
 _        = require '../../utils/lodash'
 EventBus = require '../../utils/eventbus'
 assign   = require '../../polyfills/assign'
+serialize = require '../../utils/form-serialize';
 
 bnd = if window.addEventListener then 'addEventListener' else 'attachEvent';
 unbnd = if window.removeEventListener then 'removeEventListener' else 'detachEvent';
@@ -50,8 +51,9 @@ class Tracker
       if nodes.indexOf(event.target)==-1
         return
       event.preventDefault();
-      evt = if _.isFunction(eventName) then eventName(event.target) else eventName
-      props = if _.isFunction(properties) then properties(event.target) else properties
+      serialized = serialize(event.target, { hash: true })
+      evt = if _.isFunction(eventName) then eventName(event.target, serialized) else eventName
+      props = if _.isFunction(properties) then properties(event.target, serialized) else properties
       _isSubmitted = false
       submit = =>
         return if _isSubmitted
@@ -59,7 +61,7 @@ class Tracker
         event.target.submit()
       timeout = setTimeout submit
       , 1000
-      @track(evt, props).then submit, submit
+      @track(evt, props||serialized).then submit, submit
 
     if isDynamic
       listen(document.body, "submit", trackSubmit, true)

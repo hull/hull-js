@@ -57,21 +57,9 @@
         document.body.appendChild(form)
       }
 
-      Hull.trackForm("form.trackable", function event(form) {
-        // Your custom logic to extract form Name
-        return "Form Submitted: "+form.id
-      }, function properties(form) {
+      Hull.trackForm("form.trackable", "Form Submitted", function properties(form, serialized) {
         debugger
-        // Your custom logic to extract form properties
-        var props = {};
-        //Simple, naive form serialization. You probably want to define how to capture data more accurately;
-        Array.prototype.slice.call(form.elements).map(function(element){
-          // No need to capture the Submit button in the form;
-          if (element.type==="submit"){ return; }
-          props[element.name] = element.value;
-        })
-        console.log("Sending Props", props)
-        return props;
+        return serialized;
       })
     </script>
   </head>

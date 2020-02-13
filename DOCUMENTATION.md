@@ -391,17 +391,29 @@ Listen to form submissions and  performs a tracking call
 // Static forms capture. Need to call again if forms are added after the fact.
 // and be careful not to attach handlers to the same forms twice or they will be double submitted
 var forms = document.querySelector("form");
-Hull.trackForm(forms, event, [properties]);
-Hull.trackForm(forms, "Event Name", { property: 'foo' });
+
+//By default we auto-serialize the form properties; See below how to change what's being sent;
+Hull.trackForm(forms, "Form Submitted");
 
 //Dynamic form handling, will capture forms created in Single Page Apps, even if they're created after we call this function.
-Hull.trackForm("form.trackable", "Event Name", { property: 'foo' });
+Hull.trackForm("form.trackable", "Form Submitted");
 
-Hull.trackForm("form.trackable", function event(form) {
+//You can pass a static object if you want.
+Hull.trackForm("form.trackable", "Form Submitted", { property: 'foo' });
+
+// You can specify a function for both the Event and the properties to be generated in a custom way.
+Hull.trackForm("form.trackable", function event(form, serialized) {
   // Your custom logic to extract form Name
-  return "Form Submitted: "+form.id
-}, function properties(form) {
-  // Your custom logic to extract form properties
+  return "Form Submitted"
+}, function properties(form, serialized) {
+  //serialized is a pre-serialized version of the form. You can return it as is, or transform it.
+  return serialized;
+});
+
+// You can use your own custom logic to extract form properties
+Hull.trackForm("form.trackable", function event(form, serialized) {
+  return "Form Submitted"
+}, function properties(form, serialized) {
   var props = {};
   //Simple, naive form serialization. You probably want to define how to capture data more accurately;
   Array.prototype.slice.call(form.elements).map(function(element){
