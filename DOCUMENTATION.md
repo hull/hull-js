@@ -377,25 +377,40 @@ Hull.ready(function(){
 ### `Hull.trackForm(forms, eventName, data)`
 Listen to form submissions and  performs a tracking call
 
-- `forms`: An HTML DOM element or array of such. jQuery supported
-- `event`: A String defining the name of the event to track or a function that returns it after being passed the form
+- `forms`: An HTML DOM element or array of such, or a String
+- `eventName`: A String defining the name of the event to track or a function that returns it after being passed the form
 - `properties`: [Optional] An object of properties, or a function that returns an object, after being passed the form
 
 ```js
-//form is an HTML Form Element or an array of form elements
+//form can be:
+// - an HTML Form Element
+// - an array of form elements
+// - a String
 // i.e. document.getElementsByTagName('form');
 
+// Static forms capture. Need to call again if forms are added after the fact.
+// and be careful not to attach handlers to the same forms twice or they will be double submitted
+var forms = document.querySelector("form");
 Hull.trackForm(forms, event, [properties]);
-
 Hull.trackForm(forms, "Event Name", { property: 'foo' });
 
-Hull.trackForm(forms, function event(form){
+//Dynamic form handling, will capture forms created in Single Page Apps, even if they're created after we call this function.
+Hull.trackForm("form.trackable", "Event Name", { property: 'foo' });
+
+Hull.trackForm("form.trackable", function event(form) {
   // Your custom logic to extract form Name
-  return <string>
-}, function properties(form){
+  return "Form Submitted: "+form.id
+}, function properties(form) {
   // Your custom logic to extract form properties
-  return <object>
-});
+  var props = {};
+  //Simple, naive form serialization. You probably want to define how to capture data more accurately;
+  Array.prototype.slice.call(form.elements).map(function(element){
+    // No need to capture the Submit button in the form;
+    if (element.type==="submit"){ return; }
+    props[element.name] = element.value;
+  })
+  return props;
+})
 ```
 
 # Querystring Tracking
