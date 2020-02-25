@@ -1,6 +1,6 @@
 {
   "name": "hull-js",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "main": "lib/hull.js",
   "dependencies": {
     "babel-runtime": "^6.6.1",
