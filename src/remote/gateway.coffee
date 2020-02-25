@@ -24,7 +24,6 @@ normalizePath = (path) ->
 batchable = (threshold, callback) ->
   timeout = null
   args = []
-
   ->
     args.push Array::slice.call(arguments)
     clearTimeout timeout
@@ -45,17 +44,6 @@ reduceHeaders = (headers)->
     memo
   , {}
 
-formatBatchParams = (requests) ->
-  params = { sequential: true }
-  params.ops = for request in requests
-    r = request[0]
-    c = {method: r.method, url: r.path}
-    c.params  = r.params if r.params?
-    c.headers = r.headers if r.headers?
-    c
-
-  params
-
 resolveResponse = (request, response={}, resolve, reject)->
   headers = reduceHeaders(response.headers)
 
@@ -71,10 +59,9 @@ resolveResponse = (request, response={}, resolve, reject)->
 class Gateway
 
   constructor: (config={}) ->
-    { batching, appId, identify } = config
+    { appId, identify } = config
     @identify = identify
-    @options = _.defaults({}, batching, { min:1, max:1, delay:2 })
-    @queue = batchable @options.delay, (requests) -> @flush(requests)
+    @queue = batchable 10, (requests) -> @flush(requests)
 
   identifyBrowserAndSession: ->
     ident = {}
@@ -107,13 +94,9 @@ class Gateway
         resolve(h)
 
   flush: (requests) ->
-    if requests.length <= @options.min
-      while requests.length
-        [request, resolve, reject] = requests.pop()
-        @handleOne(request, resolve, reject)
-    else
-      @handleMany(requests.splice(0, @options.max))
-      @flush(requests) if requests.length
+    while requests.length
+      [request, resolve, reject] = requests.pop()
+      @handleOne(request, resolve, reject)
 
   after_middlewares : []
   before_middlewares : []
@@ -154,18 +137,5 @@ class Gateway
       reject({response,  request, headers: {}})
 
     @fetch(request).then(success, error)
-
-  # Batching API posting
-  handleMany: (requests) ->
-    params = formatBatchParams(requests)
-
-    success = (responses)->
-      resolveResponse(requests[i], response, requests[i][1], requests[i][2]) for response, i in responses.body.results
-      undefined #Don't forget this to keep the promise chain alive
-
-    error = (response)->
-      request[1].reject({response:response, headers: {}, request: request}) for request in requests
-
-    @fetch({method: 'post', path: '/api/v1/batch', params }).then(success, error)
 
 module.exports = Gateway
