@@ -9,7 +9,6 @@ Api          = require './api'
 Auth         = require './auth'
 Flag         = require './flag/index'
 Tracker      = require './track/index'
-Traits       = require './traits/index'
 Sharer       = require './sharer/index'
 QueryString  = require './querystring/index'
 
@@ -28,9 +27,8 @@ class Client
 
     sharer = new Sharer(currentConfig);
     flag   = new Flag(api)
-    traits = new Traits(api)
+    traits = (payload) -> api.message({ path: '/me/traits' }, 'put', payload)
     qs     = new QueryString(traits, tracker.track, alias)
-
 
     if @currentConfig.get('debug.enabled')
       EventBus.on 'hull.**', (args...)->
@@ -56,7 +54,6 @@ class Client
       flag           : flag
       identify       : traits
       traits         : traits
-      trait          : traits
       share          : sharer.share
       findUrl        : findUrl
       parseQueryString : qs.parse
