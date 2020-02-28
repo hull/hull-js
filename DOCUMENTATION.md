@@ -6,7 +6,8 @@ It also lets you easily embed certain connectors in the page to inject functiona
 
 It is the library you install when you paste a Platform snippet in your page's `HEAD` tag.
 
-To generate the Hull.js snippet for your website, first head to the Guides section ["Getting Started with Hull.js"](https://www.hull.io/docs/guides/getting-started/getting-started-hull-js)
+# Booting Hull
+To generate the Hull.js snippet for your website, first head to the Guides section ["Getting Started with Hull.js"](https://www.hull.io/docs/guides/getting-started/getting-started-hull-js/)
 
 # Starting Hull
 
@@ -78,7 +79,7 @@ Hull.on('hull.ready', function (hull, me, platform, org) {
 
 Use `Hull.ready()` to call a function as soon as `hull.js` is
 initialized. If you call the function after the initialization is
-done, the function is called immediately.
+done, the function is called immediately. Inside [Connectors](https://www.hull.io/docs/reference/connectors), You will probably use `Hull.onEmbed()` instead.
 
 `Hull.ready()` can also be used as a promise like this:
 
