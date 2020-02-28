@@ -7,6 +7,9 @@ It also lets you easily embed certain connectors in the page to inject functiona
 It is the library you install when you paste a Platform snippet in your page's `HEAD` tag.
 
 # Booting Hull
+To generate the Hull.js snippet for your website, first head to the Guides section ["Getting Started with Hull.js"](https://www.hull.io/docs/guides/getting-started/getting-started-hull-js/)
+
+# Starting Hull
 
 > Automatic initialization
 
@@ -81,7 +84,7 @@ Hull.on('hull.ships.ready', function () {
 
 Use `Hull.ready()` to call a function as soon as `hull.js` is
 initialized. If you call the function after the initialization is
-done, the function is called immediately. Inside [Connectors](/docs/reference/connectors), You will probably use `Hull.onEmbed()` instead.
+done, the function is called immediately. Inside [Connectors](https://www.hull.io/docs/reference/connectors), You will probably use `Hull.onEmbed()` instead.
 
 `Hull.ready()` can also be used as a promise like this:
 
@@ -630,11 +633,11 @@ See [https://github.com/asyncly/EventEmitter2](https://github.com/asyncly/EventE
 
 # Embedding Connectors in the page
 
-Some connectors can inject code in the page, by having Hull.js inject their own Javascript in the page. When used from a  [Connectors](/docs/reference/connectors), Hull.js exposes additional methods to help you manage connectors.
+Some connectors can inject code in the page, by having Hull.js inject their own Javascript in the page. When used from a  [Connectors](https://www.hull.io/docs/reference/connectors), Hull.js exposes additional methods to help you manage connectors.
 
 ## Booting a connector
 
-Connectors can deploy JS code to your page, and expose settings in your dashboard you can use to configure them. Checkout [The docs on Client-side connectors](http://www.hull.io/docs/reference/connectors#client-side) to learn more about what is available.
+Connectors can deploy JS code to your page, and expose settings in your dashboard you can use to configure them. Checkout [The docs on Client-side connectors](https://www.hull.io/docs/reference/connectors#client-side) to learn more about what is available.
 
 ```js
 Hull.onEmbed(function(rootNode, deployment, hull) {
@@ -662,7 +665,7 @@ const deployment = {
 
 
 ### `Hull.onEmbed(callback)`
-Checkout [Booting your application](/docs/reference/connectors#booting-your-application) in the Connectors documentation for more details
+Checkout [Booting your application](https://www.hull.io/docs/reference/connectors#booting-your-application) in the Connectors documentation for more details
 
 ## Disabling Connectors Automatic embedding
 
