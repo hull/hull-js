@@ -72,14 +72,15 @@ class Gateway
 
   constructor: (config={}) ->
     { batching, appId, identify } = config
+    @apiEndpoint = config.apiEndpoint
     @identify = identify
     @options = _.defaults({}, batching, { min:1, max:1, delay:2 })
     @queue = batchable @options.delay, (requests) -> @flush(requests)
 
   identifyBrowserAndSession: ->
     ident = {}
-    ident['Hull-Bid'] = @identify.browser unless cookies.get('_bid')
-    ident['Hull-Sid'] = @identify.session unless cookies.get('_sid')
+    ident['Hull-Bid'] = @identify.browser
+    ident['Hull-Sid'] = @identify.session
     ident
 
   resetIdentify: ->
@@ -92,8 +93,13 @@ class Gateway
 
     headers = assign(@identifyBrowserAndSession(), RemoteHeaderStore.getState(), headers)
 
+    if @apiEndpoint
+      endpoint = [@apiEndpoint, path].join('')
+    else
+      endpoint = path
+
     #TODO Check SuperAgent under IE8 and below
-    s = superagent(method, path).set(headers)
+    s = superagent(method, endpoint).set(headers)
 
     if params? and method=='GET' then s.query(QSEncoder.encode(params)) else s.send(params)
 
