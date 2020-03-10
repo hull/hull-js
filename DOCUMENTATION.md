@@ -58,7 +58,7 @@ autoStart | String | Default: `true`, Auto Start Hull on load (call `Hull.init()
 embed | Boolean | Default:`true`. Skip embedding connectors in the page.
 debug | Boolean | Default:`false`. Log messages. VERY useful during development to catch errors in promise chains.
 verbose | Boolean | Default:`false`. Log even more things such as network traffic. Needs `debug: true`
-accessToken | String | A signed JWT, telling Hull to automatically log-in a user fetched from your backend. See ["Bring your own users"](#bring-your-own-users)
+accessToken | String | A signed JWT, setting identity claims for the current user. See ["Bring your own users"](#bring-your-own-users)
 anonymousId | String | Override the auto generated anonymousId. Use the one provided.
 sessionId | String | Override the auto generated sessionId. Use the one provided.
 
@@ -66,17 +66,12 @@ sessionId | String | Override the auto generated sessionId. Use the one provided
 ## Methods available immediately
 
 ```js
-Hull.ready(function (hull, me, platform, org) {
-  console.log('This is your wrapper for Hull', hull);
-  if (me) { console.log("You're connected, and here's your user:", me); }
+Hull.ready(function () {
+  console.log('This is your wrapper for Hull', Hull);
 });
 
 Hull.on('hull.ready', function (hull, me, platform, org) {
   console.log('Here you go!');
-});
-
-Hull.on('hull.ships.ready', function () {
-  console.log('Connectors are available in page');
 });
 ```
 
@@ -84,13 +79,13 @@ Hull.on('hull.ships.ready', function () {
 
 Use `Hull.ready()` to call a function as soon as `hull.js` is
 initialized. If you call the function after the initialization is
-done, the function is called immediately. Inside [Connectors](https://www.hull.io/docs/reference/connectors), You will probably use `Hull.onEmbed()` instead.
+done, the function is called immediately.
 
 `Hull.ready()` can also be used as a promise like this:
 
 ```js
-Hull.ready().then(({ hull, me, app, org }) => {
-  console.log('All good', me.name)
+Hull.ready().then(() => {
+  console.log('All good')
 });
 ```
 
@@ -132,14 +127,10 @@ These methods are available right away, even before <code>Hull.init()</code> is 
   window.hullAsyncInit = function(hull){
     console.log('Hull Async Init', hull),
 
-    hull.on('hull.ready', function(hull, user, app, org) {
+    hull.on('hull.ready', function(hull) {
       console.log('Hull Ready from event')
     });
-    hull.on('hull.ships.ready', function() {
-      console.log('Hull Ships Ready');
-    });
-
-    hull.ready(function(hull, user, app, org) {
+    hull.ready(function(hull) {
       console.log('Hull Ready!');
     });
   }
@@ -171,13 +162,6 @@ To increase security, when identifying users as they use your product, we need y
 
 You can then pass it to Hull to identify the user.[ Here's an article explaining how to generate this token](https://www.hull.io/docs/reference/identity_resolution/)
 
-> Log the user in with a token
-
-```js
-const user = await Hull.login({ access_token: SIGNED_JSON_WEB_TOKEN_FROM_BACKEND });
-//User Logged in with Hull Access Token
-```
-
 > Or during initialization:
 
 ```js
@@ -201,42 +185,6 @@ Hull.init({
 
 If you create a Hull access token (jwt) on the server, you can pass it and we'll log the user in for you. This is used in the [Bring your own users scenario](https://www.hull.io/docs/reference/identity_resolution/) where either have created in advance or are creating JWT access tokens on the fly for your users.
 
-## Clearing Identifiers
-
-### `Hull.logout()`
-Logs the current User out.
-
-```js
-Hull.logout().then(function() {
-  console.log('Goodbye');
-}).catch(function(err){
-  console.log('Something happened', err);
-});
-
-```
-
-## Getting the current User's profile
-
-### `Hull.currentUser()`
-
-When a User is currently logged in, `Hull.currentUser()` returns the current User as an object literal. Otherwise, it returns `false`.
-
-> Example Response
-
-```json
-{
-  "id": "50f5768ce78fa367da000001",
-  "updated_at": "2015-11-19T11:04:28Z",
-  "created_at": "2013-01-15T15:32:28Z",
-  "name": "Firstname lastname",
-  "username": null,
-  "first_name": "Firstname",
-  "last_name": "lastname",
-  "description": null,
-  "email": "user@host.com",
-  [...]
-}
-```
 
 ## Getting the current configuration
 
@@ -270,8 +218,6 @@ Hull.alias("intercom:"+visitorID)
 ```
 
 # Capturing User Attributes
-
-Capturing User Attributes
 
 ## `Hull.traits(attributes)`
 
@@ -427,93 +373,10 @@ Hull.alias('fooBar123');
 ```
 You can pass up to one of each trigger parameter as shown in the example above.
 
-# Cross-Domain Identity Resolution
-
-Hull.js is one of the rare libraries that allows businesses to recognize user activity across their different websites. Once a user has been recognized on one of your websites, the same identifiers will carry on across all your other properties where Hull.js is installed
 
 # Event Bus
 
 The Hull library embeds a message bus to which you can subscribe to be notified of lifecycle events, and emit your own events as needed.
-
-## Subscribe to a message channel
-
-> This method is available immediately at launch
-
-```js
-Hull.on('hull.init', function(hull, me, app, org) {});
-```
-
-> __Hint__: You can use wildcards in your event names to register to a class of events.
-
-### `Hull.on(evtName, cb)`
-Hull emits predefined events, and conforms to [EventEmitter2](https://github.com/asyncly/EventEmitter2)'s signature.
-You subscribe to them with the `Hull.on()` method:
-
-- The current Event name is available in `this.event`
-- It is useful to adapt react on Hull's state
-
-### Message list
-Event Name | Description | Arguments
------------|-------------|----------
-`hull.ready`        | `hull.js` has finished loading. | `Hull`, `me`, `app`, `org`
-`hull.ships.ready`  | Connectors are loaded.               | nothing
-`hull.user.update`  | User updated any property   | `me`
-`hull.track`        | `Hull.track()` called. | `properties`
-`hull.traits`     | `Hull.traits()` called.  | `event`
-
-### Parameters
-Parameter | Type | Description
-----------|------|-------------
-evtName | String  | The name of the event to attach to.
-cb      | Function | The function to be executed when the event is triggered.
-
-## Unsubscribe from a message channel
-> This method is available once the app has started.
-
-### `Hull.off(evtName, cb)`
-```js
-Hull.off('hull.ready',myFunction);
-```
-
-### Parameters
-Parameter | Type | Description
-----------|------|-------------
-evtName       | String         | The name of the event the function must be detached from.
-cb            | Function       | The function to be detached from the event.
-
-Unregisters the function from the event. As usual in such cases, it the reference of the function that is important, not its body.
-If you want to unregister a listener, take great care to ensure that when you do, you pass the __same memory reference__ than when you registered it.
-There is no tool to help you do this, just proper engineering.
-
-## Emit a message
-
-> This method is available once the app has started.
-
-```js
-Hull.emit('my.own.event',properties);
-Hull.on('my.own.event', function(properties){});
-```
-
-Use Hull as an event bus at will.
-### `Hull.emit(evtName, data)`
-
-
-Emits an event that will trigger all the registered listeners, passing them the `data` parameter.
-
-### Parameters
-Parameter | Type | Description
-----------|------|-------------
-eventName     | String         | The name of the event to be dispatched
-data          | mixed          | Data that will be passed to the subscribers
-
-### Other convenience methods
-See [https://github.com/asyncly/EventEmitter2](https://github.com/asyncly/EventEmitter2).
-
-- `Hull.onAny()`
-- `Hull.offAny()`
-- `Hull.once()`
-- `Hull.many()`
-
 
 # Utils
 
@@ -530,9 +393,6 @@ hull.utils.assign()
 //Generates a unique Identifier
 hull.utils.uuid()
 ```
-
-
-
 
 # Forwarding data to other services
 
@@ -570,8 +430,6 @@ Hull.on('hull.traits', function(attributes) {
 Event Name | Description | Arguments
 -----------|-------------|----------
 `hull.ready`         | `hull.js` has finished loading. | `Hull`, `me`, `app`, `org`
-`hull.ships.ready`   | Connectors are loaded.               | nothing
-`hull.user.update`   | User updated any property   | `me`
 `hull.track`         | `Hull.track()` called. | `properties`
 `hull.traits`      | `Hull.traits()` called.  | `event`
 
@@ -629,77 +487,3 @@ See [https://github.com/asyncly/EventEmitter2](https://github.com/asyncly/EventE
 - `Hull.offAny()`
 - `Hull.once()`
 - `Hull.many()`
-
-
-# Embedding Connectors in the page
-
-Some connectors can inject code in the page, by having Hull.js inject their own Javascript in the page. When used from a  [Connectors](https://www.hull.io/docs/reference/connectors), Hull.js exposes additional methods to help you manage connectors.
-
-## Booting a connector
-
-Connectors can deploy JS code to your page, and expose settings in your dashboard you can use to configure them. Checkout [The docs on Client-side connectors](https://www.hull.io/docs/reference/connectors#client-side) to learn more about what is available.
-
-```js
-Hull.onEmbed(function(rootNode, deployment, hull) {
-  console.log('Hello, i am a Connector and i just started');
-  console.log('Here is my root element : ', rootNode);
-  console.log('and here is my environment: ', deployment);
-
-  hull.track("event",{ parameters }); //GOOD -> we're using the local hull instance
-  Hull.track("event",{ parameters }) //BAD -> we're referring to the global instance of hull, which is less safe.
-
-});
-```
-
-```javascript
-const deployment = {
-  ship: {} //the connector's settings,
-  platform: {} //the platform's settings,
-
-}
-```
-
-<aside>
-  The `deployment` object will contain the data you need, including the connector's public settings:
-</aside>
-
-
-### `Hull.onEmbed(callback)`
-Checkout [Booting your application](https://www.hull.io/docs/reference/connectors#booting-your-application) in the Connectors documentation for more details
-
-## Disabling Connectors Automatic embedding
-
-```html
-<script
-  id="hull-js-sdk"
-  data-embed="false"
-  data-platform-id="54feb3b0574f8c7692000cfa"
-  data-org-url="https://hull-demos.hullapp.io"
-  src="https://js.hull.io/0.10.0/hull.js.gz"></script>
-```
-
-> or
-
-```html
-<script src="https://js.hull.io/0.10.0/hull.js.gz"></script>
-<script>
-  Hull.init({
-    platformId:  "YOUR_PLATFORM_ID",
-    orgUrl: "http://YOUR_ORG.hullapp.io",
-    embed:false
-  });
-</script>
-```
-
-If for some reason you need to prevent auto-embedding of Connectors, you can do so with the `embed=false` parameter.
-It will be then up to you to start the connectors, [Here is where the boot usually starts](https://github.com/hull/hull-js/blob/master/src/hull.coffee#L58), see how to start it yourself.
-
-### `Hull.embed()` method
-
-```js
-Hull.ready(function(hull, me, platform, org){
-  Hull.embed(platform.deployments, { reset:false }, callback, errback);
-});
-```
-
-<aside class="warning">This is an advanced method, if you want to start connectors manually. you're on your own ;p</aside>
