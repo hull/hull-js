@@ -6,7 +6,8 @@ It also lets you easily embed certain connectors in the page to inject functiona
 
 It is the library you install when you paste a Platform snippet in your page's `HEAD` tag.
 
-To generate the Hull.js snippet for your website, first head to the Guides section ["Getting Started with Hull.js"](https://www.hull.io/docs/guides/getting-started/getting-started-hull-js)
+# Booting Hull
+To generate the Hull.js snippet for your website, first head to the Guides section ["Getting Started with Hull.js"](https://www.hull.io/docs/guides/getting-started/getting-started-hull-js/)
 
 # Starting Hull
 
@@ -182,7 +183,7 @@ Hull.init({
   src="https://js.hull.io/0.10.0/hull.js.gz"></script>
 ```
 
-If you create a Hull access token (jwt) on the server, you can pass it and we'll log the user in for you. This is used in the [Bring your own users scenario](/docs/users/byou) where either have created in advance or are creating JWT access tokens on the fly for your users.
+If you create a Hull access token (jwt) on the server, you can pass it and we'll log the user in for you. This is used in the [Bring your own users scenario](https://www.hull.io/docs/reference/identity_resolution/) where either have created in advance or are creating JWT access tokens on the fly for your users.
 
 
 ## Getting the current configuration
@@ -372,9 +373,6 @@ Hull.alias('fooBar123');
 ```
 You can pass up to one of each trigger parameter as shown in the example above.
 
-# Cross-Domain Identity Resolution
-
-Hull.js is one of the rare libraries that allows businesses to recognize user activity across their different websites. Once a user has been recognized on one of your websites, the same identifiers will carry on across all your other properties where Hull.js is installed
 
 # Event Bus
 
@@ -473,7 +471,6 @@ hull.utils.assign()
 //Generates a unique Identifier
 hull.utils.uuid()
 ```
-
 
 # Forwarding data to other services
 
