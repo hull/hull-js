@@ -11,20 +11,19 @@
     debug="true"
     id="hull-js-sdk"
     data-platform-id="558979b4f59837f6160003c9"
-    data-org-url="http://super.hullapp.io"
+    data-org-url="https://super.hullapp.io"
     data-js-url='http://localhost:3001/hull.js'
     src="http://localhost:3001/hull.js"></script>
     <script>
-      Hull.track('Test Event', {test: 'data'});
-      Hull.traits({coconuts: 12});
-      Hull.traits({swallows: 'african'});
+      // Hull.track('Test Event', {test: 'data'});
+      // Hull.traits({coconuts: 12});
+      // Hull.traits({swallows: 'african'});
       hullAsyncInit = function(hull) {
         console.log('Hull Async Init', hull),
         hull.ready(function(hull, me, app, org) {
           console.log('Hull Ready!', hull, me, app, org);
         });
         hull.ready().then(function({ hull, me, app, org }){
-          debugger
           console.log('HullPromise Ready', hull, me, app, org)
         })
         hull.on('hull.ready',function(hull, me, app, org) {
@@ -34,12 +33,47 @@
           console.log('Ships Ready');
         })
       }
+
+      function addForm(trackable){
+        var form = document.createElement("form");
+        form.action = "/"
+        form.method = "get"
+
+        if (trackable) {
+          form.className="trackable"
+        }
+
+        var input = document.createElement("input")
+        input.type = "text";
+        input.name = "foo";
+        input.value = "foobar"
+
+        var submit = document.createElement("input");
+        submit.type = "submit"
+        submit.value = "Submit"
+
+        form.appendChild(input)
+        form.appendChild(submit);
+        document.body.appendChild(form)
+      }
+
+      Hull.trackForm("form.trackable", "Form Submitted", function properties(form, serialized) {
+        debugger
+        return serialized;
+      })
     </script>
   </head>
   <body>
     <div className="container-fluid mt-1">
       <div className="row">
-        <a href="#" id="share">Share</a>
+        <a href="#" id="addForm" onClick="addForm()">Add new Form</a>
+        <a href="#" id="addForm" onClick="addForm(true)">Add new Trackable Form</a>
+        <hr>
+        <form class="trackable" id="fform" class="" action="" method="get">
+          <input type="text" name="foo" value="foo"/>
+          <input type="submit" name="Submit" value="Submit"/>
+        </form>
+
       </div>
     </div>
   </body>
