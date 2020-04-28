@@ -56,10 +56,13 @@
         form.appendChild(submit);
         document.body.appendChild(form)
       }
-
-      Hull.trackForm("form.trackable", "Form Submitted", function properties(form, serialized) {
-        debugger
-        return serialized;
+      Hull.trackForm("form.trackable", function (form, serialized){
+        return "Form Submitted"
+      }, function properties(form, serialized) {
+        return new Promise((resolve, reject) => {
+          console.log("StartingTimeout")
+          setTimeout(() => resolve(serialized), 1500)
+        })
       })
     </script>
   </head>
