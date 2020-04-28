@@ -51,16 +51,26 @@ class Tracker
       if nodes.indexOf(event.target)==-1
         return
       event.preventDefault();
-      evt = if _.isFunction(eventName) then eventName(event.target, serialize(event.target, { hash: true })) else eventName
-      props = (if _.isFunction(properties) then properties(event.target, serialize(event.target, { hash: true })) else properties)||serialize(event.target, { hash: true })
-      _isSubmitted = false
-      submit = =>
+      evtPromise = if _.isFunction(eventName) then eventName(event.target, serialize(event.target, { hash: true })) else eventName
+      propsPromise = (if _.isFunction(properties) then properties(event.target, serialize(event.target, { hash: true })) else properties)||serialize(event.target, { hash: true })
+      timeout = null
+      submit = (source) => () =>
+        console.log("Hull: Submitting Form from", source)
         return if _isSubmitted
+        clearTimeout(timeout)
         _isSubmitted = true
         event.target.submit()
-      timeout = setTimeout submit
-      , 1000
-      @track(evt, props).then submit, submit
+
+      Promise.all([evtPromise, propsPromise]).then (argz) =>
+        [evt, props] = argz
+        _isSubmitted = false
+        timeout = setTimeout submit("Track Timeout")
+        , 2000
+        console.log("Hull: Submitting Form Data:", evt, props)
+        @track(evt, props).then submit("Track Success"), submit("Track Error")
+      , (err) =>
+        console.error("Hull: User Promise Error", err)
+        submit("User Promise Error")
 
     if isDynamic
       listen(document.body, "submit", trackSubmit, true)
