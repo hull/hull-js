@@ -50,6 +50,7 @@ class Tracker
       # Early return if form doesn't match;
       if nodes.indexOf(event.target)==-1
         return
+      # attempt to stop the event propagating;
       event.preventDefault();
       event.stopPropagation() if stopPropagation;
       evtPromise = if _.isFunction(eventName) then eventName(event.target, serialize(event.target, { hash: true }), event) else eventName
