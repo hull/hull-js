@@ -8,7 +8,6 @@
 
     <title>Hull JS Library</title>
     <script
-    debug="true"
     id="hull-js-sdk"
     data-platform-id="558979b4f59837f6160003c9"
     data-org-url="https://super.hullapp.io"
@@ -54,6 +53,9 @@
 
         form.appendChild(input)
         form.appendChild(submit);
+        form.addEventListener('submit', function onSubmit(e){
+          console.log("FORM SUBMISSIONS--------------", e)
+        })
         document.body.appendChild(form)
       }
       Hull.trackForm("form.trackable", function (form, serialized){
@@ -63,7 +65,7 @@
           console.log("StartingTimeout")
           setTimeout(() => resolve(serialized), 1500)
         })
-      })
+      }, { stopPropagation: true })
     </script>
   </head>
   <body>

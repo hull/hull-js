@@ -42,7 +42,7 @@ class Tracker
     EventBus.on 'hull.user.logout', ()->
       self.track('hull.user.logout')
 
-  trackForm: (forms, eventName, properties) =>
+  trackForm: (forms, eventName, properties, { stopPropagation = false, useCapture = true, submitDelay = 2000 } = {}) =>
     return false unless !!forms
     isDynamic = _.isString(forms)
     trackSubmit = (event) =>
@@ -51,6 +51,7 @@ class Tracker
       if nodes.indexOf(event.target)==-1
         return
       event.preventDefault();
+      event.stopPropagation() if stopPropagation;
       evtPromise = if _.isFunction(eventName) then eventName(event.target, serialize(event.target, { hash: true })) else eventName
       propsPromise = (if _.isFunction(properties) then properties(event.target, serialize(event.target, { hash: true })) else properties)||serialize(event.target, { hash: true })
       timeout = null
@@ -65,7 +66,7 @@ class Tracker
         [evt, props] = argz
         _isSubmitted = false
         timeout = setTimeout submit("Track Timeout")
-        , 2000
+        , submitDelay
         console.log("Hull: Submitting Form Data:", evt, props)
         @track(evt, props).then submit("Track Success"), submit("Track Error")
       , (err) =>
@@ -73,7 +74,7 @@ class Tracker
         submit("User Promise Error")
 
     if isDynamic
-      listen(document.body, "submit", trackSubmit, true)
+      listen(document.body, "submit", trackSubmit, useCapture)
     else
       formsList = [forms] if _.isElement(forms)
       _.map formsList, (form) =>

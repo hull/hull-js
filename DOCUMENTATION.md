@@ -323,19 +323,68 @@ Hull.ready(function(){
 
 # Form Tracking
 
-### `Hull.trackForm(forms, eventName, data)`
+### `Hull.trackForm(forms, eventName, data, options)`
 Listen to form submissions and  performs a tracking call
 
 - `forms`: An HTML DOM element or array of such, or a String
-- `eventName`: A String defining the name of the event to track or a function that returns it after being passed the form
-- `properties`: [Optional] An object of properties, or a function that returns an object, after being passed the form
-
+- `eventName`: A String defining the name of the event to track or a function that returns a string or a promise that returns a string after being passed the form and the serialized version of the form
+- `properties`: [Optional] An object of properties, or a function that returns an object or a promise that returns an object, after being passed the form and the serialized version of the form
+- `options`: [Optional] An object with the following options:
+  - `stopPropagation` [default: false] - should the form Stop propagation to other event handlers
+  - `useCapture` [default: true] - should the form capture events while they descend the dom tree or while they Bubble up
+  - `submitDelay` [ default: 2000ms ] - how much time to wait before submitting the form in case the tracking call doesn't complete
 ```js
 //form can be:
 // - an HTML Form Element
 // - an array of form elements
 // - a String
 // i.e. document.getElementsByTagName('form');
+
+
+// You can specify a function for both the Event and the properties to be generated in a custom way.
+Hull.trackForm("form.trackable", function event(form, serialized) {
+  // Your custom logic to extract form Name
+  return "Form Submitted"
+}, function properties(form, serialized) {
+  //serialized is a pre-serialized version of the form. You can return it as is, or transform it.
+  return serialized;
+});
+
+// You can specify a function for both the Event and the properties to be generated in a custom way.
+Hull.trackForm("form.trackable", function event(form, serialized) {
+  // Your custom logic to extract form Name
+  return "Form Submitted"
+}, function properties(form, serialized) {
+  //returning a promise works
+  return new Promise(function(resolve, reject){
+    return { foo: "bar "}
+  });
+});
+
+// You can specify a function for both the Event and the properties to be generated in a custom way.
+Hull.trackForm("form.trackable", function event(form, serialized) {
+  // Your custom logic to extract form Name
+  return "Form Submitted"
+}, function properties(form, serialized) {
+  //serialized is a pre-serialized version of the form. You can return it as is, or transform it.
+  return Hull.traits(serialized).then(function(){
+    return serialized
+  })
+});
+
+// You can specify a function for both the Event and the properties to be generated in a custom way.
+Hull.trackForm("form.trackable", function event(form, serialized) {
+  // Your custom logic to extract form Name
+  return "Form Submitted"
+}, function properties(form, serialized) {
+  //serialized is a pre-serialized version of the form. You can return it as is, or transform it.
+  return serialized;
+}, {
+  stopPropagation: true, //stop the event from propagating to other javascript handlers
+  useCapture: true, //capture the event while it "propagates" rather than when it "bubbles"
+  submitDelay: 3000 //increase the timeout before submitting the form anyways
+});
+
 
 // Static forms capture. Need to call again if forms are added after the fact.
 // and be careful not to attach handlers to the same forms twice or they will be double submitted
