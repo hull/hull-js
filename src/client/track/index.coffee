@@ -52,8 +52,8 @@ class Tracker
         return
       event.preventDefault();
       event.stopPropagation() if stopPropagation;
-      evtPromise = if _.isFunction(eventName) then eventName(event.target, serialize(event.target, { hash: true })) else eventName
-      propsPromise = (if _.isFunction(properties) then properties(event.target, serialize(event.target, { hash: true })) else properties)||serialize(event.target, { hash: true })
+      evtPromise = if _.isFunction(eventName) then eventName(event.target, serialize(event.target, { hash: true }), event) else eventName
+      propsPromise = (if _.isFunction(properties) then properties(event.target, serialize(event.target, { hash: true }), event) else properties)||serialize(event.target, { hash: true })
       timeout = null
       submit = (source) => () =>
         console.log("Hull: Submitting Form from", source)
