@@ -42,7 +42,7 @@ class Tracker
     EventBus.on 'hull.user.logout', ()->
       self.track('hull.user.logout')
 
-  trackForm: (forms, eventName, properties, { stopPropagation = false, useCapture = true, submitDelay = 2000 } = {}) =>
+  trackForm: (forms, eventName, properties, { stopPropagation = false, useCapture = true, submitDelay = 2000, reSubmit = true } = {}) =>
     return false unless !!forms
     isDynamic = _.isString(forms)
     trackSubmit = (event) =>
@@ -61,7 +61,8 @@ class Tracker
         return if _isSubmitted
         clearTimeout(timeout)
         _isSubmitted = true
-        event.target.submit()
+        if reSubmit
+          event.target.submit();
 
       Promise.all([evtPromise, propsPromise]).then (argz) =>
         [evt, props] = argz
