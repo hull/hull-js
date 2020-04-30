@@ -333,6 +333,7 @@ Listen to form submissions and  performs a tracking call
   - `stopPropagation` [default: false] - should the form Stop propagation to other event handlers
   - `useCapture` [default: true] - should the form capture events while they descend the dom tree or while they Bubble up
   - `submitDelay` [ default: 2000ms ] - how much time to wait before submitting the form in case the tracking call doesn't complete
+  - `reSubmit` [default: true] Submit the original form action after tracking is done
 ```js
 //form can be:
 // - an HTML Form Element
@@ -345,13 +346,13 @@ Listen to form submissions and  performs a tracking call
 Hull.trackForm("form.trackable", function event(form, serialized) {
   // Your custom logic to extract form Name
   return "Form Submitted"
-}, function properties(form, serialized) {
+}, function properties(form, serialized, event) {
   //serialized is a pre-serialized version of the form. You can return it as is, or transform it.
   return serialized;
 });
 
 // You can specify a function for both the Event and the properties to be generated in a custom way.
-Hull.trackForm("form.trackable", function event(form, serialized) {
+Hull.trackForm("form.trackable", function event(form, serialized, event) {
   // Your custom logic to extract form Name
   return "Form Submitted"
 }, function properties(form, serialized) {
@@ -362,7 +363,7 @@ Hull.trackForm("form.trackable", function event(form, serialized) {
 });
 
 // You can specify a function for both the Event and the properties to be generated in a custom way.
-Hull.trackForm("form.trackable", function event(form, serialized) {
+Hull.trackForm("form.trackable", function event(form, serialized, event) {
   // Your custom logic to extract form Name
   return "Form Submitted"
 }, function properties(form, serialized) {
@@ -376,7 +377,7 @@ Hull.trackForm("form.trackable", function event(form, serialized) {
 Hull.trackForm("form.trackable", function event(form, serialized) {
   // Your custom logic to extract form Name
   return "Form Submitted"
-}, function properties(form, serialized) {
+}, function properties(form, serialized, event) {
   //serialized is a pre-serialized version of the form. You can return it as is, or transform it.
   return serialized;
 }, {
@@ -400,7 +401,7 @@ Hull.trackForm("form.trackable", "Form Submitted");
 Hull.trackForm("form.trackable", "Form Submitted", { property: 'foo' });
 
 // You can specify a function for both the Event and the properties to be generated in a custom way.
-Hull.trackForm("form.trackable", function event(form, serialized) {
+Hull.trackForm("form.trackable", function event(form, serialized, event) {
   // Your custom logic to extract form Name
   return "Form Submitted"
 }, function properties(form, serialized) {
@@ -409,7 +410,7 @@ Hull.trackForm("form.trackable", function event(form, serialized) {
 });
 
 // You can use your own custom logic to extract form properties
-Hull.trackForm("form.trackable", function event(form, serialized) {
+Hull.trackForm("form.trackable", function event(form, serialized, event) {
   return "Form Submitted"
 }, function properties(form, serialized) {
   var props = {};
