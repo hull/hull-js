@@ -15,6 +15,7 @@ API_PATH = '/api/v1/'
 API_PATH_REGEXP = /^\/?api\/v1\//
 RESPONSE_HEADERS = ['Hull-Auth-Scope', 'Hull-Track', 'Hull-User-Id', 'Hull-User-Sig', 'X-Hits-Count', 'Link']
 
+TRACKING_PATHS = ["/api/v1/t", "/api/v1/me/traits", "/api/v1/me/alias"];
 
 normalizePath = (path) ->
   return path.replace(API_PATH_REGEXP, API_PATH) if API_PATH_REGEXP.test(path)
@@ -61,6 +62,7 @@ class Gateway
   constructor: (config={}) ->
     { appId, identify } = config
     @apiEndpoint = config.apiEndpoint
+    @trackingEndpoint = config.trackingEndpoint
     @identify = identify
     @queue = batchable 10, (requests) -> @flush(requests)
 
@@ -79,8 +81,9 @@ class Gateway
     method = (method||'get').toUpperCase()
 
     headers = assign(@identifyBrowserAndSession(), RemoteHeaderStore.getState(), headers)
-
-    if @apiEndpoint
+    if @trackingEndpoint && TRACKING_PATHS.includes(path)
+      endpoint = [@trackingEndpoint, path].join('')
+    else if @apiEndpoint
       endpoint = [@apiEndpoint, path].join('')
     else
       endpoint = path
