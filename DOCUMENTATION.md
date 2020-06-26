@@ -334,6 +334,7 @@ Listen to form submissions and  performs a tracking call
   - `useCapture` [default: true] - should the form capture events while they descend the dom tree or while they Bubble up
   - `submitDelay` [ default: 2000ms ] - how much time to wait before submitting the form in case the tracking call doesn't complete
   - `reSubmit` [default: true] Submit the original form action after tracking is done
+
 ```js
 //form can be:
 // - an HTML Form Element
@@ -492,6 +493,7 @@ cb      | Function | The function to be executed when the event is triggered.
 > This method is available once the app has started.
 
 ### `Hull.off(evtName, cb)`
+
 ```js
 Hull.off('hull.ready',myFunction);
 ```
@@ -602,6 +604,7 @@ Parameter | Type | Description
 > This method is available once the app has started.
 
 ### `Hull.off(evtName, cb)`
+
 ```js
 Hull.off('hull.ready',myFunction);
 ```
