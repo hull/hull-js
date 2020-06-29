@@ -60,10 +60,9 @@ resolveResponse = (request, response={}, resolve, reject)->
 class Gateway
 
   constructor: (config={}) ->
-    { appId, identify } = config
     @apiEndpoint = config.apiEndpoint
     @trackingEndpoint = config.trackingEndpoint
-    @identify = identify
+    @identify = config.identify
     @queue = batchable 10, (requests) -> @flush(requests)
 
   identifyBrowserAndSession: ->
