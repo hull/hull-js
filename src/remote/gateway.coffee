@@ -76,7 +76,7 @@ class Gateway
     @apiEndpoint = config.apiEndpoint
     @trackingEndpoint = config.trackingEndpoint
     @identify = identify
-    @location = location
+    @location = location || {}
     @options = _.defaults({}, batching, { min:1, max:1, delay:2 })
     @queue = batchable @options.delay, (requests) -> @flush(requests)
 
@@ -84,8 +84,9 @@ class Gateway
     ident = {}
     ident['Hull-Bid'] = @identify.browser
     ident['Hull-Sid'] = @identify.session
-    ident['X-Track-Url'] = @location.url
-    ident['X-Track-Referer'] = @location.referer
+    if @location
+      ident['X-Track-Url'] = @location.url
+      ident['X-Track-Referer'] = @location.referer
     ident
 
   resetIdentify: ->
