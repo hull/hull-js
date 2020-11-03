@@ -1,0 +1,164 @@
+---
+- - :permit
+  - MIT
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 14:49:39.907787000 Z
+- - :permit
+  - ISC*
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 14:49:49.958106000 Z
+- - :permit
+  - ISC
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 14:49:49.958106000 Z
+- - :permit
+  - Apache 2.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 14:49:58.419775000 Z
+- - :permit
+  - Simplified BSD
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 14:50:06.401359000 Z
+- - :permit
+  - New BSD
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 14:50:19.686322000 Z
+- - :permit
+  - Apache, Version 2.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 14:54:45.102570000 Z
+- - :permit
+  - BSD Zero Clause License
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 14:54:51.816426000 Z
+- - :permit
+  - MIT*
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 14:55:00.657805000 Z
+- - :permit
+  - Apache*
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 14:55:05.777537000 Z
+- - :permit
+  - Artistic-2.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 14:56:11.054311000 Z
+- - :permit
+  - BSD
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 14:56:17.043163000 Z
+- - :permit
+  - DBAD
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 15:09:29.720215000 Z
+- - :permit
+  - BSD*
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 15:09:33.996952000 Z
+- - :permit
+  - public domain
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 15:09:44.845464000 Z
+- - :permit
+  - WTFPL
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 15:10:16.233790000 Z
+- - :permit
+  - CC0-1.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 15:11:13.090491000 Z
+- - :permit
+  - Unlicense
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 15:11:42.321971000 Z
+- - :permit
+  - CC-BY-4.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 15:16:24.759100000 Z
+- - :permit
+  - CC-BY-3.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 15:16:28.000462000 Z
+- - :permit
+  - Public Domain
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-11-03 15:17:34.696654000 Z
+- - :approve
+  - buffers
+  - :who:
+    :why: MIT
+    :versions: 
+    - 0.1.1
+    :when: 2020-11-03 15:55:08.903918000 Z        
+- - :approve
+  - colors
+  - :who:
+    :why: MIT
+    :versions: 
+    - 0.3.0
+    :when: 2020-11-03 15:55:08.903918000 Z  
+- - :approve
+  - qs
+  - :who:
+    :why: Missing license information for version 2.3.3 - BSD-3-Clause License
+    :versions:
+    - 2.3.3
+    :when: 2020-11-03 15:32:26.734285000 Z
+- - :approve
+  - sntp
+  - :who:
+    :why: BSD-3-Clause
+    :versions: 
+    - 1.0.9
+    :when: 2020-11-03 15:55:08.903918000 Z
+- - :approve
+  - ripemd160
+  - :who:
+    :why: MIT
+    :versions: 
+    - 0.2.0
+    :when: 2020-11-03 15:55:08.903918000 Z
+
+
