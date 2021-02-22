@@ -1,4 +1,5 @@
-# Hull.js [ ![Codeship Status for hull/hull-js](https://circleci.com/gh/hull/hull-js/tree/develop.png?circle-token=26a17dad6ac378f6028a460a5857d5ca15a8aa13) ](https://circleci.com/gh/hull/hull-js)
+# Hull.js [ ![Codeship Status for hull/hull-js](https://circleci.com/gh/hull/hull-js/tree/develop.png?circle-token=26a17dad6ac378f6028a460a5857d5ca15a8aa13) [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fhull%2Fhull-js.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fhull%2Fhull-js?ref=badge_shield)
+](https://circleci.com/gh/hull/hull-js)
 
 # Building the library
 Checkout
@@ -61,6 +62,9 @@ If you want to submit code:
 
 # License
 MIT License. See LICENSE for details.
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fhull%2Fhull-js.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fhull%2Fhull-js?ref=badge_large)
 
 # Copyright
 Copyright (c) 2015 Hull, Inc.
