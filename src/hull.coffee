@@ -52,8 +52,8 @@ onInitSuccess = (userSuccessCallback, hull, data)->
   # Prune init queue
   Pool.run('identify', hull)
   Pool.run('alias', hull)
-  Pool.run('traits', hull)
   Pool.run('track', hull)
+  Pool.run('traits', hull)
   Pool.run('trackForm', hull)
 
   # Execute Hull.init callback

@@ -19,6 +19,7 @@ getReferralContext = ->
 
 getRemoteUrl = (config, identifiers)->
   url = "#{config.orgUrl}/api/v1/#{config.appId}/remote.html?v=#{VERSION}"
+  url += "&url=#{encodeURIComponent(document.location.href)}"
   url += "&r=#{encodeURIComponent(document.referrer)}"
   url += "&js=#{config.jsUrl}"  if config.jsUrl
   url += "&uid=#{config.uid}"   if config.uid

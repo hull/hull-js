@@ -72,10 +72,11 @@ resolveResponse = (request, response={}, resolve, reject)->
 class Gateway
 
   constructor: (config={}) ->
-    { batching, appId, identify } = config
+    { batching, appId, identify, location } = config
     @apiEndpoint = config.apiEndpoint
     @trackingEndpoint = config.trackingEndpoint
     @identify = identify
+    @location = location || {}
     @options = _.defaults({}, batching, { min:1, max:1, delay:2 })
     @queue = batchable @options.delay, (requests) -> @flush(requests)
 
@@ -83,6 +84,9 @@ class Gateway
     ident = {}
     ident['Hull-Bid'] = @identify.browser
     ident['Hull-Sid'] = @identify.session
+    if @location
+      ident['X-Track-Url'] = @location.url
+      ident['X-Track-Referer'] = @location.referer
     ident
 
   resetIdentify: ->
