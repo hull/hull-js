@@ -1,3 +1,4 @@
+LeakyBucket       = require '../../utils/leaky-bucket'
 assign            = require '../../polyfills/assign'
 EventBus          = require '../../utils/eventbus'
 RemoteUserStore   = require '../../flux/stores/RemoteUserStore'
@@ -9,6 +10,11 @@ StructuredEventProps = ['category', 'action', 'label', 'property', 'value']
 MarketingProps = ['campaign', 'source', 'medium', 'term', 'content']
 TopLevelProps = ['hull_ship_id'].concat(StructuredEventProps)
 
+DEFAULT_RATE_LIMIT_CONFIG = {
+  capacity: 25,
+  interval: 60000
+}
+
 Identity = (o)-> o
 
 class HullTrackService extends GenericService
@@ -18,7 +24,7 @@ class HullTrackService extends GenericService
     super(config, gateway)
 
     @_request = @wrappedRequest
-
+    @rateLimitter = new LeakyBucket(config.trackRateLimit || DEFAULT_RATE_LIMIT_CONFIG)
 
     RemoteUserStore.addChangeListener (change)=>
       currentUser = RemoteUserStore.getState().user
@@ -26,7 +32,10 @@ class HullTrackService extends GenericService
 
 
   request: (opts, callback, errback) =>
-
+    @rateLimitter.throttle().then => 
+      @_sendRequest(opts, callback, errback)
+    
+  _sendRequest: (opts, callback, errback) =>
     { params, path } = opts
 
     event = path
