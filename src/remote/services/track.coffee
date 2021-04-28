@@ -1,3 +1,4 @@
+LeakyBucket       = require '../../utils/leaky-bucket'
 assign            = require '../../polyfills/assign'
 EventBus          = require '../../utils/eventbus'
 RemoteUserStore   = require '../../flux/stores/RemoteUserStore'
@@ -18,7 +19,11 @@ class HullTrackService extends GenericService
     super(config, gateway)
 
     @_request = @wrappedRequest
-
+    
+    if (config.trackRateLimit && config.trackRateLimit.capacity) 
+      @rateLimitter = new LeakyBucket(config.trackRateLimit)
+    else
+      @rateLimitter = false
 
     RemoteUserStore.addChangeListener (change)=>
       currentUser = RemoteUserStore.getState().user
@@ -26,7 +31,13 @@ class HullTrackService extends GenericService
 
 
   request: (opts, callback, errback) =>
-
+    if @rateLimitter
+      @rateLimitter.throttle().then => 
+        @_sendRequest(opts, callback, errback)
+    else
+      @_sendRequest(opts, callback, errback)
+    
+  _sendRequest: (opts, callback, errback) =>
     { params, path } = opts
 
     event = path
