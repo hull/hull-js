@@ -10,11 +10,6 @@ StructuredEventProps = ['category', 'action', 'label', 'property', 'value']
 MarketingProps = ['campaign', 'source', 'medium', 'term', 'content']
 TopLevelProps = ['hull_ship_id'].concat(StructuredEventProps)
 
-DEFAULT_RATE_LIMIT_CONFIG = {
-  capacity: 25,
-  interval: 60000
-}
-
 Identity = (o)-> o
 
 class HullTrackService extends GenericService
@@ -24,7 +19,11 @@ class HullTrackService extends GenericService
     super(config, gateway)
 
     @_request = @wrappedRequest
-    @rateLimitter = new LeakyBucket(config.trackRateLimit || DEFAULT_RATE_LIMIT_CONFIG)
+    
+    if (config.trackRateLimit && config.trackRateLimit.capacity) 
+      @rateLimitter = new LeakyBucket(config.trackRateLimit)
+    else
+      @rateLimitter = false
 
     RemoteUserStore.addChangeListener (change)=>
       currentUser = RemoteUserStore.getState().user
@@ -32,7 +31,10 @@ class HullTrackService extends GenericService
 
 
   request: (opts, callback, errback) =>
-    @rateLimitter.throttle().then => 
+    if @rateLimitter
+      @rateLimitter.throttle().then => 
+        @_sendRequest(opts, callback, errback)
+    else
       @_sendRequest(opts, callback, errback)
     
   _sendRequest: (opts, callback, errback) =>
