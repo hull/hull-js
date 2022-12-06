@@ -16,7 +16,7 @@
     "lodash": "^4.11.1",
     "merge-stream": "^1.0.0",
     "putainde-localstorage": "^4.0.0",
-    "qs": "^6.1.0",
+    "qs": "^6.5.3",
     "raw-loader": "^0.5.1",
     "superagent": "^1.8.3"
   },
